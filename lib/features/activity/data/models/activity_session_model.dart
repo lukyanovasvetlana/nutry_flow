@@ -1,5 +1,5 @@
 import '../../domain/entities/activity_session.dart';
-import '../../domain/entities/workout.dart';
+
 import 'workout_model.dart';
 
 class ActivitySessionModel {

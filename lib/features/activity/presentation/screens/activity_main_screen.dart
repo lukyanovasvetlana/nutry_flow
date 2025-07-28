@@ -10,7 +10,7 @@ import 'activity_stats_screen.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
 
 class ActivityMainScreen extends StatefulWidget {
-  const ActivityMainScreen({Key? key}) : super(key: key);
+  const ActivityMainScreen({super.key});
 
   @override
   State<ActivityMainScreen> createState() => _ActivityMainScreenState();

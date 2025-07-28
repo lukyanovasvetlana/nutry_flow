@@ -10,7 +10,7 @@ import '../widgets/activity_chart.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
 
 class ActivityStatsScreen extends StatefulWidget {
-  const ActivityStatsScreen({Key? key}) : super(key: key);
+  const ActivityStatsScreen({super.key});
 
   @override
   State<ActivityStatsScreen> createState() => _ActivityStatsScreenState();

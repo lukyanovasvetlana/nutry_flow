@@ -4,9 +4,9 @@ abstract class Failure {
 }
 
 class ServerFailure extends Failure {
-  ServerFailure(String message) : super(message);
+  ServerFailure(super.message);
 }
 
 class AnalyticsFailure extends Failure {
-  AnalyticsFailure(String message) : super(message);
+  AnalyticsFailure(super.message);
 } 

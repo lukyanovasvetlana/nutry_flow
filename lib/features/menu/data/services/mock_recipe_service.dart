@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:developer' as developer;
 import '../models/menu_item.dart';
 import '../models/ingredient.dart';
 import '../models/recipe_step.dart';
@@ -281,17 +282,17 @@ class MockRecipeService {
   ];
 
   Future<List<MenuItem>> getAllRecipes() async {
-    print('🍽️ MockRecipeService: getAllRecipes called');
+    developer.log('🍽️ MockRecipeService: getAllRecipes called', name: 'MockRecipeService');
     
     // Имитируем задержку сети
     await Future.delayed(const Duration(milliseconds: 1000));
     
-    print('🍽️ MockRecipeService: Returning ${_mockRecipes.length} mock recipes');
+    developer.log('🍽️ MockRecipeService: Returning ${_mockRecipes.length} mock recipes', name: 'MockRecipeService');
     return List.from(_mockRecipes);
   }
 
   Future<void> saveRecipe(MenuItem recipe, List<File> photos) async {
-    print('🍽️ MockRecipeService: saveRecipe called - ${recipe.title}');
+    developer.log('🍽️ MockRecipeService: saveRecipe called - ${recipe.title}', name: 'MockRecipeService');
     
     // Имитируем задержку сети
     await Future.delayed(const Duration(milliseconds: 1500));
@@ -299,11 +300,11 @@ class MockRecipeService {
     // Добавляем рецепт в мок-список
     _mockRecipes.add(recipe);
     
-    print('🍽️ MockRecipeService: Recipe saved successfully');
+    developer.log('🍽️ MockRecipeService: Recipe saved successfully', name: 'MockRecipeService');
   }
 
   Future<void> updateRecipe(MenuItem recipe, {List<File>? newPhotos, List<String>? photosToDelete}) async {
-    print('🍽️ MockRecipeService: updateRecipe called - ${recipe.title}');
+    developer.log('🍽️ MockRecipeService: updateRecipe called - ${recipe.title}', name: 'MockRecipeService');
     
     // Имитируем задержку сети
     await Future.delayed(const Duration(milliseconds: 1200));
@@ -312,14 +313,14 @@ class MockRecipeService {
     final index = _mockRecipes.indexWhere((r) => r.id == recipe.id);
     if (index != -1) {
       _mockRecipes[index] = recipe;
-      print('🍽️ MockRecipeService: Recipe updated successfully');
+      developer.log('🍽️ MockRecipeService: Recipe updated successfully', name: 'MockRecipeService');
     } else {
-      print('🍽️ MockRecipeService: Recipe not found for update');
+      developer.log('🍽️ MockRecipeService: Recipe not found for update', name: 'MockRecipeService');
     }
   }
 
   Future<void> deleteRecipe(String recipeId) async {
-    print('🍽️ MockRecipeService: deleteRecipe called - $recipeId');
+    developer.log('🍽️ MockRecipeService: deleteRecipe called - $recipeId', name: 'MockRecipeService');
     
     // Имитируем задержку сети
     await Future.delayed(const Duration(milliseconds: 800));
@@ -330,9 +331,9 @@ class MockRecipeService {
     final removed = initialLength - _mockRecipes.length;
     
     if (removed > 0) {
-      print('🍽️ MockRecipeService: Recipe deleted successfully');
+      developer.log('🍽️ MockRecipeService: Recipe deleted successfully', name: 'MockRecipeService');
     } else {
-      print('🍽️ MockRecipeService: Recipe not found for deletion');
+      developer.log('🍽️ MockRecipeService: Recipe not found for deletion', name: 'MockRecipeService');
     }
   }
   

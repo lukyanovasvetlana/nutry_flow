@@ -3,7 +3,7 @@ import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:nutry_flow/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:nutry_flow/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:nutry_flow/features/meal_plan/presentation/screens/meal_plan_screen.dart';
-import 'package:nutry_flow/features/exercise/presentation/screens/exercise_screen.dart';
+
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'package:nutry_flow/shared/theme/app_styles.dart';
 
@@ -24,11 +24,7 @@ class _AppContainerState extends State<AppContainer> {
     const MealPlanScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+
 
 
 
