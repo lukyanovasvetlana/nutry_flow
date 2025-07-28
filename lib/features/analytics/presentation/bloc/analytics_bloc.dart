@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/analytics_event.dart' as domain;
-import '../../domain/entities/analytics_data.dart';
-import '../../domain/usecases/track_event_usecase.dart';
-import '../../domain/usecases/track_event_usecase.dart' as usecases;
+import 'package:nutry_flow/features/analytics/domain/entities/analytics_data.dart';
+import 'package:nutry_flow/features/analytics/domain/entities/nutrition_tracking.dart';
+import 'package:nutry_flow/features/analytics/domain/entities/weight_tracking.dart';
+import 'package:nutry_flow/features/analytics/domain/entities/activity_tracking.dart';
+import 'package:nutry_flow/features/analytics/data/repositories/analytics_repository.dart';
+import 'dart:developer' as developer;
 
-/// События для AnalyticsBloc
+// Events
 abstract class AnalyticsEvent extends Equatable {
   const AnalyticsEvent();
 
@@ -13,73 +15,90 @@ abstract class AnalyticsEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Отслеживание события
-class TrackAnalyticsEvent extends AnalyticsEvent {
-  final domain.AnalyticsEvent event;
-
-  const TrackAnalyticsEvent(this.event);
-
-  @override
-  List<Object?> get props => [event];
-}
-
-/// Отслеживание нескольких событий
-class TrackAnalyticsEvents extends AnalyticsEvent {
-  final List<domain.AnalyticsEvent> events;
-
-  const TrackAnalyticsEvents(this.events);
-
-  @override
-  List<Object?> get props => [events];
-}
-
-/// Получение аналитических данных за сегодня
-class GetTodayAnalytics extends AnalyticsEvent {
-  final String userId;
-
-  const GetTodayAnalytics(this.userId);
-
-  @override
-  List<Object?> get props => [userId];
-}
-
-/// Получение аналитических данных за неделю
-class GetWeeklyAnalytics extends AnalyticsEvent {
-  final String userId;
-
-  const GetWeeklyAnalytics(this.userId);
-
-  @override
-  List<Object?> get props => [userId];
-}
-
-/// Получение аналитических данных за месяц
-class GetMonthlyAnalytics extends AnalyticsEvent {
-  final String userId;
-
-  const GetMonthlyAnalytics(this.userId);
-
-  @override
-  List<Object?> get props => [userId];
-}
-
-/// Получение аналитических данных за период
-class GetAnalyticsForPeriod extends AnalyticsEvent {
-  final String userId;
+class LoadAnalyticsData extends AnalyticsEvent {
   final DateTime startDate;
   final DateTime endDate;
-
-  const GetAnalyticsForPeriod({
-    required this.userId,
+  
+  const LoadAnalyticsData({
     required this.startDate,
     required this.endDate,
   });
 
   @override
-  List<Object?> get props => [userId, startDate, endDate];
+  List<Object?> get props => [startDate, endDate];
 }
 
-/// Состояния для AnalyticsBloc
+class LoadNutritionTracking extends AnalyticsEvent {
+  final DateTime startDate;
+  final DateTime endDate;
+  
+  const LoadNutritionTracking({
+    required this.startDate,
+    required this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [startDate, endDate];
+}
+
+class SaveNutritionTracking extends AnalyticsEvent {
+  final NutritionTracking tracking;
+  
+  const SaveNutritionTracking(this.tracking);
+
+  @override
+  List<Object?> get props => [tracking];
+}
+
+class LoadWeightTracking extends AnalyticsEvent {
+  final DateTime startDate;
+  final DateTime endDate;
+  
+  const LoadWeightTracking({
+    required this.startDate,
+    required this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [startDate, endDate];
+}
+
+class SaveWeightTracking extends AnalyticsEvent {
+  final WeightTracking tracking;
+  
+  const SaveWeightTracking(this.tracking);
+
+  @override
+  List<Object?> get props => [tracking];
+}
+
+class LoadActivityTracking extends AnalyticsEvent {
+  final DateTime startDate;
+  final DateTime endDate;
+  
+  const LoadActivityTracking({
+    required this.startDate,
+    required this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [startDate, endDate];
+}
+
+class SaveActivityTracking extends AnalyticsEvent {
+  final ActivityTracking tracking;
+  
+  const SaveActivityTracking(this.tracking);
+
+  @override
+  List<Object?> get props => [tracking];
+}
+
+class LoadAnalyticsSummary extends AnalyticsEvent {
+  const LoadAnalyticsSummary();
+}
+
+// States
 abstract class AnalyticsState extends Equatable {
   const AnalyticsState();
 
@@ -87,170 +106,365 @@ abstract class AnalyticsState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Начальное состояние
 class AnalyticsInitial extends AnalyticsState {}
 
-/// Загрузка
 class AnalyticsLoading extends AnalyticsState {}
 
-/// Аналитические данные загружены
 class AnalyticsLoaded extends AnalyticsState {
-  final AnalyticsData data;
-  final String period;
-
-  const AnalyticsLoaded(this.data, this.period);
+  final AnalyticsData analyticsData;
+  final List<NutritionTracking> nutritionTracking;
+  final List<WeightTracking> weightTracking;
+  final List<ActivityTracking> activityTracking;
+  final DateTime startDate;
+  final DateTime endDate;
+  
+  const AnalyticsLoaded({
+    required this.analyticsData,
+    required this.nutritionTracking,
+    required this.weightTracking,
+    required this.activityTracking,
+    required this.startDate,
+    required this.endDate,
+  });
 
   @override
-  List<Object?> get props => [data, period];
+  List<Object?> get props => [
+    analyticsData,
+    nutritionTracking,
+    weightTracking,
+    activityTracking,
+    startDate,
+    endDate,
+  ];
+
+  AnalyticsLoaded copyWith({
+    AnalyticsData? analyticsData,
+    List<NutritionTracking>? nutritionTracking,
+    List<WeightTracking>? weightTracking,
+    List<ActivityTracking>? activityTracking,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    return AnalyticsLoaded(
+      analyticsData: analyticsData ?? this.analyticsData,
+      nutritionTracking: nutritionTracking ?? this.nutritionTracking,
+      weightTracking: weightTracking ?? this.weightTracking,
+      activityTracking: activityTracking ?? this.activityTracking,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+    );
+  }
 }
 
-/// Ошибка
 class AnalyticsError extends AnalyticsState {
   final String message;
-
+  
   const AnalyticsError(this.message);
 
   @override
   List<Object?> get props => [message];
 }
 
-/// Событие отслежено
-class AnalyticsEventTracked extends AnalyticsState {
-  final String eventName;
-
-  const AnalyticsEventTracked(this.eventName);
+class AnalyticsSuccess extends AnalyticsState {
+  final String message;
+  
+  const AnalyticsSuccess(this.message);
 
   @override
-  List<Object?> get props => [eventName];
+  List<Object?> get props => [message];
 }
 
-/// BLoC для аналитики
+class AnalyticsSummaryLoaded extends AnalyticsState {
+  final Map<String, dynamic> summary;
+  
+  const AnalyticsSummaryLoaded(this.summary);
+
+  @override
+  List<Object?> get props => [summary];
+}
+
+// BLoC
 class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
-  final TrackEventUseCase _trackEventUseCase;
-  final usecases.TrackEventsUseCase _trackEventsUseCase;
-  final usecases.GetTodayAnalyticsUseCase _getTodayAnalyticsUseCase;
-  final usecases.GetWeeklyAnalyticsUseCase _getWeeklyAnalyticsUseCase;
-  final usecases.GetMonthlyAnalyticsUseCase _getMonthlyAnalyticsUseCase;
-  final usecases.GetAnalyticsForPeriodUseCase _getAnalyticsForPeriodUseCase;
+  final AnalyticsRepository _analyticsRepository;
 
   AnalyticsBloc({
-    required TrackEventUseCase trackEventUseCase,
-    required usecases.TrackEventsUseCase trackEventsUseCase,
-    required usecases.GetTodayAnalyticsUseCase getTodayAnalyticsUseCase,
-    required usecases.GetWeeklyAnalyticsUseCase getWeeklyAnalyticsUseCase,
-    required usecases.GetMonthlyAnalyticsUseCase getMonthlyAnalyticsUseCase,
-    required usecases.GetAnalyticsForPeriodUseCase getAnalyticsForPeriodUseCase,
-  }) : _trackEventUseCase = trackEventUseCase,
-       _trackEventsUseCase = trackEventsUseCase,
-       _getTodayAnalyticsUseCase = getTodayAnalyticsUseCase,
-       _getWeeklyAnalyticsUseCase = getWeeklyAnalyticsUseCase,
-       _getMonthlyAnalyticsUseCase = getMonthlyAnalyticsUseCase,
-       _getAnalyticsForPeriodUseCase = getAnalyticsForPeriodUseCase,
+    required AnalyticsRepository analyticsRepository,
+  }) : _analyticsRepository = analyticsRepository,
        super(AnalyticsInitial()) {
     
-    on<TrackAnalyticsEvent>(_onTrackEvent);
-    on<TrackAnalyticsEvents>(_onTrackEvents);
-    on<GetTodayAnalytics>(_onGetTodayAnalytics);
-    on<GetWeeklyAnalytics>(_onGetWeeklyAnalytics);
-    on<GetMonthlyAnalytics>(_onGetMonthlyAnalytics);
-    on<GetAnalyticsForPeriod>(_onGetAnalyticsForPeriod);
+    on<LoadAnalyticsData>(_onLoadAnalyticsData);
+    on<LoadNutritionTracking>(_onLoadNutritionTracking);
+    on<SaveNutritionTracking>(_onSaveNutritionTracking);
+    on<LoadWeightTracking>(_onLoadWeightTracking);
+    on<SaveWeightTracking>(_onSaveWeightTracking);
+    on<LoadActivityTracking>(_onLoadActivityTracking);
+    on<SaveActivityTracking>(_onSaveActivityTracking);
+    on<LoadAnalyticsSummary>(_onLoadAnalyticsSummary);
   }
 
-  Future<void> _onTrackEvent(
-    TrackAnalyticsEvent event,
+  Future<void> _onLoadAnalyticsData(
+    LoadAnalyticsData event,
     Emitter<AnalyticsState> emit,
   ) async {
     try {
-      final result = await _trackEventUseCase(event.event);
-      result.fold(
-        (failure) => emit(AnalyticsError(failure.message)),
-        (_) => emit(AnalyticsEventTracked(event.event.name)),
+      developer.log('📊 AnalyticsBloc: Loading analytics data', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      final analyticsData = await _analyticsRepository.getAnalyticsData(
+        event.startDate,
+        event.endDate,
       );
-    } catch (e) {
-      emit(AnalyticsError(e.toString()));
-    }
-  }
 
-  Future<void> _onTrackEvents(
-    TrackAnalyticsEvents event,
-    Emitter<AnalyticsState> emit,
-  ) async {
-    try {
-      final result = await _trackEventsUseCase(event.events);
-      result.fold(
-        (failure) => emit(AnalyticsError(failure.message)),
-        (_) => emit(AnalyticsEventTracked('${event.events.length} events')),
-      );
-    } catch (e) {
-      emit(AnalyticsError(e.toString()));
-    }
-  }
-
-  Future<void> _onGetTodayAnalytics(
-    GetTodayAnalytics event,
-    Emitter<AnalyticsState> emit,
-  ) async {
-    emit(AnalyticsLoading());
-    try {
-      final result = await _getTodayAnalyticsUseCase(event.userId);
-      result.fold(
-        (failure) => emit(AnalyticsError(failure.message)),
-        (data) => emit(AnalyticsLoaded(data, 'today')),
-      );
-    } catch (e) {
-      emit(AnalyticsError(e.toString()));
-    }
-  }
-
-  Future<void> _onGetWeeklyAnalytics(
-    GetWeeklyAnalytics event,
-    Emitter<AnalyticsState> emit,
-  ) async {
-    emit(AnalyticsLoading());
-    try {
-      final result = await _getWeeklyAnalyticsUseCase(event.userId);
-      result.fold(
-        (failure) => emit(AnalyticsError(failure.message)),
-        (data) => emit(AnalyticsLoaded(data, 'week')),
-      );
-    } catch (e) {
-      emit(AnalyticsError(e.toString()));
-    }
-  }
-
-  Future<void> _onGetMonthlyAnalytics(
-    GetMonthlyAnalytics event,
-    Emitter<AnalyticsState> emit,
-  ) async {
-    emit(AnalyticsLoading());
-    try {
-      final result = await _getMonthlyAnalyticsUseCase(event.userId);
-      result.fold(
-        (failure) => emit(AnalyticsError(failure.message)),
-        (data) => emit(AnalyticsLoaded(data, 'month')),
-      );
-    } catch (e) {
-      emit(AnalyticsError(e.toString()));
-    }
-  }
-
-  Future<void> _onGetAnalyticsForPeriod(
-    GetAnalyticsForPeriod event,
-    Emitter<AnalyticsState> emit,
-  ) async {
-    emit(AnalyticsLoading());
-    try {
-      final result = await _getAnalyticsForPeriodUseCase(
-        userId: event.userId,
+      emit(AnalyticsLoaded(
+        analyticsData: analyticsData,
+        nutritionTracking: analyticsData.nutritionTracking,
+        weightTracking: analyticsData.weightTracking,
+        activityTracking: analyticsData.activityTracking,
         startDate: event.startDate,
         endDate: event.endDate,
-      );
-      result.fold(
-        (failure) => emit(AnalyticsError(failure.message)),
-        (data) => emit(AnalyticsLoaded(data, 'period')),
-      );
+      ));
+
+      developer.log('📊 AnalyticsBloc: Analytics data loaded successfully', name: 'AnalyticsBloc');
     } catch (e) {
-      emit(AnalyticsError(e.toString()));
+      developer.log('📊 AnalyticsBloc: Load analytics data failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось загрузить данные аналитики: $e'));
     }
+  }
+
+  Future<void> _onLoadNutritionTracking(
+    LoadNutritionTracking event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Loading nutrition tracking', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      final nutritionTracking = await _analyticsRepository.getNutritionTracking(
+        event.startDate,
+        event.endDate,
+      );
+
+      if (state is AnalyticsLoaded) {
+        final currentState = state as AnalyticsLoaded;
+        emit(currentState.copyWith(nutritionTracking: nutritionTracking));
+      } else {
+        emit(AnalyticsLoaded(
+          analyticsData: AnalyticsData(
+            nutritionTracking: nutritionTracking,
+            weightTracking: [],
+            activityTracking: [],
+            period: '${event.startDate.day}/${event.startDate.month} - ${event.endDate.day}/${event.endDate.month}',
+          ),
+          nutritionTracking: nutritionTracking,
+          weightTracking: [],
+          activityTracking: [],
+          startDate: event.startDate,
+          endDate: event.endDate,
+        ));
+      }
+
+      developer.log('📊 AnalyticsBloc: Nutrition tracking loaded successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Load nutrition tracking failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось загрузить данные о питании: $e'));
+    }
+  }
+
+  Future<void> _onSaveNutritionTracking(
+    SaveNutritionTracking event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Saving nutrition tracking', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      await _analyticsRepository.saveNutritionTracking(event.tracking);
+
+      emit(AnalyticsSuccess('Данные о питании сохранены успешно'));
+      developer.log('📊 AnalyticsBloc: Nutrition tracking saved successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Save nutrition tracking failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось сохранить данные о питании: $e'));
+    }
+  }
+
+  Future<void> _onLoadWeightTracking(
+    LoadWeightTracking event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Loading weight tracking', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      final weightTracking = await _analyticsRepository.getWeightTracking(
+        event.startDate,
+        event.endDate,
+      );
+
+      if (state is AnalyticsLoaded) {
+        final currentState = state as AnalyticsLoaded;
+        emit(currentState.copyWith(weightTracking: weightTracking));
+      } else {
+        emit(AnalyticsLoaded(
+          analyticsData: AnalyticsData(
+            nutritionTracking: [],
+            weightTracking: weightTracking,
+            activityTracking: [],
+            period: '${event.startDate.day}/${event.startDate.month} - ${event.endDate.day}/${event.endDate.month}',
+          ),
+          nutritionTracking: [],
+          weightTracking: weightTracking,
+          activityTracking: [],
+          startDate: event.startDate,
+          endDate: event.endDate,
+        ));
+      }
+
+      developer.log('📊 AnalyticsBloc: Weight tracking loaded successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Load weight tracking failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось загрузить данные о весе: $e'));
+    }
+  }
+
+  Future<void> _onSaveWeightTracking(
+    SaveWeightTracking event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Saving weight tracking', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      await _analyticsRepository.saveWeightTracking(event.tracking);
+
+      emit(AnalyticsSuccess('Данные о весе сохранены успешно'));
+      developer.log('📊 AnalyticsBloc: Weight tracking saved successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Save weight tracking failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось сохранить данные о весе: $e'));
+    }
+  }
+
+  Future<void> _onLoadActivityTracking(
+    LoadActivityTracking event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Loading activity tracking', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      final activityTracking = await _analyticsRepository.getActivityTracking(
+        event.startDate,
+        event.endDate,
+      );
+
+      if (state is AnalyticsLoaded) {
+        final currentState = state as AnalyticsLoaded;
+        emit(currentState.copyWith(activityTracking: activityTracking));
+      } else {
+        emit(AnalyticsLoaded(
+          analyticsData: AnalyticsData(
+            nutritionTracking: [],
+            weightTracking: [],
+            activityTracking: activityTracking,
+            period: '${event.startDate.day}/${event.startDate.month} - ${event.endDate.day}/${event.endDate.month}',
+          ),
+          nutritionTracking: [],
+          weightTracking: [],
+          activityTracking: activityTracking,
+          startDate: event.startDate,
+          endDate: event.endDate,
+        ));
+      }
+
+      developer.log('📊 AnalyticsBloc: Activity tracking loaded successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Load activity tracking failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось загрузить данные об активности: $e'));
+    }
+  }
+
+  Future<void> _onSaveActivityTracking(
+    SaveActivityTracking event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Saving activity tracking', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      await _analyticsRepository.saveActivityTracking(event.tracking);
+
+      emit(AnalyticsSuccess('Данные об активности сохранены успешно'));
+      developer.log('📊 AnalyticsBloc: Activity tracking saved successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Save activity tracking failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось сохранить данные об активности: $e'));
+    }
+  }
+
+  Future<void> _onLoadAnalyticsSummary(
+    LoadAnalyticsSummary event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Loading analytics summary', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      // Загружаем данные за последние 30 дней
+      final endDate = DateTime.now();
+      final startDate = endDate.subtract(const Duration(days: 30));
+
+      final nutritionTracking = await _analyticsRepository.getNutritionTracking(startDate, endDate);
+      final weightTracking = await _analyticsRepository.getWeightTracking(startDate, endDate);
+      final activityTracking = await _analyticsRepository.getActivityTracking(startDate, endDate);
+
+      // Вычисляем сводку
+      final summary = _calculateSummary(
+        nutritionTracking,
+        weightTracking,
+        activityTracking,
+      );
+
+      emit(AnalyticsSummaryLoaded(summary));
+      developer.log('📊 AnalyticsBloc: Analytics summary loaded successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Load analytics summary failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось загрузить сводку аналитики: $e'));
+    }
+  }
+
+  Map<String, dynamic> _calculateSummary(
+    List<NutritionTracking> nutritionTracking,
+    List<WeightTracking> weightTracking,
+    List<ActivityTracking> activityTracking,
+  ) {
+    // Средние калории за день
+    final avgCalories = nutritionTracking.isNotEmpty
+        ? nutritionTracking.map((n) => n.caloriesConsumed).reduce((a, b) => a + b) / nutritionTracking.length
+        : 0;
+
+    // Изменение веса
+    final weightChange = weightTracking.length >= 2
+        ? weightTracking.last.weight - weightTracking.first.weight
+        : 0;
+
+    // Общая активность
+    final totalSteps = activityTracking.map((a) => a.stepsCount).reduce((a, b) => a + b);
+    final totalCaloriesBurned = activityTracking.map((a) => a.caloriesBurned).reduce((a, b) => a + b);
+
+    // Средний белок за день
+    final avgProtein = nutritionTracking.isNotEmpty
+        ? nutritionTracking.map((n) => n.proteinConsumed).reduce((a, b) => a + b) / nutritionTracking.length
+        : 0;
+
+    return {
+      'avgCalories': avgCalories.round(),
+      'weightChange': weightChange,
+      'totalSteps': totalSteps,
+      'totalCaloriesBurned': totalCaloriesBurned,
+      'avgProtein': avgProtein.round(),
+      'daysTracked': nutritionTracking.length,
+      'workoutSessions': activityTracking.where((a) => a.workoutDuration > 0).length,
+    };
   }
 } 
