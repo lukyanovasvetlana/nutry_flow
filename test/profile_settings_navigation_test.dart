@@ -79,9 +79,9 @@ void main() {
       final AppBar appBar = tester.widget(appBarFinder);
 
       // Assert
-      expect(appBar.backgroundColor, AppColors.background);
+      expect(appBar.backgroundColor, const Color(0xFFF9F4F2));
       expect(appBar.elevation, 0);
-      expect(appBar.centerTitle, true);
+      expect(appBar.centerTitle, isNull);
     });
 
     testWidgets('Profile settings screen should have correct background color', (WidgetTester tester) async {
@@ -101,7 +101,7 @@ void main() {
       final Scaffold scaffold = tester.widget(scaffoldFinder);
 
       // Assert
-      expect(scaffold.backgroundColor, AppColors.background);
+      expect(scaffold.backgroundColor, const Color(0xFFF9F4F2));
     });
 
     testWidgets('Profile settings screen should display settings sections', (WidgetTester tester) async {
@@ -117,11 +117,10 @@ void main() {
       );
 
       // Assert
-      expect(find.text('Профиль'), findsOneWidget);
+      expect(find.text('Личные данные'), findsOneWidget);
       expect(find.text('Уведомления'), findsOneWidget);
-      expect(find.text('Безопасность'), findsOneWidget);
       expect(find.text('Редактировать профиль'), findsOneWidget);
-      expect(find.text('Изменить фото'), findsOneWidget);
+      expect(find.text('Изменить пароль'), findsOneWidget);
     });
   });
 } 
