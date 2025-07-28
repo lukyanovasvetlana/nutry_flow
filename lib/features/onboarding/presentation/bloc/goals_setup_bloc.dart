@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'dart:developer' as developer;
 import '../../domain/entities/user_goals.dart';
 import '../../domain/usecases/save_user_goals_usecase.dart';
 import '../../domain/usecases/get_user_goals_usecase.dart';
+import '../../../profile/data/repositories/user_data_repository.dart';
 
 // Events
 abstract class GoalsSetupEvent extends Equatable {
@@ -61,6 +63,8 @@ class WorkoutDurationChanged extends GoalsSetupEvent {
   @override
   List<Object?> get props => [duration];
 }
+
+class InitializeGoals extends GoalsSetupEvent {}
 
 // States
 abstract class GoalsSetupState extends Equatable {
@@ -121,11 +125,13 @@ class GoalsSetupError extends GoalsSetupState {
 class GoalsSetupBloc extends Bloc<GoalsSetupEvent, GoalsSetupState> {
   final SaveUserGoalsUseCase _saveUserGoalsUseCase;
   final GetUserGoalsUseCase _getUserGoalsUseCase;
+  final UserDataRepository _userDataRepository;
 
   GoalsSetupBloc(
     this._saveUserGoalsUseCase,
     this._getUserGoalsUseCase,
-  ) : super(GoalsSetupInitial()) {
+  ) : _userDataRepository = UserDataRepository(),
+      super(GoalsSetupInitial()) {
     on<GoalSelected>(_onGoalSelected);
     on<TargetWeightChanged>(_onTargetWeightChanged);
     on<SaveGoals>(_onSaveGoals);
@@ -134,6 +140,7 @@ class GoalsSetupBloc extends Bloc<GoalsSetupEvent, GoalsSetupState> {
     on<WorkoutTypeToggled>(_onWorkoutTypeToggled);
     on<WorkoutFrequencyChanged>(_onWorkoutFrequencyChanged);
     on<WorkoutDurationChanged>(_onWorkoutDurationChanged);
+    on<InitializeGoals>(_onInitializeGoals);
   }
 
   void _onGoalSelected(GoalSelected event, Emitter<GoalsSetupState> emit) {
@@ -195,71 +202,104 @@ class GoalsSetupBloc extends Bloc<GoalsSetupEvent, GoalsSetupState> {
   }
 
   void _onSaveGoals(SaveGoals event, Emitter<GoalsSetupState> emit) async {
-    print('🟤 GoalsSetupBloc: SaveGoals event received');
+    developer.log('🟤 GoalsSetupBloc: SaveGoals event received', name: 'GoalsSetupBloc');
     
     if (state is GoalsSetupLoaded) {
       final currentState = state as GoalsSetupLoaded;
-      print('🟤 GoalsSetupBloc: Current state is GoalsSetupLoaded');
-      print('🟤 GoalsSetupBloc: Goals valid: ${currentState.isValid}');
-      print('🟤 GoalsSetupBloc: Goals: ${currentState.goals}');
+      developer.log('🟤 GoalsSetupBloc: Current state is GoalsSetupLoaded', name: 'GoalsSetupBloc');
+      developer.log('🟤 GoalsSetupBloc: Goals valid: ${currentState.isValid}', name: 'GoalsSetupBloc');
+      developer.log('🟤 GoalsSetupBloc: Goals: ${currentState.goals}', name: 'GoalsSetupBloc');
       
       emit(GoalsSetupSaving());
-      print('🟤 GoalsSetupBloc: Emitted GoalsSetupSaving');
+      developer.log('🟤 GoalsSetupBloc: Emitted GoalsSetupSaving', name: 'GoalsSetupBloc');
       
       try {
-        print('🟤 GoalsSetupBloc: Calling saveUserGoalsUseCase.execute');
+        // Сначала пробуем сохранить через UserDataRepository (Supabase)
+        developer.log('🟤 GoalsSetupBloc: Trying to save via UserDataRepository', name: 'GoalsSetupBloc');
+        await _userDataRepository.saveUserGoals(currentState.goals);
+        developer.log('🟤 GoalsSetupBloc: Goals saved via UserDataRepository successfully', name: 'GoalsSetupBloc');
+        
+        // Также сохраняем через use case для совместимости
+        developer.log('🟤 GoalsSetupBloc: Calling saveUserGoalsUseCase.execute', name: 'GoalsSetupBloc');
         final result = await _saveUserGoalsUseCase.execute(currentState.goals);
         
-        print('🟤 GoalsSetupBloc: SaveUserGoalsUseCase result - isSuccess: ${result.isSuccess}');
+        developer.log('🟤 GoalsSetupBloc: SaveUserGoalsUseCase result - isSuccess: ${result.isSuccess}', name: 'GoalsSetupBloc');
         
         if (result.isSuccess) {
-          print('🟤 GoalsSetupBloc: Goals saved successfully');
+          developer.log('🟤 GoalsSetupBloc: Goals saved successfully', name: 'GoalsSetupBloc');
           emit(GoalsSetupSaved(currentState.goals));
         } else {
-          print('🟤 GoalsSetupBloc: Failed to save goals - error:  [38;5;9m${result.error} [0m');
+          developer.log('🟤 GoalsSetupBloc: Failed to save goals - error: ${result.error}', name: 'GoalsSetupBloc');
           emit(GoalsSetupError(result.error!));
         }
       } catch (e) {
-        print('🟤 GoalsSetupBloc: Exception in SaveGoals: $e');
+        developer.log('🟤 GoalsSetupBloc: Exception in SaveGoals: $e', name: 'GoalsSetupBloc');
         emit(GoalsSetupError('Ошибка сохранения целей: ${e.toString()}'));
       }
     } else {
-      print('🟤 GoalsSetupBloc: State is not GoalsSetupLoaded - ${state.runtimeType}');
+      developer.log('🟤 GoalsSetupBloc: State is not GoalsSetupLoaded - ${state.runtimeType}', name: 'GoalsSetupBloc');
       emit(GoalsSetupError('Неверное состояние для сохранения целей'));
     }
   }
 
   void _onLoadExistingGoals(LoadExistingGoals event, Emitter<GoalsSetupState> emit) async {
+    developer.log('🟤 GoalsSetupBloc: LoadExistingGoals event received', name: 'GoalsSetupBloc');
     emit(GoalsSetupLoading());
     
-    final result = await _getUserGoalsUseCase.execute();
-    
-    if (result.isSuccess && result.goals != null) {
-      int safeCalories = (result.goals!.targetCalories != null && result.goals!.targetCalories! >= 800 && result.goals!.targetCalories! <= 5000)
-        ? result.goals!.targetCalories!
-        : 2000;
-      emit(GoalsSetupLoaded(
-        goals: result.goals!.copyWith(targetCalories: safeCalories),
-        isValid: result.goals!.isValid,
-      ));
-    } else if (result.error != null) {
-      emit(GoalsSetupError(result.error!));
-    } else {
-      // Нет существующих целей, создаем новые
-      emit(GoalsSetupLoaded(
-        goals: UserGoals(
-          id: 'goals10',
-          userId: 'user1',
-          fitnessGoals: const [],
-          dietaryPreferences: const [],
-          healthConditions: const [],
-          workoutTypes: const [],
-          targetCalories: 2000,
-          createdAt: DateTime(2023, 1, 1),
-          updatedAt: DateTime(2023, 1, 1),
-        ),
-        isValid: false,
-      ));
+    try {
+      // Сначала пробуем загрузить через UserDataRepository (Supabase)
+      developer.log('🟤 GoalsSetupBloc: Trying to load via UserDataRepository', name: 'GoalsSetupBloc');
+      final goals = await _userDataRepository.getUserGoals();
+      
+      if (goals != null) {
+        developer.log('🟤 GoalsSetupBloc: Goals loaded via UserDataRepository successfully', name: 'GoalsSetupBloc');
+        int safeCalories = (goals.targetCalories != null && goals.targetCalories! >= 800 && goals.targetCalories! <= 5000)
+          ? goals.targetCalories!
+          : 2000;
+        emit(GoalsSetupLoaded(
+          goals: goals.copyWith(targetCalories: safeCalories),
+          isValid: goals.isValid,
+        ));
+        return;
+      }
+      
+      // Fallback к use case
+      developer.log('🟤 GoalsSetupBloc: No goals from UserDataRepository, trying use case', name: 'GoalsSetupBloc');
+      final result = await _getUserGoalsUseCase.execute();
+      
+      if (result.isSuccess && result.goals != null) {
+        developer.log('🟤 GoalsSetupBloc: Goals loaded via use case successfully', name: 'GoalsSetupBloc');
+        int safeCalories = (result.goals!.targetCalories != null && result.goals!.targetCalories! >= 800 && result.goals!.targetCalories! <= 5000)
+          ? result.goals!.targetCalories!
+          : 2000;
+        emit(GoalsSetupLoaded(
+          goals: result.goals!.copyWith(targetCalories: safeCalories),
+          isValid: result.goals!.isValid,
+        ));
+      } else if (result.error != null) {
+        developer.log('🟤 GoalsSetupBloc: Error loading goals via use case: ${result.error}', name: 'GoalsSetupBloc');
+        emit(GoalsSetupError(result.error!));
+      } else {
+        // Нет существующих целей, создаем новые
+        developer.log('🟤 GoalsSetupBloc: No existing goals, creating new ones', name: 'GoalsSetupBloc');
+        emit(GoalsSetupLoaded(
+          goals: UserGoals(
+            id: 'goals10',
+            userId: 'user1',
+            fitnessGoals: const [],
+            dietaryPreferences: const [],
+            healthConditions: const [],
+            workoutTypes: const [],
+            targetCalories: 2000,
+            createdAt: DateTime(2023, 1, 1),
+            updatedAt: DateTime(2023, 1, 1),
+          ),
+          isValid: false,
+        ));
+      }
+    } catch (e) {
+      developer.log('🟤 GoalsSetupBloc: Exception in LoadExistingGoals: $e', name: 'GoalsSetupBloc');
+      emit(GoalsSetupError('Ошибка загрузки целей: ${e.toString()}'));
     }
   }
 
@@ -305,5 +345,11 @@ class GoalsSetupBloc extends Bloc<GoalsSetupEvent, GoalsSetupState> {
       final updatedGoals = currentState.goals.copyWith(targetProtein: event.duration.toDouble(), updatedAt: DateTime.now());
       emit(currentState.copyWith(goals: updatedGoals, isValid: updatedGoals.isValid));
     }
+  }
+
+  void _onInitializeGoals(InitializeGoals event, Emitter<GoalsSetupState> emit) async {
+    developer.log('🟤 GoalsSetupBloc: InitializeGoals event received', name: 'GoalsSetupBloc');
+    // Автоматически загружаем существующие цели при инициализации
+    add(LoadExistingGoals());
   }
 } 

@@ -74,7 +74,12 @@ class NutryFlowApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/profile-info': (context) => const ProfileInfoScreen(),
         '/onboarding': (context) => BlocProvider<GoalsSetupBloc>(
-          create: (context) => OnboardingDependencies.instance.createGoalsSetupBloc(),
+          create: (context) {
+            final bloc = OnboardingDependencies.instance.createGoalsSetupBloc();
+            // Автоматически инициализируем цели при создании BLoC
+            bloc.add(InitializeGoals());
+            return bloc;
+          },
           child: const GoalsSetupView(),
         ),
         '/app': (context) => const AppContainer(),
