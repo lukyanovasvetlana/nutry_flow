@@ -25,6 +25,7 @@ import 'package:nutry_flow/features/analytics/di/analytics_dependencies.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'package:nutry_flow/core/services/local_cache_service.dart';
+import 'package:nutry_flow/core/services/notification_service.dart';
 import 'package:nutry_flow/app.dart';
 
 void main() async {
@@ -35,6 +36,9 @@ void main() async {
   
   // Инициализация локального кэша
   await LocalCacheService.instance.initialize();
+  
+  // Инициализация сервиса уведомлений
+  await NotificationService.instance.initialize();
   
   // Инициализация GetIt
   
