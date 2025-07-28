@@ -177,9 +177,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
+                child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+                  children: [
               // Период
               _buildPeriodHeader(),
               const SizedBox(height: 20),
@@ -213,7 +213,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   Widget _buildPeriodHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+        children: [
         const Text(
           'Период',
           style: TextStyle(
@@ -533,14 +533,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ),
         const SizedBox(height: 12),
         Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
                 _buildAchievementTile(
                   icon: Icons.emoji_events,
                   title: 'Первая неделя',
@@ -560,10 +560,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   title: 'Активный месяц',
                   subtitle: '30 дней подряд тренировок',
                   isCompleted: false,
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
         ),
       ],
     );
@@ -582,14 +582,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           color: isCompleted ? AppColors.green : Colors.grey[300],
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          icon,
+            child: Icon(
+              icon,
           color: isCompleted ? Colors.white : Colors.grey[600],
           size: 20,
         ),
       ),
       title: Text(
-        title,
+                  title,
         style: TextStyle(
           fontWeight: FontWeight.w500,
           color: isCompleted ? Colors.black87 : Colors.grey[600],
@@ -690,7 +690,7 @@ class LineChartPainter extends CustomPainter {
       
       if (i == 0) {
         path.moveTo(x, y);
-      } else {
+    } else {
         path.lineTo(x, y);
       }
     }
@@ -753,4 +753,4 @@ class LineChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
+} 
