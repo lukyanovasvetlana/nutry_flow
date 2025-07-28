@@ -428,7 +428,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
             borderRadius: BorderRadius.circular(25),
           ),
           elevation: 2,
-          shadowColor: AppColors.green.withOpacity(0.4),
+          shadowColor: AppColors.green.withValues(alpha: 0.4),
         ),
         child: const Text(
           'Сохранить',

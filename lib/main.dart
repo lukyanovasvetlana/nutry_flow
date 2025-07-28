@@ -20,18 +20,15 @@ import 'package:nutry_flow/features/menu/di/menu_dependencies.dart';
 import 'package:nutry_flow/features/meal_plan/di/meal_plan_dependencies.dart';
 import 'package:nutry_flow/features/grocery_list/di/grocery_dependencies.dart';
 import 'package:nutry_flow/features/calendar/di/calendar_dependencies.dart';
-import 'package:nutry_flow/features/activity/di/activity_dependencies.dart';
 import 'package:nutry_flow/features/exercise/di/exercise_dependencies.dart';
 import 'package:nutry_flow/features/analytics/di/analytics_dependencies.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
-import 'package:nutry_flow/shared/theme/app_styles.dart';
 import 'package:nutry_flow/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Инициализация GetIt
-  final getIt = GetIt.instance;
   
   // Инициализация зависимостей
   await OnboardingDependencies.instance.initialize();

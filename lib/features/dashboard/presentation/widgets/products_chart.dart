@@ -168,8 +168,8 @@ class ProductsChart extends StatelessWidget {
             ),
             gradient: LinearGradient(
               colors: isActive 
-                ? [AppColors.yellow, AppColors.yellow.withOpacity(0.8)]
-                : [AppColors.green, AppColors.green.withOpacity(0.8)],
+                ? [AppColors.yellow, AppColors.yellow.withValues(alpha: 0.8)]
+                : [AppColors.green, AppColors.green.withValues(alpha: 0.8)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),

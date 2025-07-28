@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/goals_setup_bloc.dart';
 import '../../domain/entities/user_goals.dart';
-import '../../di/onboarding_dependencies.dart';
+
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class GoalsSetupScreen extends StatelessWidget {
@@ -244,7 +244,7 @@ class GoalsSetupView extends StatelessWidget {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? (goal['color'] as Color).withOpacity(0.1) : Colors.grey[50],
+                      color: isSelected ? (goal['color'] as Color).withValues(alpha: 0.1) : Colors.grey[50],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? (goal['color'] as Color) : Colors.grey[300]!,
@@ -693,7 +693,7 @@ class GoalsSetupView extends StatelessWidget {
             colors: [
               Colors.black,
               Colors.black,
-              Colors.black.withOpacity(0.3),
+              Colors.black.withValues(alpha: 0.3),
               Colors.transparent,
             ],
             stops: const [0.0, 0.6, 0.8, 1.0],

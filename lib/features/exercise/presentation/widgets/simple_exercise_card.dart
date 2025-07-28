@@ -142,7 +142,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
               elevation: _isPressed ? 8 : 2,
               borderRadius: BorderRadius.circular(20),
               color: context.colors.surface,
-              shadowColor: context.colors.shadow.withOpacity(0.1),
+              shadowColor: context.colors.shadow.withValues(alpha: 0.1),
               child: InkWell(
                 onTap: widget.onTap,
                 onTapDown: _onTapDown,
@@ -169,7 +169,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: _getCategoryColor().withOpacity(0.1),
+                          color: _getCategoryColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(

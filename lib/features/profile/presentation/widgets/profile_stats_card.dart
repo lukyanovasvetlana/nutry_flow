@@ -210,10 +210,10 @@ class ProfileStatsCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: bmiColor.withOpacity(0.1),
+        color: bmiColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: bmiColor.withOpacity(0.3),
+          color: bmiColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -373,10 +373,10 @@ class ProfileStatsCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

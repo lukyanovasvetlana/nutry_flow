@@ -4,7 +4,7 @@ import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
-import '../../domain/usecases/reset_password_usecase.dart';
+
 
 // Events
 abstract class AuthEvent extends Equatable {

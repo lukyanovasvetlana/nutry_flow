@@ -163,7 +163,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
               elevation: _elevationAnimation.value,
               borderRadius: BorderRadius.circular(16),
               color: context.colors.surface,
-              shadowColor: context.colors.shadow.withOpacity(0.1),
+              shadowColor: context.colors.shadow.withValues(alpha: 0.1),
               child: InkWell(
                 onTap: widget.onTap,
                 onTapDown: _onTapDown,
@@ -176,7 +176,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: _isPressed 
-                          ? context.colors.primary.withOpacity(0.3)
+                          ? context.colors.primary.withValues(alpha: 0.3)
                           : context.colors.outline,
                       width: _isPressed ? 2 : 1,
                     ),
@@ -191,7 +191,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                           gradient: LinearGradient(
                             colors: [
                               _getCategoryColor(),
-                              _getCategoryColor().withOpacity(0.8),
+                              _getCategoryColor().withValues(alpha: 0.8),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -199,7 +199,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: _getCategoryColor().withOpacity(0.3),
+                              color: _getCategoryColor().withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -238,7 +238,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                                       vertical: 3,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: _getDifficultyColor().withOpacity(0.1),
+                                      color: _getDifficultyColor().withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(

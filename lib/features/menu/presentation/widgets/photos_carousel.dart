@@ -97,7 +97,7 @@ class _PhotosCarouselState extends State<PhotosCarousel> {
                     shape: BoxShape.circle,
                     color: _currentIndex == index
                         ? Theme.of(context).primaryColor
-                        : Colors.grey.withOpacity(0.3),
+                        : Colors.grey.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -116,7 +116,7 @@ class _PhotosCarouselState extends State<PhotosCarousel> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

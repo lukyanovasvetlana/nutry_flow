@@ -493,7 +493,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                   '${exercise.sets ?? 0} x ${exercise.reps ?? 0}',
                   style: context.typography.bodyMediumStyle.copyWith(
                     color: isCurrent 
-                        ? context.colors.onPrimary.withOpacity(0.7) 
+                        ? context.colors.onPrimary.withValues(alpha: 0.7) 
                         : context.colors.onSurfaceVariant,
                   ),
                 ),

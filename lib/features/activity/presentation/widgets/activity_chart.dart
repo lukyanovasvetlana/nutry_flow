@@ -45,13 +45,13 @@ class ActivityChart extends StatelessWidget {
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: context.colors.outline.withOpacity(0.3),
+              color: context.colors.outline.withValues(alpha: 0.3),
               strokeWidth: 1,
             );
           },
           getDrawingVerticalLine: (value) {
             return FlLine(
-              color: context.colors.outline.withOpacity(0.3),
+              color: context.colors.outline.withValues(alpha: 0.3),
               strokeWidth: 1,
             );
           },
@@ -108,7 +108,7 @@ class ActivityChart extends StatelessWidget {
         borderData: FlBorderData(
           show: true,
           border: Border.all(
-            color: context.colors.outline.withOpacity(0.3),
+            color: context.colors.outline.withValues(alpha: 0.3),
           ),
         ),
         minX: 0,
@@ -122,7 +122,7 @@ class ActivityChart extends StatelessWidget {
             gradient: LinearGradient(
               colors: [
                 context.colors.primary,
-                context.colors.primary.withOpacity(0.5),
+                context.colors.primary.withValues(alpha: 0.5),
               ],
             ),
             barWidth: 3,
@@ -142,8 +142,8 @@ class ActivityChart extends StatelessWidget {
               show: true,
               gradient: LinearGradient(
                 colors: [
-                  context.colors.primary.withOpacity(0.3),
-                  context.colors.primary.withOpacity(0.1),
+                  context.colors.primary.withValues(alpha: 0.3),
+                  context.colors.primary.withValues(alpha: 0.1),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,

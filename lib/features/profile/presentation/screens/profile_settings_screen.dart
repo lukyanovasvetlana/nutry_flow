@@ -243,7 +243,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       subtitle: Text(
         subtitle,
         style: TextStyle(
-          color: isDestructive ? Colors.red.withOpacity(0.7) : Colors.grey[600],
+          color: isDestructive ? Colors.red.withValues(alpha: 0.7) : Colors.grey[600],
         ),
       ),
       trailing: onTap != null

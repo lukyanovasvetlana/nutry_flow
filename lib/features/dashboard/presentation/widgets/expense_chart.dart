@@ -168,8 +168,8 @@ class ExpenseChart extends StatelessWidget {
             ),
             gradient: LinearGradient(
               colors: isActive 
-                ? [AppColors.orange, AppColors.orange.withOpacity(0.8)]
-                : [AppColors.yellow, AppColors.yellow.withOpacity(0.8)],
+                ? [AppColors.orange, AppColors.orange.withValues(alpha: 0.8)]
+                : [AppColors.yellow, AppColors.yellow.withValues(alpha: 0.8)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),

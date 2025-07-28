@@ -24,7 +24,7 @@ class ArticleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -54,7 +54,7 @@ class ArticleCard extends StatelessWidget {
           width: double.infinity,
           height: 180,
           decoration: BoxDecoration(
-            color: AppColors.button.withOpacity(0.1),
+            color: AppColors.button.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(
@@ -71,7 +71,7 @@ class ArticleCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.button.withOpacity(0.1),
+                color: AppColors.button.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -88,7 +88,7 @@ class ArticleCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.button.withOpacity(0.1),
+                  color: AppColors.button.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -193,7 +193,7 @@ class ArticleCard extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: AppColors.button.withOpacity(0.1),
+            color: AppColors.button.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(

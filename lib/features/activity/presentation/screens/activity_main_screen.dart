@@ -97,7 +97,7 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
           gradient: LinearGradient(
             colors: [
               context.colors.primary,
-              context.colors.primary.withOpacity(0.8),
+              context.colors.primary.withValues(alpha: 0.8),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -128,7 +128,7 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
                       Text(
                         'Выберите упражнение или создайте тренировку',
                         style: context.typography.bodyMediumStyle.copyWith(
-                          color: context.colors.onPrimary.withOpacity(0.9),
+                          color: context.colors.onPrimary.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -214,7 +214,7 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -433,7 +433,7 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

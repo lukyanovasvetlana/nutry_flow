@@ -272,7 +272,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
     required VoidCallback onTap,
   }) {
     return Material(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
@@ -404,7 +404,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
     final optionColor = color ?? Colors.green;
     
     return Material(
-      color: optionColor.withOpacity(0.1),
+      color: optionColor.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,

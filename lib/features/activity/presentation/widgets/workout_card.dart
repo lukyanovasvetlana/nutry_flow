@@ -109,7 +109,7 @@ class WorkoutCard extends StatelessWidget {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: _getDifficultyColor(workout.difficulty).withOpacity(0.1),
+        color: _getDifficultyColor(workout.difficulty).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
@@ -198,7 +198,7 @@ class WorkoutCard extends StatelessWidget {
             onPressed: onEdit,
             icon: const Icon(Icons.edit),
             style: IconButton.styleFrom(
-              backgroundColor: Colors.blue.withOpacity(0.1),
+              backgroundColor: Colors.blue.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -208,7 +208,7 @@ class WorkoutCard extends StatelessWidget {
             onPressed: onDelete,
             icon: const Icon(Icons.delete),
             style: IconButton.styleFrom(
-              backgroundColor: Colors.red.withOpacity(0.1),
+              backgroundColor: Colors.red.withValues(alpha: 0.1),
             ),
           ),
         ],

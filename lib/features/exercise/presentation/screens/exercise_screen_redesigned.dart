@@ -485,13 +485,13 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned>
                   gradient: LinearGradient(
                     colors: [
                       context.colors.primary,
-                      context.colors.primary.withOpacity(0.8),
+                      context.colors.primary.withValues(alpha: 0.8),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: context.colors.primary.withOpacity(0.3),
+                      color: context.colors.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

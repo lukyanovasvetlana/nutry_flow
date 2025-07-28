@@ -672,7 +672,7 @@ class _CalendarGrid extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.green.withOpacity(0.1) : null,
+                          color: isSelected ? AppColors.green.withValues(alpha: 0.1) : null,
                           borderRadius: BorderRadius.circular(8),
                           border: isSelected
                               ? Border.all(color: AppColors.green, width: 1.5)
@@ -821,7 +821,7 @@ class _EventCard extends StatelessWidget {
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.green,
-                  backgroundColor: AppColors.green.withOpacity(0.1),
+                  backgroundColor: AppColors.green.withValues(alpha: 0.1),
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

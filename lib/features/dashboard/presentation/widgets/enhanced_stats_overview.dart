@@ -155,7 +155,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                   border: isSelected 
                       ? null 
                       : Border.all(
-                          color: DesignTokens.colors.outline.withOpacity(0.1),
+                          color: DesignTokens.colors.outline.withValues(alpha: 0.1),
                           width: DesignTokens.borders.thin,
                         ),
                 ),
@@ -172,8 +172,8 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                             padding: EdgeInsets.all(DesignTokens.spacing.sm),
                             decoration: BoxDecoration(
                               color: isSelected 
-                                  ? DesignTokens.colors.onPrimary.withOpacity(0.2)
-                                  : color.withOpacity(0.1),
+                                  ? DesignTokens.colors.onPrimary.withValues(alpha: 0.2)
+                                  : color.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
                             ),
                             child: Icon(
@@ -211,7 +211,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                           fontSize: DesignTokens.typography.bodySmall,
                           fontWeight: DesignTokens.typography.medium,
                           color: isSelected 
-                              ? DesignTokens.colors.onPrimary.withOpacity(0.8)
+                              ? DesignTokens.colors.onPrimary.withValues(alpha: 0.8)
                               : DesignTokens.colors.onSurfaceVariant,
                         ),
                       ),
@@ -234,10 +234,10 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
       ),
       decoration: BoxDecoration(
         color: isSelected 
-            ? DesignTokens.colors.onPrimary.withOpacity(0.2)
+            ? DesignTokens.colors.onPrimary.withValues(alpha: 0.2)
             : (isPositive 
-                ? DesignTokens.colors.success.withOpacity(0.1)
-                : DesignTokens.colors.error.withOpacity(0.1)),
+                ? DesignTokens.colors.success.withValues(alpha: 0.1)
+                : DesignTokens.colors.error.withValues(alpha: 0.1)),
         borderRadius: BorderRadius.circular(DesignTokens.borders.full),
       ),
       child: Row(
@@ -359,7 +359,7 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                 width: DesignTokens.spacing.avatarMedium,
                 height: DesignTokens.spacing.avatarMedium,
                 decoration: BoxDecoration(
-                  color: DesignTokens.colors.onPrimary.withOpacity(0.2),
+                  color: DesignTokens.colors.onPrimary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.borders.full),
                 ),
                 child: ClipRRect(
@@ -383,14 +383,14 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                         Icon(
                           greetingIcon,
                           size: DesignTokens.spacing.iconSmall,
-                          color: DesignTokens.colors.onPrimary.withOpacity(0.8),
+                          color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
                         ),
                         SizedBox(width: DesignTokens.spacing.xs),
                         Text(
                           greeting,
                           style: TextStyle(
                             fontSize: DesignTokens.typography.bodyMedium,
-                            color: DesignTokens.colors.onPrimary.withOpacity(0.8),
+                            color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
                             fontWeight: DesignTokens.typography.medium,
                           ),
                         ),
@@ -410,7 +410,7 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                       'Готовы к новому дню здорового питания?',
                       style: TextStyle(
                         fontSize: DesignTokens.typography.bodySmall,
-                        color: DesignTokens.colors.onPrimary.withOpacity(0.7),
+                        color: DesignTokens.colors.onPrimary.withValues(alpha: 0.7),
                         fontWeight: DesignTokens.typography.regular,
                       ),
                     ),
@@ -423,11 +423,11 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                 onPressed: () => Navigator.pushNamed(context, '/profile-settings'),
                 icon: Icon(
                   Icons.settings_rounded,
-                  color: DesignTokens.colors.onPrimary.withOpacity(0.8),
+                  color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
                   size: DesignTokens.spacing.iconMedium,
                 ),
                 style: IconButton.styleFrom(
-                  backgroundColor: DesignTokens.colors.onPrimary.withOpacity(0.1),
+                  backgroundColor: DesignTokens.colors.onPrimary.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
                   ),
@@ -509,7 +509,7 @@ class QuickActions extends StatelessWidget {
             borderRadius: DesignTokens.borders.cardRadius,
             boxShadow: DesignTokens.shadows.sm,
             border: Border.all(
-              color: DesignTokens.colors.outline.withOpacity(0.1),
+              color: DesignTokens.colors.outline.withValues(alpha: 0.1),
               width: DesignTokens.borders.thin,
             ),
           ),
@@ -518,7 +518,7 @@ class QuickActions extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(DesignTokens.spacing.sm),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
                 ),
                 child: Icon(

@@ -34,7 +34,7 @@ class WeightDataCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.green.withOpacity(0.1),
+                    color: AppColors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -180,9 +180,9 @@ class WeightDataCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: bmiColor.withOpacity(0.1),
+        color: bmiColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: bmiColor.withOpacity(0.3)),
+        border: Border.all(color: bmiColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -198,7 +198,7 @@ class WeightDataCard extends StatelessWidget {
                 'ИМТ',
                 style: TextStyle(
                   fontSize: 11,
-                  color: bmiColor.withOpacity(0.8),
+                  color: bmiColor.withValues(alpha: 0.8),
                 ),
               ),
               const Spacer(),
@@ -220,7 +220,7 @@ class WeightDataCard extends StatelessWidget {
                   bmiCategory,
                   style: TextStyle(
                     fontSize: 10,
-                    color: bmiColor.withOpacity(0.8),
+                    color: bmiColor.withValues(alpha: 0.8),
                     fontWeight: FontWeight.w500,
                   ),
                 ),

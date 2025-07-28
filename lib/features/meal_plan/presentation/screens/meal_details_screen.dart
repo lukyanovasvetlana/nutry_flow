@@ -175,8 +175,8 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.green.withOpacity(0.3),
-                    AppColors.yellow.withOpacity(0.3),
+                    AppColors.green.withValues(alpha: 0.3),
+                    AppColors.yellow.withValues(alpha: 0.3),
                   ],
                 ),
               ),
@@ -199,7 +199,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -261,7 +261,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -334,7 +334,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -412,7 +412,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -465,7 +465,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -522,7 +522,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.green.withOpacity(0.1),
+            color: AppColors.green.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(

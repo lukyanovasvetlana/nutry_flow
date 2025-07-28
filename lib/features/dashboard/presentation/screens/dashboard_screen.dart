@@ -7,8 +7,7 @@ import '../widgets/products_chart.dart';
 import '../widgets/products_breakdown_chart.dart';
 import '../widgets/calories_chart.dart';
 import '../widgets/calories_breakdown_chart.dart';
-import '../../../meal_plan/presentation/screens/meal_details_screen.dart';
-import '../../../meal_plan/presentation/screens/meal_plan_screen.dart';
+
 import '../../../grocery_list/presentation/screens/grocery_list_screen.dart';
 import '../../../menu/presentation/screens/healthy_menu_screen.dart';
 import '../../../exercise/presentation/screens/exercise_screen_redesigned.dart';
@@ -171,7 +170,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

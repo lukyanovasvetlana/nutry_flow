@@ -78,7 +78,7 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
             boxShadow: widget.showBorder
                 ? [
                     BoxShadow(
-                      color: AppColors.green.withOpacity(0.2),
+                      color: AppColors.green.withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -119,7 +119,7 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -225,8 +225,8 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
     
     return Material(
       color: enabled 
-          ? buttonColor.withOpacity(0.1) 
-          : Colors.grey.withOpacity(0.1),
+          ? buttonColor.withValues(alpha: 0.1) 
+          : Colors.grey.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: enabled ? onTap : null,
@@ -527,7 +527,7 @@ class AvatarOptionsBottomSheet extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: optionColor.withOpacity(0.1),
+                  color: optionColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(

@@ -192,9 +192,9 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
                 : BorderRadius.circular(DesignTokens.borders.sm),
             gradient: LinearGradient(
               colors: [
-                DesignTokens.colors.outline.withOpacity(0.1),
-                DesignTokens.colors.outline.withOpacity(0.3),
-                DesignTokens.colors.outline.withOpacity(0.1),
+                DesignTokens.colors.outline.withValues(alpha: 0.1),
+                DesignTokens.colors.outline.withValues(alpha: 0.3),
+                DesignTokens.colors.outline.withValues(alpha: 0.1),
               ],
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
@@ -319,9 +319,9 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
             borderRadius: BorderRadius.circular(borderRadius ?? DesignTokens.borders.sm),
             gradient: LinearGradient(
               colors: [
-                DesignTokens.colors.outline.withOpacity(0.1),
-                DesignTokens.colors.outline.withOpacity(0.3),
-                DesignTokens.colors.outline.withOpacity(0.1),
+                DesignTokens.colors.outline.withValues(alpha: 0.1),
+                DesignTokens.colors.outline.withValues(alpha: 0.3),
+                DesignTokens.colors.outline.withValues(alpha: 0.1),
               ],
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
@@ -410,7 +410,7 @@ class ErrorStateWidget extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: DesignTokens.colors.error.withOpacity(0.1),
+                color: DesignTokens.colors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DesignTokens.borders.full),
               ),
               child: Icon(
@@ -564,7 +564,7 @@ class EmptyStateWidget extends StatelessWidget {
 extension LinearGradientExtension on LinearGradient {
   LinearGradient scale(double opacity) {
     return LinearGradient(
-      colors: colors.map((color) => color.withOpacity(opacity)).toList(),
+      colors: colors.map((color) => color.withValues(alpha: opacity)).toList(),
       stops: stops,
       begin: begin,
       end: end,
