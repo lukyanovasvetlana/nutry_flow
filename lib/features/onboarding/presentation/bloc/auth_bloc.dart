@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'dart:developer' as developer;
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
+import '../../../../core/services/supabase_service.dart';
 
 
 // Events
@@ -99,6 +101,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final SignUpUseCase _signUpUseCase;
   final SignInUseCase _signInUseCase;
+  final SupabaseService _supabaseService;
 
   AuthBloc({
     required AuthRepository authRepository,
@@ -107,6 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   })  : _authRepository = authRepository,
         _signUpUseCase = signUpUseCase,
         _signInUseCase = signInUseCase,
+        _supabaseService = SupabaseService.instance,
         super(AuthInitial()) {
     on<SignUpRequested>(_onSignUpRequested);
     on<SignInRequested>(_onSignInRequested);
@@ -116,60 +120,145 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onSignUpRequested(SignUpRequested event, Emitter<AuthState> emit) async {
-    print('🔵 AuthBloc: SignUpRequested received - email: ${event.email}');
+    developer.log('🔵 AuthBloc: SignUpRequested received - email: ${event.email}', name: 'AuthBloc');
     emit(AuthLoading());
     
     try {
-      print('🔵 AuthBloc: Calling signUpUseCase.execute');
+      // Сначала пробуем Supabase
+      if (_supabaseService.isAvailable) {
+        developer.log('🔵 AuthBloc: Using Supabase for sign up', name: 'AuthBloc');
+        final response = await _supabaseService.signUp(
+          email: event.email,
+          password: event.password,
+        );
+        
+        if (response.user != null) {
+          final user = User(
+            id: response.user!.id,
+            email: response.user!.email ?? event.email,
+            name: response.user!.userMetadata?['name'] ?? '',
+          );
+          developer.log('🔵 AuthBloc: Supabase sign up successful', name: 'AuthBloc');
+          emit(AuthAuthenticated(user));
+          return;
+        } else {
+          developer.log('🔵 AuthBloc: Supabase sign up failed', name: 'AuthBloc');
+          emit(AuthError('Ошибка регистрации через Supabase'));
+          return;
+        }
+      }
+      
+      // Fallback к mock репозиторию
+      developer.log('🔵 AuthBloc: Using mock repository for sign up', name: 'AuthBloc');
       final result = await _signUpUseCase.execute(event.email, event.password);
       
-      print('🔵 AuthBloc: SignUp result - isSuccess: ${result.isSuccess}');
+      developer.log('🔵 AuthBloc: SignUp result - isSuccess: ${result.isSuccess}', name: 'AuthBloc');
       if (result.isSuccess) {
-        print('🔵 AuthBloc: SignUp successful - user: ${result.user?.email}');
+        developer.log('🔵 AuthBloc: SignUp successful - user: ${result.user?.email}', name: 'AuthBloc');
         emit(AuthAuthenticated(result.user!));
       } else {
-        print('🔵 AuthBloc: SignUp failed - error: ${result.error}');
+        developer.log('🔵 AuthBloc: SignUp failed - error: ${result.error}', name: 'AuthBloc');
         emit(AuthError(result.error ?? 'Ошибка регистрации'));
       }
     } catch (e) {
-      print('🔵 AuthBloc: SignUp exception: $e');
+      developer.log('🔵 AuthBloc: SignUp exception: $e', name: 'AuthBloc');
       emit(AuthError('Ошибка регистрации: ${e.toString()}'));
     }
   }
 
   void _onSignInRequested(SignInRequested event, Emitter<AuthState> emit) async {
-    print('🔵 AuthBloc: SignInRequested received - email: ${event.email}');
+    developer.log('🔵 AuthBloc: SignInRequested received - email: ${event.email}', name: 'AuthBloc');
     emit(AuthLoading());
     
     try {
-      print('🔵 AuthBloc: Calling signInUseCase.execute');
+      // Сначала пробуем Supabase
+      if (_supabaseService.isAvailable) {
+        developer.log('🔵 AuthBloc: Using Supabase for sign in', name: 'AuthBloc');
+        final response = await _supabaseService.signIn(
+          email: event.email,
+          password: event.password,
+        );
+        
+        if (response.user != null) {
+          final user = User(
+            id: response.user!.id,
+            email: response.user!.email ?? event.email,
+            name: response.user!.userMetadata?['name'] ?? '',
+          );
+          developer.log('🔵 AuthBloc: Supabase sign in successful', name: 'AuthBloc');
+          emit(AuthAuthenticated(user));
+          return;
+        } else {
+          developer.log('🔵 AuthBloc: Supabase sign in failed', name: 'AuthBloc');
+          emit(AuthError('Ошибка входа через Supabase'));
+          return;
+        }
+      }
+      
+      // Fallback к mock репозиторию
+      developer.log('🔵 AuthBloc: Using mock repository for sign in', name: 'AuthBloc');
       final result = await _signInUseCase.execute(event.email, event.password);
       
-      print('🔵 AuthBloc: SignIn result - isSuccess: ${result.isSuccess}');
+      developer.log('🔵 AuthBloc: SignIn result - isSuccess: ${result.isSuccess}', name: 'AuthBloc');
       if (result.isSuccess) {
-        print('🔵 AuthBloc: SignIn successful - user: ${result.user?.email}');
+        developer.log('🔵 AuthBloc: SignIn successful - user: ${result.user?.email}', name: 'AuthBloc');
         emit(AuthAuthenticated(result.user!));
       } else {
-        print('🔵 AuthBloc: SignIn failed - error: ${result.error}');
+        developer.log('🔵 AuthBloc: SignIn failed - error: ${result.error}', name: 'AuthBloc');
         emit(AuthError(result.error ?? 'Ошибка входа'));
       }
     } catch (e) {
-      print('🔵 AuthBloc: SignIn exception: $e');
+      developer.log('🔵 AuthBloc: SignIn exception: $e', name: 'AuthBloc');
       emit(AuthError('Ошибка входа: ${e.toString()}'));
     }
   }
 
   void _onSignOutRequested(SignOutRequested event, Emitter<AuthState> emit) async {
     try {
+      // Сначала пробуем Supabase
+      if (_supabaseService.isAvailable) {
+        developer.log('🔵 AuthBloc: Using Supabase for sign out', name: 'AuthBloc');
+        await _supabaseService.signOut();
+        developer.log('🔵 AuthBloc: Supabase sign out successful', name: 'AuthBloc');
+        emit(AuthUnauthenticated());
+        return;
+      }
+      
+      // Fallback к mock репозиторию
+      developer.log('🔵 AuthBloc: Using mock repository for sign out', name: 'AuthBloc');
       await _authRepository.signOut();
       emit(AuthUnauthenticated());
     } catch (e) {
+      developer.log('🔵 AuthBloc: Sign out exception: $e', name: 'AuthBloc');
       emit(AuthError('Ошибка выхода: ${e.toString()}'));
     }
   }
 
   void _onAuthStatusChecked(AuthStatusChecked event, Emitter<AuthState> emit) async {
     try {
+      // Сначала пробуем Supabase
+      if (_supabaseService.isAvailable) {
+        developer.log('🔵 AuthBloc: Using Supabase for auth status check', name: 'AuthBloc');
+        final currentUser = _supabaseService.currentUser;
+        
+        if (currentUser != null) {
+          final user = User(
+            id: currentUser.id,
+            email: currentUser.email ?? '',
+            name: currentUser.userMetadata?['name'] ?? '',
+          );
+          developer.log('🔵 AuthBloc: User authenticated via Supabase', name: 'AuthBloc');
+          emit(AuthAuthenticated(user));
+          return;
+        } else {
+          developer.log('🔵 AuthBloc: No user authenticated via Supabase', name: 'AuthBloc');
+          emit(AuthUnauthenticated());
+          return;
+        }
+      }
+      
+      // Fallback к mock репозиторию
+      developer.log('🔵 AuthBloc: Using mock repository for auth status check', name: 'AuthBloc');
       final user = await _authRepository.getCurrentUser();
       if (user != null) {
         emit(AuthAuthenticated(user));
@@ -177,22 +266,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthUnauthenticated());
       }
     } catch (e) {
+      developer.log('🔵 AuthBloc: Auth status check exception: $e', name: 'AuthBloc');
       emit(AuthUnauthenticated());
     }
   }
 
   void _onResetPasswordRequested(ResetPasswordRequested event, Emitter<AuthState> emit) async {
-    print('🔵 AuthBloc: ResetPasswordRequested received - email: ${event.email}');
+    developer.log('🔵 AuthBloc: ResetPasswordRequested received - email: ${event.email}', name: 'AuthBloc');
     emit(AuthLoading());
     
     try {
-      print('🔵 AuthBloc: Calling authRepository.resetPassword');
+      // Сначала пробуем Supabase
+      if (_supabaseService.isAvailable) {
+        developer.log('🔵 AuthBloc: Using Supabase for password reset', name: 'AuthBloc');
+        await _supabaseService.resetPassword(event.email);
+        developer.log('🔵 AuthBloc: Supabase password reset successful', name: 'AuthBloc');
+        emit(PasswordResetSent(event.email));
+        return;
+      }
+      
+      // Fallback к mock репозиторию
+      developer.log('🔵 AuthBloc: Using mock repository for password reset', name: 'AuthBloc');
       await _authRepository.resetPassword(event.email);
       
-      print('🔵 AuthBloc: Password reset successful');
+      developer.log('🔵 AuthBloc: Password reset successful', name: 'AuthBloc');
       emit(PasswordResetSent(event.email));
     } catch (e) {
-      print('🔵 AuthBloc: Password reset failed - error: ${e.toString()}');
+      developer.log('🔵 AuthBloc: Password reset failed - error: ${e.toString()}', name: 'AuthBloc');
       emit(AuthError('Ошибка сброса пароля: ${e.toString()}'));
     }
   }
