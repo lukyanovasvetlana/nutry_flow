@@ -1,0 +1,227 @@
+name: Scrum Master Automation
+
+on:
+  schedule:
+    # Ежедневно в 9:00 по UTC (12:00 по Москве)
+    - cron: '0 9 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'daily-report'
+        type: choice
+        options:
+          - daily-report
+          - velocity
+          - burndown
+          - planning-template
+          - retrospective-template
+      sprint_number:
+        description: 'Sprint number for templates'
+        required: false
+        type: string
+      start_date:
+        description: 'Sprint start date'
+        required: false
+        type: string
+      end_date:
+        description: 'Sprint end date'
+        required: false
+        type: string
+      goal:
+        description: 'Sprint goal'
+        required: false
+        type: string
+
+jobs:
+  scrum-automation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          
+      - name: Run Scrum Automation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          python scripts/scrum_automation.py \
+            --action ${{ github.event.inputs.action || 'daily-report' }} \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --repo ${{ github.repository }} \
+            --webhook-url ${{ secrets.SLACK_WEBHOOK_URL }} \
+            --sprint-number ${{ github.event.inputs.sprint_number || '' }} \
+            --start-date ${{ github.event.inputs.start_date || '' }} \
+            --end-date ${{ github.event.inputs.end_date || '' }} \
+            --goal "${{ github.event.inputs.goal || '' }}"
+            
+      - name: Create Sprint Planning Issue
+        if: github.event.inputs.action == 'planning-template'
+        run: |
+          TEMPLATE=$(python scripts/scrum_automation.py \
+            --action planning-template \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --repo ${{ github.repository }} \
+            --sprint-number ${{ github.event.inputs.sprint_number }} \
+            --start-date ${{ github.event.inputs.start_date }} \
+            --end-date ${{ github.event.inputs.end_date }} \
+            --goal "${{ github.event.inputs.goal }}")
+          
+          gh issue create \
+            --title "Sprint ${{ github.event.inputs.sprint_number }} Planning" \
+            --body "$TEMPLATE" \
+            --label "sprint-planning" \
+            --label "documentation"
+            
+      - name: Create Retrospective Issue
+        if: github.event.inputs.action == 'retrospective-template'
+        run: |
+          TEMPLATE=$(python scripts/scrum_automation.py \
+            --action retrospective-template \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --repo ${{ github.repository }} \
+            --sprint-number ${{ github.event.inputs.sprint_number }})
+          
+          gh issue create \
+            --title "Sprint ${{ github.event.inputs.sprint_number }} Retrospective" \
+            --body "$TEMPLATE" \
+            --label "retrospective" \
+            --label "documentation"
+
+  sprint-metrics:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests matplotlib pandas
+          
+      - name: Generate Sprint Metrics
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/generate_sprint_metrics.py \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --repo ${{ github.repository }}
+            
+      - name: Upload Metrics Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: sprint-metrics-report
+          path: sprint_metrics_report.md
+          
+      - name: Comment on Sprint Issues
+        if: github.event_name == 'schedule'
+        run: |
+          REPORT=$(cat sprint_metrics_report.md)
+          gh issue comment 1 --body "$REPORT"
+
+  burndown-chart:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests matplotlib pandas
+          
+      - name: Generate Burndown Chart
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/generate_burndown_chart.py \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --repo ${{ github.repository }}
+            
+      - name: Upload Burndown Chart
+        uses: actions/upload-artifact@v3
+        with:
+          name: burndown-chart
+          path: burndown_chart.png
+
+  team-happiness:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Generate Team Happiness Survey
+        run: |
+          cat > team_happiness_survey.md << 'EOF'
+          # Team Happiness Survey - Sprint ${{ github.event.inputs.sprint_number || 'Current' }}
+          
+          ## Instructions
+          Please rate your satisfaction with the current sprint on a scale of 1-5:
+          
+          - **1**: Very Dissatisfied
+          - **2**: Dissatisfied  
+          - **3**: Neutral
+          - **4**: Satisfied
+          - **5**: Very Satisfied
+          
+          ## Questions
+          
+          ### Process & Communication
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with our daily standups?
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with sprint planning?
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with team communication?
+          
+          ### Work Environment
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with your workload?
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with the tools and processes?
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with the quality of work?
+          
+          ### Growth & Learning
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with opportunities to learn?
+          - [ ] **1** [ ] **2** [ ] **3** [ ] **4** [ ] **5** - How satisfied are you with feedback and recognition?
+          
+          ## Comments
+          Please share any additional comments or suggestions:
+          
+          _________________________________
+          _________________________________
+          _________________________________
+          
+          **Thank you for your feedback!**
+          EOF
+          
+      - name: Create Team Happiness Issue
+        run: |
+          gh issue create \
+            --title "Team Happiness Survey - Sprint ${{ github.event.inputs.sprint_number || 'Current' }}" \
+            --body-file team_happiness_survey.md \
+            --label "team-happiness" \
+            --label "survey" 

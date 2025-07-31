@@ -169,6 +169,7 @@ class UserGoalsRepositoryImpl implements UserGoalsRepository {
       fitnessGoals: List<String>.from(data['fitness_goals'] ?? []),
       dietaryPreferences: List<String>.from(data['dietary_preferences'] ?? []),
       healthConditions: List<String>.from(data['health_conditions'] ?? []),
+      allergens: List<String>.from(data['allergens'] ?? []),
       workoutTypes: List<String>.from(data['workout_types'] ?? []),
       targetWeight: data['target_weight']?.toDouble(),
       targetCalories: data['target_calories'] as int?,

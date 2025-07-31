@@ -4,6 +4,7 @@ import 'package:nutry_flow/features/analytics/domain/entities/analytics_data.dar
 import 'package:nutry_flow/features/analytics/domain/entities/nutrition_tracking.dart';
 import 'package:nutry_flow/features/analytics/domain/entities/weight_tracking.dart';
 import 'package:nutry_flow/features/analytics/domain/entities/activity_tracking.dart';
+import 'package:nutry_flow/features/analytics/domain/entities/analytics_event.dart' as domain;
 import 'package:nutry_flow/features/analytics/data/repositories/analytics_repository.dart';
 import 'dart:developer' as developer;
 
@@ -96,6 +97,15 @@ class SaveActivityTracking extends AnalyticsEvent {
 
 class LoadAnalyticsSummary extends AnalyticsEvent {
   const LoadAnalyticsSummary();
+}
+
+class TrackAnalyticsEvent extends AnalyticsEvent {
+  final domain.AnalyticsEvent event;
+  
+  const TrackAnalyticsEvent(this.event);
+
+  @override
+  List<Object?> get props => [event];
 }
 
 // States
@@ -200,6 +210,7 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
     on<LoadActivityTracking>(_onLoadActivityTracking);
     on<SaveActivityTracking>(_onSaveActivityTracking);
     on<LoadAnalyticsSummary>(_onLoadAnalyticsSummary);
+    on<TrackAnalyticsEvent>(_onTrackAnalyticsEvent);
   }
 
   Future<void> _onLoadAnalyticsData(
@@ -250,6 +261,8 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       } else {
         emit(AnalyticsLoaded(
           analyticsData: AnalyticsData(
+            userId: 'current_user',
+            date: DateTime.now(),
             nutritionTracking: nutritionTracking,
             weightTracking: [],
             activityTracking: [],
@@ -307,6 +320,8 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       } else {
         emit(AnalyticsLoaded(
           analyticsData: AnalyticsData(
+            userId: 'current_user',
+            date: DateTime.now(),
             nutritionTracking: [],
             weightTracking: weightTracking,
             activityTracking: [],
@@ -364,6 +379,8 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       } else {
         emit(AnalyticsLoaded(
           analyticsData: AnalyticsData(
+            userId: 'current_user',
+            date: DateTime.now(),
             nutritionTracking: [],
             weightTracking: [],
             activityTracking: activityTracking,
@@ -430,6 +447,24 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
     } catch (e) {
       developer.log('📊 AnalyticsBloc: Load analytics summary failed: $e', name: 'AnalyticsBloc');
       emit(AnalyticsError('Не удалось загрузить сводку аналитики: $e'));
+    }
+  }
+
+  Future<void> _onTrackAnalyticsEvent(
+    TrackAnalyticsEvent event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    try {
+      developer.log('📊 AnalyticsBloc: Tracking analytics event', name: 'AnalyticsBloc');
+      emit(AnalyticsLoading());
+
+      await _analyticsRepository.trackEvent(event.event);
+
+      emit(AnalyticsSuccess('Событие аналитики отслежено'));
+      developer.log('📊 AnalyticsBloc: Analytics event tracked successfully', name: 'AnalyticsBloc');
+    } catch (e) {
+      developer.log('📊 AnalyticsBloc: Track analytics event failed: $e', name: 'AnalyticsBloc');
+      emit(AnalyticsError('Не удалось отследить событие аналитики: $e'));
     }
   }
 

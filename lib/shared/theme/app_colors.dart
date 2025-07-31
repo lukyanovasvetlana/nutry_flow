@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Основные цвета бренда
+  static const primary = Color(0xFF4CAF50); // Основной цвет приложения
+  static const secondary = Color(0xFF81C784); // Вторичный цвет
   static const green = Color(0xFFC2E66E);
   static const yellow = Color(0xFFFFCB65);
   static const orange = Color(0xFFFFA257);

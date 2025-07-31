@@ -108,26 +108,12 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            // Отслеживаем успешный вход
-            AnalyticsTracker.trackLogin(
-              method: 'email',
-              userId: state.user?.email,
-            );
-            Navigator.pushReplacementNamed(context, '/main');
+            Navigator.pushReplacementNamed(context, '/dashboard');
           } else if (state is AuthError) {
-            // Отслеживаем ошибку входа
-            AnalyticsTracker.trackError(
-              errorType: 'login_error',
-              errorMessage: state.message,
-            );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
               ),
             );
           }
@@ -167,38 +153,108 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                     BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         final isLoading = state is AuthLoading;
-                        
                         return Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              // Email поле
-                              _buildEmailField(isLoading),
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                  ),
+                                  errorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  focusedErrorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  prefixIcon: const Icon(Icons.email),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                enabled: !isLoading,
+                                textInputAction: TextInputAction.next,
+                              ),
                               const SizedBox(height: 24),
-                              
-                              // Пароль поле
-                              _buildPasswordField(isLoading),
+                              TextFormField(
+                                controller: _passwordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Пароль',
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                  ),
+                                  errorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  focusedErrorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  prefixIcon: const Icon(Icons.lock),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                  ),
+                                ),
+                                obscureText: _obscurePassword,
+                                enabled: !isLoading,
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: (_) => _login(context),
+                              ),
                               const SizedBox(height: 16),
-                              
-                              // Забыли пароль
                               _buildForgotPasswordLink(context, isLoading),
                               const SizedBox(height: 40),
-                              
-                              // Кнопка входа
-                              _buildLoginButton(context, isLoading),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: isLoading ? null : () => _login(context),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.button,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: isLoading
+                                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                                      : const Text('Войти'),
+                                ),
+                              ),
                               const SizedBox(height: 30),
-                              
-                              // Разделитель
                               _buildDivider(),
                               const SizedBox(height: 30),
-                              
-                              // Кнопка регистрации
-                              _buildRegisterButton(context, isLoading),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: isLoading ? null : () => Navigator.pushReplacementNamed(context, '/registration'),
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(color: AppColors.button),
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Создать аккаунт',
+                                    style: TextStyle(color: AppColors.button),
+                                  ),
+                                ),
+                              ),
                               const SizedBox(height: 20),
-                              
-                              // Политика конфиденциальности
                               _buildPrivacyPolicy(context),
-                              const SizedBox(height: 24),
                             ],
                           ),
                         );

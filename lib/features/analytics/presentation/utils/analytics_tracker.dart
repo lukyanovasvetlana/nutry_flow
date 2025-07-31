@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import '../bloc/analytics_bloc.dart';
-import '../../domain/entities/analytics_event.dart';
+import '../bloc/analytics_bloc.dart' show AnalyticsBloc, TrackAnalyticsEvent;
+import '../../domain/entities/analytics_event.dart' as domain;
 import '../../data/services/analytics_service.dart';
 
 /// Утилита для отслеживания аналитических событий
@@ -17,7 +17,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.login(
+    final event = domain.AnalyticsEvent.login(
       method: method,
       userId: userId,
       sessionId: sessionId,
@@ -31,7 +31,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.signUp(
+    final event = domain.AnalyticsEvent.signUp(
       method: method,
       userId: userId,
       sessionId: sessionId,
@@ -45,7 +45,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.screenView(
+    final event = domain.AnalyticsEvent.screenView(
       screenName: screenName,
       userId: userId,
       sessionId: sessionId,
@@ -61,7 +61,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.foodAdded(
+    final event = domain.AnalyticsEvent.foodAdded(
       foodName: foodName,
       calories: calories,
       mealType: mealType,
@@ -79,7 +79,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.workoutCompleted(
+    final event = domain.AnalyticsEvent.workoutCompleted(
       workoutName: workoutName,
       duration: duration,
       caloriesBurned: caloriesBurned,
@@ -96,7 +96,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.goalSet(
+    final event = domain.AnalyticsEvent.goalSet(
       goalType: goalType,
       targetValue: targetValue,
       userId: userId,
@@ -112,7 +112,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.goalAchieved(
+    final event = domain.AnalyticsEvent.goalAchieved(
       goalType: goalType,
       achievedValue: achievedValue,
       userId: userId,
@@ -128,7 +128,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent.error(
+    final event = domain.AnalyticsEvent.error(
       errorType: errorType,
       errorMessage: errorMessage,
       userId: userId,
@@ -144,7 +144,7 @@ class AnalyticsTracker {
     String? userId,
     String? sessionId,
   }) {
-    final event = AnalyticsEvent(
+    final event = domain.AnalyticsEvent(
       name: eventName,
       parameters: parameters ?? {},
       userId: userId,
@@ -154,7 +154,7 @@ class AnalyticsTracker {
   }
 
   /// Внутренний метод для отправки события
-  static void _trackEvent(AnalyticsEvent event) {
+  static void _trackEvent(domain.AnalyticsEvent event) {
     try {
       final analyticsBloc = GetIt.instance<AnalyticsBloc>();
       analyticsBloc.add(TrackAnalyticsEvent(event));

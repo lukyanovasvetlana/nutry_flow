@@ -132,16 +132,12 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            Navigator.pushReplacementNamed(context, '/profile-info');
+            Navigator.pushReplacementNamed(context, '/goals-setup');
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
               ),
             );
           }
@@ -157,13 +153,13 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
             ),
           ),
           body: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 40.0),
+              child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 0),
                     Image.asset('assets/images/Logo.png', height: 80),
                     const SizedBox(height: 20),
                     Text(
@@ -181,38 +177,138 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                     BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         final isLoading = state is AuthLoading;
-                        
                         return Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              // Email поле
-                              _buildEmailField(isLoading),
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                  ),
+                                  errorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  focusedErrorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  prefixIcon: const Icon(Icons.email),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                enabled: !isLoading,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) return 'Пожалуйста, введите email';
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Пожалуйста, введите корректный email';
+                                  return null;
+                                },
+                              ),
                               const SizedBox(height: 24),
-                              
-                              // Пароль поле
-                              _buildPasswordField(isLoading),
+                              TextFormField(
+                                controller: _passwordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Пароль',
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                  ),
+                                  errorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  focusedErrorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  prefixIcon: const Icon(Icons.lock),
+                                ),
+                                obscureText: true,
+                                enabled: !isLoading,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) return 'Пожалуйста, введите пароль';
+                                  if (value.length < 6) return 'Пароль должен быть не менее 6 символов';
+                                  return null;
+                                },
+                              ),
                               const SizedBox(height: 24),
-                              
-                              // Подтверждение пароля
-                              _buildConfirmPasswordField(isLoading),
+                              TextFormField(
+                                controller: _confirmPasswordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Подтвердите пароль',
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                  ),
+                                  errorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  focusedErrorBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  prefixIcon: const Icon(Icons.lock_outline),
+                                ),
+                                obscureText: true,
+                                enabled: !isLoading,
+                                validator: (value) {
+                                  if (value != _passwordController.text) return 'Пароли не совпадают';
+                                  return null;
+                                },
+                              ),
                               const SizedBox(height: 40),
-                              
-                              // Кнопка регистрации
-                              _buildRegisterButton(context, isLoading),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: isLoading ? null : () => _register(context),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.button,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: isLoading
+                                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                                      : const Text('Зарегистрироваться'),
+                                ),
+                              ),
                               const SizedBox(height: 30),
-                              
-                              // Разделитель
                               _buildDivider(),
                               const SizedBox(height: 30),
-                              
-                              // Кнопка входа
-                              _buildLoginButton(context, isLoading),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: isLoading ? null : () => Navigator.pushReplacementNamed(context, '/login'),
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(color: AppColors.button),
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Уже есть аккаунт? Войти',
+                                    style: TextStyle(color: AppColors.button),
+                                  ),
+                                ),
+                              ),
                               const SizedBox(height: 20),
-                              
-                              // Политика конфиденциальности
                               _buildPrivacyPolicy(context),
-                              const SizedBox(height: 30),
                             ],
                           ),
                         );

@@ -1,8 +1,6 @@
 import 'package:get_it/get_it.dart';
 import '../data/services/analytics_service.dart';
-import '../data/repositories/analytics_repository_impl.dart';
-import '../domain/repositories/analytics_repository.dart';
-import '../domain/usecases/track_event_usecase.dart';
+import '../data/repositories/analytics_repository.dart';
 import '../presentation/bloc/analytics_bloc.dart';
 
 /// Зависимости для модуля аналитики
@@ -26,43 +24,13 @@ class AnalyticsDependencies {
 
     // Регистрируем репозиторий
     getIt.registerLazySingleton<AnalyticsRepository>(
-      () => AnalyticsRepositoryImpl(getIt<AnalyticsService>()),
-    );
-
-    // Регистрируем use cases
-    getIt.registerLazySingleton<TrackEventUseCase>(
-      () => TrackEventUseCase(getIt<AnalyticsRepository>()),
-    );
-
-    getIt.registerLazySingleton<TrackEventsUseCase>(
-      () => TrackEventsUseCase(getIt<AnalyticsRepository>()),
-    );
-
-    getIt.registerLazySingleton<GetTodayAnalyticsUseCase>(
-      () => GetTodayAnalyticsUseCase(getIt<AnalyticsRepository>()),
-    );
-
-    getIt.registerLazySingleton<GetWeeklyAnalyticsUseCase>(
-      () => GetWeeklyAnalyticsUseCase(getIt<AnalyticsRepository>()),
-    );
-
-    getIt.registerLazySingleton<GetMonthlyAnalyticsUseCase>(
-      () => GetMonthlyAnalyticsUseCase(getIt<AnalyticsRepository>()),
-    );
-
-    getIt.registerLazySingleton<GetAnalyticsForPeriodUseCase>(
-      () => GetAnalyticsForPeriodUseCase(getIt<AnalyticsRepository>()),
+      () => AnalyticsRepository(),
     );
 
     // Регистрируем BLoC
     getIt.registerFactory<AnalyticsBloc>(
       () => AnalyticsBloc(
-        trackEventUseCase: getIt<TrackEventUseCase>(),
-        trackEventsUseCase: getIt<TrackEventsUseCase>(),
-        getTodayAnalyticsUseCase: getIt<GetTodayAnalyticsUseCase>(),
-        getWeeklyAnalyticsUseCase: getIt<GetWeeklyAnalyticsUseCase>(),
-        getMonthlyAnalyticsUseCase: getIt<GetMonthlyAnalyticsUseCase>(),
-        getAnalyticsForPeriodUseCase: getIt<GetAnalyticsForPeriodUseCase>(),
+        analyticsRepository: getIt<AnalyticsRepository>(),
       ),
     );
 

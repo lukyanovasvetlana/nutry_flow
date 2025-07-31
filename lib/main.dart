@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/splash_screen.dart';
-import 'package:nutry_flow/features/onboarding/presentation/screens/welcome_screen.dart';
-import 'package:nutry_flow/features/onboarding/presentation/screens/registration_screen.dart';
-import 'package:nutry_flow/features/onboarding/presentation/screens/login_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/welcome_screen_redesigned.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_registration_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_login_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/profile_info_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/goals_setup_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/forgot_password_screen.dart';
 import 'package:nutry_flow/features/profile/presentation/screens/profile_settings_screen.dart';
 import 'package:nutry_flow/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:nutry_flow/features/analytics/presentation/screens/health_articles_screen.dart';
+import 'package:nutry_flow/features/analytics/presentation/screens/developer_analytics_screen.dart';
+import 'package:nutry_flow/features/analytics/presentation/screens/ab_testing_screen.dart';
 
 import 'package:nutry_flow/features/onboarding/presentation/bloc/goals_setup_bloc.dart';
 import 'package:nutry_flow/features/onboarding/di/onboarding_dependencies.dart';
@@ -26,6 +28,8 @@ import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'package:nutry_flow/core/services/local_cache_service.dart';
 import 'package:nutry_flow/core/services/notification_service.dart';
+import 'package:nutry_flow/core/services/monitoring_service.dart';
+import 'package:nutry_flow/core/services/ab_testing_service.dart';
 import 'package:nutry_flow/app.dart';
 
 void main() async {
@@ -39,6 +43,12 @@ void main() async {
   
   // Инициализация сервиса уведомлений
   await NotificationService.instance.initialize();
+  
+  // Инициализация сервиса мониторинга
+  await MonitoringService.instance.initialize();
+  
+  // Инициализация сервиса A/B тестирования
+  await ABTestingService.instance.initialize();
   
   // Инициализация GetIt
   
@@ -77,10 +87,20 @@ class NutryFlowApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => const SplashScreen(),
-        '/welcome': (context) => const WelcomeScreen(),
-        '/registration': (context) => const RegistrationScreen(),
-        '/login': (context) => const LoginScreen(),
+        '/welcome': (context) => const WelcomeScreenRedesigned(),
+        '/registration': (context) => const EnhancedRegistrationScreen(),
+        '/login': (context) => const EnhancedLoginScreen(),
         '/profile-info': (context) => const ProfileInfoScreen(),
+        '/goals-setup': (context) => BlocProvider<GoalsSetupBloc>(
+          create: (context) {
+            final bloc = OnboardingDependencies.instance.createGoalsSetupBloc();
+            // Автоматически инициализируем цели при создании BLoC
+            bloc.add(InitializeGoals());
+            return bloc;
+          },
+          child: const GoalsSetupView(),
+        ),
+        '/dashboard': (context) => const AppContainer(),
         '/onboarding': (context) => BlocProvider<GoalsSetupBloc>(
           create: (context) {
             final bloc = OnboardingDependencies.instance.createGoalsSetupBloc();
@@ -97,7 +117,12 @@ class NutryFlowApp extends StatelessWidget {
         '/health-articles': (context) => Scaffold(
           body: const HealthArticlesScreen(),
         ),
-
+        '/developer-analytics': (context) => Scaffold(
+          body: const DeveloperAnalyticsScreen(),
+        ),
+        '/ab-testing': (context) => Scaffold(
+          body: const ABTestingScreen(),
+        ),
         '/profile-settings': (context) => Scaffold(
           body: const ProfileSettingsScreen(),
         ),

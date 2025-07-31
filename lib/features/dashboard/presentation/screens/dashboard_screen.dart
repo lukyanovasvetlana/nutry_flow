@@ -205,6 +205,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               MaterialPageRoute(builder: (context) => const AnalyticsScreen()),
             );
             break;
+          case 'developer_analytics':
+            Navigator.pushNamed(context, '/developer-analytics');
+            break;
+          case 'ab_testing':
+            Navigator.pushNamed(context, '/ab-testing');
+            break;
           case 'profile':
             Navigator.pushNamed(context, '/profile-settings');
             break;
@@ -246,6 +252,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: ListTile(
             leading: Icon(Icons.analytics, color: AppColors.button),
             title: Text('Аналитика'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'developer_analytics',
+          child: ListTile(
+            leading: Icon(Icons.developer_mode, color: AppColors.button),
+            title: Text('Аналитика разработчика'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'ab_testing',
+          child: ListTile(
+            leading: Icon(Icons.science, color: AppColors.button),
+            title: Text('A/B Тестирование'),
             contentPadding: EdgeInsets.zero,
           ),
         ),

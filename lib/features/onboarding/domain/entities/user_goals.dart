@@ -7,6 +7,7 @@ class UserGoals extends Equatable {
   final List<String> fitnessGoals;
   final List<String> dietaryPreferences;
   final List<String> healthConditions;
+  final List<String> allergens;
   final List<String> workoutTypes;
   final double? targetWeight;
   final int? targetCalories;
@@ -23,6 +24,7 @@ class UserGoals extends Equatable {
     required this.fitnessGoals,
     required this.dietaryPreferences,
     required this.healthConditions,
+    required this.allergens,
     required this.workoutTypes,
     this.targetWeight,
     this.targetCalories,
@@ -46,6 +48,7 @@ class UserGoals extends Equatable {
     List<String>? fitnessGoals,
     List<String>? dietaryPreferences,
     List<String>? healthConditions,
+    List<String>? allergens,
     List<String>? workoutTypes,
     double? targetWeight,
     int? targetCalories,
@@ -62,6 +65,7 @@ class UserGoals extends Equatable {
       fitnessGoals: fitnessGoals ?? this.fitnessGoals,
       dietaryPreferences: dietaryPreferences ?? this.dietaryPreferences,
       healthConditions: healthConditions ?? this.healthConditions,
+      allergens: allergens ?? this.allergens,
       workoutTypes: workoutTypes ?? this.workoutTypes,
       targetWeight: targetWeight ?? this.targetWeight,
       targetCalories: targetCalories ?? this.targetCalories,
@@ -81,6 +85,7 @@ class UserGoals extends Equatable {
       'fitness_goals': fitnessGoals,
       'dietary_preferences': dietaryPreferences,
       'health_conditions': healthConditions,
+      'allergens': allergens,
       'workout_types': workoutTypes,
       'target_weight': targetWeight,
       'target_calories': targetCalories,
@@ -100,6 +105,7 @@ class UserGoals extends Equatable {
       fitnessGoals: List<String>.from(json['fitness_goals'] as List),
       dietaryPreferences: List<String>.from(json['dietary_preferences'] as List),
       healthConditions: List<String>.from(json['health_conditions'] as List),
+      allergens: List<String>.from(json['allergens'] ?? []),
       workoutTypes: List<String>.from(json['workout_types'] ?? []),
       targetWeight: json['target_weight'] as double?,
       targetCalories: json['target_calories'] as int?,
@@ -112,23 +118,24 @@ class UserGoals extends Equatable {
     );
   }
 
-  @override
+    @override
   List<Object?> get props => [
-    id,
-    userId,
-    fitnessGoals,
-    dietaryPreferences,
-    healthConditions,
-    workoutTypes,
-    targetWeight,
-    targetCalories,
-    targetProtein,
-    targetCarbs,
-    targetFat,
-    workoutFrequency,
-    createdAt,
-    updatedAt,
-  ];
+        id,
+        userId,
+        fitnessGoals,
+        dietaryPreferences,
+        healthConditions,
+        allergens,
+        workoutTypes,
+        targetWeight,
+        targetCalories,
+        targetProtein,
+        targetCarbs,
+        targetFat,
+        workoutFrequency,
+        createdAt,
+        updatedAt,
+      ];
 
   @override
   String toString() {

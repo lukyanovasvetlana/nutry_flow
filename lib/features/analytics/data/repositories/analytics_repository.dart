@@ -3,10 +3,43 @@ import 'package:nutry_flow/features/analytics/domain/entities/analytics_data.dar
 import 'package:nutry_flow/features/analytics/domain/entities/nutrition_tracking.dart';
 import 'package:nutry_flow/features/analytics/domain/entities/weight_tracking.dart';
 import 'package:nutry_flow/features/analytics/domain/entities/activity_tracking.dart';
+import 'package:nutry_flow/features/analytics/domain/entities/analytics_event.dart' as domain;
 import 'dart:developer' as developer;
 
 class AnalyticsRepository {
   final SupabaseService _supabaseService = SupabaseService.instance;
+  
+  /// Отслеживание аналитического события
+  Future<void> trackEvent(domain.AnalyticsEvent event) async {
+    try {
+      developer.log('📊 AnalyticsRepository: Tracking event: ${event.name}', name: 'AnalyticsRepository');
+      
+      if (_supabaseService.isAvailable) {
+        final user = _supabaseService.currentUser;
+        if (user == null) {
+          developer.log('📊 AnalyticsRepository: User not authenticated for tracking', name: 'AnalyticsRepository');
+          return;
+        }
+        
+        await _supabaseService.saveUserData('analytics_events', {
+          'user_id': user.id,
+          'event_name': event.name,
+          'parameters': event.parameters,
+          'session_id': event.sessionId,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        
+        developer.log('📊 AnalyticsRepository: Event tracked successfully', name: 'AnalyticsRepository');
+      } else {
+        developer.log('📊 AnalyticsRepository: Supabase not available, event tracking skipped', name: 'AnalyticsRepository');
+        // В демо-режиме просто логируем событие
+        developer.log('📊 AnalyticsRepository: Demo mode - Event: ${event.name}, Parameters: ${event.parameters}', name: 'AnalyticsRepository');
+      }
+    } catch (e) {
+      developer.log('📊 AnalyticsRepository: Track event failed: $e', name: 'AnalyticsRepository');
+      // Не выбрасываем исключение, чтобы не прерывать работу приложения
+    }
+  }
   
   /// Сохранение данных о питании
   Future<void> saveNutritionTracking(NutritionTracking tracking) async {
@@ -61,15 +94,22 @@ class AnalyticsRepository {
         
         final tracking = data.map((item) => NutritionTracking(
           id: item['id'],
+          userId: user.id,
           date: DateTime.parse(item['date']),
           caloriesConsumed: item['calories_consumed'] ?? 0,
           proteinConsumed: item['protein_consumed'] ?? 0,
           fatConsumed: item['fat_consumed'] ?? 0,
           carbsConsumed: item['carbs_consumed'] ?? 0,
           fiberConsumed: item['fiber_consumed'] ?? 0,
+          sugarConsumed: item['sugar_consumed'] ?? 0,
+          sodiumConsumed: item['sodium_consumed'] ?? 0,
           waterConsumed: item['water_consumed'] ?? 0,
           mealsCount: item['meals_count'] ?? 0,
           notes: item['notes'],
+          mealType: item['meal_type'] ?? 'general',
+          foodItems: List<String>.from(item['food_items'] ?? []),
+          createdAt: DateTime.parse(item['created_at'] ?? DateTime.now().toIso8601String()),
+          updatedAt: DateTime.parse(item['updated_at'] ?? DateTime.now().toIso8601String()),
         )).toList();
         
         // Фильтруем по датам
@@ -140,12 +180,16 @@ class AnalyticsRepository {
         
         final tracking = data.map((item) => WeightTracking(
           id: item['id'],
+          userId: user.id,
           date: DateTime.parse(item['date']),
           weight: item['weight'] ?? 0.0,
           bodyFatPercentage: item['body_fat_percentage'],
           muscleMass: item['muscle_mass'],
+          waterPercentage: item['water_percentage'],
           bmi: item['bmi'],
           notes: item['notes'],
+          createdAt: DateTime.parse(item['created_at'] ?? DateTime.now().toIso8601String()),
+          updatedAt: DateTime.parse(item['updated_at'] ?? DateTime.now().toIso8601String()),
         )).toList();
         
         // Фильтруем по датам
@@ -182,9 +226,9 @@ class AnalyticsRepository {
           'id': tracking.id,
           'date': tracking.date.toIso8601String(),
           'steps_count': tracking.stepsCount,
-          'distance_km': tracking.distanceKm,
+          'distance_km': tracking.distance,
           'calories_burned': tracking.caloriesBurned,
-          'active_minutes': tracking.activeMinutes,
+          'active_minutes': tracking.workoutDuration,
           'workout_duration': tracking.workoutDuration,
           'workout_type': tracking.workoutType,
           'notes': tracking.notes,
@@ -218,14 +262,18 @@ class AnalyticsRepository {
         
         final tracking = data.map((item) => ActivityTracking(
           id: item['id'],
+          userId: user.id,
           date: DateTime.parse(item['date']),
           stepsCount: item['steps_count'] ?? 0,
-          distanceKm: item['distance_km'] ?? 0.0,
           caloriesBurned: item['calories_burned'] ?? 0,
-          activeMinutes: item['active_minutes'] ?? 0,
           workoutDuration: item['workout_duration'] ?? 0,
+          distance: item['distance_km'] ?? 0.0,
           workoutType: item['workout_type'],
+          averageHeartRate: item['average_heart_rate'],
+          maxHeartRate: item['max_heart_rate'],
           notes: item['notes'],
+          createdAt: DateTime.parse(item['created_at'] ?? DateTime.now().toIso8601String()),
+          updatedAt: DateTime.parse(item['updated_at'] ?? DateTime.now().toIso8601String()),
         )).toList();
         
         // Фильтруем по датам
@@ -255,7 +303,10 @@ class AnalyticsRepository {
       final weightData = await getWeightTracking(startDate, endDate);
       final activityData = await getActivityTracking(startDate, endDate);
       
+      final user = _supabaseService.currentUser;
       final analyticsData = AnalyticsData(
+        userId: user?.id ?? 'unknown',
+        date: DateTime.now(),
         nutritionTracking: nutritionData,
         weightTracking: weightData,
         activityTracking: activityData,

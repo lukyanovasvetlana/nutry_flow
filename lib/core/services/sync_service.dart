@@ -11,144 +11,144 @@ class SyncService {
   final SupabaseService _supabaseService = SupabaseService.instance;
   final LocalCacheService _localCache = LocalCacheService.instance;
 
-  /// Синхронизация данных с конфликт-резолюшн
-  Future<SyncResult> syncData<T>({
-    required String tableName,
+  /// Синхронизация данных между сервером и локальным кэшем
+  Future<SyncResult<T>> syncData<T>({
     required String cacheKey,
-    required T Function(Map<String, dynamic>) fromJson,
+    required Future<List<T>> Function() getFromServer,
+    required Future<List<T>> Function() getFromLocalCache,
+    required Future<void> Function(List<T>) saveToLocalCache,
     required Map<String, dynamic> Function(T) toJson,
-    Duration cacheValidity = const Duration(hours: 1),
+    required T Function(Map<String, dynamic>) fromJson,
     ConflictResolutionStrategy strategy = ConflictResolutionStrategy.serverWins,
   }) async {
     try {
-      developer.log('🔄 SyncService: Starting sync for $tableName', name: 'SyncService');
+      developer.log('🔄 SyncService: Starting sync for key: $cacheKey', name: 'SyncService');
 
-      // Проверяем доступность Supabase
-      if (!_supabaseService.isAvailable) {
-        developer.log('🔄 SyncService: Supabase not available, using local cache', name: 'SyncService');
-        return await _getFromLocalCache<T>(cacheKey, fromJson);
-      }
-
-      // Получаем данные из Supabase
-      final serverData = await _getFromServer(tableName);
+      // Получаем данные с сервера
+      final serverData = await getFromServer();
       
       // Получаем данные из локального кэша
-      final localData = await _getFromLocalCache<T>(cacheKey, fromJson);
+      final localData = await getFromLocalCache();
 
+      // Определяем конфликты
+      final conflicts = _detectConflicts(serverData, localData, toJson);
+      
       // Разрешаем конфликты
       final resolvedData = await _resolveConflicts(
-        serverData: serverData,
-        localData: localData,
-        strategy: strategy,
-        tableName: tableName,
+        serverData,
+        localData,
+        conflicts,
+        strategy,
+        toJson,
+        fromJson,
       );
 
-      // Сохраняем в локальный кэш
-      if (resolvedData != null) {
-        await _saveToLocalCache(cacheKey, resolvedData, toJson);
-      }
+      // Сохраняем разрешенные данные в локальный кэш
+      await saveToLocalCache(resolvedData);
 
-      developer.log('🔄 SyncService: Sync completed for $tableName', name: 'SyncService');
-      return SyncResult(
+      final result = SyncResult<T>(
         data: resolvedData,
         source: SyncSource.hybrid,
-        conflictsResolved: serverData.isNotEmpty && localData.isNotEmpty,
+        conflictsResolved: conflicts.isNotEmpty,
       );
 
+      developer.log('🔄 SyncService: Sync completed for key: $cacheKey - ${resolvedData.length} items', name: 'SyncService');
+      
+      return result;
     } catch (e) {
-      developer.log('🔄 SyncService: Sync failed for $tableName: $e', name: 'SyncService');
-      return await _getFromLocalCache<T>(cacheKey, fromJson);
+      developer.log('🔄 SyncService: Failed to sync data for key: $cacheKey - $e', name: 'SyncService');
+      rethrow;
     }
   }
 
   /// Получение данных только из локального кэша
-  Future<SyncResult> getFromLocalCache<T>(
+  Future<SyncResult<T>> getFromLocalCache<T>(
     String cacheKey,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     return await _getFromLocalCache<T>(cacheKey, fromJson);
   }
 
-  /// Принудительная синхронизация с сервером
-  Future<SyncResult> forceSyncFromServer<T>({
-    required String tableName,
+  /// Принудительная синхронизация с сервера
+  Future<List<T>> forceSyncFromServer<T>({
     required String cacheKey,
-    required T Function(Map<String, dynamic>) fromJson,
+    required Future<List<T>> Function() getFromServer,
+    required Future<void> Function(List<T>) saveToLocalCache,
     required Map<String, dynamic> Function(T) toJson,
   }) async {
     try {
-      developer.log('🔄 SyncService: Force syncing from server for $tableName', name: 'SyncService');
+      developer.log('🔄 SyncService: Force syncing from server for key: $cacheKey', name: 'SyncService');
 
-      if (!_supabaseService.isAvailable) {
-        throw Exception('Supabase not available');
-      }
+      final serverData = await getFromServer();
+      await saveToLocalCache(serverData);
 
-      final serverData = await _getFromServer(tableName);
+      developer.log('🔄 SyncService: Force sync completed for key: $cacheKey - ${serverData.length} items', name: 'SyncService');
       
-      if (serverData.isNotEmpty) {
-        await _saveToLocalCache(cacheKey, serverData, toJson);
-      }
-
-      return SyncResult(
-        data: serverData,
-        source: SyncSource.server,
-        conflictsResolved: false,
-      );
-
+      return serverData;
     } catch (e) {
-      developer.log('🔄 SyncService: Force sync failed for $tableName: $e', name: 'SyncService');
+      developer.log('🔄 SyncService: Failed to force sync from server for key: $cacheKey - $e', name: 'SyncService');
       rethrow;
     }
   }
 
   /// Сохранение данных с синхронизацией
   Future<void> saveWithSync<T>({
-    required String tableName,
     required String cacheKey,
-    required T data,
+    required List<T> data,
+    required Future<void> Function(List<T>) saveToServer,
+    required Future<void> Function(List<T>) saveToLocalCache,
     required Map<String, dynamic> Function(T) toJson,
   }) async {
     try {
-      developer.log('🔄 SyncService: Saving with sync for $tableName', name: 'SyncService');
+      developer.log('🔄 SyncService: Saving with sync for key: $cacheKey', name: 'SyncService');
 
-      // Сохраняем в Supabase
-      if (_supabaseService.isAvailable) {
-        await _saveToServer(tableName, toJson(data));
-        developer.log('🔄 SyncService: Saved to server for $tableName', name: 'SyncService');
-      }
-
+      // Сохраняем на сервер
+      await saveToServer(data);
+      
       // Сохраняем в локальный кэш
-      await _saveToLocalCache(cacheKey, [data], toJson);
-      developer.log('🔄 SyncService: Saved to local cache for $tableName', name: 'SyncService');
+      await saveToLocalCache(data);
 
+      developer.log('🔄 SyncService: Save with sync completed for key: $cacheKey', name: 'SyncService');
     } catch (e) {
-      developer.log('🔄 SyncService: Save with sync failed for $tableName: $e', name: 'SyncService');
+      developer.log('🔄 SyncService: Failed to save with sync for key: $cacheKey - $e', name: 'SyncService');
       rethrow;
     }
   }
 
-  /// Очистка устаревших данных
-  Future<void> clearExpiredCache() async {
+  /// Очистка устаревшего кэша
+  Future<void> clearExpiredCache({
+    required Duration maxAge,
+  }) async {
     try {
       developer.log('🔄 SyncService: Clearing expired cache', name: 'SyncService');
 
-      final keys = _localCache.getAllKeys();
       final now = DateTime.now();
-      final maxAge = const Duration(days: 7);
+      final expiredKeys = <String>[];
 
-      for (final key in keys) {
-        if (key.endsWith('_timestamp')) {
-          final dataKey = key.replaceAll('_timestamp', '');
-          if (!_localCache.isCacheValid(dataKey, maxAge)) {
-            await _localCache.removeData(dataKey);
-            await _localCache.removeData(key);
-            developer.log('🔄 SyncService: Removed expired cache for $dataKey', name: 'SyncService');
+      // Проверяем все ключи кэша
+      final allKeys = await LocalCacheService.instance.getAllKeys();
+      
+      for (final key in allKeys) {
+        if (key.startsWith('sync_')) {
+          final timestamp = await LocalCacheService.instance.getValue('${key}_timestamp');
+          if (timestamp != null) {
+            final cacheTime = DateTime.parse(timestamp);
+            if (now.difference(cacheTime) > maxAge) {
+              expiredKeys.add(key);
+            }
           }
         }
       }
 
+      // Удаляем устаревшие данные
+      for (final key in expiredKeys) {
+        await LocalCacheService.instance.removeData(key);
+        await LocalCacheService.instance.removeData('${key}_timestamp');
+      }
+
+      developer.log('🔄 SyncService: Cleared ${expiredKeys.length} expired cache entries', name: 'SyncService');
     } catch (e) {
-      developer.log('🔄 SyncService: Clear expired cache failed: $e', name: 'SyncService');
+      developer.log('🔄 SyncService: Failed to clear expired cache - $e', name: 'SyncService');
     }
   }
 
@@ -168,7 +168,7 @@ class SyncService {
     }
   }
 
-  Future<SyncResult> _getFromLocalCache<T>(
+  Future<SyncResult<T>> _getFromLocalCache<T>(
     String cacheKey,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
@@ -214,85 +214,176 @@ class SyncService {
     }
   }
 
-  Future<List<T>> _resolveConflicts<T>({
-    required List<Map<String, dynamic>> serverData,
-    required List<T> localData,
-    required ConflictResolutionStrategy strategy,
-    required String tableName,
-  }) async {
-    if (serverData.isEmpty && localData.isEmpty) {
-      return [];
-    }
-
-    if (serverData.isEmpty) {
-      return localData;
-    }
-
-    if (localData.isEmpty) {
-      // Конвертируем serverData в T
-      return serverData.map((item) => _convertToT<T>(item)).toList();
-    }
-
-    switch (strategy) {
-      case ConflictResolutionStrategy.serverWins:
-        developer.log('🔄 SyncService: Using server-wins strategy for $tableName', name: 'SyncService');
-        return serverData.map((item) => _convertToT<T>(item)).toList();
-
-      case ConflictResolutionStrategy.localWins:
-        developer.log('🔄 SyncService: Using local-wins strategy for $tableName', name: 'SyncService');
-        return localData;
-
-      case ConflictResolutionStrategy.merge:
-        developer.log('🔄 SyncService: Using merge strategy for $tableName', name: 'SyncService');
-        return await _mergeData<T>(serverData, localData);
-
-      case ConflictResolutionStrategy.timestamp:
-        developer.log('🔄 SyncService: Using timestamp strategy for $tableName', name: 'SyncService');
-        return await _resolveByTimestamp<T>(serverData, localData);
-    }
-  }
-
-  T _convertToT<T>(Map<String, dynamic> data) {
-    // Это упрощенная версия, в реальном приложении нужно использовать proper JSON deserialization
-    return data as T;
-  }
-
-  Future<List<T>> _mergeData<T>(
-    List<Map<String, dynamic>> serverData,
+  /// Определение конфликтов между серверными и локальными данными
+  List<SyncConflict<T>> _detectConflicts<T>(
+    List<T> serverData,
     List<T> localData,
-  ) async {
-    // Простая стратегия слияния - объединяем уникальные элементы
-    final merged = <T>[];
-    final seenIds = <String>{};
-
-    // Добавляем серверные данные
-    for (final serverItem in serverData) {
-      final id = serverItem['id']?.toString() ?? '';
-      if (!seenIds.contains(id)) {
-        merged.add(_convertToT<T>(serverItem));
-        seenIds.add(id);
+    Map<String, dynamic> Function(T) toJson,
+  ) {
+    final conflicts = <SyncConflict<T>>[];
+    
+    // Создаем Map для быстрого поиска
+    final serverMap = <String, T>{};
+    final localMap = <String, T>{};
+    
+    for (final item in serverData) {
+      final json = toJson(item);
+      final id = json['id'] as String? ?? json['user_id'] as String? ?? '';
+      if (id.isNotEmpty) {
+        serverMap[id] = item;
       }
     }
-
-    // Добавляем локальные данные
-    for (final localItem in localData) {
-      final id = localItem.toString(); // Упрощенно
-      if (!seenIds.contains(id)) {
-        merged.add(localItem);
-        seenIds.add(id);
+    
+    for (final item in localData) {
+      final json = toJson(item);
+      final id = json['id'] as String? ?? json['user_id'] as String? ?? '';
+      if (id.isNotEmpty) {
+        localMap[id] = item;
       }
     }
-
-    return merged;
+    
+    // Находим конфликты
+    for (final id in serverMap.keys) {
+      if (localMap.containsKey(id)) {
+        final serverItem = serverMap[id]!;
+        final localItem = localMap[id]!;
+        
+        final serverJson = toJson(serverItem);
+        final localJson = toJson(localItem);
+        
+        // Проверяем, есть ли различия
+        if (!_isEqual(serverJson, localJson)) {
+          conflicts.add(SyncConflict<T>(
+            id: id,
+            serverData: serverItem,
+            localData: localItem,
+            conflictType: ConflictType.dataMismatch,
+          ));
+        }
+      }
+    }
+    
+    return conflicts;
   }
 
-  Future<List<T>> _resolveByTimestamp<T>(
-    List<Map<String, dynamic>> serverData,
+  /// Разрешение конфликтов
+  Future<List<T>> _resolveConflicts<T>(
+    List<T> serverData,
     List<T> localData,
+    List<SyncConflict<T>> conflicts,
+    ConflictResolutionStrategy strategy,
+    Map<String, dynamic> Function(T) toJson,
+    T Function(Map<String, dynamic>) fromJson,
   ) async {
-    // Используем timestamp для разрешения конфликтов
-    // В реальном приложении нужно сравнивать updated_at поля
-    return serverData.map((item) => _convertToT<T>(item)).toList();
+    final resolvedData = <T>[];
+    
+    // Создаем Map для быстрого поиска
+    final serverMap = <String, T>{};
+    final localMap = <String, T>{};
+    
+    for (final item in serverData) {
+      final json = toJson(item);
+      final id = json['id'] as String? ?? json['user_id'] as String? ?? '';
+      if (id.isNotEmpty) {
+        serverMap[id] = item;
+      }
+    }
+    
+    for (final item in localData) {
+      final json = toJson(item);
+      final id = json['id'] as String? ?? json['user_id'] as String? ?? '';
+      if (id.isNotEmpty) {
+        localMap[id] = item;
+      }
+    }
+    
+    // Обрабатываем конфликты
+    for (final conflict in conflicts) {
+      T resolvedItem;
+      
+      switch (strategy) {
+        case ConflictResolutionStrategy.serverWins:
+          resolvedItem = conflict.serverData;
+          break;
+        case ConflictResolutionStrategy.localWins:
+          resolvedItem = conflict.localData;
+          break;
+        case ConflictResolutionStrategy.merge:
+          resolvedItem = await _mergeData(conflict.serverData, conflict.localData, toJson, fromJson);
+          break;
+        case ConflictResolutionStrategy.timestamp:
+          resolvedItem = await _resolveByTimestamp(conflict.serverData, conflict.localData, toJson);
+          break;
+      }
+      
+      // Обновляем данные
+      serverMap[conflict.id] = resolvedItem;
+      localMap[conflict.id] = resolvedItem;
+    }
+    
+    // Собираем все данные
+    resolvedData.addAll(serverMap.values);
+    
+    // Добавляем локальные данные, которых нет на сервере
+    for (final entry in localMap.entries) {
+      if (!serverMap.containsKey(entry.key)) {
+        resolvedData.add(entry.value);
+      }
+    }
+    
+    return resolvedData;
+  }
+
+  /// Сравнение JSON объектов
+  bool _isEqual(Map<String, dynamic> json1, Map<String, dynamic> json2) {
+    if (json1.length != json2.length) return false;
+    
+    for (final key in json1.keys) {
+      if (!json2.containsKey(key)) return false;
+      if (json1[key] != json2[key]) return false;
+    }
+    
+    return true;
+  }
+
+  /// Слияние данных
+  Future<T> _mergeData<T>(
+    T serverData,
+    T localData,
+    Map<String, dynamic> Function(T) toJson,
+    T Function(Map<String, dynamic>) fromJson,
+  ) async {
+    final serverJson = toJson(serverData);
+    final localJson = toJson(localData);
+    
+    // Простое слияние - берем последние значения
+    final mergedJson = Map<String, dynamic>.from(serverJson);
+    mergedJson.addAll(localJson);
+    
+    return fromJson(mergedJson);
+  }
+
+  /// Разрешение конфликта по временной метке
+  Future<T> _resolveByTimestamp<T>(
+    T serverData,
+    T localData,
+    Map<String, dynamic> Function(T) toJson,
+  ) async {
+    final serverJson = toJson(serverData);
+    final localJson = toJson(localData);
+    
+    final serverTimestamp = serverJson['updated_at'] as String?;
+    final localTimestamp = localJson['updated_at'] as String?;
+    
+    if (serverTimestamp != null && localTimestamp != null) {
+      final serverTime = DateTime.parse(serverTimestamp);
+      final localTime = DateTime.parse(localTimestamp);
+      
+      return serverTime.isAfter(localTime) ? serverData : localData;
+    }
+    
+    // По умолчанию берем серверные данные
+    return serverData;
   }
 }
 
@@ -326,4 +417,30 @@ class SyncResult<T> {
   String toString() {
     return 'SyncResult(data: ${data.length} items, source: $source, conflictsResolved: $conflictsResolved)';
   }
+}
+
+class SyncConflict<T> {
+  final String id;
+  final T serverData;
+  final T localData;
+  final ConflictType conflictType;
+
+  SyncConflict({
+    required this.id,
+    required this.serverData,
+    required this.localData,
+    required this.conflictType,
+  });
+
+  @override
+  String toString() {
+    return 'SyncConflict(id: $id, type: $conflictType)';
+  }
+}
+
+enum ConflictType {
+  dataMismatch,
+  serverOnly,
+  localOnly,
+  timestampConflict,
 } 

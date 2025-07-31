@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -63,107 +63,109 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 40.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 60),
-                // Логотип
-                Image.asset('assets/images/Logo.png', height: 80),
-                const SizedBox(height: 30),
-                // Заголовок
-                Text(
-                  'Восстановление пароля',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                // Описание
-                Text(
-                  'Введите email, указанный при регистрации. Мы отправим инструкции по восстановлению пароля.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
-                // Форма
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      // Поле email
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          hintText: 'Введите ваш email',
-                          prefixIcon: const Icon(Icons.email),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 60),
+              Image.asset('assets/images/Logo.png', height: 80),
+              const SizedBox(height: 30),
+              Text(
+                'Восстановление пароля',
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Введите email, указанный при регистрации. Мы отправим инструкции по восстановлению пароля.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        border: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Пожалуйста, введите email';
-                          }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                            return 'Пожалуйста, введите корректный email';
-                          }
-                          return null;
-                        },
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.green, width: 2),
+                        ),
+                        errorBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                        focusedErrorBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 2),
+                        ),
+                        prefixIcon: const Icon(Icons.email),
                       ),
-                      const SizedBox(height: 30),
-                      // Кнопка отправки
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _resetPassword,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.green,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Пожалуйста, введите email';
+                        }
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          return 'Пожалуйста, введите корректный email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 40),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _resetPassword,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.button,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  ),
-                                )
-                              : const Text(
-                                  'Отправить инструкции',
-                                  style: TextStyle(fontSize: 16),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                 ),
-                        ),
+                              )
+                            : const Text('Отправить инструкции'),
                       ),
-                      const SizedBox(height: 20),
-                      // Кнопка "Назад к входу"
-                      TextButton(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
                         onPressed: () {
                           Navigator.pushReplacementNamed(context, '/login');
                         },
-                        child: const Text(
-                          'Назад к входу',
-                          style: TextStyle(
-                            color: AppColors.green,
-                            fontSize: 16,
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: AppColors.button),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        child: Text(
+                          'Назад',
+                          style: TextStyle(color: AppColors.button),
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

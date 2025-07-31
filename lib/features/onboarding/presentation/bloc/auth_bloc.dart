@@ -136,7 +136,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final user = User(
             id: response.user!.id,
             email: response.user!.email ?? event.email,
-            name: response.user!.userMetadata?['name'] ?? '',
+            firstName: response.user!.userMetadata?['name'] ?? '',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
           );
           developer.log('🔵 AuthBloc: Supabase sign up successful', name: 'AuthBloc');
           emit(AuthAuthenticated(user));
@@ -183,7 +185,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final user = User(
             id: response.user!.id,
             email: response.user!.email ?? event.email,
-            name: response.user!.userMetadata?['name'] ?? '',
+            firstName: response.user!.userMetadata?['name'] ?? '',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
           );
           developer.log('🔵 AuthBloc: Supabase sign in successful', name: 'AuthBloc');
           emit(AuthAuthenticated(user));
@@ -245,7 +249,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final user = User(
             id: currentUser.id,
             email: currentUser.email ?? '',
-            name: currentUser.userMetadata?['name'] ?? '',
+            firstName: currentUser.userMetadata?['name'] ?? '',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
           );
           developer.log('🔵 AuthBloc: User authenticated via Supabase', name: 'AuthBloc');
           emit(AuthAuthenticated(user));

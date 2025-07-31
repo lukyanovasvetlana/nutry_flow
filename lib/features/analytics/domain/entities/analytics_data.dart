@@ -1,4 +1,7 @@
 import 'analytics_event.dart';
+import 'nutrition_tracking.dart';
+import 'weight_tracking.dart';
+import 'activity_tracking.dart';
 
 /// Сущность аналитических данных
 class AnalyticsData {
@@ -6,24 +9,37 @@ class AnalyticsData {
   final DateTime date;
   final Map<String, dynamic> metrics;
   final List<AnalyticsEvent> events;
+  final List<NutritionTracking> nutritionTracking;
+  final List<WeightTracking> weightTracking;
+  final List<ActivityTracking> activityTracking;
+  final String period; // day, week, month, year
 
   const AnalyticsData({
     required this.userId,
     required this.date,
     this.metrics = const {},
     this.events = const [],
+    this.nutritionTracking = const [],
+    this.weightTracking = const [],
+    this.activityTracking = const [],
+    this.period = 'day',
   });
 
   /// Создает аналитические данные для пользователя
   factory AnalyticsData.forUser({
     required String userId,
     DateTime? date,
+    String period = 'day',
   }) {
     return AnalyticsData(
       userId: userId,
       date: date ?? DateTime.now(),
       metrics: {},
       events: [],
+      nutritionTracking: [],
+      weightTracking: [],
+      activityTracking: [],
+      period: period,
     );
   }
 
@@ -37,6 +53,10 @@ class AnalyticsData {
       date: date,
       metrics: updatedMetrics,
       events: events,
+      nutritionTracking: nutritionTracking,
+      weightTracking: weightTracking,
+      activityTracking: activityTracking,
+      period: period,
     );
   }
 
@@ -47,6 +67,52 @@ class AnalyticsData {
       date: date,
       metrics: metrics,
       events: [...events, event],
+      nutritionTracking: nutritionTracking,
+      weightTracking: weightTracking,
+      activityTracking: activityTracking,
+      period: period,
+    );
+  }
+
+  /// Добавляет данные отслеживания питания
+  AnalyticsData addNutritionTracking(NutritionTracking tracking) {
+    return AnalyticsData(
+      userId: userId,
+      date: date,
+      metrics: metrics,
+      events: events,
+      nutritionTracking: [...nutritionTracking, tracking],
+      weightTracking: weightTracking,
+      activityTracking: activityTracking,
+      period: period,
+    );
+  }
+
+  /// Добавляет данные отслеживания веса
+  AnalyticsData addWeightTracking(WeightTracking tracking) {
+    return AnalyticsData(
+      userId: userId,
+      date: date,
+      metrics: metrics,
+      events: events,
+      nutritionTracking: nutritionTracking,
+      weightTracking: [...weightTracking, tracking],
+      activityTracking: activityTracking,
+      period: period,
+    );
+  }
+
+  /// Добавляет данные отслеживания активности
+  AnalyticsData addActivityTracking(ActivityTracking tracking) {
+    return AnalyticsData(
+      userId: userId,
+      date: date,
+      metrics: metrics,
+      events: events,
+      nutritionTracking: nutritionTracking,
+      weightTracking: weightTracking,
+      activityTracking: [...activityTracking, tracking],
+      period: period,
     );
   }
 
@@ -67,29 +133,57 @@ class AnalyticsData {
 
   /// Получает общее количество калорий за день
   double getTotalCalories() {
+    if (nutritionTracking.isNotEmpty) {
+      return nutritionTracking
+          .map((n) => n.caloriesConsumed)
+          .reduce((a, b) => a + b);
+    }
     return getMetric<double>('total_calories') ?? 0.0;
   }
 
   /// Получает количество сожженных калорий за день
-  int getBurnedCalories() {
-    return getMetric<int>('burned_calories') ?? 0;
+  double getBurnedCalories() {
+    if (activityTracking.isNotEmpty) {
+      return activityTracking
+          .map((a) => a.caloriesBurned)
+          .reduce((a, b) => a + b);
+    }
+    return getMetric<double>('burned_calories') ?? 0.0;
   }
 
   /// Получает количество выполненных тренировок
   int getCompletedWorkouts() {
-    return countEvents('workout_completed');
+    return activityTracking.where((a) => a.workoutDuration > 0).length;
   }
 
-  /// Получает общее время тренировок в секундах
+  /// Получает общее время тренировок в минутах
   int getTotalWorkoutTime() {
-    return events
-        .where((event) => event.name == 'workout_completed')
-        .fold(0, (sum, event) => sum + (event.parameters['duration_seconds'] as int? ?? 0));
+    return activityTracking
+        .where((a) => a.workoutDuration > 0)
+        .fold(0, (sum, a) => sum + a.workoutDuration);
   }
 
   /// Получает количество приемов пищи
   int getMealCount() {
-    return countEvents('food_added');
+    return nutritionTracking.length;
+  }
+
+  /// Получает общее количество шагов
+  int getTotalSteps() {
+    return activityTracking
+        .map((a) => a.stepsCount)
+        .reduce((a, b) => a + b);
+  }
+
+  /// Получает средний вес
+  double? getAverageWeight() {
+    if (weightTracking.isNotEmpty) {
+      final totalWeight = weightTracking
+          .map((w) => w.weight)
+          .reduce((a, b) => a + b);
+      return totalWeight / weightTracking.length;
+    }
+    return null;
   }
 
   /// Преобразует данные в Map для сохранения
@@ -99,6 +193,10 @@ class AnalyticsData {
       'date': date.toIso8601String(),
       'metrics': metrics,
       'events': events.map((event) => event.toMap()).toList(),
+      'nutrition_tracking': nutritionTracking.map((n) => n.toJson()).toList(),
+      'weight_tracking': weightTracking.map((w) => w.toJson()).toList(),
+      'activity_tracking': activityTracking.map((a) => a.toJson()).toList(),
+      'period': period,
     };
   }
 
@@ -117,11 +215,21 @@ class AnalyticsData {
                 sessionId: eventMap['session_id'] as String?,
               ))
           .toList(),
+      nutritionTracking: (map['nutrition_tracking'] as List?)
+          ?.map((n) => NutritionTracking.fromJson(n as Map<String, dynamic>))
+          .toList() ?? [],
+      weightTracking: (map['weight_tracking'] as List?)
+          ?.map((w) => WeightTracking.fromJson(w as Map<String, dynamic>))
+          .toList() ?? [],
+      activityTracking: (map['activity_tracking'] as List?)
+          ?.map((a) => ActivityTracking.fromJson(a as Map<String, dynamic>))
+          .toList() ?? [],
+      period: map['period'] as String? ?? 'day',
     );
   }
 
   @override
   String toString() {
-    return 'AnalyticsData(userId: $userId, date: $date, metrics: $metrics, events: ${events.length})';
+    return 'AnalyticsData(userId: $userId, date: $date, metrics: $metrics, events: ${events.length}, nutrition: ${nutritionTracking.length}, weight: ${weightTracking.length}, activity: ${activityTracking.length})';
   }
 } 

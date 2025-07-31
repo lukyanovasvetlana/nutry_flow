@@ -26,13 +26,13 @@ class UserDataRepository {
         'updated_at': DateTime.now().toIso8601String(),
       };
 
-      // Сохраняем с синхронизацией
-      await _syncService.saveWithSync(
-        tableName: 'user_goals',
-        cacheKey: 'user_goals_cache',
-        data: goalsData,
-        toJson: (data) => data,
-      );
+      // Сохраняем в Supabase напрямую
+      if (_supabaseService.isAvailable) {
+        final user = _supabaseService.currentUser;
+        if (user != null) {
+          await _supabaseService.saveUserData('user_goals', goalsData);
+        }
+      }
 
       developer.log('🟪 UserDataRepository: Goals saved successfully', name: 'UserDataRepository');
     } catch (e) {
@@ -46,27 +46,34 @@ class UserDataRepository {
     try {
       developer.log('🟪 UserDataRepository: Getting goals with sync', name: 'UserDataRepository');
 
-      final syncResult = await _syncService.syncData<Map<String, dynamic>>(
-        tableName: 'user_goals',
-        cacheKey: 'user_goals_cache',
-        fromJson: (data) => data,
-        toJson: (data) => data,
-        strategy: ConflictResolutionStrategy.serverWins,
-      );
+      // Получаем данные из Supabase напрямую
+      List<Map<String, dynamic>> goalsData = [];
+      if (_supabaseService.isAvailable) {
+        final user = _supabaseService.currentUser;
+        if (user != null) {
+          final data = await _supabaseService.getUserData('user_goals', userId: user.id);
+          goalsData = data.cast<Map<String, dynamic>>();
+        }
+      }
 
-      if (syncResult.data.isNotEmpty) {
-        final goalsData = syncResult.data.first;
+      if (goalsData.isNotEmpty) {
+        final goalData = goalsData.first;
         final goals = UserGoals(
-          fitnessGoals: List<String>.from(goalsData['fitness_goals'] ?? []),
-          targetCalories: goalsData['target_calories'] ?? 2000,
-          targetProtein: goalsData['target_protein'] ?? 150,
-          dietaryPreferences: List<String>.from(goalsData['dietary_preferences'] ?? []),
-          allergens: List<String>.from(goalsData['allergens'] ?? []),
-          workoutTypes: List<String>.from(goalsData['workout_types'] ?? []),
-          workoutFrequency: goalsData['workout_frequency'],
+          id: goalData['id'] ?? 'default_id',
+          userId: goalData['user_id'] ?? 'default_user_id',
+          fitnessGoals: List<String>.from(goalData['fitness_goals'] ?? []),
+          targetCalories: goalData['target_calories'] ?? 2000,
+          targetProtein: goalData['target_protein'] ?? 150,
+          dietaryPreferences: List<String>.from(goalData['dietary_preferences'] ?? []),
+          healthConditions: List<String>.from(goalData['health_conditions'] ?? []),
+          allergens: List<String>.from(goalData['allergens'] ?? []),
+          workoutTypes: List<String>.from(goalData['workout_types'] ?? []),
+          workoutFrequency: goalData['workout_frequency'],
+          createdAt: DateTime.parse(goalData['created_at'] ?? DateTime.now().toIso8601String()),
+          updatedAt: DateTime.parse(goalData['updated_at'] ?? DateTime.now().toIso8601String()),
         );
 
-        developer.log('🟪 UserDataRepository: Goals retrieved successfully from ${syncResult.source}', name: 'UserDataRepository');
+        developer.log('🟪 UserDataRepository: Goals retrieved successfully from Supabase', name: 'UserDataRepository');
         return goals;
       }
 
