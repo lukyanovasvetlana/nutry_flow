@@ -47,7 +47,7 @@ class AnalyticsData {
   AnalyticsData addMetric(String key, dynamic value) {
     final updatedMetrics = Map<String, dynamic>.from(metrics);
     updatedMetrics[key] = value;
-    
+
     return AnalyticsData(
       userId: userId,
       date: date,
@@ -170,17 +170,14 @@ class AnalyticsData {
 
   /// Получает общее количество шагов
   int getTotalSteps() {
-    return activityTracking
-        .map((a) => a.stepsCount)
-        .reduce((a, b) => a + b);
+    return activityTracking.map((a) => a.stepsCount).reduce((a, b) => a + b);
   }
 
   /// Получает средний вес
   double? getAverageWeight() {
     if (weightTracking.isNotEmpty) {
-      final totalWeight = weightTracking
-          .map((w) => w.weight)
-          .reduce((a, b) => a + b);
+      final totalWeight =
+          weightTracking.map((w) => w.weight).reduce((a, b) => a + b);
       return totalWeight / weightTracking.length;
     }
     return null;
@@ -209,21 +206,26 @@ class AnalyticsData {
       events: (map['events'] as List)
           .map((eventMap) => AnalyticsEvent(
                 name: eventMap['name'] as String,
-                parameters: Map<String, dynamic>.from(eventMap['parameters'] as Map),
+                parameters:
+                    Map<String, dynamic>.from(eventMap['parameters'] as Map),
                 timestamp: DateTime.parse(eventMap['timestamp'] as String),
                 userId: eventMap['user_id'] as String?,
                 sessionId: eventMap['session_id'] as String?,
               ))
           .toList(),
       nutritionTracking: (map['nutrition_tracking'] as List?)
-          ?.map((n) => NutritionTracking.fromJson(n as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map(
+                  (n) => NutritionTracking.fromJson(n as Map<String, dynamic>))
+              .toList() ??
+          [],
       weightTracking: (map['weight_tracking'] as List?)
-          ?.map((w) => WeightTracking.fromJson(w as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((w) => WeightTracking.fromJson(w as Map<String, dynamic>))
+              .toList() ??
+          [],
       activityTracking: (map['activity_tracking'] as List?)
-          ?.map((a) => ActivityTracking.fromJson(a as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((a) => ActivityTracking.fromJson(a as Map<String, dynamic>))
+              .toList() ??
+          [],
       period: map['period'] as String? ?? 'day',
     );
   }
@@ -232,4 +234,4 @@ class AnalyticsData {
   String toString() {
     return 'AnalyticsData(userId: $userId, date: $date, metrics: $metrics, events: ${events.length}, nutrition: ${nutritionTracking.length}, weight: ${weightTracking.length}, activity: ${activityTracking.length})';
   }
-} 
+}

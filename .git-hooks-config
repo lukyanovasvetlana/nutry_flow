@@ -1,0 +1,38 @@
+# Конфигурация Git hooks для NutryFlow
+# Автор: AI Assistant
+
+# Включенные хуки
+ENABLED_HOOKS=(
+    "pre-commit"    # Проверка качества кода перед коммитом
+    "pre-push"      # Финальная проверка перед отправкой
+    "commit-msg"    # Проверка сообщений коммитов
+    "post-merge"    # Автоматическая очистка после слияния
+)
+
+# Настройки анализа кода
+ANALYSIS_SETTINGS=(
+    "unused_import: error"      # Ошибка для неиспользуемых импортов
+    "unused_element: error"     # Ошибка для неиспользуемых элементов
+    "unused_field: error"       # Ошибка для неиспользуемых полей
+    "unused_local_variable: error" # Ошибка для неиспользуемых переменных
+)
+
+# Настройки тестирования
+TEST_SETTINGS=(
+    "run_tests: true"           # Запускать тесты
+    "test_coverage: false"      # Проверять покрытие тестами
+    "fail_on_test_failure: true" # Отменять коммит при неудаче тестов
+)
+
+# Настройки сборки
+BUILD_SETTINGS=(
+    "check_build: true"         # Проверять сборку
+    "fail_on_build_failure: false" # Не отменять коммит при неудаче сборки
+)
+
+# Автоматические исправления
+AUTO_FIXES=(
+    "format_code: true"         # Автоматически форматировать код
+    "fix_imports: true"         # Автоматически исправлять импорты
+    "add_fixed_files: true"     # Добавлять исправленные файлы в коммит
+)

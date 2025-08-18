@@ -1,16 +1,114 @@
-# nutry_flow
+# NutryFlow 🥗
 
-A new Flutter project.
+Мобильное приложение для управления питанием и здоровым образом жизни, построенное на Flutter с использованием Clean Architecture.
 
-## Getting Started
+## 🚀 Быстрый старт для разработчиков
 
-This project is a starting point for a Flutter application.
+### Экспресс-настройка (5 минут)
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+# Клонируйте репозиторий
+git clone https://github.com/your-org/nutry_flow.git
+cd nutry_flow
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Запустите автоматическую настройку
+./scripts/setup_developer_environment.sh
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+📖 **Подробное руководство**: [QUICK_START_DEVELOPER.md](QUICK_START_DEVELOPER.md)
+
+## 🏗️ Архитектура
+
+Проект использует **Clean Architecture** с разделением на слои:
+
+- **Presentation Layer**: BLoC для управления состоянием
+- **Domain Layer**: Use Cases и Entities
+- **Data Layer**: Repositories и Data Sources
+
+### Структура проекта
+
+```
+lib/
+├── features/          # Функциональные модули
+│   ├── auth/         # Аутентификация
+│   ├── onboarding/   # Онбординг
+│   ├── dashboard/    # Дашборд
+│   ├── nutrition/    # Питание
+│   ├── activity/     # Активность
+│   └── profile/      # Профиль
+├── core/             # Общие компоненты
+├── shared/           # Общие виджеты и темы
+└── config/           # Конфигурация
+```
+
+## 🛠️ Технологии
+
+- **Flutter** 3.16.0+
+- **Dart** 3.2.0+
+- **BLoC** для управления состоянием
+- **GetIt** для dependency injection
+- **Supabase** для backend
+- **Firebase** для аналитики и push-уведомлений
+
+## 📱 Функциональность
+
+- ✅ Аутентификация пользователей
+- ✅ Онбординг и настройка целей
+- ✅ Отслеживание питания
+- ✅ Планирование тренировок
+- ✅ Аналитика и отчеты
+- ✅ Push-уведомления
+- ✅ Темная/светлая тема
+
+## 🧪 Тестирование
+
+```bash
+# Все тесты
+flutter test
+
+# С покрытием
+flutter test --coverage
+
+# Конкретный тест
+flutter test test/features/auth/auth_bloc_test.dart
+```
+
+## 📚 Документация
+
+- **Руководство разработчика**: [docs/developer-onboarding-guide.md](docs/developer-onboarding-guide.md)
+- **Стандарты кодирования**: [docs/development-guidelines.md](docs/development-guidelines.md)
+- **Архитектура**: [docs/architecture.md](docs/architecture.md)
+- **Scrum процессы**: [docs/scrum/](docs/scrum/)
+
+## 🚀 Разработка
+
+```bash
+# Запуск приложения
+flutter run
+
+# Сборка для продакшена
+flutter build apk --release
+flutter build appbundle --release
+flutter build ios --release
+```
+
+## 🤝 Участие в разработке
+
+1. Создайте ветку для новой функциональности
+2. Внесите изменения
+3. Напишите тесты
+4. Создайте Pull Request
+5. Пройдите code review
+
+## 📞 Поддержка
+
+- **Tech Lead**: [tech.lead@company.com]
+- **Scrum Master**: [scrum.master@company.com]
+- **Slack**: #nutryflow-dev
+- **Discord**: #development
+
+---
+
+**Версия**: 1.0.0  
+**Лицензия**: MIT  
+**Поддержка**: dev-team@company.com

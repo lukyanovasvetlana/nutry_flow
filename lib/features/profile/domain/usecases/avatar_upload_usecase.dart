@@ -1,5 +1,4 @@
 import 'dart:io';
-import '../entities/user_profile.dart';
 import '../repositories/profile_repository.dart';
 import '../../data/services/image_processing_service.dart';
 
@@ -41,23 +40,28 @@ class AvatarUploadUseCase {
   Future<AvatarUploadResult> execute(File imageFile, String userId) async {
     try {
       // Валидация файла изображения
-      final validationResult = await _imageProcessingService.validateImage(imageFile);
+      final validationResult =
+          await _imageProcessingService.validateImage(imageFile);
       if (!validationResult.isValid) {
-        return AvatarUploadResult.failure(validationResult.error ?? 'Invalid image');
+        return AvatarUploadResult.failure(
+            validationResult.error ?? 'Invalid image');
       }
-      
+
       // Обработка изображения
-      final processingResult = await _imageProcessingService.processAvatarImage(imageFile);
+      final processingResult =
+          await _imageProcessingService.processAvatarImage(imageFile);
       if (!processingResult.isSuccess) {
-        return AvatarUploadResult.failure(processingResult.error ?? 'Failed to process image');
+        return AvatarUploadResult.failure(
+            processingResult.error ?? 'Failed to process image');
       }
-      
+
       // Загрузка обработанного изображения
-      final avatarUrl = await _uploadProcessedImage(processingResult.outputFile!, userId);
-      
+      final avatarUrl =
+          await _uploadProcessedImage(processingResult.outputFile!, userId);
+
       // Обновление профиля пользователя
       await _updateUserAvatar(userId, avatarUrl);
-      
+
       return AvatarUploadResult.success(avatarUrl);
     } catch (e) {
       return AvatarUploadResult.failure('Failed to upload avatar: $e');
@@ -111,4 +115,4 @@ class AvatarUploadUseCase {
   Future<void> cleanupTempFiles() async {
     await _imageProcessingService.cleanupTempFiles();
   }
-} 
+}

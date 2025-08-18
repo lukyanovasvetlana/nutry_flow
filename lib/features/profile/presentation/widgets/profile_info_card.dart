@@ -5,9 +5,9 @@ class ProfileInfoCard extends StatelessWidget {
   final UserProfile profile;
 
   const ProfileInfoCard({
-    Key? key,
+    super.key,
     required this.profile,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,54 +30,54 @@ class ProfileInfoCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            
+
             // Personal Details
             _buildInfoRow(
               icon: Icons.person,
               label: 'Полное имя',
               value: profile.fullName,
             ),
-            
+
             _buildInfoRow(
               icon: Icons.email,
               label: 'Email',
               value: profile.email,
             ),
-            
+
             if (profile.phone?.isNotEmpty == true)
               _buildInfoRow(
                 icon: Icons.phone,
                 label: 'Телефон',
                 value: profile.phone ?? '',
               ),
-            
+
             if (profile.dateOfBirth != null)
               _buildInfoRow(
                 icon: Icons.calendar_today,
                 label: 'Дата рождения',
                 value: _formatDate(profile.dateOfBirth!),
               ),
-            
+
             if (profile.gender != null)
               _buildInfoRow(
                 icon: Icons.person_outline,
                 label: 'Пол',
                 value: profile.gender!.displayName,
               ),
-            
+
             if (profile.activityLevel != null)
               _buildInfoRow(
                 icon: Icons.fitness_center,
                 label: 'Уровень активности',
                 value: profile.activityLevel!.displayName,
               ),
-            
+
             // Health Information
-            if (profile.allergies.isNotEmpty || profile.healthConditions.isNotEmpty) ...[
+            if (profile.allergies.isNotEmpty ||
+                profile.healthConditions.isNotEmpty) ...[
               SizedBox(height: 16),
               Divider(),
               SizedBox(height: 16),
-              
               Text(
                 'Здоровье',
                 style: TextStyle(
@@ -87,7 +87,6 @@ class ProfileInfoCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              
               if (profile.allergies.isNotEmpty)
                 _buildInfoRow(
                   icon: Icons.warning,
@@ -95,7 +94,6 @@ class ProfileInfoCard extends StatelessWidget {
                   value: profile.allergies.join(', '),
                   valueColor: Colors.orange.shade700,
                 ),
-              
               if (profile.healthConditions.isNotEmpty)
                 _buildInfoRow(
                   icon: Icons.medical_services,
@@ -104,13 +102,12 @@ class ProfileInfoCard extends StatelessWidget {
                   valueColor: Colors.blue.shade700,
                 ),
             ],
-            
+
             // Dietary Preferences
             if (profile.dietaryPreferences.isNotEmpty) ...[
               SizedBox(height: 16),
               Divider(),
               SizedBox(height: 16),
-              
               Text(
                 'Предпочтения в питании',
                 style: TextStyle(
@@ -120,7 +117,6 @@ class ProfileInfoCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -207,8 +203,8 @@ class ProfileInfoCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: value.isEmpty 
-                        ? Colors.grey.shade400 
+                    color: value.isEmpty
+                        ? Colors.grey.shade400
                         : valueColor ?? Colors.black87,
                   ),
                 ),
@@ -222,10 +218,20 @@ class ProfileInfoCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final months = [
-      'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-      'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря'
     ];
-    
+
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
-} 
+}

@@ -8,6 +8,6 @@ class GetUserWorkoutsUseCase {
   GetUserWorkoutsUseCase(this._repository);
 
   Future<Either<String, List<Workout>>> execute(String userId) async {
-    return await _repository.getUserWorkouts(userId);
+    return _repository.getUserWorkouts(userId);
   }
-} 
+}

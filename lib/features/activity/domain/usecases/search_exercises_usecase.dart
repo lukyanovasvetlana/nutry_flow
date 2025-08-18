@@ -9,8 +9,8 @@ class SearchExercisesUseCase {
 
   Future<Either<String, List<Exercise>>> execute(String query) async {
     if (query.trim().isEmpty) {
-      return await _repository.getAllExercises();
+      return _repository.getAllExercises();
     }
-    return await _repository.searchExercises(query.trim());
+    return _repository.searchExercises(query.trim());
   }
-} 
+}

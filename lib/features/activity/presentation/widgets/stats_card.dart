@@ -8,12 +8,12 @@ class StatsCard extends StatelessWidget {
   final Color color;
 
   const StatsCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     required this.icon,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,6 @@ class StatsCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            
             Text(
               value,
               style: context.typography.headlineSmallStyle.copyWith(
@@ -50,7 +49,6 @@ class StatsCard extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
-            
             Text(
               title,
               style: context.typography.bodySmallStyle.copyWith(
@@ -65,4 +63,4 @@ class StatsCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

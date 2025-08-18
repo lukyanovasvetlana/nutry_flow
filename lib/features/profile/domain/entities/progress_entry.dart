@@ -112,4 +112,4 @@ class ProgressEntry extends Equatable {
         metadata,
         createdAt,
       ];
-} 
+}

@@ -8,7 +8,8 @@ part 'nutrition_diary_state.dart';
 class NutritionDiaryCubit extends Cubit<NutritionDiaryState> {
   final GetNutritionDiaryUseCase _getNutritionDiaryUseCase;
 
-  NutritionDiaryCubit(this._getNutritionDiaryUseCase) : super(NutritionDiaryInitial());
+  NutritionDiaryCubit(this._getNutritionDiaryUseCase)
+      : super(NutritionDiaryInitial());
 
   Future<void> loadDailyDiary(String userId, DateTime date) async {
     emit(NutritionDiaryLoading());
@@ -21,11 +22,13 @@ class NutritionDiaryCubit extends Cubit<NutritionDiaryState> {
     }
   }
 
-  Future<void> loadDateRangeDiary(String userId, DateTime startDate, DateTime endDate) async {
+  Future<void> loadDateRangeDiary(
+      String userId, DateTime startDate, DateTime endDate) async {
     emit(NutritionDiaryLoading());
 
     try {
-      final diaries = await _getNutritionDiaryUseCase.getDateRangeDiary(userId, startDate, endDate);
+      final diaries = await _getNutritionDiaryUseCase.getDateRangeDiary(
+          userId, startDate, endDate);
       emit(NutritionDiaryRangeSuccess(diaries));
     } catch (e) {
       emit(NutritionDiaryError(e.toString()));
@@ -36,7 +39,8 @@ class NutritionDiaryCubit extends Cubit<NutritionDiaryState> {
     emit(NutritionDiaryLoading());
 
     try {
-      final diaries = await _getNutritionDiaryUseCase.getWeeklyDiary(userId, startDate);
+      final diaries =
+          await _getNutritionDiaryUseCase.getWeeklyDiary(userId, startDate);
       emit(NutritionDiaryRangeSuccess(diaries));
     } catch (e) {
       emit(NutritionDiaryError(e.toString()));
@@ -47,20 +51,23 @@ class NutritionDiaryCubit extends Cubit<NutritionDiaryState> {
     emit(NutritionDiaryLoading());
 
     try {
-      final diaries = await _getNutritionDiaryUseCase.getMonthlyDiary(userId, month);
+      final diaries =
+          await _getNutritionDiaryUseCase.getMonthlyDiary(userId, month);
       emit(NutritionDiaryRangeSuccess(diaries));
     } catch (e) {
       emit(NutritionDiaryError(e.toString()));
     }
   }
 
-  Future<void> loadFilteredDiary(String userId, DateTime startDate, DateTime endDate, {MealType? mealType, String? foodCategory}) async {
+  Future<void> loadFilteredDiary(
+      String userId, DateTime startDate, DateTime endDate,
+      {MealType? mealType, String? foodCategory}) async {
     emit(NutritionDiaryLoading());
 
     try {
       final diaries = await _getNutritionDiaryUseCase.getFilteredDiary(
-        userId, 
-        startDate, 
+        userId,
+        startDate,
         endDate,
         mealType: mealType,
         foodCategory: foodCategory,
@@ -71,11 +78,13 @@ class NutritionDiaryCubit extends Cubit<NutritionDiaryState> {
     }
   }
 
-  Future<void> loadGoalAnalysis(String userId, DateTime date, NutritionGoals goals) async {
+  Future<void> loadGoalAnalysis(
+      String userId, DateTime date, NutritionGoals goals) async {
     emit(NutritionDiaryLoading());
 
     try {
-      final analysis = await _getNutritionDiaryUseCase.getGoalAnalysis(userId, date, goals);
+      final analysis =
+          await _getNutritionDiaryUseCase.getGoalAnalysis(userId, date, goals);
       emit(NutritionDiaryGoalAnalysisSuccess(analysis));
     } catch (e) {
       emit(NutritionDiaryError(e.toString()));
@@ -93,4 +102,4 @@ class NutritionDiaryCubit extends Cubit<NutritionDiaryState> {
   void setError(String message) {
     emit(NutritionDiaryError(message));
   }
-} 
+}

@@ -4,4 +4,4 @@ import 'menu_item.dart';
 export 'menu_item.dart';
 
 // Создаем typedef для удобства
-typedef Recipe = MenuItem; 
+typedef Recipe = MenuItem;

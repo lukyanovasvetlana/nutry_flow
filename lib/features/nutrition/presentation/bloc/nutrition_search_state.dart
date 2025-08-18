@@ -45,4 +45,4 @@ class NutritionSearchError extends NutritionSearchState {
 
   @override
   List<Object> get props => [message];
-} 
+}

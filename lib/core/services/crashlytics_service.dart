@@ -18,7 +18,8 @@ class CrashlyticsService {
     if (_isInitialized) return;
 
     try {
-      developer.log('🚨 CrashlyticsService: Initializing crashlytics service', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Initializing crashlytics service',
+          name: 'CrashlyticsService');
 
       _crashlytics = MockFirebaseCrashlytics.instance;
 
@@ -29,9 +30,13 @@ class CrashlyticsService {
       await _setUserData();
 
       _isInitialized = true;
-      developer.log('🚨 CrashlyticsService: Crashlytics service initialized successfully', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Crashlytics service initialized successfully',
+          name: 'CrashlyticsService');
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to initialize crashlytics service: $e', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Failed to initialize crashlytics service: $e',
+          name: 'CrashlyticsService');
       rethrow;
     }
   }
@@ -46,7 +51,8 @@ class CrashlyticsService {
         await _crashlytics.setCustomKey('user_id', user.id);
       }
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to set user data: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to set user data: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -59,22 +65,29 @@ class CrashlyticsService {
   }) async {
     try {
       if (!_isInitialized) {
-        developer.log('🚨 CrashlyticsService: Crashlytics not initialized, logging to console', name: 'CrashlyticsService');
+        developer.log(
+            '🚨 CrashlyticsService: Crashlytics not initialized, logging to console',
+            name: 'CrashlyticsService');
         developer.log('🚨 Error: $error', name: 'CrashlyticsService');
         if (stackTrace != null) {
-          developer.log('🚨 Stack trace: $stackTrace', name: 'CrashlyticsService');
+          developer.log('🚨 Stack trace: $stackTrace',
+              name: 'CrashlyticsService');
         }
         return;
       }
 
-      developer.log('🚨 CrashlyticsService: Logging error: $error', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Logging error: $error',
+          name: 'CrashlyticsService');
 
       // Логируем в Crashlytics
       await _crashlytics.recordError(
         error,
         stackTrace,
         reason: reason,
-        information: additionalData?.entries.map((e) => '${e.key}: ${e.value}').toList() ?? [],
+        information: additionalData?.entries
+                .map((e) => '${e.key}: ${e.value}')
+                .toList() ??
+            [],
       );
 
       // Логируем в аналитику
@@ -84,9 +97,11 @@ class CrashlyticsService {
         additionalData: additionalData,
       );
 
-      developer.log('🚨 CrashlyticsService: Error logged successfully', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Error logged successfully',
+          name: 'CrashlyticsService');
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log error: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -99,22 +114,29 @@ class CrashlyticsService {
   }) async {
     try {
       if (!_isInitialized) {
-        developer.log('🚨 CrashlyticsService: Crashlytics not initialized, logging to console', name: 'CrashlyticsService');
+        developer.log(
+            '🚨 CrashlyticsService: Crashlytics not initialized, logging to console',
+            name: 'CrashlyticsService');
         developer.log('🚨 Exception: $exception', name: 'CrashlyticsService');
         if (stackTrace != null) {
-          developer.log('🚨 Stack trace: $stackTrace', name: 'CrashlyticsService');
+          developer.log('🚨 Stack trace: $stackTrace',
+              name: 'CrashlyticsService');
         }
         return;
       }
 
-      developer.log('🚨 CrashlyticsService: Logging exception: $exception', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Logging exception: $exception',
+          name: 'CrashlyticsService');
 
       // Логируем в Crashlytics
       await _crashlytics.recordError(
         exception,
         stackTrace,
         reason: reason,
-        information: additionalData?.entries.map((e) => '${e.key}: ${e.value}').toList() ?? [],
+        information: additionalData?.entries
+                .map((e) => '${e.key}: ${e.value}')
+                .toList() ??
+            [],
       );
 
       // Логируем в аналитику
@@ -124,9 +146,11 @@ class CrashlyticsService {
         additionalData: additionalData,
       );
 
-      developer.log('🚨 CrashlyticsService: Exception logged successfully', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Exception logged successfully',
+          name: 'CrashlyticsService');
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log exception: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log exception: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -134,17 +158,22 @@ class CrashlyticsService {
   Future<void> setCustomKey(String key, dynamic value) async {
     try {
       if (!_isInitialized) {
-        developer.log('🚨 CrashlyticsService: Crashlytics not initialized, skipping custom key: $key', name: 'CrashlyticsService');
+        developer.log(
+            '🚨 CrashlyticsService: Crashlytics not initialized, skipping custom key: $key',
+            name: 'CrashlyticsService');
         return;
       }
 
-      developer.log('🚨 CrashlyticsService: Setting custom key: $key = $value', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Setting custom key: $key = $value',
+          name: 'CrashlyticsService');
 
       await _crashlytics.setCustomKey(key, value);
 
-      developer.log('🚨 CrashlyticsService: Custom key set successfully: $key', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Custom key set successfully: $key',
+          name: 'CrashlyticsService');
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to set custom key $key: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to set custom key $key: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -152,17 +181,23 @@ class CrashlyticsService {
   Future<void> setUserIdentifier(String identifier) async {
     try {
       if (!_isInitialized) {
-        developer.log('🚨 CrashlyticsService: Crashlytics not initialized, skipping user identifier', name: 'CrashlyticsService');
+        developer.log(
+            '🚨 CrashlyticsService: Crashlytics not initialized, skipping user identifier',
+            name: 'CrashlyticsService');
         return;
       }
 
-      developer.log('🚨 CrashlyticsService: Setting user identifier: $identifier', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Setting user identifier: $identifier',
+          name: 'CrashlyticsService');
 
       await _crashlytics.setUserIdentifier(identifier);
 
-      developer.log('🚨 CrashlyticsService: User identifier set successfully', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: User identifier set successfully',
+          name: 'CrashlyticsService');
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to set user identifier: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to set user identifier: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -170,17 +205,22 @@ class CrashlyticsService {
   Future<void> log(String message) async {
     try {
       if (!_isInitialized) {
-        developer.log('🚨 CrashlyticsService: Crashlytics not initialized, logging to console: $message', name: 'CrashlyticsService');
+        developer.log(
+            '🚨 CrashlyticsService: Crashlytics not initialized, logging to console: $message',
+            name: 'CrashlyticsService');
         return;
       }
 
-      developer.log('🚨 CrashlyticsService: Logging message: $message', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Logging message: $message',
+          name: 'CrashlyticsService');
 
       await _crashlytics.log(message);
 
-      developer.log('🚨 CrashlyticsService: Message logged successfully', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Message logged successfully',
+          name: 'CrashlyticsService');
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log message: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log message: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -194,7 +234,9 @@ class CrashlyticsService {
     Map<String, dynamic>? responseData,
   }) async {
     try {
-      developer.log('🚨 CrashlyticsService: Logging API error: $method $endpoint - $statusCode', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Logging API error: $method $endpoint - $statusCode',
+          name: 'CrashlyticsService');
 
       await logError(
         'API Error: $method $endpoint returned $statusCode',
@@ -211,7 +253,8 @@ class CrashlyticsService {
         },
       );
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log API error: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log API error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -223,7 +266,9 @@ class CrashlyticsService {
     Map<String, dynamic>? queryData,
   }) async {
     try {
-      developer.log('🚨 CrashlyticsService: Logging database error: $operation on $table', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Logging database error: $operation on $table',
+          name: 'CrashlyticsService');
 
       await logError(
         'Database Error: $operation on $table failed',
@@ -238,7 +283,8 @@ class CrashlyticsService {
         },
       );
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log database error: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log database error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -249,7 +295,8 @@ class CrashlyticsService {
     String? userId,
   }) async {
     try {
-      developer.log('🚨 CrashlyticsService: Logging auth error: $operation', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Logging auth error: $operation',
+          name: 'CrashlyticsService');
 
       await logError(
         'Auth Error: $operation failed',
@@ -263,7 +310,8 @@ class CrashlyticsService {
         },
       );
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log auth error: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log auth error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -275,7 +323,9 @@ class CrashlyticsService {
     Map<String, dynamic>? additionalData,
   }) async {
     try {
-      developer.log('🚨 CrashlyticsService: Logging UI error: $screenName - $widgetName', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Logging UI error: $screenName - $widgetName',
+          name: 'CrashlyticsService');
 
       await logError(
         'UI Error: $widgetName on $screenName',
@@ -290,7 +340,8 @@ class CrashlyticsService {
         },
       );
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log UI error: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log UI error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -302,7 +353,9 @@ class CrashlyticsService {
     int? statusCode,
   }) async {
     try {
-      developer.log('🚨 CrashlyticsService: Logging network error: $method $url', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Logging network error: $method $url',
+          name: 'CrashlyticsService');
 
       await logError(
         'Network Error: $method $url failed',
@@ -317,7 +370,8 @@ class CrashlyticsService {
         },
       );
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log network error: $e', name: 'CrashlyticsService');
+      developer.log('🚨 CrashlyticsService: Failed to log network error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -329,7 +383,9 @@ class CrashlyticsService {
     double? actualValue,
   }) async {
     try {
-      developer.log('🚨 CrashlyticsService: Logging performance error: $metricName', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Logging performance error: $metricName',
+          name: 'CrashlyticsService');
 
       await logError(
         'Performance Error: $metricName failed',
@@ -344,7 +400,9 @@ class CrashlyticsService {
         },
       );
     } catch (e) {
-      developer.log('🚨 CrashlyticsService: Failed to log performance error: $e', name: 'CrashlyticsService');
+      developer.log(
+          '🚨 CrashlyticsService: Failed to log performance error: $e',
+          name: 'CrashlyticsService');
     }
   }
 
@@ -353,4 +411,4 @@ class CrashlyticsService {
 
   /// Проверка инициализации
   bool get isInitialized => _isInitialized;
-} 
+}

@@ -12,4 +12,4 @@ class StepsCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

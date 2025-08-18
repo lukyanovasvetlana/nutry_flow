@@ -1,7 +1,7 @@
 import '../models/exercise.dart';
 
 class ExerciseService {
-  static List<Exercise> _exercises = [
+  static final List<Exercise> _exercises = [
     Exercise(
       id: '1',
       name: 'Приседания',
@@ -11,7 +11,8 @@ class ExerciseService {
       reps: 12,
       restSeconds: 60,
       iconName: 'fitness_center',
-      description: 'Комплексное упражнение, которое задействует квадрицепсы, подколенные сухожилия и ягодицы.',
+      description:
+          'Комплексное упражнение, которое задействует квадрицепсы, подколенные сухожилия и ягодицы.',
       targetMuscles: ['Квадрицепсы', 'Подколенные сухожилия', 'Ягодицы'],
       equipment: ['Собственный вес'],
     ),
@@ -24,8 +25,14 @@ class ExerciseService {
       reps: 10,
       restSeconds: 90,
       iconName: 'fitness_center',
-      description: 'Базовое комплексное упражнение, которое прорабатывает всю заднюю цепь мышц.',
-      targetMuscles: ['Подколенные сухожилия', 'Ягодицы', 'Поясница', 'Трапеции'],
+      description:
+          'Базовое комплексное упражнение, которое прорабатывает всю заднюю цепь мышц.',
+      targetMuscles: [
+        'Подколенные сухожилия',
+        'Ягодицы',
+        'Поясница',
+        'Трапеции'
+      ],
       equipment: ['Штанга', 'Блины'],
     ),
     Exercise(
@@ -37,7 +44,8 @@ class ExerciseService {
       reps: 8,
       restSeconds: 60,
       iconName: 'fitness_center',
-      description: 'Классическое упражнение для верхней части тела, нацеленное на грудь, плечи и трицепсы.',
+      description:
+          'Классическое упражнение для верхней части тела, нацеленное на грудь, плечи и трицепсы.',
       targetMuscles: ['Грудь', 'Плечи', 'Трицепсы'],
       equipment: ['Штанга', 'Скамья', 'Блины'],
     ),
@@ -50,7 +58,8 @@ class ExerciseService {
       reps: 8,
       restSeconds: 90,
       iconName: 'fitness_center',
-      description: 'Упражнение с собственным весом, которое прорабатывает спину и бицепсы.',
+      description:
+          'Упражнение с собственным весом, которое прорабатывает спину и бицепсы.',
       targetMuscles: ['Широчайшие', 'Ромбовидные', 'Бицепсы'],
       equipment: ['Турник'],
     ),
@@ -63,7 +72,8 @@ class ExerciseService {
       reps: 60,
       restSeconds: 30,
       iconName: 'fitness_center',
-      description: 'Изометрическое упражнение для кора, которое укрепляет всю среднюю часть тела.',
+      description:
+          'Изометрическое упражнение для кора, которое укрепляет всю среднюю часть тела.',
       targetMuscles: ['Пресс', 'Плечи', 'Ягодицы'],
       equipment: ['Собственный вес'],
     ),
@@ -77,7 +87,8 @@ class ExerciseService {
       restSeconds: 0,
       duration: '30 мин',
       iconName: 'directions_run',
-      description: 'Кардиоупражнение, которое улучшает выносливость и сжигает калории.',
+      description:
+          'Кардиоупражнение, которое улучшает выносливость и сжигает калории.',
       targetMuscles: ['Ноги', 'Сердечно-сосудистая система'],
       equipment: ['Беговые кроссовки'],
     ),
@@ -90,7 +101,8 @@ class ExerciseService {
       reps: 15,
       restSeconds: 60,
       iconName: 'fitness_center',
-      description: 'Одностороннее упражнение для ног, которое улучшает баланс и силу.',
+      description:
+          'Одностороннее упражнение для ног, которое улучшает баланс и силу.',
       targetMuscles: ['Квадрицепсы', 'Подколенные сухожилия', 'Ягодицы'],
       equipment: ['Собственный вес'],
     ),
@@ -130,7 +142,8 @@ class ExerciseService {
       restSeconds: 0,
       duration: '45 мин',
       iconName: 'directions_bike',
-      description: 'Низкоударное кардиоупражнение, которое укрепляет мышцы ног.',
+      description:
+          'Низкоударное кардиоупражнение, которое укрепляет мышцы ног.',
       targetMuscles: ['Ноги', 'Сердечно-сосудистая система'],
       equipment: ['Велосипед'],
     ),
@@ -143,7 +156,8 @@ class ExerciseService {
       reps: 20,
       restSeconds: 30,
       iconName: 'fitness_center',
-      description: 'Динамическое упражнение, которое сочетает кардио и укрепление кора.',
+      description:
+          'Динамическое упражнение, которое сочетает кардио и укрепление кора.',
       targetMuscles: ['Пресс', 'Плечи', 'Ноги'],
       equipment: ['Собственный вес'],
     ),
@@ -157,7 +171,8 @@ class ExerciseService {
       restSeconds: 0,
       duration: '60 мин',
       iconName: 'self_improvement',
-      description: 'Практика, которая сочетает физические позы, дыхание и медитацию.',
+      description:
+          'Практика, которая сочетает физические позы, дыхание и медитацию.',
       targetMuscles: ['Все тело'],
       equipment: ['Коврик для йоги'],
     ),
@@ -169,27 +184,41 @@ class ExerciseService {
 
   static List<Exercise> searchExercises(String query) {
     if (query.isEmpty) return _exercises;
-    
+
     return _exercises.where((exercise) {
       return exercise.name.toLowerCase().contains(query.toLowerCase()) ||
-             exercise.category.toLowerCase().contains(query.toLowerCase()) ||
-             exercise.targetMuscles.any((muscle) => 
-                muscle.toLowerCase().contains(query.toLowerCase()));
+          exercise.category.toLowerCase().contains(query.toLowerCase()) ||
+          exercise.targetMuscles.any(
+              (muscle) => muscle.toLowerCase().contains(query.toLowerCase()));
     }).toList();
   }
 
   static List<Exercise> filterByCategory(String category) {
     if (category.isEmpty || category == 'All') return _exercises;
-    return _exercises.where((exercise) => exercise.category == category).toList();
+    return _exercises
+        .where((exercise) => exercise.category == category)
+        .toList();
   }
 
   static List<Exercise> filterByDifficulty(String difficulty) {
     if (difficulty.isEmpty || difficulty == 'All') return _exercises;
-    return _exercises.where((exercise) => exercise.difficulty == difficulty).toList();
+    return _exercises
+        .where((exercise) => exercise.difficulty == difficulty)
+        .toList();
   }
 
   static List<String> getCategories() {
-    return ['All', 'Ноги', 'Спина', 'Грудь', 'Плечи', 'Руки', 'Пресс', 'Кардио', 'Растяжка'];
+    return [
+      'All',
+      'Ноги',
+      'Спина',
+      'Грудь',
+      'Плечи',
+      'Руки',
+      'Пресс',
+      'Кардио',
+      'Растяжка'
+    ];
   }
 
   static List<String> getDifficulties() {
@@ -203,4 +232,4 @@ class ExerciseService {
       return null;
     }
   }
-} 
+}

@@ -18,7 +18,7 @@ import 'package:image_picker/image_picker.dart';
 
 class AddEditRecipeScreen extends StatefulWidget {
   final MenuItem? recipe;
-  const AddEditRecipeScreen({Key? key, this.recipe}) : super(key: key);
+  const AddEditRecipeScreen({super.key, this.recipe});
 
   @override
   State<AddEditRecipeScreen> createState() => _AddEditRecipeScreenState();
@@ -57,13 +57,9 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
   }
 
   void _initializeService() {
-    print('🍽️ AddEditRecipeScreen: Initializing service - isDemo: ${SupabaseConfig.isDemo}');
-    
     if (SupabaseConfig.isDemo) {
-      print('🍽️ AddEditRecipeScreen: Using MockRecipeService');
       _recipeService = MockRecipeService();
     } else {
-      print('🍽️ AddEditRecipeScreen: Using RecipeService');
       _recipeService = RecipeService();
     }
   }
@@ -74,12 +70,14 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Выберите фото'),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.green),
+                leading:
+                    const Icon(Icons.photo_library, color: AppColors.green),
                 title: const Text('Галерея'),
                 onTap: () {
                   Navigator.pop(context);
@@ -109,7 +107,7 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
         maxHeight: 1080,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         setState(() {
           _photos.add(RecipePhoto(
@@ -195,8 +193,8 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
       builder: (context) => PreviewRecipeModal(
         title: _titleController.text,
         description: _descriptionController.text,
-        category: _selectedCategory,
-        difficulty: _selectedDifficulty,
+        category: _selectedCategory ?? 'Завтрак',
+        difficulty: _selectedDifficulty ?? 'Легко',
         photos: _photos,
         ingredients: _ingredients,
         steps: _steps,
@@ -205,20 +203,13 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
     );
   }
 
-  void _removePhoto(int index) {
-    final photo = _photos[index];
-    if (photo.url != null) {
-      _photosToDelete.add(photo.url!);
-    }
-    setState(() {
-      _photos.removeAt(index);
-    });
-  }
-
   void _saveRecipe() async {
-    if (_formKey.currentState!.validate() && _photos.isNotEmpty && _ingredients.isNotEmpty && _steps.isNotEmpty) {
+    if (_formKey.currentState!.validate() &&
+        _photos.isNotEmpty &&
+        _ingredients.isNotEmpty &&
+        _steps.isNotEmpty) {
       setState(() => _isLoading = true);
-      
+
       try {
         final menuItem = MenuItem(
           id: widget.recipe?.id ?? const Uuid().v4(),
@@ -234,19 +225,23 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
 
         if (widget.recipe == null) {
           // Создание нового рецепта
-          final photoFiles = _photos.where((p) => p.file != null).map((p) => p.file!).toList();
+          final photoFiles =
+              _photos.where((p) => p.file != null).map((p) => p.file!).toList();
           await _recipeService.saveRecipe(menuItem, photoFiles);
         } else {
           // Обновление существующего
-          final newPhotoFiles = _photos.where((p) => p.file != null).map((p) => p.file!).toList();
-          await _recipeService.updateRecipe(menuItem, newPhotos: newPhotoFiles, photosToDelete: _photosToDelete);
+          final newPhotoFiles =
+              _photos.where((p) => p.file != null).map((p) => p.file!).toList();
+          await _recipeService.updateRecipe(menuItem,
+              newPhotos: newPhotoFiles, photosToDelete: _photosToDelete);
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Рецепт успешно ${widget.recipe == null ? 'сохранён' : 'обновлён'}!')),
+          SnackBar(
+              content: Text(
+                  'Рецепт успешно ${widget.recipe == null ? 'сохранён' : 'обновлён'}!')),
         );
         Navigator.pop(context, true); // Возвращаем true для обновления списка
-
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка сохранения: $e')),
@@ -255,8 +250,10 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
         setState(() => _isLoading = false);
       }
     } else {
-       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Пожалуйста, заполните все поля и добавьте фото, ингредиенты и шаги')),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Пожалуйста, заполните все поля и добавьте фото, ингредиенты и шаги')),
       );
     }
   }
@@ -265,7 +262,8 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.recipe == null ? 'Добавить рецепт' : 'Редактировать рецепт'),
+        title: Text(
+            widget.recipe == null ? 'Добавить рецепт' : 'Редактировать рецепт'),
         actions: [
           IconButton(
             icon: const Icon(Icons.remove_red_eye),
@@ -283,7 +281,8 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Фото
-                Text('Фото блюда', style: Theme.of(context).textTheme.titleMedium),
+                Text('Фото блюда',
+                    style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 PhotosCarousel(
                   photos: _photos,
@@ -293,8 +292,11 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                 // Название
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(labelText: 'Название блюда'),
-                  validator: (value) => value == null || value.isEmpty ? 'Введите название' : null,
+                  decoration:
+                      const InputDecoration(labelText: 'Название блюда'),
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Введите название'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 // Описание
@@ -308,29 +310,34 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                 DropdownButtonFormField<String>(
                   value: _selectedCategory,
                   items: ['Завтрак', 'Обед', 'Перекус', 'Ужин']
-                      .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                      .map((cat) =>
+                          DropdownMenuItem(value: cat, child: Text(cat)))
                       .toList(),
                   onChanged: (val) => setState(() => _selectedCategory = val),
                   decoration: const InputDecoration(labelText: 'Категория'),
-                  validator: (value) => value == null ? 'Выберите категорию' : null,
+                  validator: (value) =>
+                      value == null ? 'Выберите категорию' : null,
                 ),
                 const SizedBox(height: 16),
                 // Сложность
                 DropdownButtonFormField<String>(
                   value: _selectedDifficulty,
                   items: ['Легко', 'Средне', 'Сложно']
-                      .map((dif) => DropdownMenuItem(value: dif, child: Text(dif)))
+                      .map((dif) =>
+                          DropdownMenuItem(value: dif, child: Text(dif)))
                       .toList(),
                   onChanged: (val) => setState(() => _selectedDifficulty = val),
                   decoration: const InputDecoration(labelText: 'Сложность'),
-                  validator: (value) => value == null ? 'Выберите сложность' : null,
+                  validator: (value) =>
+                      value == null ? 'Выберите сложность' : null,
                 ),
                 const SizedBox(height: 24),
                 // Ингредиенты
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Ингредиенты', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Ингредиенты',
+                        style: Theme.of(context).textTheme.titleMedium),
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: _addIngredient,
@@ -345,7 +352,8 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Шаги приготовления', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Шаги приготовления',
+                        style: Theme.of(context).textTheme.titleMedium),
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: _addStep,
@@ -358,11 +366,13 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                     )),
                 const SizedBox(height: 24),
                 // Автоматический расчет нутриентов
-                Text('Нутриенты (рассчитаны автоматически)', style: Theme.of(context).textTheme.titleMedium),
+                Text('Нутриенты (рассчитаны автоматически)',
+                    style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 _nutritionFacts == null
                     ? const Text('Добавьте ингредиенты для расчета')
-                    : Text('Калории: ${_nutritionFacts!.calories} ккал, Белки: ${_nutritionFacts!.protein} г, Жиры: ${_nutritionFacts!.fat} г, Углеводы: ${_nutritionFacts!.carbs} г'),
+                    : Text(
+                        'Калории: ${_nutritionFacts!.calories} ккал, Белки: ${_nutritionFacts!.protein} г, Жиры: ${_nutritionFacts!.fat} г, Углеводы: ${_nutritionFacts!.carbs} г'),
                 const SizedBox(height: 32),
                 // Кнопка сохранить
                 SizedBox(
@@ -382,4 +392,4 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
       ),
     );
   }
-} 
+}

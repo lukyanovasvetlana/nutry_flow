@@ -9,4 +9,4 @@ class ServerFailure extends Failure {
 
 class AnalyticsFailure extends Failure {
   AnalyticsFailure(super.message);
-} 
+}

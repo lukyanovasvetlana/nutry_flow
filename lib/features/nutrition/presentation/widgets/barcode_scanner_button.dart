@@ -4,13 +4,13 @@ class BarcodeScannerButton extends StatelessWidget {
   final Function(String) onBarcodeScanned;
 
   const BarcodeScannerButton({
-    Key? key,
+    super.key,
     required this.onBarcodeScanned,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(12),
@@ -32,7 +32,8 @@ class BarcodeScannerButton extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Сканер штрихкода'),
-        content: const Text('Функция сканирования штрихкода будет добавлена позже.'),
+        content:
+            const Text('Функция сканирования штрихкода будет добавлена позже.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -42,4 +43,4 @@ class BarcodeScannerButton extends StatelessWidget {
       ),
     );
   }
-} 
+}

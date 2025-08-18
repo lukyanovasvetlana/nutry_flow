@@ -36,13 +36,13 @@ class ActivitySessionModel {
       id: json['id'],
       userId: json['user_id'],
       workoutId: json['workout_id'],
-      workout: json['workouts'] != null 
-          ? WorkoutModel.fromJson(json['workouts']) 
+      workout: json['workouts'] != null
+          ? WorkoutModel.fromJson(json['workouts'])
           : null,
       status: json['status'],
       startedAt: DateTime.parse(json['started_at']),
-      completedAt: json['completed_at'] != null 
-          ? DateTime.parse(json['completed_at']) 
+      completedAt: json['completed_at'] != null
+          ? DateTime.parse(json['completed_at'])
           : null,
       durationMinutes: json['duration_minutes'],
       caloriesBurned: json['calories_burned'],
@@ -90,8 +90,8 @@ class ActivitySessionModel {
       id: session.id,
       userId: session.userId,
       workoutId: session.workoutId,
-      workout: session.workout != null 
-          ? WorkoutModel.fromEntity(session.workout!) 
+      workout: session.workout != null
+          ? WorkoutModel.fromEntity(session.workout!)
           : null,
       status: _statusToString(session.status),
       startedAt: session.startedAt,
@@ -131,4 +131,4 @@ class ActivitySessionModel {
         return 'cancelled';
     }
   }
-} 
+}

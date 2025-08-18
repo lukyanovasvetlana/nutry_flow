@@ -17,7 +17,8 @@ class PerformanceService {
     if (_isInitialized) return;
 
     try {
-      developer.log('⚡ PerformanceService: Initializing performance service', name: 'PerformanceService');
+      developer.log('⚡ PerformanceService: Initializing performance service',
+          name: 'PerformanceService');
 
       _performance = MockFirebasePerformance.instance;
 
@@ -25,9 +26,13 @@ class PerformanceService {
       await _performance.setPerformanceCollectionEnabled(true);
 
       _isInitialized = true;
-      developer.log('⚡ PerformanceService: Performance service initialized successfully', name: 'PerformanceService');
+      developer.log(
+          '⚡ PerformanceService: Performance service initialized successfully',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('⚡ PerformanceService: Failed to initialize performance service: $e', name: 'PerformanceService');
+      developer.log(
+          '⚡ PerformanceService: Failed to initialize performance service: $e',
+          name: 'PerformanceService');
       rethrow;
     }
   }
@@ -36,14 +41,18 @@ class PerformanceService {
   TraceInterface createTrace(String name) {
     try {
       if (!_isInitialized) {
-        developer.log('⚡ PerformanceService: Performance not initialized, creating mock trace', name: 'PerformanceService');
+        developer.log(
+            '⚡ PerformanceService: Performance not initialized, creating mock trace',
+            name: 'PerformanceService');
         return _performance.newTrace(name);
       }
 
-      developer.log('⚡ PerformanceService: Creating trace: $name', name: 'PerformanceService');
+      developer.log('⚡ PerformanceService: Creating trace: $name',
+          name: 'PerformanceService');
       return _performance.newTrace(name);
     } catch (e) {
-      developer.log('⚡ PerformanceService: Failed to create trace $name: $e', name: 'PerformanceService');
+      developer.log('⚡ PerformanceService: Failed to create trace $name: $e',
+          name: 'PerformanceService');
       return _performance.newTrace(name);
     }
   }
@@ -52,14 +61,18 @@ class PerformanceService {
   HttpMetricInterface createHttpMetric(String url, String method) {
     try {
       if (!_isInitialized) {
-        developer.log('⚡ PerformanceService: Performance not initialized, creating mock HTTP metric', name: 'PerformanceService');
+        developer.log(
+            '⚡ PerformanceService: Performance not initialized, creating mock HTTP metric',
+            name: 'PerformanceService');
         return _performance.newHttpMetric(url, HttpMethod.get);
       }
 
-      developer.log('⚡ PerformanceService: Creating HTTP metric: $method $url', name: 'PerformanceService');
+      developer.log('⚡ PerformanceService: Creating HTTP metric: $method $url',
+          name: 'PerformanceService');
       return _performance.newHttpMetric(url, HttpMethod.get);
     } catch (e) {
-      developer.log('⚡ PerformanceService: Failed to create HTTP metric: $e', name: 'PerformanceService');
+      developer.log('⚡ PerformanceService: Failed to create HTTP metric: $e',
+          name: 'PerformanceService');
       return _performance.newHttpMetric(url, HttpMethod.get);
     }
   }
@@ -67,14 +80,14 @@ class PerformanceService {
   /// Отслеживание времени загрузки экрана
   Future<void> trackScreenLoadTime(String screenName) async {
     try {
-      final trace = await createTrace('screen_load_$screenName');
+      final trace = createTrace('screen_load_$screenName');
       await trace.start();
-      
+
       // Имитируем время загрузки
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'screen_load_time',
@@ -83,24 +96,28 @@ class PerformanceService {
           'load_time_ms': 100,
         },
       );
-      
-      developer.log('📊 PerformanceService: Screen load time tracked: $screenName - 100ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: Screen load time tracked: $screenName - 100ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track screen load time: $e', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: Failed to track screen load time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание времени API запроса
   Future<void> trackApiRequest(String endpoint, String method) async {
     try {
-      final metric = await createHttpMetric(endpoint, method);
+      final metric = createHttpMetric(endpoint, method);
       await metric.start();
-      
+
       // Имитируем время запроса
       await Future.delayed(const Duration(milliseconds: 200));
-      
+
       await metric.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'api_request_time',
@@ -110,24 +127,28 @@ class PerformanceService {
           'request_time_ms': 200,
         },
       );
-      
-      developer.log('📊 PerformanceService: API request time tracked: $endpoint - 200ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: API request time tracked: $endpoint - 200ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track API request time: $e', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: Failed to track API request time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание времени загрузки данных
   Future<void> trackDataLoadTime(String dataType, Duration loadTime) async {
     try {
-      final trace = await createTrace('data_load_$dataType');
+      final trace = createTrace('data_load_$dataType');
       await trace.start();
-      
+
       // Имитируем время загрузки
       await Future.delayed(loadTime);
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'data_load_time',
@@ -136,24 +157,28 @@ class PerformanceService {
           'load_time_ms': loadTime.inMilliseconds,
         },
       );
-      
-      developer.log('📊 PerformanceService: Data load time tracked: $dataType - ${loadTime.inMilliseconds}ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: Data load time tracked: $dataType - ${loadTime.inMilliseconds}ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track data load time: $e', name: 'PerformanceService');
+      developer.log('📊 PerformanceService: Failed to track data load time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание времени обработки изображений
-  Future<void> trackImageProcessingTime(String imageType, Duration processingTime) async {
+  Future<void> trackImageProcessingTime(
+      String imageType, Duration processingTime) async {
     try {
-      final trace = await createTrace('image_processing_$imageType');
+      final trace = createTrace('image_processing_$imageType');
       await trace.start();
-      
+
       // Имитируем время обработки
       await Future.delayed(processingTime);
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'image_processing_time',
@@ -162,24 +187,28 @@ class PerformanceService {
           'processing_time_ms': processingTime.inMilliseconds,
         },
       );
-      
-      developer.log('📊 PerformanceService: Image processing time tracked: $imageType - ${processingTime.inMilliseconds}ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: Image processing time tracked: $imageType - ${processingTime.inMilliseconds}ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track image processing time: $e', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: Failed to track image processing time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание времени синхронизации
   Future<void> trackSyncTime(String syncType, Duration syncTime) async {
     try {
-      final trace = await createTrace('sync_$syncType');
+      final trace = createTrace('sync_$syncType');
       await trace.start();
-      
+
       // Имитируем время синхронизации
       await Future.delayed(syncTime);
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'sync_time',
@@ -188,28 +217,31 @@ class PerformanceService {
           'sync_time_ms': syncTime.inMilliseconds,
         },
       );
-      
-      developer.log('📊 PerformanceService: Sync time tracked: $syncType - ${syncTime.inMilliseconds}ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: Sync time tracked: $syncType - ${syncTime.inMilliseconds}ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track sync time: $e', name: 'PerformanceService');
+      developer.log('📊 PerformanceService: Failed to track sync time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание использования памяти
   Future<void> trackMemoryUsage() async {
     try {
-      final trace = await createTrace('memory_usage');
+      final trace = createTrace('memory_usage');
       await trace.start();
-      
+
       // Получаем информацию о памяти (упрощенная версия)
       final memoryInfo = {
         'total_memory': 1024 * 1024 * 1024, // 1GB
-        'used_memory': 512 * 1024 * 1024,   // 512MB
-        'free_memory': 512 * 1024 * 1024,   // 512MB
+        'used_memory': 512 * 1024 * 1024, // 512MB
+        'free_memory': 512 * 1024 * 1024, // 512MB
       };
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'memory_usage',
@@ -219,24 +251,26 @@ class PerformanceService {
           'free_memory_mb': memoryInfo['free_memory']! / (1024 * 1024),
         },
       );
-      
-      developer.log('📊 PerformanceService: Memory usage tracked', name: 'PerformanceService');
+
+      developer.log('📊 PerformanceService: Memory usage tracked',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track memory usage: $e', name: 'PerformanceService');
+      developer.log('📊 PerformanceService: Failed to track memory usage: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание времени запуска приложения
   Future<void> trackAppStartTime(Duration startTime) async {
     try {
-      final trace = await createTrace('app_start');
+      final trace = createTrace('app_start');
       await trace.start();
-      
+
       // Имитируем время запуска
       await Future.delayed(startTime);
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'app_start_time',
@@ -244,24 +278,27 @@ class PerformanceService {
           'start_time_ms': startTime.inMilliseconds,
         },
       );
-      
-      developer.log('📊 PerformanceService: App start time tracked: ${startTime.inMilliseconds}ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: App start time tracked: ${startTime.inMilliseconds}ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track app start time: $e', name: 'PerformanceService');
+      developer.log('📊 PerformanceService: Failed to track app start time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Отслеживание времени отклика UI
   Future<void> trackUIResponseTime(String action) async {
     try {
-      final trace = await createTrace('ui_response_$action');
+      final trace = createTrace('ui_response_$action');
       await trace.start();
-      
+
       // Имитируем время отклика
       await Future.delayed(const Duration(milliseconds: 50));
-      
+
       await trace.stop();
-      
+
       // Логируем в аналитику
       await AnalyticsService.instance.logEvent(
         name: 'ui_response_time',
@@ -270,30 +307,43 @@ class PerformanceService {
           'response_time_ms': 50,
         },
       );
-      
-      developer.log('📊 PerformanceService: UI response time tracked: $action - 50ms', name: 'PerformanceService');
+
+      developer.log(
+          '📊 PerformanceService: UI response time tracked: $action - 50ms',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to track UI response time: $e', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: Failed to track UI response time: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Установка атрибутов для трейса
-  Future<void> setTraceAttribute(TraceInterface trace, String name, String value) async {
+  Future<void> setTraceAttribute(
+      TraceInterface trace, String name, String value) async {
     try {
       await trace.setAttribute(name, value);
-      developer.log('📊 PerformanceService: Trace attribute set: $name = $value', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: Trace attribute set: $name = $value',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to set trace attribute: $e', name: 'PerformanceService');
+      developer.log('📊 PerformanceService: Failed to set trace attribute: $e',
+          name: 'PerformanceService');
     }
   }
 
   /// Установка атрибутов для HTTP метрики
-  Future<void> setHttpMetricAttribute(HttpMetricInterface metric, String name, String value) async {
+  Future<void> setHttpMetricAttribute(
+      HttpMetricInterface metric, String name, String value) async {
     try {
       await metric.setAttribute(name, value);
-      developer.log('📊 PerformanceService: HTTP metric attribute set: $name = $value', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: HTTP metric attribute set: $name = $value',
+          name: 'PerformanceService');
     } catch (e) {
-      developer.log('📊 PerformanceService: Failed to set HTTP metric attribute: $e', name: 'PerformanceService');
+      developer.log(
+          '📊 PerformanceService: Failed to set HTTP metric attribute: $e',
+          name: 'PerformanceService');
     }
   }
 
@@ -302,4 +352,4 @@ class PerformanceService {
 
   /// Проверка инициализации
   bool get isInitialized => _isInitialized;
-} 
+}

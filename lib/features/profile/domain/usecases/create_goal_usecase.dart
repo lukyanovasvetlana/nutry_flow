@@ -44,7 +44,7 @@ class CreateGoalUseCase {
       updatedAt: now,
     );
 
-    return await _repository.createGoal(goal);
+    return _repository.createGoal(goal);
   }
 
   void _validateGoalData({
@@ -77,12 +77,15 @@ class CreateGoalUseCase {
         }
         break;
       case GoalType.activity:
-        if (targetValue > 24 * 60) { // максимум 24 часа в минутах
-          throw ArgumentError('Время активности не может превышать 24 часа в день');
+        if (targetValue > 24 * 60) {
+          // максимум 24 часа в минутах
+          throw ArgumentError(
+              'Время активности не может превышать 24 часа в день');
         }
         break;
       case GoalType.nutrition:
-        if (targetValue > 10000) { // разумный максимум калорий
+        if (targetValue > 10000) {
+          // разумный максимум калорий
           throw ArgumentError('Количество калорий не может превышать 10000');
         }
         break;
@@ -95,12 +98,14 @@ class CreateGoalUseCase {
         throw ArgumentError('Целевая дата не может быть в прошлом');
       }
       if (targetDate.isAfter(now.add(const Duration(days: 365 * 2)))) {
-        throw ArgumentError('Целевая дата не может быть более чем через 2 года');
+        throw ArgumentError(
+            'Целевая дата не может быть более чем через 2 года');
       }
     }
   }
 
-  double _getInitialCurrentValue(GoalType type, Map<String, dynamic>? metadata) {
+  double _getInitialCurrentValue(
+      GoalType type, Map<String, dynamic>? metadata) {
     switch (type) {
       case GoalType.weight:
         // Для веса берем стартовое значение из метаданных
@@ -111,4 +116,4 @@ class CreateGoalUseCase {
         return 0.0;
     }
   }
-} 
+}

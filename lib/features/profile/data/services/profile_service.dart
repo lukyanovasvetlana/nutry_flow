@@ -90,23 +90,21 @@ class MockProfileService implements ProfileService {
 
   @override
   Future<UserProfileModel?> getCurrentUserProfile() async {
-    await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
-    print('🟪 MockProfileService: getCurrentUserProfile called');
+    await Future.delayed(
+        const Duration(milliseconds: 500)); // Simulate network delay
     return _demoProfile;
   }
 
   @override
   Future<UserProfileModel?> getUserProfile(String userId) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    print('🟪 MockProfileService: getUserProfile called - userId: $userId');
     return _profiles[userId];
   }
 
   @override
   Future<UserProfileModel> createUserProfile(UserProfileModel profile) async {
     await Future.delayed(const Duration(milliseconds: 800));
-    print('🟪 MockProfileService: createUserProfile called - ${profile.fullName}');
-    
+
     if (_profiles.containsKey(profile.id)) {
       throw const ProfileServiceException(
         'Profile already exists',
@@ -118,7 +116,7 @@ class MockProfileService implements ProfileService {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    
+
     _profiles[profile.id] = newProfile;
     return newProfile;
   }
@@ -126,8 +124,7 @@ class MockProfileService implements ProfileService {
   @override
   Future<UserProfileModel> updateUserProfile(UserProfileModel profile) async {
     await Future.delayed(const Duration(milliseconds: 600));
-    print('🟪 MockProfileService: updateUserProfile called - ${profile.fullName}');
-    
+
     if (!_profiles.containsKey(profile.id)) {
       throw const ProfileServiceException(
         'Profile not found',
@@ -138,7 +135,7 @@ class MockProfileService implements ProfileService {
     final updatedProfile = profile.copyWith(
       updatedAt: DateTime.now(),
     );
-    
+
     _profiles[profile.id] = updatedProfile;
     return updatedProfile;
   }
@@ -146,8 +143,7 @@ class MockProfileService implements ProfileService {
   @override
   Future<void> deleteUserProfile(String userId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    print('🟪 MockProfileService: deleteUserProfile called - userId: $userId');
-    
+
     if (!_profiles.containsKey(userId)) {
       throw const ProfileServiceException(
         'Profile not found',
@@ -162,8 +158,7 @@ class MockProfileService implements ProfileService {
   @override
   Future<String> uploadAvatar(String userId, File imageFile) async {
     await Future.delayed(const Duration(milliseconds: 1500));
-    print('🟪 MockProfileService: uploadAvatar called - userId: $userId');
-    
+
     if (!_profiles.containsKey(userId)) {
       throw const ProfileServiceException(
         'Profile not found',
@@ -174,22 +169,21 @@ class MockProfileService implements ProfileService {
     // Simulate avatar upload
     final avatarUrl = 'https://example.com/avatars/$userId.jpg';
     _avatars[userId] = avatarUrl;
-    
+
     // Update profile with new avatar URL
     final profile = _profiles[userId]!;
     _profiles[userId] = profile.copyWith(
       avatarUrl: avatarUrl,
       updatedAt: DateTime.now(),
     );
-    
+
     return avatarUrl;
   }
 
   @override
   Future<void> deleteAvatar(String userId) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    print('🟪 MockProfileService: deleteAvatar called - userId: $userId');
-    
+
     if (!_profiles.containsKey(userId)) {
       throw const ProfileServiceException(
         'Profile not found',
@@ -198,7 +192,7 @@ class MockProfileService implements ProfileService {
     }
 
     _avatars.remove(userId);
-    
+
     // Update profile to remove avatar URL
     final profile = _profiles[userId]!;
     _profiles[userId] = profile.copyWith(
@@ -210,17 +204,15 @@ class MockProfileService implements ProfileService {
   @override
   Future<bool> isEmailAvailable(String email, {String? excludeUserId}) async {
     await Future.delayed(const Duration(milliseconds: 200));
-    print('🟪 MockProfileService: isEmailAvailable called - email: $email');
-    
-    return !_profiles.values.any((profile) => 
-      profile.email == email && profile.id != excludeUserId);
+
+    return !_profiles.values.any(
+        (profile) => profile.email == email && profile.id != excludeUserId);
   }
 
   @override
   Future<Map<String, dynamic>> getProfileStatistics(String userId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    print('🟪 MockProfileService: getProfileStatistics called - userId: $userId');
-    
+
     if (!_profiles.containsKey(userId)) {
       throw const ProfileServiceException(
         'Profile not found',
@@ -231,7 +223,8 @@ class MockProfileService implements ProfileService {
     final profile = _profiles[userId]!;
     return {
       'profile_completeness': profile.profileCompleteness,
-      'days_since_created': DateTime.now().difference(profile.createdAt!).inDays,
+      'days_since_created':
+          DateTime.now().difference(profile.createdAt!).inDays,
       'last_updated': profile.updatedAt,
       'has_avatar': profile.avatarUrl != null,
       'goals_count': profile.fitnessGoals.length,
@@ -244,8 +237,7 @@ class MockProfileService implements ProfileService {
   @override
   Future<Map<String, dynamic>> exportProfileData(String userId) async {
     await Future.delayed(const Duration(milliseconds: 600));
-    print('🟪 MockProfileService: exportProfileData called - userId: $userId');
-    
+
     if (!_profiles.containsKey(userId)) {
       throw const ProfileServiceException(
         'Profile not found',
@@ -255,7 +247,7 @@ class MockProfileService implements ProfileService {
 
     final profile = _profiles[userId]!;
     final statistics = await getProfileStatistics(userId);
-    
+
     return {
       'profile': profile.toJson(),
       'statistics': statistics,
@@ -268,7 +260,7 @@ class MockProfileService implements ProfileService {
 /// Supabase implementation of ProfileService
 class SupabaseProfileService implements ProfileService {
   final SupabaseClient _supabase;
-  
+
   SupabaseProfileService(this._supabase);
 
   @override
@@ -278,7 +270,7 @@ class SupabaseProfileService implements ProfileService {
       if (user == null) {
         throw ProfileServiceException('User not authenticated');
       }
-      
+
       return await getUserProfile(user.id);
     } catch (e) {
       if (e is ProfileServiceException) rethrow;
@@ -289,12 +281,9 @@ class SupabaseProfileService implements ProfileService {
   @override
   Future<UserProfileModel?> getUserProfile(String userId) async {
     try {
-      final response = await _supabase
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .single();
-      
+      final response =
+          await _supabase.from('profiles').select().eq('id', userId).single();
+
       return _mapToUserProfileModel(response);
     } catch (e) {
       if (e is PostgrestException && e.code == 'PGRST116') {
@@ -309,13 +298,10 @@ class SupabaseProfileService implements ProfileService {
   Future<UserProfileModel> createUserProfile(UserProfileModel profile) async {
     try {
       final data = _mapToSupabaseData(profile);
-      
-      final response = await _supabase
-          .from('profiles')
-          .insert(data)
-          .select()
-          .single();
-      
+
+      final response =
+          await _supabase.from('profiles').insert(data).select().single();
+
       return _mapToUserProfileModel(response);
     } catch (e) {
       throw ProfileServiceException('Failed to create user profile: $e');
@@ -327,14 +313,14 @@ class SupabaseProfileService implements ProfileService {
     try {
       final data = _mapToSupabaseData(profile);
       data['updated_at'] = DateTime.now().toIso8601String();
-      
+
       final response = await _supabase
           .from('profiles')
           .update(data)
           .eq('id', profile.id)
           .select()
           .single();
-      
+
       return _mapToUserProfileModel(response);
     } catch (e) {
       throw ProfileServiceException('Failed to update user profile: $e');
@@ -344,10 +330,7 @@ class SupabaseProfileService implements ProfileService {
   @override
   Future<void> deleteUserProfile(String userId) async {
     try {
-      await _supabase
-          .from('profiles')
-          .delete()
-          .eq('id', userId);
+      await _supabase.from('profiles').delete().eq('id', userId);
     } catch (e) {
       throw ProfileServiceException('Failed to delete user profile: $e');
     }
@@ -358,21 +341,16 @@ class SupabaseProfileService implements ProfileService {
     try {
       final fileName = 'avatar_$userId.jpg';
       final filePath = 'avatars/$fileName';
-      
-      await _supabase.storage
-          .from('avatars')
-          .upload(filePath, imageFile);
-      
-      final url = _supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath);
-      
+
+      await _supabase.storage.from('avatars').upload(filePath, imageFile);
+
+      final url = _supabase.storage.from('avatars').getPublicUrl(filePath);
+
       // Update profile with new avatar URL
       await _supabase
           .from('profiles')
-          .update({'avatar_url': url})
-          .eq('id', userId);
-      
+          .update({'avatar_url': url}).eq('id', userId);
+
       return url;
     } catch (e) {
       throw ProfileServiceException('Failed to upload avatar: $e');
@@ -389,18 +367,15 @@ class SupabaseProfileService implements ProfileService {
         final urlParts = profile!.avatarUrl!.split('/');
         final fileName = urlParts.last;
         final filePath = 'avatars/$fileName';
-        
+
         // Delete from storage
-        await _supabase.storage
-            .from('avatars')
-            .remove([filePath]);
+        await _supabase.storage.from('avatars').remove([filePath]);
       }
-      
+
       // Update profile to remove avatar URL
       await _supabase
           .from('profiles')
-          .update({'avatar_url': null})
-          .eq('id', userId);
+          .update({'avatar_url': null}).eq('id', userId);
     } catch (e) {
       throw ProfileServiceException('Failed to delete avatar: $e');
     }
@@ -409,15 +384,12 @@ class SupabaseProfileService implements ProfileService {
   @override
   Future<bool> isEmailAvailable(String email, {String? excludeUserId}) async {
     try {
-      var query = _supabase
-          .from('profiles')
-          .select('id')
-          .eq('email', email);
-      
+      var query = _supabase.from('profiles').select('id').eq('email', email);
+
       if (excludeUserId != null) {
         query = query.neq('id', excludeUserId);
       }
-      
+
       final response = await query;
       return response.isEmpty;
     } catch (e) {
@@ -433,19 +405,21 @@ class SupabaseProfileService implements ProfileService {
           .from('user_goals')
           .select('type, status')
           .eq('user_id', userId);
-      
+
       // Get progress entries count
       final progressResponse = await _supabase
           .from('progress_entries')
           .select('type')
           .eq('user_id', userId);
-      
+
       // Calculate statistics
       final totalGoals = goalsResponse.length;
-      final activeGoals = goalsResponse.where((g) => g['status'] == 'active').length;
-      final completedGoals = goalsResponse.where((g) => g['status'] == 'completed').length;
+      final activeGoals =
+          goalsResponse.where((g) => g['status'] == 'active').length;
+      final completedGoals =
+          goalsResponse.where((g) => g['status'] == 'completed').length;
       final totalProgressEntries = progressResponse.length;
-      
+
       return {
         'total_goals': totalGoals,
         'active_goals': activeGoals,
@@ -465,19 +439,17 @@ class SupabaseProfileService implements ProfileService {
       if (profile == null) {
         throw ProfileServiceException('Profile not found');
       }
-      
+
       // Get goals
-      final goalsResponse = await _supabase
-          .from('user_goals')
-          .select()
-          .eq('user_id', userId);
-      
+      final goalsResponse =
+          await _supabase.from('user_goals').select().eq('user_id', userId);
+
       // Get progress entries
       final progressResponse = await _supabase
           .from('progress_entries')
           .select()
           .eq('user_id', userId);
-      
+
       return {
         'profile': _mapToSupabaseData(profile),
         'goals': goalsResponse,
@@ -508,7 +480,8 @@ class SupabaseProfileService implements ProfileService {
       'target_protein': profile.targetProtein,
       'target_carbs': profile.targetCarbs,
       'target_fat': profile.targetFat,
-      'dietary_preferences': profile.dietaryPreferences.map((p) => p.name).toList(),
+      'dietary_preferences':
+          profile.dietaryPreferences.map((p) => p.name).toList(),
       'allergies': profile.allergies,
       'health_conditions': profile.healthConditions,
       'fitness_goals': profile.fitnessGoals,
@@ -525,10 +498,10 @@ class SupabaseProfileService implements ProfileService {
       lastName: data['last_name'] ?? '',
       email: data['email'] ?? '',
       phone: data['phone'],
-      dateOfBirth: data['birth_date'] != null 
-          ? DateTime.parse(data['birth_date']) 
+      dateOfBirth: data['birth_date'] != null
+          ? DateTime.parse(data['birth_date'])
           : null,
-      gender: data['gender'] != null 
+      gender: data['gender'] != null
           ? Gender.values.firstWhere(
               (g) => g.name == data['gender'],
               orElse: () => Gender.other,
@@ -549,23 +522,26 @@ class SupabaseProfileService implements ProfileService {
       targetCarbs: data['target_carbs']?.toDouble(),
       targetFat: data['target_fat']?.toDouble(),
       dietaryPreferences: (data['dietary_preferences'] as List<dynamic>?)
-          ?.map((p) => DietaryPreference.values.firstWhere(
-                (d) => d.name == p,
-                orElse: () => DietaryPreference.none,
-              ))
-          .toList() ?? [],
+              ?.map((p) => DietaryPreference.values.firstWhere(
+                    (d) => d.name == p,
+                    orElse: () => DietaryPreference.none,
+                  ))
+              .toList() ??
+          [],
       allergies: (data['allergies'] as List<dynamic>?)?.cast<String>() ?? [],
-      healthConditions: (data['health_conditions'] as List<dynamic>?)?.cast<String>() ?? [],
-      fitnessGoals: (data['fitness_goals'] as List<dynamic>?)?.cast<String>() ?? [],
+      healthConditions:
+          (data['health_conditions'] as List<dynamic>?)?.cast<String>() ?? [],
+      fitnessGoals:
+          (data['fitness_goals'] as List<dynamic>?)?.cast<String>() ?? [],
       foodRestrictions: data['food_restrictions'],
       pushNotificationsEnabled: data['push_notifications_enabled'] ?? true,
       emailNotificationsEnabled: data['email_notifications_enabled'] ?? true,
-      createdAt: data['created_at'] != null 
-          ? DateTime.parse(data['created_at']) 
+      createdAt: data['created_at'] != null
+          ? DateTime.parse(data['created_at'])
           : DateTime.now(),
-      updatedAt: data['updated_at'] != null 
-          ? DateTime.parse(data['updated_at']) 
+      updatedAt: data['updated_at'] != null
+          ? DateTime.parse(data['updated_at'])
           : DateTime.now(),
     );
   }
-} 
+}

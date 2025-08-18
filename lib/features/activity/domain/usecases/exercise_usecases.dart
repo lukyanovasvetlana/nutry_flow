@@ -10,7 +10,7 @@ class GetExercisesUseCase {
   GetExercisesUseCase(this.repository);
 
   Future<Either<String, List<Exercise>>> call() async {
-    return await repository.getAllExercises();
+    return repository.getAllExercises();
   }
 }
 
@@ -21,7 +21,7 @@ class GetExerciseByIdUseCase {
   GetExerciseByIdUseCase(this.repository);
 
   Future<Either<String, Exercise?>> call(String id) async {
-    return await repository.getExerciseById(id);
+    return repository.getExerciseById(id);
   }
 }
 
@@ -33,9 +33,9 @@ class SearchExercisesUseCase {
 
   Future<Either<String, List<Exercise>>> call(String query) async {
     if (query.trim().isEmpty) {
-      return await repository.getAllExercises();
+      return repository.getAllExercises();
     }
-    return await repository.searchExercises(query.trim());
+    return repository.searchExercises(query.trim());
   }
 }
 
@@ -46,7 +46,7 @@ class FilterExercisesByCategoryUseCase {
   FilterExercisesByCategoryUseCase(this.repository);
 
   Future<Either<String, List<Exercise>>> call(String category) async {
-    return await repository.filterByCategory(category);
+    return repository.filterByCategory(category);
   }
 }
 
@@ -57,7 +57,7 @@ class FilterExercisesByDifficultyUseCase {
   FilterExercisesByDifficultyUseCase(this.repository);
 
   Future<Either<String, List<Exercise>>> call(String difficulty) async {
-    return await repository.filterByDifficulty(difficulty);
+    return repository.filterByDifficulty(difficulty);
   }
 }
 
@@ -68,7 +68,7 @@ class GetFavoriteExercisesUseCase {
   GetFavoriteExercisesUseCase(this.repository);
 
   Future<Either<String, List<Exercise>>> call(String userId) async {
-    return await repository.getFavoriteExercises(userId);
+    return repository.getFavoriteExercises(userId);
   }
 }
 
@@ -79,7 +79,7 @@ class ToggleFavoriteExerciseUseCase {
   ToggleFavoriteExerciseUseCase(this.repository);
 
   Future<Either<String, void>> call(String userId, String exerciseId) async {
-    return await repository.toggleFavorite(userId, exerciseId);
+    return repository.toggleFavorite(userId, exerciseId);
   }
 }
 
@@ -90,7 +90,7 @@ class GetExerciseCategoriesUseCase {
   GetExerciseCategoriesUseCase(this.repository);
 
   Future<Either<String, List<String>>> call() async {
-    return await repository.getCategories();
+    return repository.getCategories();
   }
 }
 
@@ -101,6 +101,6 @@ class GetExerciseDifficultiesUseCase {
   GetExerciseDifficultiesUseCase(this.repository);
 
   Future<Either<String, List<String>>> call() async {
-    return await repository.getDifficulties();
+    return repository.getDifficulties();
   }
-} 
+}

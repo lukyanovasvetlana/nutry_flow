@@ -7,15 +7,16 @@ class NutritionGoalsChart extends StatelessWidget {
   final NutritionGoals goals;
 
   const NutritionGoalsChart({
-    Key? key,
+    super.key,
     required this.summary,
     required this.goals,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final analysis = NutritionGoalsAnalysis.fromSummary(DateTime.now(), summary, goals);
-    
+    final analysis =
+        NutritionGoalsAnalysis.fromSummary(DateTime.now(), summary, goals);
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -38,29 +39,33 @@ class NutritionGoalsChart extends StatelessWidget {
                 Text(
                   'Прогресс по целям',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getOverallScoreColor(analysis.overallCompletionPercentage).withValues(alpha: 0.1),
+                    color: _getOverallScoreColor(
+                            analysis.overallCompletionPercentage)
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${analysis.overallCompletionPercentage.toStringAsFixed(0)}%',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: _getOverallScoreColor(analysis.overallCompletionPercentage),
+                      color: _getOverallScoreColor(
+                          analysis.overallCompletionPercentage),
                     ),
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Progress bars
             _buildProgressBar(
               'Калории',
@@ -70,9 +75,9 @@ class NutritionGoalsChart extends StatelessWidget {
               Colors.orange,
               Icons.local_fire_department,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             _buildProgressBar(
               'Белки',
               summary.totalProtein,
@@ -81,9 +86,9 @@ class NutritionGoalsChart extends StatelessWidget {
               Colors.red,
               Icons.fitness_center,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             _buildProgressBar(
               'Жиры',
               summary.totalFats,
@@ -92,9 +97,9 @@ class NutritionGoalsChart extends StatelessWidget {
               Colors.yellow[700]!,
               Icons.opacity,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             _buildProgressBar(
               'Углеводы',
               summary.totalCarbs,
@@ -103,38 +108,37 @@ class NutritionGoalsChart extends StatelessWidget {
               Colors.blue,
               Icons.grain,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Status indicators
-            if (analysis.isCaloriesOnTarget || 
-                analysis.isProteinOnTarget || 
-                analysis.isFatsOnTarget || 
+            if (analysis.isCaloriesOnTarget ||
+                analysis.isProteinOnTarget ||
+                analysis.isFatsOnTarget ||
                 analysis.isCarbsOnTarget) ...[
               const Divider(),
               const SizedBox(height: 8),
-              
               Text(
                 'Статус целей',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
-              
               const SizedBox(height: 8),
-              
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
                 children: [
                   if (analysis.isCaloriesOnTarget)
-                    _buildStatusChip('Калории', Colors.green, Icons.check_circle),
+                    _buildStatusChip(
+                        'Калории', Colors.green, Icons.check_circle),
                   if (analysis.isProteinOnTarget)
                     _buildStatusChip('Белки', Colors.green, Icons.check_circle),
                   if (analysis.isFatsOnTarget)
                     _buildStatusChip('Жиры', Colors.green, Icons.check_circle),
                   if (analysis.isCarbsOnTarget)
-                    _buildStatusChip('Углеводы', Colors.green, Icons.check_circle),
+                    _buildStatusChip(
+                        'Углеводы', Colors.green, Icons.check_circle),
                   if (!analysis.isCaloriesOnTarget)
                     _buildStatusChip('Калории', Colors.orange, Icons.warning),
                   if (!analysis.isProteinOnTarget)
@@ -162,7 +166,7 @@ class NutritionGoalsChart extends StatelessWidget {
   ) {
     final isOverTarget = current > target;
     final displayPercentage = isOverTarget ? 100.0 : percentage;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -196,9 +200,7 @@ class NutritionGoalsChart extends StatelessWidget {
             ),
           ],
         ),
-        
         const SizedBox(height: 4),
-        
         LinearProgressIndicator(
           value: displayPercentage / 100,
           backgroundColor: Colors.grey[200],
@@ -242,4 +244,4 @@ class NutritionGoalsChart extends StatelessWidget {
     if (score >= 70) return Colors.orange;
     return Colors.red;
   }
-} 
+}

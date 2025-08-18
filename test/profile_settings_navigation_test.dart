@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutry_flow/features/profile/presentation/screens/profile_settings_screen.dart';
-import 'package:nutry_flow/shared/theme/app_colors.dart';
-import 'package:nutry_flow/app.dart';
 
 void main() {
   group('Profile Settings Navigation Tests', () {

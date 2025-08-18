@@ -41,7 +41,8 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   }
 
   @override
-  Future<Either<String, List<Exercise>>> filterByCategory(String category) async {
+  Future<Either<String, List<Exercise>>> filterByCategory(
+      String category) async {
     try {
       if (category == 'All') {
         return await getAllExercises();
@@ -54,7 +55,8 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   }
 
   @override
-  Future<Either<String, List<Exercise>>> filterByDifficulty(String difficulty) async {
+  Future<Either<String, List<Exercise>>> filterByDifficulty(
+      String difficulty) async {
     try {
       if (difficulty == 'All') {
         return await getAllExercises();
@@ -67,7 +69,8 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   }
 
   @override
-  Future<Either<String, List<Exercise>>> getFavoriteExercises(String userId) async {
+  Future<Either<String, List<Exercise>>> getFavoriteExercises(
+      String userId) async {
     try {
       final exercises = await _exerciseService.getFavoriteExercises(userId);
       return Right(exercises);
@@ -77,7 +80,8 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   }
 
   @override
-  Future<Either<String, void>> toggleFavorite(String userId, String exerciseId) async {
+  Future<Either<String, void>> toggleFavorite(
+      String userId, String exerciseId) async {
     try {
       await _exerciseService.toggleFavorite(userId, exerciseId);
       return const Right(null);
@@ -105,4 +109,4 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
       return Left('Ошибка при получении уровней сложности: $e');
     }
   }
-} 
+}

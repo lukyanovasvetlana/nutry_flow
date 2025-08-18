@@ -30,7 +30,7 @@ class FoodEntryCubit extends Cubit<FoodEntryState> {
         consumedAt: consumedAt,
         notes: notes,
       );
-      
+
       emit(FoodEntrySuccess(result));
     } catch (e) {
       emit(FoodEntryError(e.toString()));
@@ -56,7 +56,7 @@ class FoodEntryCubit extends Cubit<FoodEntryState> {
         consumedAt: consumedAt,
         notes: notes,
       );
-      
+
       emit(FoodEntryValidationSuccess(result));
     } catch (e) {
       emit(FoodEntryValidationError(e.toString()));
@@ -74,4 +74,4 @@ class FoodEntryCubit extends Cubit<FoodEntryState> {
   void setError(String message) {
     emit(FoodEntryError(message));
   }
-} 
+}

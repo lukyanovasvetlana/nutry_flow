@@ -20,9 +20,9 @@ class FoodItemModel extends FoodItem {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super(
-    createdAt: createdAt ?? DateTime.now(),
-    updatedAt: updatedAt ?? DateTime.now(),
-  );
+          createdAt: createdAt ?? DateTime.now(),
+          updatedAt: updatedAt ?? DateTime.now(),
+        );
 
   factory FoodItemModel.fromJson(Map<String, dynamic> json) {
     return FoodItemModel(
@@ -35,25 +35,25 @@ class FoodItemModel extends FoodItem {
       brand: json['brand'] as String?,
       barcode: json['barcode'] as String?,
       category: json['category'] as String?,
-      fiberPer100g: json['fiber_per_100g'] != null 
-          ? (json['fiber_per_100g'] as num).toDouble() 
+      fiberPer100g: json['fiber_per_100g'] != null
+          ? (json['fiber_per_100g'] as num).toDouble()
           : 0.0,
-      sugarPer100g: json['sugar_per_100g'] != null 
-          ? (json['sugar_per_100g'] as num).toDouble() 
+      sugarPer100g: json['sugar_per_100g'] != null
+          ? (json['sugar_per_100g'] as num).toDouble()
           : 0.0,
-      sodiumPer100g: json['sodium_per_100g'] != null 
-          ? (json['sodium_per_100g'] as num).toDouble() 
+      sodiumPer100g: json['sodium_per_100g'] != null
+          ? (json['sodium_per_100g'] as num).toDouble()
           : 0.0,
       imageUrl: json['image_url'] as String?,
       description: json['description'] as String?,
-      allergens: json['allergens'] != null 
-          ? List<String>.from(json['allergens'] as List) 
+      allergens: json['allergens'] != null
+          ? List<String>.from(json['allergens'] as List)
           : [],
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at'] as String) 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
           : DateTime.now(),
-      updatedAt: json['updated_at'] != null 
-          ? DateTime.parse(json['updated_at'] as String) 
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
           : DateTime.now(),
     );
   }
@@ -124,4 +124,4 @@ class FoodItemModel extends FoodItem {
       updatedAt: updatedAt,
     );
   }
-} 
+}

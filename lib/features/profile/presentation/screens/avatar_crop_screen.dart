@@ -67,9 +67,8 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
       body: Column(
         children: [
           Expanded(
-            child: _isProcessing
-                ? _buildProcessingView()
-                : _buildImagePreview(),
+            child:
+                _isProcessing ? _buildProcessingView() : _buildImagePreview(),
           ),
           if (!_isProcessing) _buildInstructions(),
         ],
@@ -269,7 +268,7 @@ class AvatarCropper {
     File imageFile, {
     String? title,
   }) async {
-    return await Navigator.of(context).push<File>(
+    return Navigator.of(context).push<File>(
       MaterialPageRoute(
         builder: (context) => AvatarCropScreen(
           imageFile: imageFile,
@@ -308,4 +307,4 @@ class AvatarCropper {
       return null;
     }
   }
-} 
+}

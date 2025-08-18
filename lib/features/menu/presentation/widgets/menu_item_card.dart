@@ -24,23 +24,25 @@ class MenuItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (recipe.photos.isNotEmpty && recipe.photos.first.url != null)
+            if (recipe.photos.isNotEmpty)
               Image.network(
-                recipe.photos.first.url!,
+                recipe.photos.first.url,
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const SizedBox(height: 150, child: Icon(Icons.broken_image)),
+                errorBuilder: (context, error, stackTrace) => const SizedBox(
+                    height: 150, child: Icon(Icons.broken_image)),
               ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(recipe.title, style: Theme.of(context).textTheme.titleLarge),
+                  Text(recipe.title,
+                      style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
-                  Text(recipe.description, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(recipe.description,
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -57,4 +59,4 @@ class MenuItemCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

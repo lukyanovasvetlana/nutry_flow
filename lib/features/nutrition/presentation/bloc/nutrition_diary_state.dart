@@ -45,4 +45,4 @@ class NutritionDiaryError extends NutritionDiaryState {
 
   @override
   List<Object> get props => [message];
-} 
+}

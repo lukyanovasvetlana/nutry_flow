@@ -8,11 +8,11 @@ class FoodSearchResults extends StatelessWidget {
   final bool isLoading;
 
   const FoodSearchResults({
-    Key? key,
+    super.key,
     required this.foodItems,
     required this.onFoodItemSelected,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +36,15 @@ class FoodSearchResults extends StatelessWidget {
             Text(
               'Продукты не найдены',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+                    color: Colors.grey[600],
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Попробуйте изменить поисковый запрос',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[500],
-              ),
+                    color: Colors.grey[500],
+                  ),
             ),
           ],
         ),
@@ -56,7 +56,7 @@ class FoodSearchResults extends StatelessWidget {
       itemCount: foodItems.length,
       itemBuilder: (context, index) {
         final foodItem = foodItems[index];
-        
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: FoodItemCard(
@@ -82,4 +82,4 @@ class FoodSearchResults extends StatelessWidget {
       ),
     );
   }
-} 
+}

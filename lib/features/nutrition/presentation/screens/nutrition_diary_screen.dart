@@ -29,7 +29,7 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
     super.initState();
     _selectedDate = widget.initialDate ?? DateTime.now();
     _tabController = TabController(length: 3, vsync: this);
-    
+
     _loadDiaryData();
   }
 
@@ -41,14 +41,14 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
 
   void _loadDiaryData() {
     final userId = 'current_user_id'; // TODO: Get from auth service
-    
+
     if (_selectedMealType != null) {
       context.read<NutritionDiaryCubit>().loadFilteredDiary(
-        userId, 
-        _selectedDate,
-        _selectedDate,
-        mealType: _selectedMealType,
-      );
+            userId,
+            _selectedDate,
+            _selectedDate,
+            mealType: _selectedMealType,
+          );
     } else {
       context.read<NutritionDiaryCubit>().loadDailyDiary(userId, _selectedDate);
     }
@@ -61,7 +61,7 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
-    
+
     if (date != null) {
       setState(() {
         _selectedDate = date;
@@ -170,7 +170,8 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                   icon: const Icon(Icons.chevron_left),
                   onPressed: () {
                     setState(() {
-                      _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+                      _selectedDate =
+                          _selectedDate.subtract(const Duration(days: 1));
                     });
                     _loadDiaryData();
                   },
@@ -198,7 +199,8 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                   icon: const Icon(Icons.chevron_right),
                   onPressed: () {
                     final tomorrow = _selectedDate.add(const Duration(days: 1));
-                    if (tomorrow.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+                    if (tomorrow.isBefore(
+                        DateTime.now().add(const Duration(days: 1)))) {
                       setState(() {
                         _selectedDate = tomorrow;
                       });
@@ -209,7 +211,7 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
               ],
             ),
           ),
-          
+
           // Content
           Expanded(
             child: TabBarView(
@@ -246,13 +248,14 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                   onMealTypeFilterChanged: _onMealTypeFilterChanged,
                   selectedMealType: _selectedMealType,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Meal entries
                 MealEntriesList(
                   entries: state.diary.entries,
-                  mealType: MealType.breakfast, // Default meal type, should be dynamic
+                  mealType: MealType
+                      .breakfast, // Default meal type, should be dynamic
                   onEdit: _onEditFoodEntry,
                   onDelete: _onDeleteFoodEntry,
                 ),
@@ -275,8 +278,8 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                 Text(
                   state.message,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.red[600],
-                  ),
+                        color: Colors.red[600],
+                      ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -315,9 +318,9 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                   diaries: state.diaries,
                   chartType: ChartType.weekly,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Weekly summary
                 Text(
                   'Недельная сводка',
@@ -344,8 +347,8 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                 Text(
                   state.message,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.red[600],
-                  ),
+                        color: Colors.red[600],
+                      ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -386,9 +389,9 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                   diaries: state.diaries,
                   chartType: ChartType.monthly,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Monthly summary
                 Text(
                   'Месячная сводка',
@@ -415,8 +418,8 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
                 Text(
                   state.message,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.red[600],
-                  ),
+                        color: Colors.red[600],
+                      ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -437,4 +440,4 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
       },
     );
   }
-} 
+}

@@ -92,7 +92,7 @@ class Workout extends Equatable {
 
   int get totalEstimatedDuration {
     if (estimatedDurationMinutes != null) return estimatedDurationMinutes!;
-    
+
     int total = 0;
     for (final exercise in exercises) {
       if (exercise.duration != null) {
@@ -104,7 +104,7 @@ class Workout extends Equatable {
         }
       } else if (exercise.sets != null && exercise.reps != null) {
         // Estimate time for strength exercises
-        total += (exercise.sets! * 2); // 2 minutes per set
+        total += exercise.sets! * 2; // 2 minutes per set
       }
     }
     return total;
@@ -127,7 +127,8 @@ class Workout extends Equatable {
       userId: userId ?? this.userId,
       name: name ?? this.name,
       description: description ?? this.description,
-      estimatedDurationMinutes: estimatedDurationMinutes ?? this.estimatedDurationMinutes,
+      estimatedDurationMinutes:
+          estimatedDurationMinutes ?? this.estimatedDurationMinutes,
       difficulty: difficulty ?? this.difficulty,
       isTemplate: isTemplate ?? this.isTemplate,
       exercises: exercises ?? this.exercises,
@@ -149,4 +150,4 @@ class Workout extends Equatable {
         createdAt,
         updatedAt,
       ];
-} 
+}

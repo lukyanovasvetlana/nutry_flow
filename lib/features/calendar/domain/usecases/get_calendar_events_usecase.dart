@@ -7,24 +7,26 @@ class GetCalendarEventsResult {
   final List<CalendarEvent> events;
   final String? error;
   final bool isSuccess;
-  
-  const GetCalendarEventsResult.success(this.events) 
-      : error = null, isSuccess = true;
-  
-  const GetCalendarEventsResult.failure(this.error) 
-      : events = const [], isSuccess = false;
+
+  const GetCalendarEventsResult.success(this.events)
+      : error = null,
+        isSuccess = true;
+
+  const GetCalendarEventsResult.failure(this.error)
+      : events = const [],
+        isSuccess = false;
 }
 
 /// Use case для получения событий календаря
 class GetCalendarEventsUseCase {
   final CalendarRepository _repository;
   final AuthRepository _authRepository;
-  
+
   const GetCalendarEventsUseCase(
     this._repository,
     this._authRepository,
   );
-  
+
   /// Получает все события пользователя
   Future<GetCalendarEventsResult> execute({
     DateTime? startDate,
@@ -41,12 +43,11 @@ class GetCalendarEventsUseCase {
       final currentUser = await _authRepository.getCurrentUser();
       if (currentUser == null) {
         return const GetCalendarEventsResult.failure(
-          'Пользователь не аутентифицирован'
-        );
+            'Пользователь не аутентифицирован');
       }
-      
+
       List<CalendarEvent> events;
-      
+
       // Выбираем подходящий метод получения событий
       if (onlyToday == true) {
         events = await _repository.getTodayEvents();
@@ -63,21 +64,19 @@ class GetCalendarEventsUseCase {
       } else {
         events = await _repository.getAllEvents();
       }
-      
+
       // Дополнительная фильтрация если нужно
       if (category != null && category.isNotEmpty && onlyToday != true) {
         events = events.where((e) => e.category == category).toList();
       }
-      
+
       // Сортировка по дате
       events.sort((a, b) => a.dateTime.compareTo(b.dateTime));
-      
+
       return GetCalendarEventsResult.success(events);
-      
     } catch (e) {
       return GetCalendarEventsResult.failure(
-        'Ошибка при получении событий: ${e.toString()}'
-      );
+          'Ошибка при получении событий: ${e.toString()}');
     }
   }
-} 
+}

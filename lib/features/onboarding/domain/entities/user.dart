@@ -67,7 +67,7 @@ class User {
       firstName: json['first_name'] as String?,
       lastName: json['last_name'] as String?,
       phone: json['phone'] as String?,
-      dateOfBirth: json['date_of_birth'] != null 
+      dateOfBirth: json['date_of_birth'] != null
           ? DateTime.parse(json['date_of_birth'] as String)
           : null,
       avatarUrl: json['avatar_url'] as String?,
@@ -89,4 +89,4 @@ class User {
   String toString() {
     return 'User(id: $id, email: $email, firstName: $firstName, lastName: $lastName)';
   }
-} 
+}

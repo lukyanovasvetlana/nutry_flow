@@ -183,7 +183,8 @@ class GoalsLoaded extends GoalsState {
   });
 
   @override
-  List<Object> get props => [goals, progressEntries, achievements, userStatistics];
+  List<Object> get props =>
+      [goals, progressEntries, achievements, userStatistics];
 
   GoalsLoaded copyWith({
     List<Goal>? goals,
@@ -200,11 +201,15 @@ class GoalsLoaded extends GoalsState {
   }
 
   List<Goal> get activeGoals => goals.where((goal) => goal.isActive).toList();
-  List<Goal> get completedGoals => goals.where((goal) => goal.isCompleted).toList();
-  List<Goal> get weightGoals => goals.where((goal) => goal.type == GoalType.weight).toList();
-  List<Goal> get activityGoals => goals.where((goal) => goal.type == GoalType.activity).toList();
-  List<Goal> get nutritionGoals => goals.where((goal) => goal.type == GoalType.nutrition).toList();
-  
+  List<Goal> get completedGoals =>
+      goals.where((goal) => goal.isCompleted).toList();
+  List<Goal> get weightGoals =>
+      goals.where((goal) => goal.type == GoalType.weight).toList();
+  List<Goal> get activityGoals =>
+      goals.where((goal) => goal.type == GoalType.activity).toList();
+  List<Goal> get nutritionGoals =>
+      goals.where((goal) => goal.type == GoalType.nutrition).toList();
+
   List<Achievement> get recentAchievements {
     final sorted = List<Achievement>.from(achievements);
     sorted.sort((a, b) => b.earnedDate.compareTo(a.earnedDate));
@@ -271,9 +276,11 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       emit(GoalsLoading());
 
       final goals = await _getGoalsUseCase.execute(event.userId);
-      final progressEntries = await _trackProgressUseCase.getProgressEntries(event.userId);
+      final progressEntries =
+          await _trackProgressUseCase.getProgressEntries(event.userId);
       final achievements = <Achievement>[]; // Пока пустой список
-      final userStatistics = await _getGoalsUseCase.getUserStatistics(event.userId);
+      final userStatistics =
+          await _getGoalsUseCase.getUserStatistics(event.userId);
 
       emit(GoalsLoaded(
         goals: goals,
@@ -282,7 +289,8 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
         userStatistics: userStatistics,
       ));
     } catch (e) {
-      emit(GoalsError('Ошибка загрузки целей: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка загрузки целей: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
@@ -290,7 +298,7 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
     try {
       emit(const GoalsOperationInProgress('Создание цели...'));
 
-      final goal = await _createGoalUseCase.execute(
+      await _createGoalUseCase.execute(
         userId: event.userId,
         type: event.type,
         title: event.title,
@@ -306,7 +314,8 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       // Перезагружаем данные
       add(LoadGoals(event.userId));
     } catch (e) {
-      emit(GoalsError('Ошибка создания цели: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка создания цели: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
@@ -320,7 +329,8 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       // Перезагружаем данные
       add(LoadGoals(event.goal.userId));
     } catch (e) {
-      emit(GoalsError('Ошибка обновления цели: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка обновления цели: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
@@ -334,15 +344,18 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       // Нужно получить userId для перезагрузки
       if (state is GoalsLoaded) {
         final currentState = state as GoalsLoaded;
-        final goal = currentState.goals.firstWhere((g) => g.id == event.goalId);
-        add(LoadGoals(goal.userId));
+        final goalToDelete =
+            currentState.goals.firstWhere((g) => g.id == event.goalId);
+        add(LoadGoals(goalToDelete.userId));
       }
     } catch (e) {
-      emit(GoalsError('Ошибка удаления цели: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка удаления цели: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
-  Future<void> _onAddProgressEntry(AddProgressEntry event, Emitter<GoalsState> emit) async {
+  Future<void> _onAddProgressEntry(
+      AddProgressEntry event, Emitter<GoalsState> emit) async {
     try {
       emit(const GoalsOperationInProgress('Добавление записи прогресса...'));
 
@@ -362,11 +375,13 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       // Перезагружаем данные
       add(LoadGoals(event.userId));
     } catch (e) {
-      emit(GoalsError('Ошибка записи прогресса: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка записи прогресса: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
-  Future<void> _onLoadProgressEntries(LoadProgressEntries event, Emitter<GoalsState> emit) async {
+  Future<void> _onLoadProgressEntries(
+      LoadProgressEntries event, Emitter<GoalsState> emit) async {
     try {
       if (state is! GoalsLoaded) return;
 
@@ -381,11 +396,13 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       final currentState = state as GoalsLoaded;
       emit(currentState.copyWith(progressEntries: progressEntries));
     } catch (e) {
-      emit(GoalsError('Ошибка загрузки прогресса: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка загрузки прогресса: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
-  Future<void> _onLoadAchievements(LoadAchievements event, Emitter<GoalsState> emit) async {
+  Future<void> _onLoadAchievements(
+      LoadAchievements event, Emitter<GoalsState> emit) async {
     try {
       if (state is! GoalsLoaded) return;
 
@@ -395,25 +412,30 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
       final currentState = state as GoalsLoaded;
       emit(currentState.copyWith(achievements: achievements));
     } catch (e) {
-      emit(GoalsError('Ошибка загрузки достижений: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка загрузки достижений: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
-  Future<void> _onLoadUserStatistics(LoadUserStatistics event, Emitter<GoalsState> emit) async {
+  Future<void> _onLoadUserStatistics(
+      LoadUserStatistics event, Emitter<GoalsState> emit) async {
     try {
       if (state is! GoalsLoaded) return;
 
-      final userStatistics = await _getGoalsUseCase.getUserStatistics(event.userId);
+      final userStatistics =
+          await _getGoalsUseCase.getUserStatistics(event.userId);
 
       final currentState = state as GoalsLoaded;
       emit(currentState.copyWith(userStatistics: userStatistics));
     } catch (e) {
-      emit(GoalsError('Ошибка загрузки статистики: ${e.toString()}', exception: e as Exception?));
+      emit(GoalsError('Ошибка загрузки статистики: ${e.toString()}',
+          exception: e as Exception?));
     }
   }
 
-  Future<void> _onRefreshGoalsData(RefreshGoalsData event, Emitter<GoalsState> emit) async {
+  Future<void> _onRefreshGoalsData(
+      RefreshGoalsData event, Emitter<GoalsState> emit) async {
     // Просто перезагружаем все данные
     add(LoadGoals(event.userId));
   }
-} 
+}

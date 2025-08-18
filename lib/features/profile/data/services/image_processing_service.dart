@@ -16,25 +16,25 @@ class ImageProcessingService {
       // Read image file
       final bytes = await inputFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) {
         return ProcessingResult.error('Failed to decode image');
       }
 
       // Resize image to square with target size
       final processedImage = _resizeToSquare(image, targetSize);
-      
+
       // Encode with compression
       final compressedBytes = _encodeWithCompression(processedImage, quality);
-      
+
       // Save to temporary file
       final outputFile = await _saveTempFile(compressedBytes, 'jpg');
-      
+
       // Calculate compression stats
       final originalSize = bytes.length;
       final compressedSize = compressedBytes.length;
       final compressionRatio = (1 - (compressedSize / originalSize)) * 100;
-      
+
       return ProcessingResult.success(
         outputFile: outputFile,
         originalSize: originalSize,
@@ -56,20 +56,20 @@ class ImageProcessingService {
     try {
       final bytes = await inputFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) {
         return ProcessingResult.error('Failed to decode image');
       }
 
       // Create square thumbnail
       final thumbnail = _resizeToSquare(image, size);
-      
+
       // Encode with higher compression for thumbnails
       final thumbnailBytes = _encodeWithCompression(thumbnail, quality);
-      
+
       // Save to temporary file
       final outputFile = await _saveTempFile(thumbnailBytes, 'jpg');
-      
+
       return ProcessingResult.success(
         outputFile: outputFile,
         originalSize: bytes.length,
@@ -87,7 +87,7 @@ class ImageProcessingService {
     try {
       final bytes = await imageFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) {
         return ValidationResult.invalid('Invalid image format');
       }
@@ -111,7 +111,8 @@ class ImageProcessingService {
       const maxSizeBytes = 20 * 1024 * 1024; // 20MB
       if (fileSizeBytes > maxSizeBytes) {
         final sizeMB = (fileSizeBytes / (1024 * 1024)).toStringAsFixed(1);
-        return ValidationResult.invalid('Image file too large (${sizeMB}MB). Maximum size is 20MB.');
+        return ValidationResult.invalid(
+            'Image file too large (${sizeMB}MB). Maximum size is 20MB.');
       }
 
       return ValidationResult.valid();
@@ -125,14 +126,14 @@ class ImageProcessingService {
     try {
       final bytes = await inputFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) {
         throw Exception('Failed to decode image');
       }
 
       // Re-encode without EXIF data
       final cleanBytes = img.encodeJpg(image, quality: 95);
-      
+
       // Save to new temporary file
       return await _saveTempFile(cleanBytes, 'jpg');
     } catch (e) {
@@ -143,12 +144,13 @@ class ImageProcessingService {
   /// Resize image to square maintaining aspect ratio
   img.Image _resizeToSquare(img.Image image, int targetSize) {
     // Determine the smaller dimension to crop from center
-    final minDimension = image.width < image.height ? image.width : image.height;
-    
+    final minDimension =
+        image.width < image.height ? image.width : image.height;
+
     // Calculate crop coordinates for center crop
     final cropX = (image.width - minDimension) ~/ 2;
     final cropY = (image.height - minDimension) ~/ 2;
-    
+
     // Crop to square
     final cropped = img.copyCrop(
       image,
@@ -157,7 +159,7 @@ class ImageProcessingService {
       width: minDimension,
       height: minDimension,
     );
-    
+
     // Resize to target size with high quality
     return img.copyResize(
       cropped,
@@ -178,7 +180,7 @@ class ImageProcessingService {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final fileName = 'processed_avatar_$timestamp.$extension';
     final file = File(path.join(tempDir.path, fileName));
-    
+
     await file.writeAsBytes(bytes);
     return file;
   }
@@ -188,7 +190,7 @@ class ImageProcessingService {
     try {
       final tempDir = await getTemporaryDirectory();
       final files = tempDir.listSync();
-      
+
       for (final file in files) {
         if (file is File && file.path.contains('processed_avatar_')) {
           // Delete files older than 1 hour
@@ -209,14 +211,14 @@ class ImageProcessingService {
     try {
       final bytes = await imageFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) {
         return null;
       }
 
       final fileSizeBytes = await imageFile.length();
       final format = _getImageFormat(imageFile.path);
-      
+
       return ImageInfo(
         width: image.width,
         height: image.height,
@@ -332,7 +334,7 @@ class ImageInfo {
   });
 
   String get dimensions => '${width}x$height';
-  
+
   String get fileSize {
     if (fileSizeBytes < 1024) {
       return '${fileSizeBytes}B';
@@ -346,4 +348,4 @@ class ImageInfo {
   bool get isSquare => width == height;
   bool get isLandscape => width > height;
   bool get isPortrait => height > width;
-} 
+}

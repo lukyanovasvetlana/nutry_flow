@@ -26,7 +26,7 @@ class SearchFoodItemsUseCase {
   Future<SearchFoodItemsResult> execute(String query) async {
     // Валидация поискового запроса
     final cleanQuery = _validateAndCleanQuery(query);
-    
+
     if (cleanQuery.isEmpty) {
       return const SearchFoodItemsResult(
         items: [],
@@ -46,7 +46,8 @@ class SearchFoodItemsUseCase {
       items: sortedItems,
       query: cleanQuery,
       totalFound: sortedItems.length,
-      hasMore: false, // Для простоты, в реальном приложении может быть пагинация
+      hasMore:
+          false, // Для простоты, в реальном приложении может быть пагинация
     );
   }
 
@@ -61,14 +62,15 @@ class SearchFoodItemsUseCase {
   }
 
   /// Получает часто используемые продукты пользователя
-  Future<List<FoodItem>> getFavoriteItems(String userId, {int limit = 10}) async {
+  Future<List<FoodItem>> getFavoriteItems(String userId,
+      {int limit = 10}) async {
     return getUserFavoriteItems(userId, limit: limit);
   }
 
   /// Получает предложения для поиска
   Future<List<String>> getSearchSuggestions(String query) async {
     final cleanQuery = _validateAndCleanQuery(query);
-    
+
     if (cleanQuery.isEmpty) {
       return [];
     }
@@ -80,7 +82,7 @@ class SearchFoodItemsUseCase {
 
   /// Получает популярные продукты
   Future<List<FoodItem>> getPopularItems({int limit = 20}) async {
-    return await _repository.getPopularFoodItems(limit: limit);
+    return _repository.getPopularFoodItems(limit: limit);
   }
 
   /// Получает продукты по категории
@@ -89,43 +91,45 @@ class SearchFoodItemsUseCase {
       throw ArgumentError('Категория не может быть пустой');
     }
 
-    return await _repository.getFoodItemsByCategory(category);
+    return _repository.getFoodItemsByCategory(category);
   }
 
   /// Получает часто используемые продукты пользователя
-  Future<List<FoodItem>> getUserFavoriteItems(String userId, {int limit = 10}) async {
+  Future<List<FoodItem>> getUserFavoriteItems(String userId,
+      {int limit = 10}) async {
     if (userId.trim().isEmpty) {
       throw ArgumentError('ID пользователя не может быть пустым');
     }
 
-    return await _repository.getUserFavoriteFoodItems(userId, limit: limit);
+    return _repository.getUserFavoriteFoodItems(userId, limit: limit);
   }
 
   /// Получает рекомендуемые продукты для пользователя
-  Future<List<FoodItem>> getRecommendedItems(String userId, {int limit = 10}) async {
+  Future<List<FoodItem>> getRecommendedItems(String userId,
+      {int limit = 10}) async {
     if (userId.trim().isEmpty) {
       throw ArgumentError('ID пользователя не может быть пустым');
     }
 
-    return await _repository.getRecommendedFoodItems(userId, limit: limit);
+    return _repository.getRecommendedFoodItems(userId, limit: limit);
   }
 
   /// Поиск продукта по штрихкоду
   Future<FoodItem?> findByBarcode(String barcode) async {
     final cleanBarcode = _validateAndCleanBarcode(barcode);
-    
+
     if (cleanBarcode.isEmpty) {
       return null;
     }
 
-    return await _repository.getFoodItemByBarcode(cleanBarcode);
+    return _repository.getFoodItemByBarcode(cleanBarcode);
   }
 
   /// Валидирует и очищает поисковый запрос
   String _validateAndCleanQuery(String query) {
     // Убираем лишние пробелы и приводим к нижнему регистру
     final cleaned = query.trim().toLowerCase();
-    
+
     // Минимальная длина запроса
     if (cleaned.length < 2) {
       return '';
@@ -144,8 +148,8 @@ class SearchFoodItemsUseCase {
   /// Валидирует и очищает штрихкод
   String _validateAndCleanBarcode(String barcode) {
     // Убираем все символы кроме цифр
-    final cleaned = barcode.replaceAll(RegExp(r'[^0-9]'), '');
-    
+    final cleaned = barcode.replaceAll(RegExp('[^0-9]'), '');
+
     // Проверяем длину штрихкода (обычно 8, 12, 13 или 14 цифр)
     if (cleaned.length < 8 || cleaned.length > 14) {
       return '';
@@ -157,7 +161,7 @@ class SearchFoodItemsUseCase {
   /// Сортирует результаты поиска по релевантности
   List<FoodItem> _sortByRelevance(List<FoodItem> items, String query) {
     final sortedItems = List<FoodItem>.from(items);
-    
+
     sortedItems.sort((a, b) {
       final scoreA = _calculateRelevanceScore(a, query);
       final scoreB = _calculateRelevanceScore(b, query);
@@ -258,4 +262,4 @@ class SearchFoodItemsUseCase {
 
     return Map.fromEntries(sortedEntries);
   }
-} 
+}

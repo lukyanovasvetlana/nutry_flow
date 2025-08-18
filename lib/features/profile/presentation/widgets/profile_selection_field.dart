@@ -50,9 +50,7 @@ class ProfileSelectionField<T> extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.grey[50],
                       border: Border.all(
-                        color: field.hasError 
-                            ? Colors.red 
-                            : Colors.grey[300]!,
+                        color: field.hasError ? Colors.red : Colors.grey[300]!,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -63,8 +61,8 @@ class ProfileSelectionField<T> extends StatelessWidget {
                             displayText ?? hint ?? 'Выберите $label',
                             style: TextStyle(
                               fontSize: 14,
-                              color: displayText != null 
-                                  ? Colors.black87 
+                              color: displayText != null
+                                  ? Colors.black87
                                   : Colors.grey[400],
                             ),
                           ),
@@ -95,4 +93,4 @@ class ProfileSelectionField<T> extends StatelessWidget {
       ],
     );
   }
-} 
+}

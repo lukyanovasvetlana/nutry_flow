@@ -6,10 +6,10 @@ class NutritionSummaryCard extends StatelessWidget {
   final bool compact;
 
   const NutritionSummaryCard({
-    Key? key,
+    super.key,
     required this.summary,
     this.compact = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,22 +32,22 @@ class NutritionSummaryCard extends StatelessWidget {
                 Text(
                   'Сводка за день',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 const Spacer(),
                 Text(
                   '${summary.totalCalories.toStringAsFixed(0)} ккал',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Macros
             Row(
               children: [
@@ -77,20 +77,20 @@ class NutritionSummaryCard extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             if (!compact) ...[
               const SizedBox(height: 16),
-              
+
               // Meal breakdown
               Text(
                 'По приёмам пищи',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Row(
                 children: [
                   Expanded(
@@ -127,30 +127,27 @@ class NutritionSummaryCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               // Additional nutrients (if available)
-              if (summary.totalFiber != null || 
-                  summary.totalSugar != null || 
+              if (summary.totalFiber != null ||
+                  summary.totalSugar != null ||
                   summary.totalSodium != null) ...[
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 8),
-                
                 Text(
                   'Дополнительно',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
-                
                 const SizedBox(height: 8),
-                
                 Row(
                   children: [
                     Expanded(
                       child: _buildNutrientItem(
                         'Клетчатка',
-                        '${summary.totalFiber!.toStringAsFixed(1)} г',
+                        '${summary.totalFiber.toStringAsFixed(1)} г',
                         Icons.eco,
                         Colors.green,
                       ),
@@ -158,7 +155,7 @@ class NutritionSummaryCard extends StatelessWidget {
                     Expanded(
                       child: _buildNutrientItem(
                         'Сахар',
-                        '${summary.totalSugar!.toStringAsFixed(1)} г',
+                        '${summary.totalSugar.toStringAsFixed(1)} г',
                         Icons.cake,
                         Colors.pink,
                       ),
@@ -166,7 +163,7 @@ class NutritionSummaryCard extends StatelessWidget {
                     Expanded(
                       child: _buildNutrientItem(
                         'Натрий',
-                        '${summary.totalSodium!.toStringAsFixed(1)} мг',
+                        '${summary.totalSodium.toStringAsFixed(1)} мг',
                         Icons.water_drop,
                         Colors.cyan,
                       ),
@@ -181,7 +178,8 @@ class NutritionSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMacroItem(String label, String value, IconData icon, Color color) {
+  Widget _buildMacroItem(
+      String label, String value, IconData icon, Color color) {
     return Column(
       children: [
         Icon(icon, color: color, size: 20),
@@ -205,13 +203,14 @@ class NutritionSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMealItem(String label, double calories, IconData icon, Color color) {
+  Widget _buildMealItem(
+      String label, double calories, IconData icon, Color color) {
     return Column(
       children: [
         Icon(icon, color: color, size: 16),
         const SizedBox(height: 4),
         Text(
-          '${calories.toStringAsFixed(0)}',
+          calories.toStringAsFixed(0),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
@@ -229,7 +228,8 @@ class NutritionSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNutrientItem(String label, String value, IconData icon, Color color) {
+  Widget _buildNutrientItem(
+      String label, String value, IconData icon, Color color) {
     return Column(
       children: [
         Icon(icon, color: color, size: 16),
@@ -252,4 +252,4 @@ class NutritionSummaryCard extends StatelessWidget {
       ],
     );
   }
-} 
+}

@@ -10,9 +10,12 @@ class NotificationRepository {
   final NotificationService _notificationService = NotificationService.instance;
 
   /// Сохранение настроек уведомлений пользователя
-  Future<void> saveNotificationPreferences(NotificationPreferences preferences) async {
+  Future<void> saveNotificationPreferences(
+      NotificationPreferences preferences) async {
     try {
-      developer.log('🔔 NotificationRepository: Saving notification preferences', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Saving notification preferences',
+          name: 'NotificationRepository');
 
       if (_supabaseService.isAvailable) {
         final user = _supabaseService.currentUser;
@@ -22,21 +25,30 @@ class NotificationRepository {
             'meal_reminders_enabled': preferences.mealRemindersEnabled,
             'workout_reminders_enabled': preferences.workoutRemindersEnabled,
             'goal_reminders_enabled': preferences.goalRemindersEnabled,
-            'general_notifications_enabled': preferences.generalNotificationsEnabled,
-            'meal_reminder_time': preferences.mealReminderTime?.toIso8601String(),
-            'workout_reminder_time': preferences.workoutReminderTime?.toIso8601String(),
-            'goal_reminder_time': preferences.goalReminderTime?.toIso8601String(),
+            'general_notifications_enabled':
+                preferences.generalNotificationsEnabled,
+            'meal_reminder_time':
+                preferences.mealReminderTime?.toIso8601String(),
+            'workout_reminder_time':
+                preferences.workoutReminderTime?.toIso8601String(),
+            'goal_reminder_time':
+                preferences.goalReminderTime?.toIso8601String(),
             'created_at': DateTime.now().toIso8601String(),
             'updated_at': DateTime.now().toIso8601String(),
           });
-          developer.log('🔔 NotificationRepository: Preferences saved to Supabase', name: 'NotificationRepository');
+          developer.log(
+              '🔔 NotificationRepository: Preferences saved to Supabase',
+              name: 'NotificationRepository');
         }
       } else {
-        developer.log('🔔 NotificationRepository: Supabase not available, using local storage', name: 'NotificationRepository');
+        developer.log(
+            '🔔 NotificationRepository: Supabase not available, using local storage',
+            name: 'NotificationRepository');
         // TODO: Implement local storage fallback
       }
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to save preferences: $e', name: 'NotificationRepository');
+      developer.log('🔔 NotificationRepository: Failed to save preferences: $e',
+          name: 'NotificationRepository');
       rethrow;
     }
   }
@@ -44,34 +56,43 @@ class NotificationRepository {
   /// Получение настроек уведомлений пользователя
   Future<NotificationPreferences> getNotificationPreferences() async {
     try {
-      developer.log('🔔 NotificationRepository: Getting notification preferences', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Getting notification preferences',
+          name: 'NotificationRepository');
 
       if (_supabaseService.isAvailable) {
         final user = _supabaseService.currentUser;
         if (user != null) {
-          final data = await _supabaseService.getUserData('user_notification_preferences', userId: user.id);
-          
+          final data = await _supabaseService
+              .getUserData('user_notification_preferences', userId: user.id);
+
           if (data.isNotEmpty) {
             final preferences = data.first;
             return NotificationPreferences(
-              mealRemindersEnabled: preferences['meal_reminders_enabled'] ?? true,
-              workoutRemindersEnabled: preferences['workout_reminders_enabled'] ?? true,
-              goalRemindersEnabled: preferences['goal_reminders_enabled'] ?? true,
-              generalNotificationsEnabled: preferences['general_notifications_enabled'] ?? true,
-              mealReminderTime: preferences['meal_reminder_time'] != null 
+              mealRemindersEnabled:
+                  preferences['meal_reminders_enabled'] ?? true,
+              workoutRemindersEnabled:
+                  preferences['workout_reminders_enabled'] ?? true,
+              goalRemindersEnabled:
+                  preferences['goal_reminders_enabled'] ?? true,
+              generalNotificationsEnabled:
+                  preferences['general_notifications_enabled'] ?? true,
+              mealReminderTime: preferences['meal_reminder_time'] != null
                   ? DateTime.parse(preferences['meal_reminder_time'])
                   : null,
-              workoutReminderTime: preferences['workout_reminder_time'] != null 
+              workoutReminderTime: preferences['workout_reminder_time'] != null
                   ? DateTime.parse(preferences['workout_reminder_time'])
                   : null,
-              goalReminderTime: preferences['goal_reminder_time'] != null 
+              goalReminderTime: preferences['goal_reminder_time'] != null
                   ? DateTime.parse(preferences['goal_reminder_time'])
                   : null,
             );
           }
         }
       } else {
-        developer.log('🔔 NotificationRepository: Supabase not available, using default preferences', name: 'NotificationRepository');
+        developer.log(
+            '🔔 NotificationRepository: Supabase not available, using default preferences',
+            name: 'NotificationRepository');
       }
 
       // Возвращаем настройки по умолчанию
@@ -85,7 +106,8 @@ class NotificationRepository {
         goalReminderTime: DateTime.now().add(const Duration(days: 1)),
       );
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to get preferences: $e', name: 'NotificationRepository');
+      developer.log('🔔 NotificationRepository: Failed to get preferences: $e',
+          name: 'NotificationRepository');
       // Возвращаем настройки по умолчанию в случае ошибки
       return NotificationPreferences(
         mealRemindersEnabled: true,
@@ -102,7 +124,8 @@ class NotificationRepository {
   /// Планирование уведомления
   Future<void> scheduleNotification(ScheduledNotification notification) async {
     try {
-      developer.log('🔔 NotificationRepository: Scheduling notification', name: 'NotificationRepository');
+      developer.log('🔔 NotificationRepository: Scheduling notification',
+          name: 'NotificationRepository');
 
       // Планируем локальное уведомление
       await _notificationService.scheduleLocalNotification(
@@ -130,11 +153,15 @@ class NotificationRepository {
             'created_at': DateTime.now().toIso8601String(),
             'updated_at': DateTime.now().toIso8601String(),
           });
-          developer.log('🔔 NotificationRepository: Notification saved to Supabase', name: 'NotificationRepository');
+          developer.log(
+              '🔔 NotificationRepository: Notification saved to Supabase',
+              name: 'NotificationRepository');
         }
       }
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to schedule notification: $e', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Failed to schedule notification: $e',
+          name: 'NotificationRepository');
       rethrow;
     }
   }
@@ -142,18 +169,25 @@ class NotificationRepository {
   /// Отмена уведомления
   Future<void> cancelNotification(int notificationId) async {
     try {
-      developer.log('🔔 NotificationRepository: Cancelling notification: $notificationId', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Cancelling notification: $notificationId',
+          name: 'NotificationRepository');
 
       // Отменяем локальное уведомление
       await _notificationService.cancelLocalNotification(notificationId);
 
       // Удаляем из Supabase
       if (_supabaseService.isAvailable) {
-        await _supabaseService.deleteUserData('scheduled_notifications', notificationId.toString());
-        developer.log('🔔 NotificationRepository: Notification cancelled in Supabase', name: 'NotificationRepository');
+        await _supabaseService.deleteUserData(
+            'scheduled_notifications', notificationId.toString());
+        developer.log(
+            '🔔 NotificationRepository: Notification cancelled in Supabase',
+            name: 'NotificationRepository');
       }
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to cancel notification: $e', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Failed to cancel notification: $e',
+          name: 'NotificationRepository');
       rethrow;
     }
   }
@@ -161,28 +195,35 @@ class NotificationRepository {
   /// Получение запланированных уведомлений
   Future<List<ScheduledNotification>> getScheduledNotifications() async {
     try {
-      developer.log('🔔 NotificationRepository: Getting scheduled notifications', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Getting scheduled notifications',
+          name: 'NotificationRepository');
 
       if (_supabaseService.isAvailable) {
         final user = _supabaseService.currentUser;
         if (user != null) {
-          final data = await _supabaseService.getUserData('scheduled_notifications', userId: user.id);
-          
-          return data.map((item) => ScheduledNotification(
-            id: item['id'],
-            title: item['title'],
-            body: item['body'],
-            type: item['type'],
-            scheduledDate: DateTime.parse(item['scheduled_date']),
-            payload: item['payload'],
-            isActive: item['is_active'] ?? true,
-          )).toList();
+          final data = await _supabaseService
+              .getUserData('scheduled_notifications', userId: user.id);
+
+          return data
+              .map((item) => ScheduledNotification(
+                    id: item['id'],
+                    title: item['title'],
+                    body: item['body'],
+                    type: item['type'],
+                    scheduledDate: DateTime.parse(item['scheduled_date']),
+                    payload: item['payload'],
+                    isActive: item['is_active'] ?? true,
+                  ))
+              .toList();
         }
       }
 
       return [];
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to get scheduled notifications: $e', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Failed to get scheduled notifications: $e',
+          name: 'NotificationRepository');
       return [];
     }
   }
@@ -196,31 +237,41 @@ class NotificationRepository {
     Map<String, dynamic>? data,
   }) async {
     try {
-      developer.log('🔔 NotificationRepository: Sending push notification', name: 'NotificationRepository');
+      developer.log('🔔 NotificationRepository: Sending push notification',
+          name: 'NotificationRepository');
 
       if (_supabaseService.isAvailable) {
         // Получаем FCM токены пользователя
         final tokens = await _getUserFCMTokens(userId);
-        
+
         if (tokens.isNotEmpty) {
           // Отправляем уведомление через Supabase Edge Functions
-          await _supabaseService.supabase.functions.invoke('send-push-notification', body: {
-            'tokens': tokens,
-            'title': title,
-            'body': body,
-            'data': {
-              'type': type,
-              ...?data,
-            },
-          });
-          
-          developer.log('🔔 NotificationRepository: Push notification sent successfully', name: 'NotificationRepository');
+          final client = _supabaseService.client;
+          if (client != null) {
+            await client.functions.invoke('send-push-notification', body: {
+              'tokens': tokens,
+              'title': title,
+              'body': body,
+              'data': {
+                'type': type,
+                ...?data,
+              },
+            });
+          }
+
+          developer.log(
+              '🔔 NotificationRepository: Push notification sent successfully',
+              name: 'NotificationRepository');
         } else {
-          developer.log('🔔 NotificationRepository: No FCM tokens found for user', name: 'NotificationRepository');
+          developer.log(
+              '🔔 NotificationRepository: No FCM tokens found for user',
+              name: 'NotificationRepository');
         }
       }
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to send push notification: $e', name: 'NotificationRepository');
+      developer.log(
+          '🔔 NotificationRepository: Failed to send push notification: $e',
+          name: 'NotificationRepository');
       rethrow;
     }
   }
@@ -228,10 +279,12 @@ class NotificationRepository {
   /// Получение FCM токенов пользователя
   Future<List<String>> _getUserFCMTokens(String userId) async {
     try {
-      final data = await _supabaseService.getUserData('user_fcm_tokens', userId: userId);
+      final data =
+          await _supabaseService.getUserData('user_fcm_tokens', userId: userId);
       return data.map((item) => item['token'] as String).toList();
     } catch (e) {
-      developer.log('🔔 NotificationRepository: Failed to get FCM tokens: $e', name: 'NotificationRepository');
+      developer.log('🔔 NotificationRepository: Failed to get FCM tokens: $e',
+          name: 'NotificationRepository');
       return [];
     }
   }
@@ -240,13 +293,13 @@ class NotificationRepository {
   String _getChannelId(String type) {
     switch (type) {
       case 'meal_reminder':
-        return NotificationService._mealReminderChannel;
+        return 'meal_reminder_channel';
       case 'workout_reminder':
-        return NotificationService._workoutReminderChannel;
+        return 'workout_reminder_channel';
       case 'goal_achievement':
-        return NotificationService._goalReminderChannel;
+        return 'goal_reminder_channel';
       default:
-        return NotificationService._generalChannel;
+        return 'general_notifications';
     }
   }
 
@@ -359,7 +412,8 @@ class NotificationRepository {
     await sendPushNotification(
       userId: userId,
       title: 'Превышение калорий',
-      body: 'Вы превысили дневную норму калорий на ${consumedCalories - targetCalories} ккал',
+      body:
+          'Вы превысили дневную норму калорий на ${consumedCalories - targetCalories} ккал',
       type: 'calorie_exceeded',
       data: {
         'target_calories': targetCalories,
@@ -367,4 +421,4 @@ class NotificationRepository {
       },
     );
   }
-} 
+}

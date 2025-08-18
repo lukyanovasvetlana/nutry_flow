@@ -11,4 +11,4 @@ abstract class ExerciseRepository {
   Future<Either<String, void>> toggleFavorite(String userId, String exerciseId);
   Future<Either<String, List<String>>> getCategories();
   Future<Either<String, List<String>>> getDifficulties();
-} 
+}

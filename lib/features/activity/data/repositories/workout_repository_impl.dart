@@ -31,7 +31,8 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<String, List<Workout>>> getWorkoutTemplates(String userId) async {
+  Future<Either<String, List<Workout>>> getWorkoutTemplates(
+      String userId) async {
     try {
       final templates = await _workoutService.getWorkoutTemplates(userId);
       return Right(templates);
@@ -81,12 +82,14 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<String, List<Workout>>> searchWorkouts(String userId, String query) async {
+  Future<Either<String, List<Workout>>> searchWorkouts(
+      String userId, String query) async {
     try {
       if (query.trim().isEmpty) {
         return await getUserWorkouts(userId);
       }
-      final workouts = await _workoutService.searchWorkouts(userId, query.trim());
+      final workouts =
+          await _workoutService.searchWorkouts(userId, query.trim());
       return Right(workouts);
     } catch (e) {
       return Left('Ошибка при поиске тренировок: $e');
@@ -94,12 +97,14 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<String, List<Workout>>> filterWorkoutsByDifficulty(String userId, String difficulty) async {
+  Future<Either<String, List<Workout>>> filterWorkoutsByDifficulty(
+      String userId, String difficulty) async {
     try {
-      final workouts = await _workoutService.filterWorkoutsByDifficulty(userId, difficulty);
+      final workouts =
+          await _workoutService.filterWorkoutsByDifficulty(userId, difficulty);
       return Right(workouts);
     } catch (e) {
       return Left('Ошибка при фильтрации тренировок: $e');
     }
   }
-} 
+}

@@ -13,7 +13,7 @@ import '../../domain/entities/insight_author.dart';
 import 'article_detail_screen.dart';
 
 class HealthArticlesScreen extends StatefulWidget {
-  const HealthArticlesScreen({Key? key}) : super(key: key);
+  const HealthArticlesScreen({super.key});
 
   @override
   State<HealthArticlesScreen> createState() => _HealthArticlesScreenState();
@@ -38,7 +38,8 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
     _featuredArticle = const InsightArticle(
       id: 'featured1',
       title: '10 принципов здорового питания для активной жизни',
-      description: 'Узнайте основные принципы правильного питания, которые помогут вам поддерживать энергию и здоровье в течение всего дня.',
+      description:
+          'Узнайте основные принципы правильного питания, которые помогут вам поддерживать энергию и здоровье в течение всего дня.',
       author: 'Доктор Анна Петрова',
       authorAvatar: '👩‍⚕️',
       category: 'Питание',
@@ -131,12 +132,42 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
     ];
 
     _tags = [
-      const InsightTag(id: '1', name: 'Питание', category: 'Питание', color: '#4CAF50', articleCount: 15),
-      const InsightTag(id: '2', name: 'Тренировки', category: 'Тренировки', color: '#2196F3', articleCount: 12),
-      const InsightTag(id: '3', name: 'Здоровье', category: 'Здоровье', color: '#FF9800', articleCount: 8),
-      const InsightTag(id: '4', name: 'Рецепты', category: 'Рецепты', color: '#9C27B0', articleCount: 20),
-      const InsightTag(id: '5', name: 'Витамины', category: 'Здоровье', color: '#F44336', articleCount: 6),
-      const InsightTag(id: '6', name: 'Мотивация', category: 'Психология', color: '#009688', articleCount: 10),
+      const InsightTag(
+          id: '1',
+          name: 'Питание',
+          category: 'Питание',
+          color: '#4CAF50',
+          articleCount: 15),
+      const InsightTag(
+          id: '2',
+          name: 'Тренировки',
+          category: 'Тренировки',
+          color: '#2196F3',
+          articleCount: 12),
+      const InsightTag(
+          id: '3',
+          name: 'Здоровье',
+          category: 'Здоровье',
+          color: '#FF9800',
+          articleCount: 8),
+      const InsightTag(
+          id: '4',
+          name: 'Рецепты',
+          category: 'Рецепты',
+          color: '#9C27B0',
+          articleCount: 20),
+      const InsightTag(
+          id: '5',
+          name: 'Витамины',
+          category: 'Здоровье',
+          color: '#F44336',
+          articleCount: 6),
+      const InsightTag(
+          id: '6',
+          name: 'Мотивация',
+          category: 'Психология',
+          color: '#009688',
+          articleCount: 10),
     ];
 
     _authors = [
@@ -175,25 +206,49 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
 
   List<InsightArticle> get _filteredArticles {
     if (_searchQuery.isEmpty) return _articles;
-    return _articles.where((article) =>
-        article.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        article.description.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        article.author.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        article.category.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        article.tags.any((tag) => tag.toLowerCase().contains(_searchQuery.toLowerCase()))
-    ).toList();
+    return _articles
+        .where((article) =>
+            article.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            article.description
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()) ||
+            article.author.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            article.category
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()) ||
+            article.tags.any((tag) =>
+                tag.toLowerCase().contains(_searchQuery.toLowerCase())))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.dynamicBackground,
       appBar: AppBar(
-        title: const Text('Статьи о здоровье'),
-        centerTitle: true,
+        backgroundColor: AppColors.dynamicSurface,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: AppColors.dynamicTextPrimary),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          'Статьи о здоровье',
+          style: TextStyle(
+            color: AppColors.dynamicTextPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.bookmark_border,
+                color: AppColors.dynamicTextPrimary),
+            onPressed: () {
+              // TODO: Show bookmarks
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -248,12 +303,12 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Главная статья',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppColors.dynamicTextPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -262,7 +317,8 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ArticleDetailScreen(article: _featuredArticle),
+                builder: (context) =>
+                    ArticleDetailScreen(article: _featuredArticle),
               ),
             );
           },
@@ -274,7 +330,7 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
 
   Widget _buildRecommendedArticles() {
     final articles = _filteredArticles.take(3).toList();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -303,19 +359,20 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
           )
         else
           ...articles.map((article) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ArticleDetailScreen(article: article),
-                  ),
-                );
-              },
-              child: ArticleCard(article: article),
-            ),
-          )),
+                padding: const EdgeInsets.only(bottom: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ArticleDetailScreen(article: article),
+                      ),
+                    );
+                  },
+                  child: ArticleCard(article: article),
+                ),
+              )),
       ],
     );
   }
@@ -334,16 +391,17 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
         ),
         const SizedBox(height: 12),
         ..._videos.map((video) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Воспроизведение видео: ${video.title}')),
-              );
-            },
-            child: VideoCard(video: video),
-          ),
-        )),
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Воспроизведение видео: ${video.title}')),
+                  );
+                },
+                child: VideoCard(video: video),
+              ),
+            )),
       ],
     );
   }
@@ -364,14 +422,16 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: _tags.map((tag) => GestureDetector(
-            onTap: () {
-              setState(() {
-                _searchQuery = tag.name;
-              });
-            },
-            child: TagChip(tag: tag),
-          )).toList(),
+          children: _tags
+              .map((tag) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _searchQuery = tag.name;
+                      });
+                    },
+                    child: TagChip(tag: tag),
+                  ))
+              .toList(),
         ),
       ],
     );
@@ -391,17 +451,17 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
         ),
         const SizedBox(height: 12),
         ..._authors.map((author) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Профиль автора: ${author.name}')),
-              );
-            },
-            child: AuthorCard(author: author),
-          ),
-        )),
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Профиль автора: ${author.name}')),
+                  );
+                },
+                child: AuthorCard(author: author),
+              ),
+            )),
       ],
     );
   }
-} 
+}

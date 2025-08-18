@@ -12,4 +12,4 @@ class WeightCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

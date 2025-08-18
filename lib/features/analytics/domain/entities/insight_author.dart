@@ -27,4 +27,4 @@ class InsightAuthor {
 
   @override
   int get hashCode => id.hashCode;
-} 
+}

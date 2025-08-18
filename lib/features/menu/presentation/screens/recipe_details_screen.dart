@@ -7,7 +7,7 @@ import 'add_edit_recipe_screen.dart';
 
 class RecipeDetailsScreen extends StatefulWidget {
   final MenuItem recipe;
-  const RecipeDetailsScreen({Key? key, required this.recipe}) : super(key: key);
+  const RecipeDetailsScreen({super.key, required this.recipe});
 
   @override
   State<RecipeDetailsScreen> createState() => _RecipeDetailsScreenState();
@@ -25,13 +25,9 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
   }
 
   void _initializeService() {
-    print('🍽️ RecipeDetailsScreen: Initializing service - isDemo: ${SupabaseConfig.isDemo}');
-    
     if (SupabaseConfig.isDemo) {
-      print('🍽️ RecipeDetailsScreen: Using MockRecipeService');
       _recipeService = MockRecipeService();
     } else {
-      print('🍽️ RecipeDetailsScreen: Using RecipeService');
       _recipeService = RecipeService();
     }
   }
@@ -39,7 +35,8 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
   void _navigateToEdit() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddEditRecipeScreen(recipe: _recipe)),
+      MaterialPageRoute(
+          builder: (context) => AddEditRecipeScreen(recipe: _recipe)),
     );
     if (result == true) {
       // TODO: Обновить данные рецепта после редактирования
@@ -56,8 +53,12 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
         title: const Text('Удалить рецепт?'),
         content: const Text('Это действие нельзя будет отменить.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Отмена')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Удалить')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Отмена')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Удалить')),
         ],
       ),
     );
@@ -65,7 +66,8 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
     if (confirmed == true) {
       try {
         await _recipeService.deleteRecipe(_recipe.id);
-        Navigator.pop(context, true); // Возвращаемся с флагом для обновления списка
+        Navigator.pop(
+            context, true); // Возвращаемся с флагом для обновления списка
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка удаления: $e')),
@@ -106,7 +108,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.network(
-                        photo.url!,
+                        photo.url,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
                             const Icon(Icons.broken_image, size: 48),
@@ -117,7 +119,11 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
               ),
             const SizedBox(height: 16),
             // Название, категория, сложность
-            Text(_recipe.title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(_recipe.title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -128,14 +134,17 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
             ),
             const SizedBox(height: 16),
             // Описание
-            Text(_recipe.description, style: Theme.of(context).textTheme.bodyLarge),
+            Text(_recipe.description,
+                style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 24),
             // Ингредиенты
             Text('Ингредиенты', style: Theme.of(context).textTheme.titleLarge),
-            ..._recipe.ingredients.map((ing) => Text('• ${ing.name} - ${ing.amount} ${ing.unit}')),
+            ..._recipe.ingredients.map(
+                (ing) => Text('• ${ing.name} - ${ing.amount} ${ing.unit}')),
             const SizedBox(height: 24),
             // Шаги
-            Text('Шаги приготовления', style: Theme.of(context).textTheme.titleLarge),
+            Text('Шаги приготовления',
+                style: Theme.of(context).textTheme.titleLarge),
             ..._recipe.steps.map((step) => ListTile(
                   leading: CircleAvatar(child: Text('${step.order}')),
                   title: Text(step.description),
@@ -156,4 +165,4 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
       ),
     );
   }
-} 
+}

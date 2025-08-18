@@ -41,15 +41,15 @@ class SignInUseCase {
       if (email.isEmpty || password.isEmpty) {
         return SignInResult.failure('Email and password are required');
       }
-      
+
       // Валидация формата email
       if (!_isValidEmail(email)) {
         return SignInResult.failure('Invalid email format');
       }
-      
+
       // Выполняем вход
       final user = await _authRepository.signIn(email, password);
-      
+
       return SignInResult.success(user);
     } catch (e) {
       return SignInResult.failure('Sign in failed: $e');
@@ -59,4 +59,4 @@ class SignInUseCase {
   bool _isValidEmail(String email) {
     return RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email);
   }
-} 
+}

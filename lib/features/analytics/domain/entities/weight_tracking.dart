@@ -107,4 +107,4 @@ class WeightTracking extends Equatable {
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
-} 
+}

@@ -5,9 +5,9 @@ class ProfileGoalsCard extends StatelessWidget {
   final UserProfile profile;
 
   const ProfileGoalsCard({
-    Key? key,
+    super.key,
     required this.profile,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ProfileGoalsCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            
+
             // Fitness Goals
             if (profile.fitnessGoals.isNotEmpty) ...[
               Text(
@@ -42,7 +42,6 @@ class ProfileGoalsCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -54,12 +53,11 @@ class ProfileGoalsCard extends StatelessWidget {
                   );
                 }).toList(),
               ),
-              
               SizedBox(height: 16),
               Divider(),
               SizedBox(height: 16),
             ],
-            
+
             // Weight Goal Progress
             if (profile.weight != null && profile.targetWeight != null) ...[
               _buildWeightGoalProgress(),
@@ -67,11 +65,11 @@ class ProfileGoalsCard extends StatelessWidget {
               Divider(),
               SizedBox(height: 16),
             ],
-            
+
             // Nutrition Goals
-            if (profile.targetCalories != null || 
-                profile.targetProtein != null || 
-                profile.targetCarbs != null || 
+            if (profile.targetCalories != null ||
+                profile.targetProtein != null ||
+                profile.targetCarbs != null ||
                 profile.targetFat != null) ...[
               Text(
                 'Цели по питанию',
@@ -82,7 +80,6 @@ class ProfileGoalsCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              
               if (profile.targetCalories != null)
                 _buildNutritionGoal(
                   icon: Icons.local_fire_department,
@@ -91,7 +88,6 @@ class ProfileGoalsCard extends StatelessWidget {
                   color: Colors.red,
                   progress: 0.7, // Mock progress
                 ),
-              
               if (profile.targetProtein != null)
                 _buildNutritionGoal(
                   icon: Icons.egg,
@@ -100,7 +96,6 @@ class ProfileGoalsCard extends StatelessWidget {
                   color: Colors.indigo,
                   progress: 0.8, // Mock progress
                 ),
-              
               if (profile.targetCarbs != null)
                 _buildNutritionGoal(
                   icon: Icons.grain,
@@ -109,7 +104,6 @@ class ProfileGoalsCard extends StatelessWidget {
                   color: Colors.amber,
                   progress: 0.6, // Mock progress
                 ),
-              
               if (profile.targetFat != null)
                 _buildNutritionGoal(
                   icon: Icons.opacity,
@@ -119,9 +113,10 @@ class ProfileGoalsCard extends StatelessWidget {
                   progress: 0.9, // Mock progress
                 ),
             ],
-            
+
             // Motivational Section
-            if (profile.fitnessGoals.isNotEmpty || profile.targetWeight != null) ...[
+            if (profile.fitnessGoals.isNotEmpty ||
+                profile.targetWeight != null) ...[
               SizedBox(height: 16),
               Container(
                 width: double.infinity,
@@ -214,12 +209,14 @@ class ProfileGoalsCard extends StatelessWidget {
     final targetWeight = profile.targetWeight!;
     final difference = (targetWeight - currentWeight).abs();
     final isLosing = currentWeight > targetWeight;
-    
+
     // Mock starting weight for progress calculation
     final startingWeight = isLosing ? currentWeight + 10 : currentWeight - 10;
     final totalChange = (targetWeight - startingWeight).abs();
-    final progress = totalChange > 0 ? (currentWeight - startingWeight).abs() / totalChange : 0.0;
-    
+    final progress = totalChange > 0
+        ? (currentWeight - startingWeight).abs() / totalChange
+        : 0.0;
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -275,7 +272,7 @@ class ProfileGoalsCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12),
-          
+
           // Progress Bar
           Container(
             height: 8,
@@ -292,9 +289,9 @@ class ProfileGoalsCard extends StatelessWidget {
               ),
             ),
           ),
-          
+
           SizedBox(height: 8),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -397,13 +394,16 @@ class ProfileGoalsCard extends StatelessWidget {
     final goalLower = goal.toLowerCase();
     if (goalLower.contains('похудение') || goalLower.contains('снижение')) {
       return Icons.trending_down;
-    } else if (goalLower.contains('набор') || goalLower.contains('увеличение')) {
+    } else if (goalLower.contains('набор') ||
+        goalLower.contains('увеличение')) {
       return Icons.trending_up;
     } else if (goalLower.contains('мышц') || goalLower.contains('сила')) {
       return Icons.fitness_center;
-    } else if (goalLower.contains('выносливость') || goalLower.contains('кардио')) {
+    } else if (goalLower.contains('выносливость') ||
+        goalLower.contains('кардио')) {
       return Icons.directions_run;
-    } else if (goalLower.contains('здоровье') || goalLower.contains('поддержание')) {
+    } else if (goalLower.contains('здоровье') ||
+        goalLower.contains('поддержание')) {
       return Icons.favorite;
     } else {
       return Icons.flag;
@@ -414,16 +414,19 @@ class ProfileGoalsCard extends StatelessWidget {
     final goalLower = goal.toLowerCase();
     if (goalLower.contains('похудение') || goalLower.contains('снижение')) {
       return Colors.red;
-    } else if (goalLower.contains('набор') || goalLower.contains('увеличение')) {
+    } else if (goalLower.contains('набор') ||
+        goalLower.contains('увеличение')) {
       return Colors.green;
     } else if (goalLower.contains('мышц') || goalLower.contains('сила')) {
       return Colors.orange;
-    } else if (goalLower.contains('выносливость') || goalLower.contains('кардио')) {
+    } else if (goalLower.contains('выносливость') ||
+        goalLower.contains('кардио')) {
       return Colors.blue;
-    } else if (goalLower.contains('здоровье') || goalLower.contains('поддержание')) {
+    } else if (goalLower.contains('здоровье') ||
+        goalLower.contains('поддержание')) {
       return Colors.purple;
     } else {
       return Colors.grey;
     }
   }
-} 
+}

@@ -56,7 +56,8 @@ class UserProfile {
   // Вычисляемые свойства
   String get fullName {
     if (firstName.isEmpty && lastName.isEmpty) return 'Не указано';
-    return '${firstName.isEmpty ? '' : firstName} ${lastName.isEmpty ? '' : lastName}'.trim();
+    return '${firstName.isEmpty ? '' : firstName} ${lastName.isEmpty ? '' : lastName}'
+        .trim();
   }
 
   String get initials {
@@ -70,7 +71,7 @@ class UserProfile {
     if (dateOfBirth == null) return null;
     final now = DateTime.now();
     int age = now.year - dateOfBirth!.year;
-    if (now.month < dateOfBirth!.month || 
+    if (now.month < dateOfBirth!.month ||
         (now.month == dateOfBirth!.month && now.day < dateOfBirth!.day)) {
       age--;
     }
@@ -86,7 +87,7 @@ class UserProfile {
   BMICategory? get bmiCategory {
     final bmiValue = bmi;
     if (bmiValue == null) return null;
-    
+
     if (bmiValue < 18.5) return BMICategory.underweight;
     if (bmiValue < 25) return BMICategory.normal;
     if (bmiValue < 30) return BMICategory.overweight;
@@ -94,9 +95,9 @@ class UserProfile {
   }
 
   double get profileCompleteness {
-    int totalFields = 12;
+    final int totalFields = 12;
     int filledFields = 0;
-    
+
     if (firstName.isNotEmpty) filledFields++;
     if (lastName.isNotEmpty) filledFields++;
     if (phone?.isNotEmpty == true) filledFields++;
@@ -109,7 +110,7 @@ class UserProfile {
     if (dietaryPreferences.isNotEmpty) filledFields++;
     if (allergies.isNotEmpty) filledFields++;
     if (foodRestrictions?.isNotEmpty == true) filledFields++;
-    
+
     return filledFields / totalFields;
   }
 
@@ -162,8 +163,10 @@ class UserProfile {
       targetCarbs: targetCarbs ?? this.targetCarbs,
       targetFat: targetFat ?? this.targetFat,
       foodRestrictions: foodRestrictions ?? this.foodRestrictions,
-      pushNotificationsEnabled: pushNotificationsEnabled ?? this.pushNotificationsEnabled,
-      emailNotificationsEnabled: emailNotificationsEnabled ?? this.emailNotificationsEnabled,
+      pushNotificationsEnabled:
+          pushNotificationsEnabled ?? this.pushNotificationsEnabled,
+      emailNotificationsEnabled:
+          emailNotificationsEnabled ?? this.emailNotificationsEnabled,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -334,4 +337,4 @@ enum BMICategory {
         return 'ИМТ 30 и выше';
     }
   }
-} 
+}

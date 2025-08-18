@@ -24,7 +24,7 @@ class ProfileEditScreen extends StatefulWidget {
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
-  
+
   // Controllers for text fields
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
@@ -37,7 +37,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late final TextEditingController _targetProteinController;
   late final TextEditingController _targetCarbsController;
   late final TextEditingController _targetFatController;
-  
+
   // Form values
   DateTime? _selectedDateOfBirth;
   Gender? _selectedGender;
@@ -46,7 +46,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   List<String> _allergies = [];
   List<String> _healthConditions = [];
   List<String> _fitnessGoals = [];
-  
+
   bool _isModified = false;
   bool _isSubmitting = false;
 
@@ -69,7 +69,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _targetProteinController = TextEditingController();
     _targetCarbsController = TextEditingController();
     _targetFatController = TextEditingController();
-    
+
     // Add listeners to track changes
     _firstNameController.addListener(_onFormChanged);
     _lastNameController.addListener(_onFormChanged);
@@ -86,7 +86,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   void _loadProfileData() {
     final profile = widget.userProfile;
-    
+
     _firstNameController.text = profile.firstName;
     _lastNameController.text = profile.lastName;
     _emailController.text = profile.email;
@@ -98,7 +98,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _targetProteinController.text = profile.targetProtein?.toString() ?? '';
     _targetCarbsController.text = profile.targetCarbs?.toString() ?? '';
     _targetFatController.text = profile.targetFat?.toString() ?? '';
-    
+
     _selectedDateOfBirth = profile.dateOfBirth;
     _selectedGender = profile.gender;
     _selectedActivityLevel = profile.activityLevel;
@@ -285,7 +285,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           keyboardType: TextInputType.phone,
           validator: (value) {
             if (value != null && value.isNotEmpty) {
-              if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value.replaceAll(RegExp(r'[\s\-\(\)]'), ''))) {
+              if (!RegExp(r'^\+?[1-9]\d{1,14}$')
+                  .hasMatch(value.replaceAll(RegExp(r'[\s\-\(\)]'), ''))) {
                 return 'Введите корректный номер телефона';
               }
             }
@@ -296,7 +297,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         ProfileSelectionField<DateTime>(
           label: 'Дата рождения',
           value: _selectedDateOfBirth,
-          displayText: _selectedDateOfBirth != null 
+          displayText: _selectedDateOfBirth != null
               ? '${_selectedDateOfBirth!.day.toString().padLeft(2, '0')}.${_selectedDateOfBirth!.month.toString().padLeft(2, '0')}.${_selectedDateOfBirth!.year}'
               : null,
           onTap: () => _selectDateOfBirth(context),
@@ -507,15 +508,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
                 ],
-                                  validator: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      final protein = double.tryParse(value);
-                      if (protein == null || protein < 10 || protein > 300) {
-                        return 'Белки: 10-300г';
-                      }
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    final protein = double.tryParse(value);
+                    if (protein == null || protein < 10 || protein > 300) {
+                      return 'Белки: 10-300г';
                     }
-                    return null;
-                  },
+                  }
+                  return null;
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -527,15 +528,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
                 ],
-                                  validator: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      final carbs = double.tryParse(value);
-                      if (carbs == null || carbs < 20 || carbs > 500) {
-                        return 'Углеводы: 20-500г';
-                      }
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    final carbs = double.tryParse(value);
+                    if (carbs == null || carbs < 20 || carbs > 500) {
+                      return 'Углеводы: 20-500г';
                     }
-                    return null;
-                  },
+                  }
+                  return null;
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -547,15 +548,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
                 ],
-                                  validator: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      final fat = double.tryParse(value);
-                      if (fat == null || fat < 10 || fat > 200) {
-                        return 'Жиры: 10-200г';
-                      }
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    final fat = double.tryParse(value);
+                    if (fat == null || fat < 10 || fat > 200) {
+                      return 'Жиры: 10-200г';
                     }
-                    return null;
-                  },
+                  }
+                  return null;
+                },
               ),
             ),
           ],
@@ -613,17 +614,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           children: [
             Expanded(
               child: OutlinedButton(
-                onPressed: _isSubmitting ? null : () {
-                  if (_isModified) {
-                    _showUnsavedChangesDialog();
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                },
-                                 style: OutlinedButton.styleFrom(
-                   padding: const EdgeInsets.symmetric(vertical: 16),
-                   side: BorderSide(color: AppColors.green),
-                 ),
+                onPressed: _isSubmitting
+                    ? null
+                    : () {
+                        if (_isModified) {
+                          _showUnsavedChangesDialog();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: BorderSide(color: AppColors.green),
+                ),
                 child: const Text('Отмена'),
               ),
             ),
@@ -631,8 +634,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: _isSubmitting ? null : _saveProfile,
-                                 style: ElevatedButton.styleFrom(
-                   backgroundColor: AppColors.green,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -642,7 +645,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
                     : const Text('Сохранить'),
@@ -658,7 +662,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Future<void> _selectDateOfBirth(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDateOfBirth ?? DateTime.now().subtract(const Duration(days: 365 * 25)),
+      initialDate: _selectedDateOfBirth ??
+          DateTime.now().subtract(const Duration(days: 365 * 25)),
       firstDate: DateTime.now().subtract(const Duration(days: 365 * 120)),
       lastDate: DateTime.now().subtract(const Duration(days: 365 * 13)),
     );
@@ -675,10 +680,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       context: context,
       builder: (context) => SimpleDialog(
         title: const Text('Выберите пол'),
-        children: Gender.values.map((gender) => SimpleDialogOption(
-          onPressed: () => Navigator.of(context).pop(gender),
-          child: Text(gender.displayName),
-        )).toList(),
+        children: Gender.values
+            .map((gender) => SimpleDialogOption(
+                  onPressed: () => Navigator.of(context).pop(gender),
+                  child: Text(gender.displayName),
+                ))
+            .toList(),
       ),
     );
     if (selected != null && selected != _selectedGender) {
@@ -694,22 +701,25 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       context: context,
       builder: (context) => SimpleDialog(
         title: const Text('Выберите уровень активности'),
-        children: ActivityLevel.values.map((level) => SimpleDialogOption(
-          onPressed: () => Navigator.of(context).pop(level),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                level.displayName,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-                             Text(
-                 level.displayName,
-                 style: const TextStyle(fontSize: 12, color: Colors.grey),
-               ),
-            ],
-          ),
-        )).toList(),
+        children: ActivityLevel.values
+            .map((level) => SimpleDialogOption(
+                  onPressed: () => Navigator.of(context).pop(level),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        level.displayName,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        level.displayName,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
       ),
     );
     if (selected != null && selected != _selectedActivityLevel) {
@@ -735,17 +745,33 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
+      phone: _phoneController.text.trim().isEmpty
+          ? null
+          : _phoneController.text.trim(),
       dateOfBirth: _selectedDateOfBirth,
       gender: _selectedGender,
-      height: _heightController.text.isEmpty ? null : double.tryParse(_heightController.text),
-      weight: _weightController.text.isEmpty ? null : double.tryParse(_weightController.text),
-      targetWeight: _targetWeightController.text.isEmpty ? null : double.tryParse(_targetWeightController.text),
+      height: _heightController.text.isEmpty
+          ? null
+          : double.tryParse(_heightController.text),
+      weight: _weightController.text.isEmpty
+          ? null
+          : double.tryParse(_weightController.text),
+      targetWeight: _targetWeightController.text.isEmpty
+          ? null
+          : double.tryParse(_targetWeightController.text),
       activityLevel: _selectedActivityLevel,
-      targetCalories: _targetCaloriesController.text.isEmpty ? null : int.tryParse(_targetCaloriesController.text),
-      targetProtein: _targetProteinController.text.isEmpty ? null : double.tryParse(_targetProteinController.text),
-      targetCarbs: _targetCarbsController.text.isEmpty ? null : double.tryParse(_targetCarbsController.text),
-      targetFat: _targetFatController.text.isEmpty ? null : double.tryParse(_targetFatController.text),
+      targetCalories: _targetCaloriesController.text.isEmpty
+          ? null
+          : int.tryParse(_targetCaloriesController.text),
+      targetProtein: _targetProteinController.text.isEmpty
+          ? null
+          : double.tryParse(_targetProteinController.text),
+      targetCarbs: _targetCarbsController.text.isEmpty
+          ? null
+          : double.tryParse(_targetCarbsController.text),
+      targetFat: _targetFatController.text.isEmpty
+          ? null
+          : double.tryParse(_targetFatController.text),
       dietaryPreferences: _selectedDietaryPreferences,
       allergies: _allergies,
       healthConditions: _healthConditions,
@@ -770,7 +796,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Несохраненные изменения'),
-        content: const Text('У вас есть несохраненные изменения. Вы действительно хотите выйти?'),
+        content: const Text(
+            'У вас есть несохраненные изменения. Вы действительно хотите выйти?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -805,4 +832,4 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       ),
     );
   }
-} 
+}

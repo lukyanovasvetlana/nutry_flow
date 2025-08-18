@@ -11,14 +11,14 @@ class WorkoutCard extends StatelessWidget {
   final bool showActions;
 
   const WorkoutCard({
-    Key? key,
+    super.key,
     required this.workout,
     this.onTap,
     this.onStart,
     this.onEdit,
     this.onDelete,
     this.showActions = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,8 @@ class WorkoutCard extends StatelessWidget {
                   ),
                   if (workout.isTemplate)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: context.colors.secondaryLight,
                         borderRadius: BorderRadius.circular(8),
@@ -77,7 +78,6 @@ class WorkoutCard extends StatelessWidget {
                     ),
                 ],
               ),
-              
               if (workout.description != null) ...[
                 const SizedBox(height: 12),
                 Text(
@@ -89,10 +89,8 @@ class WorkoutCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-              
               const SizedBox(height: 16),
               _buildWorkoutStats(),
-              
               if (showActions) ...[
                 const SizedBox(height: 16),
                 _buildActionButtons(),
@@ -252,4 +250,4 @@ class WorkoutCard extends StatelessWidget {
       return '${date.day}.${date.month}.${date.year}';
     }
   }
-} 
+}

@@ -4,9 +4,9 @@ class FoodCategoriesGrid extends StatelessWidget {
   final Function(String) onCategorySelected;
 
   const FoodCategoriesGrid({
-    Key? key,
+    super.key,
     required this.onCategorySelected,
-  }) : super(key: key);
+  });
 
   static const List<Map<String, dynamic>> _categories = [
     {'name': 'Фрукты', 'icon': Icons.apple, 'color': Colors.green},
@@ -33,10 +33,10 @@ class FoodCategoriesGrid extends StatelessWidget {
       itemCount: _categories.length,
       itemBuilder: (context, index) {
         final category = _categories[index];
-        
+
         return GestureDetector(
           onTap: () => onCategorySelected(category['name']),
-          child: Container(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               color: category['color'].withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
@@ -69,4 +69,4 @@ class FoodCategoriesGrid extends StatelessWidget {
       },
     );
   }
-} 
+}

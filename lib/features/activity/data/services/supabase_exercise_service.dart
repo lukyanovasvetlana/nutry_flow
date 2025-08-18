@@ -8,12 +8,11 @@ class SupabaseExerciseService {
   // Получить все упражнения
   Future<List<Exercise>> getAllExercises() async {
     try {
-      final response = await _supabase
-          .from('exercises')
-          .select()
-          .order('name');
+      final response = await _supabase.from('exercises').select().order('name');
 
-      return response.map((json) => ExerciseModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => ExerciseModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при получении упражнений: $e');
     }
@@ -22,11 +21,8 @@ class SupabaseExerciseService {
   // Получить упражнение по ID
   Future<Exercise?> getExerciseById(String id) async {
     try {
-      final response = await _supabase
-          .from('exercises')
-          .select()
-          .eq('id', id)
-          .single();
+      final response =
+          await _supabase.from('exercises').select().eq('id', id).single();
 
       return ExerciseModel.fromJson(response).toEntity();
     } catch (e) {
@@ -46,7 +42,9 @@ class SupabaseExerciseService {
           .or('name.ilike.%$query%,category.ilike.%$query%')
           .order('name');
 
-      return response.map((json) => ExerciseModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => ExerciseModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при поиске упражнений: $e');
     }
@@ -61,7 +59,9 @@ class SupabaseExerciseService {
           .eq('category', category)
           .order('name');
 
-      return response.map((json) => ExerciseModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => ExerciseModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при фильтрации по категории: $e');
     }
@@ -76,7 +76,9 @@ class SupabaseExerciseService {
           .eq('difficulty', difficulty)
           .order('name');
 
-      return response.map((json) => ExerciseModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => ExerciseModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при фильтрации по сложности: $e');
     }
@@ -85,14 +87,11 @@ class SupabaseExerciseService {
   // Получить избранные упражнения пользователя
   Future<List<Exercise>> getFavoriteExercises(String userId) async {
     try {
-      final response = await _supabase
-          .from('user_favorite_exercises')
-          .select('''
+      final response =
+          await _supabase.from('user_favorite_exercises').select('''
             exercise_id,
             exercises (*)
-          ''')
-          .eq('user_id', userId)
-          .order('created_at', ascending: false);
+          ''').eq('user_id', userId).order('created_at', ascending: false);
 
       return response
           .map((json) => ExerciseModel.fromJson(json['exercises']).toEntity())
@@ -122,12 +121,10 @@ class SupabaseExerciseService {
             .eq('exercise_id', exerciseId);
       } else {
         // Добавляем в избранное
-        await _supabase
-            .from('user_favorite_exercises')
-            .insert({
-              'user_id': userId,
-              'exercise_id': exerciseId,
-            });
+        await _supabase.from('user_favorite_exercises').insert({
+          'user_id': userId,
+          'exercise_id': exerciseId,
+        });
       }
     } catch (e) {
       throw Exception('Ошибка при изменении избранного: $e');
@@ -142,10 +139,8 @@ class SupabaseExerciseService {
           .select('category')
           .order('category');
 
-      final categories = response
-          .map((json) => json['category'] as String)
-          .toSet()
-          .toList();
+      final categories =
+          response.map((json) => json['category'] as String).toSet().toList();
 
       return ['All', ...categories];
     } catch (e) {
@@ -161,10 +156,8 @@ class SupabaseExerciseService {
           .select('difficulty')
           .order('difficulty');
 
-      final difficulties = response
-          .map((json) => json['difficulty'] as String)
-          .toSet()
-          .toList();
+      final difficulties =
+          response.map((json) => json['difficulty'] as String).toSet().toList();
 
       return ['All', ...difficulties];
     } catch (e) {
@@ -187,4 +180,4 @@ class SupabaseExerciseService {
       return false;
     }
   }
-} 
+}

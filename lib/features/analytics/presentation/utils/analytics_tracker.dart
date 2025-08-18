@@ -160,7 +160,6 @@ class AnalyticsTracker {
       analyticsBloc.add(TrackAnalyticsEvent(event));
     } catch (e) {
       // Логируем ошибку, но не прерываем выполнение приложения
-      print('🔍 AnalyticsTracker: Error tracking event - $e');
     }
   }
 
@@ -169,9 +168,7 @@ class AnalyticsTracker {
     try {
       final analyticsService = GetIt.instance.get<AnalyticsService>();
       await analyticsService.setUser(userId);
-    } catch (e) {
-      print('🔍 AnalyticsTracker: Error setting user - $e');
-    }
+    } catch (e) {}
   }
 
   /// Сбрасывает пользователя
@@ -179,8 +176,6 @@ class AnalyticsTracker {
     try {
       final analyticsService = GetIt.instance.get<AnalyticsService>();
       await analyticsService.resetUser();
-    } catch (e) {
-      print('🔍 AnalyticsTracker: Error resetting user - $e');
-    }
+    } catch (e) {}
   }
-} 
+}

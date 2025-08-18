@@ -119,4 +119,4 @@ class ActivityTracking extends Equatable {
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
-} 
+}

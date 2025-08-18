@@ -1,0 +1,538 @@
+{
+  "version": "1.0.0",
+  "name": "NutryFlow Design Tokens",
+  "tokens": {
+    "color": {
+      "primary": {
+        "value": "#FF4CAF50",
+        "type": "color"
+      },
+      "primaryLight": {
+        "value": "#FF81C784",
+        "type": "color"
+      },
+      "primaryDark": {
+        "value": "#FF388E3C",
+        "type": "color"
+      },
+      "secondary": {
+        "value": "#FFC2E66E",
+        "type": "color"
+      },
+      "secondaryLight": {
+        "value": "#FFE8F5E8",
+        "type": "color"
+      },
+      "secondaryDark": {
+        "value": "#FF8BC34A",
+        "type": "color"
+      },
+      "accent": {
+        "value": "#FFFFCB65",
+        "type": "color"
+      },
+      "accentLight": {
+        "value": "#FFFFF3C4",
+        "type": "color"
+      },
+      "accentDark": {
+        "value": "#FFFFA000",
+        "type": "color"
+      },
+      "protein": {
+        "value": "#FFE91E63",
+        "type": "color"
+      },
+      "carbs": {
+        "value": "#FFFFC107",
+        "type": "color"
+      },
+      "fats": {
+        "value": "#FFFF9800",
+        "type": "color"
+      },
+      "water": {
+        "value": "#FF03A9F4",
+        "type": "color"
+      },
+      "fiber": {
+        "value": "#FF9C27B0",
+        "type": "color"
+      },
+      "background": {
+        "value": "#FFF9F4F2",
+        "type": "color"
+      },
+      "surface": {
+        "value": "#FFFFFFFF",
+        "type": "color"
+      },
+      "surfaceVariant": {
+        "value": "#FFF8F9FA",
+        "type": "color"
+      },
+      "outline": {
+        "value": "#FFE0E0E0",
+        "type": "color"
+      },
+      "outlineVariant": {
+        "value": "#FFF1F3F4",
+        "type": "color"
+      },
+      "onPrimary": {
+        "value": "#FFFFFFFF",
+        "type": "color"
+      },
+      "onSecondary": {
+        "value": "#FF1B5E20",
+        "type": "color"
+      },
+      "onSurface": {
+        "value": "#FF2D3748",
+        "type": "color"
+      },
+      "onSurfaceVariant": {
+        "value": "#FF718096",
+        "type": "color"
+      },
+      "onBackground": {
+        "value": "#FF1C1B1F",
+        "type": "color"
+      },
+      "success": {
+        "value": "#FF4CAF50",
+        "type": "color"
+      },
+      "warning": {
+        "value": "#FFFFA000",
+        "type": "color"
+      },
+      "error": {
+        "value": "#FFE53935",
+        "type": "color"
+      },
+      "info": {
+        "value": "#FF039BE5",
+        "type": "color"
+      },
+      "onError": {
+        "value": "#FFFFFFFF",
+        "type": "color"
+      },
+      "onSuccess": {
+        "value": "#FFFFFFFF",
+        "type": "color"
+      },
+      "onWarning": {
+        "value": "#FF1B5E20",
+        "type": "color"
+      },
+      "onInfo": {
+        "value": "#FFFFFFFF",
+        "type": "color"
+      },
+      "shadow": {
+        "value": "#FF000000",
+        "type": "color"
+      }
+    },
+    "typography": {},
+    "spacing": {
+      "displayLarge": {
+        "value": "57.0px",
+        "type": "dimension"
+      },
+      "displayMedium": {
+        "value": "45.0px",
+        "type": "dimension"
+      },
+      "displaySmall": {
+        "value": "36.0px",
+        "type": "dimension"
+      },
+      "headlineLarge": {
+        "value": "32.0px",
+        "type": "dimension"
+      },
+      "headlineMedium": {
+        "value": "28.0px",
+        "type": "dimension"
+      },
+      "headlineSmall": {
+        "value": "24.0px",
+        "type": "dimension"
+      },
+      "titleLarge": {
+        "value": "22.0px",
+        "type": "dimension"
+      },
+      "titleMedium": {
+        "value": "16.0px",
+        "type": "dimension"
+      },
+      "titleSmall": {
+        "value": "14.0px",
+        "type": "dimension"
+      },
+      "bodyLarge": {
+        "value": "16.0px",
+        "type": "dimension"
+      },
+      "bodyMedium": {
+        "value": "14.0px",
+        "type": "dimension"
+      },
+      "bodySmall": {
+        "value": "12.0px",
+        "type": "dimension"
+      },
+      "labelLarge": {
+        "value": "14.0px",
+        "type": "dimension"
+      },
+      "labelMedium": {
+        "value": "12.0px",
+        "type": "dimension"
+      },
+      "labelSmall": {
+        "value": "11.0px",
+        "type": "dimension"
+      },
+      "lineHeightTight": {
+        "value": "1.2px",
+        "type": "dimension"
+      },
+      "lineHeightNormal": {
+        "value": "1.4px",
+        "type": "dimension"
+      },
+      "lineHeightLoose": {
+        "value": "1.6px",
+        "type": "dimension"
+      },
+      "letterSpacingNormal": {
+        "value": "0.0px",
+        "type": "dimension"
+      },
+      "letterSpacingWide": {
+        "value": "0.5px",
+        "type": "dimension"
+      },
+      "xs": {
+        "value": "4.0px",
+        "type": "dimension"
+      },
+      "sm": {
+        "value": "8.0px",
+        "type": "dimension"
+      },
+      "md": {
+        "value": "12.0px",
+        "type": "dimension"
+      },
+      "lg": {
+        "value": "16.0px",
+        "type": "dimension"
+      },
+      "xl": {
+        "value": "24.0px",
+        "type": "dimension"
+      },
+      "xxl": {
+        "value": "32.0px",
+        "type": "dimension"
+      },
+      "xxxl": {
+        "value": "48.0px",
+        "type": "dimension"
+      },
+      "buttonHeight": {
+        "value": "48.0px",
+        "type": "dimension"
+      },
+      "buttonHeightSmall": {
+        "value": "36.0px",
+        "type": "dimension"
+      },
+      "buttonHeightLarge": {
+        "value": "56.0px",
+        "type": "dimension"
+      },
+      "inputHeight": {
+        "value": "48.0px",
+        "type": "dimension"
+      },
+      "appBarHeight": {
+        "value": "56.0px",
+        "type": "dimension"
+      },
+      "bottomNavHeight": {
+        "value": "80.0px",
+        "type": "dimension"
+      },
+      "cardPadding": {
+        "value": "16.0px",
+        "type": "dimension"
+      },
+      "screenPadding": {
+        "value": "24.0px",
+        "type": "dimension"
+      },
+      "sectionSpacing": {
+        "value": "32.0px",
+        "type": "dimension"
+      },
+      "iconSmall": {
+        "value": "16.0px",
+        "type": "dimension"
+      },
+      "iconMedium": {
+        "value": "24.0px",
+        "type": "dimension"
+      },
+      "iconLarge": {
+        "value": "32.0px",
+        "type": "dimension"
+      },
+      "iconXLarge": {
+        "value": "48.0px",
+        "type": "dimension"
+      },
+      "avatarSmall": {
+        "value": "32.0px",
+        "type": "dimension"
+      },
+      "avatarMedium": {
+        "value": "48.0px",
+        "type": "dimension"
+      },
+      "avatarLarge": {
+        "value": "64.0px",
+        "type": "dimension"
+      },
+      "avatarXLarge": {
+        "value": "96.0px",
+        "type": "dimension"
+      },
+      "none": {
+        "value": "0.0px",
+        "type": "dimension"
+      },
+      "full": {
+        "value": "9999.0px",
+        "type": "dimension"
+      },
+      "thin": {
+        "value": "1.0px",
+        "type": "dimension"
+      },
+      "medium": {
+        "value": "2.0px",
+        "type": "dimension"
+      },
+      "thick": {
+        "value": "4.0px",
+        "type": "dimension"
+      }
+    },
+    "shadow": {},
+    "borderRadius": {
+      "displayLarge": {
+        "value": "57.0px",
+        "type": "borderRadius"
+      },
+      "displayMedium": {
+        "value": "45.0px",
+        "type": "borderRadius"
+      },
+      "displaySmall": {
+        "value": "36.0px",
+        "type": "borderRadius"
+      },
+      "headlineLarge": {
+        "value": "32.0px",
+        "type": "borderRadius"
+      },
+      "headlineMedium": {
+        "value": "28.0px",
+        "type": "borderRadius"
+      },
+      "headlineSmall": {
+        "value": "24.0px",
+        "type": "borderRadius"
+      },
+      "titleLarge": {
+        "value": "22.0px",
+        "type": "borderRadius"
+      },
+      "titleMedium": {
+        "value": "16.0px",
+        "type": "borderRadius"
+      },
+      "titleSmall": {
+        "value": "14.0px",
+        "type": "borderRadius"
+      },
+      "bodyLarge": {
+        "value": "16.0px",
+        "type": "borderRadius"
+      },
+      "bodyMedium": {
+        "value": "14.0px",
+        "type": "borderRadius"
+      },
+      "bodySmall": {
+        "value": "12.0px",
+        "type": "borderRadius"
+      },
+      "labelLarge": {
+        "value": "14.0px",
+        "type": "borderRadius"
+      },
+      "labelMedium": {
+        "value": "12.0px",
+        "type": "borderRadius"
+      },
+      "labelSmall": {
+        "value": "11.0px",
+        "type": "borderRadius"
+      },
+      "lineHeightTight": {
+        "value": "1.2px",
+        "type": "borderRadius"
+      },
+      "lineHeightNormal": {
+        "value": "1.4px",
+        "type": "borderRadius"
+      },
+      "lineHeightLoose": {
+        "value": "1.6px",
+        "type": "borderRadius"
+      },
+      "letterSpacingNormal": {
+        "value": "0.0px",
+        "type": "borderRadius"
+      },
+      "letterSpacingWide": {
+        "value": "0.5px",
+        "type": "borderRadius"
+      },
+      "xs": {
+        "value": "4.0px",
+        "type": "borderRadius"
+      },
+      "sm": {
+        "value": "8.0px",
+        "type": "borderRadius"
+      },
+      "md": {
+        "value": "12.0px",
+        "type": "borderRadius"
+      },
+      "lg": {
+        "value": "16.0px",
+        "type": "borderRadius"
+      },
+      "xl": {
+        "value": "24.0px",
+        "type": "borderRadius"
+      },
+      "xxl": {
+        "value": "32.0px",
+        "type": "borderRadius"
+      },
+      "xxxl": {
+        "value": "48.0px",
+        "type": "borderRadius"
+      },
+      "buttonHeight": {
+        "value": "48.0px",
+        "type": "borderRadius"
+      },
+      "buttonHeightSmall": {
+        "value": "36.0px",
+        "type": "borderRadius"
+      },
+      "buttonHeightLarge": {
+        "value": "56.0px",
+        "type": "borderRadius"
+      },
+      "inputHeight": {
+        "value": "48.0px",
+        "type": "borderRadius"
+      },
+      "appBarHeight": {
+        "value": "56.0px",
+        "type": "borderRadius"
+      },
+      "bottomNavHeight": {
+        "value": "80.0px",
+        "type": "borderRadius"
+      },
+      "cardPadding": {
+        "value": "16.0px",
+        "type": "borderRadius"
+      },
+      "screenPadding": {
+        "value": "24.0px",
+        "type": "borderRadius"
+      },
+      "sectionSpacing": {
+        "value": "32.0px",
+        "type": "borderRadius"
+      },
+      "iconSmall": {
+        "value": "16.0px",
+        "type": "borderRadius"
+      },
+      "iconMedium": {
+        "value": "24.0px",
+        "type": "borderRadius"
+      },
+      "iconLarge": {
+        "value": "32.0px",
+        "type": "borderRadius"
+      },
+      "iconXLarge": {
+        "value": "48.0px",
+        "type": "borderRadius"
+      },
+      "avatarSmall": {
+        "value": "32.0px",
+        "type": "borderRadius"
+      },
+      "avatarMedium": {
+        "value": "48.0px",
+        "type": "borderRadius"
+      },
+      "avatarLarge": {
+        "value": "64.0px",
+        "type": "borderRadius"
+      },
+      "avatarXLarge": {
+        "value": "96.0px",
+        "type": "borderRadius"
+      },
+      "none": {
+        "value": "0.0px",
+        "type": "borderRadius"
+      },
+      "full": {
+        "value": "9999.0px",
+        "type": "borderRadius"
+      },
+      "thin": {
+        "value": "1.0px",
+        "type": "borderRadius"
+      },
+      "medium": {
+        "value": "2.0px",
+        "type": "borderRadius"
+      },
+      "thick": {
+        "value": "4.0px",
+        "type": "borderRadius"
+      }
+    }
+  }
+}

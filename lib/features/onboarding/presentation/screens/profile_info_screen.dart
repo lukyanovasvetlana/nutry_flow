@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class ProfileInfoScreen extends StatefulWidget {
-  const ProfileInfoScreen({Key? key}) : super(key: key);
+  const ProfileInfoScreen({super.key});
 
   @override
   State<ProfileInfoScreen> createState() => _ProfileInfoScreenState();
@@ -53,12 +53,14 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Выберите фото'),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.green),
+                leading:
+                    const Icon(Icons.photo_library, color: AppColors.green),
                 title: const Text('Галерея'),
                 onTap: () {
                   Navigator.pop(context);
@@ -112,13 +114,15 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   }
 
   void _saveProfile() async {
-    if (_formKey.currentState!.validate() && _selectedGender != null && _selectedDate != null) {
+    if (_formKey.currentState!.validate() &&
+        _selectedGender != null &&
+        _selectedDate != null) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('userName', _firstNameController.text);
       await prefs.setString('userLastName', _lastNameController.text);
       await prefs.setString('userGender', _selectedGender!);
       await prefs.setString('userBirthDate', _selectedDate!.toIso8601String());
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Профиль сохранен!')),
       );
@@ -145,7 +149,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pushReplacementNamed(context, '/registration'),
+          onPressed: () =>
+              Navigator.pushReplacementNamed(context, '/registration'),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
@@ -204,7 +209,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                   onPressed: _showImagePickerDialog,
                   child: const Text(
                     'Изменить фото',
-                    style: TextStyle(color: AppColors.green, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: AppColors.green, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -230,7 +236,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           CircleAvatar(
             radius: 70,
             backgroundColor: Colors.white,
-            backgroundImage: _profileImage != null ? FileImage(_profileImage!) : null,
+            backgroundImage:
+                _profileImage != null ? FileImage(_profileImage!) : null,
             child: _profileImage == null
                 ? Icon(Icons.person_outline, size: 60, color: Colors.grey[300])
                 : null,
@@ -263,13 +270,15 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         _buildTextField(
           controller: _firstNameController,
           label: 'Имя',
-          validator: (value) => value == null || value.isEmpty ? 'Введите имя' : null,
+          validator: (value) =>
+              value == null || value.isEmpty ? 'Введите имя' : null,
         ),
         const SizedBox(height: 16),
         _buildTextField(
           controller: _lastNameController,
           label: 'Фамилия',
-          validator: (value) => value == null || value.isEmpty ? 'Введите фамилию' : null,
+          validator: (value) =>
+              value == null || value.isEmpty ? 'Введите фамилию' : null,
         ),
         const SizedBox(height: 16),
         _buildDropdownField(),
@@ -300,7 +309,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           controller: controller,
           validator: validator,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
             border: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
             ),
@@ -350,7 +360,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           },
           validator: (value) => value == null ? 'Выберите пол' : null,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
             border: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
             ),
@@ -402,7 +413,9 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                       ? '${_selectedDate!.day}.${_selectedDate!.month}.${_selectedDate!.year}'
                       : 'Выберите дату',
                   style: TextStyle(
-                    color: _selectedDate != null ? const Color(0xFF2D3748) : Colors.grey[600],
+                    color: _selectedDate != null
+                        ? const Color(0xFF2D3748)
+                        : Colors.grey[600],
                     fontSize: 16,
                   ),
                 ),
@@ -462,4 +475,4 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       ),
     );
   }
-} 
+}

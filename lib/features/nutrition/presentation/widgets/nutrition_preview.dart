@@ -6,10 +6,10 @@ class NutritionPreview extends StatelessWidget {
   final double portionSize;
 
   const NutritionPreview({
-    Key? key,
+    super.key,
     required this.foodItem,
     required this.portionSize,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +27,12 @@ class NutritionPreview extends StatelessWidget {
           Text(
             'Пищевая ценность на ${portionSize.toStringAsFixed(0)} г',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Main macros
           Row(
             children: [
@@ -57,9 +57,9 @@ class NutritionPreview extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Row(
             children: [
               Expanded(
@@ -83,78 +83,73 @@ class NutritionPreview extends StatelessWidget {
               ),
             ],
           ),
-          
+
           // Additional nutrients (if available)
-          if (foodItem.fiberPer100g != null || 
-              foodItem.sugarPer100g != null || 
+          if (foodItem.fiberPer100g != null ||
+              foodItem.sugarPer100g != null ||
               foodItem.sodiumPer100g != null) ...[
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
-            
             Text(
               'Дополнительные питательные вещества',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
-            
             const SizedBox(height: 8),
-            
             Row(
               children: [
-                if (foodItem.fiberPer100g != null)
-                  Expanded(
-                    child: _buildNutrientRow(
-                      'Клетчатка',
-                      foodItem.calculateFiber(portionSize)?.toStringAsFixed(1) ?? '0',
-                      Icons.eco,
-                      Colors.green,
-                    ),
+                Expanded(
+                  child: _buildNutrientRow(
+                    'Клетчатка',
+                    foodItem.calculateFiber(portionSize).toStringAsFixed(1) ??
+                        '0',
+                    Icons.eco,
+                    Colors.green,
                   ),
-                if (foodItem.sugarPer100g != null)
-                  Expanded(
-                    child: _buildNutrientRow(
-                      'Сахар',
-                      foodItem.calculateSugar(portionSize)?.toStringAsFixed(1) ?? '0',
-                      Icons.cake,
-                      Colors.pink,
-                    ),
+                ),
+                Expanded(
+                  child: _buildNutrientRow(
+                    'Сахар',
+                    foodItem.calculateSugar(portionSize).toStringAsFixed(1) ??
+                        '0',
+                    Icons.cake,
+                    Colors.pink,
                   ),
-                if (foodItem.sodiumPer100g != null)
-                  Expanded(
-                    child: _buildNutrientRow(
-                      'Натрий',
-                      foodItem.calculateSodium(portionSize)?.toStringAsFixed(1) ?? '0',
-                      Icons.water_drop,
-                      Colors.cyan,
-                    ),
+                ),
+                Expanded(
+                  child: _buildNutrientRow(
+                    'Натрий',
+                    foodItem.calculateSodium(portionSize).toStringAsFixed(1) ??
+                        '0',
+                    Icons.water_drop,
+                    Colors.cyan,
                   ),
+                ),
               ],
             ),
           ],
-          
+
           // Allergens (if any)
-          if (foodItem.allergens != null && foodItem.allergens!.isNotEmpty) ...[
+          if (foodItem.allergens.isNotEmpty) ...[
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
-            
             Text(
               'Аллергены',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
-            
             const SizedBox(height: 8),
-            
             Wrap(
               spacing: 8,
               runSpacing: 4,
-              children: foodItem.allergens!.map((allergen) {
+              children: foodItem.allergens.map((allergen) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.red[50],
                     borderRadius: BorderRadius.circular(12),
@@ -176,7 +171,8 @@ class NutritionPreview extends StatelessWidget {
     );
   }
 
-  Widget _buildMacroCard(String label, String value, String unit, IconData icon, Color color) {
+  Widget _buildMacroCard(
+      String label, String value, String unit, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -207,7 +203,8 @@ class NutritionPreview extends StatelessWidget {
     );
   }
 
-  Widget _buildNutrientRow(String label, String value, IconData icon, Color color) {
+  Widget _buildNutrientRow(
+      String label, String value, IconData icon, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -234,4 +231,4 @@ class NutritionPreview extends StatelessWidget {
       ),
     );
   }
-} 
+}

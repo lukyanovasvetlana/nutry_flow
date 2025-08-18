@@ -21,7 +21,9 @@ class SupabaseWorkoutService {
           .eq('is_template', false)
           .order('created_at', ascending: false);
 
-      return response.map((json) => WorkoutModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => WorkoutModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при получении тренировок: $e');
     }
@@ -30,17 +32,13 @@ class SupabaseWorkoutService {
   // Получить тренировку по ID
   Future<Workout?> getWorkoutById(String id) async {
     try {
-      final response = await _supabase
-          .from('workouts')
-          .select('''
+      final response = await _supabase.from('workouts').select('''
             *,
             workout_exercises (
               *,
               exercises (*)
             )
-          ''')
-          .eq('id', id)
-          .single();
+          ''').eq('id', id).single();
 
       return WorkoutModel.fromJson(response).toEntity();
     } catch (e) {
@@ -67,7 +65,9 @@ class SupabaseWorkoutService {
           .eq('is_template', true)
           .order('created_at', ascending: false);
 
-      return response.map((json) => WorkoutModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => WorkoutModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при получении шаблонов: $e');
     }
@@ -100,9 +100,7 @@ class SupabaseWorkoutService {
           };
         }).toList();
 
-        await _supabase
-            .from('workout_exercises')
-            .insert(workoutExercises);
+        await _supabase.from('workout_exercises').insert(workoutExercises);
       }
 
       // Получаем полную тренировку с упражнениями
@@ -142,9 +140,7 @@ class SupabaseWorkoutService {
           };
         }).toList();
 
-        await _supabase
-            .from('workout_exercises')
-            .insert(workoutExercises);
+        await _supabase.from('workout_exercises').insert(workoutExercises);
       }
 
       // Получаем обновленную тренировку
@@ -157,10 +153,7 @@ class SupabaseWorkoutService {
   // Удалить тренировку
   Future<void> deleteWorkout(String id) async {
     try {
-      await _supabase
-          .from('workouts')
-          .delete()
-          .eq('id', id);
+      await _supabase.from('workouts').delete().eq('id', id);
     } catch (e) {
       throw Exception('Ошибка при удалении тренировки: $e');
     }
@@ -171,8 +164,7 @@ class SupabaseWorkoutService {
     try {
       await _supabase
           .from('workouts')
-          .update({'is_template': true})
-          .eq('id', workoutId);
+          .update({'is_template': true}).eq('id', workoutId);
     } catch (e) {
       throw Exception('Ошибка при сохранении шаблона: $e');
     }
@@ -195,14 +187,17 @@ class SupabaseWorkoutService {
           .or('name.ilike.%$query%,description.ilike.%$query%')
           .order('created_at', ascending: false);
 
-      return response.map((json) => WorkoutModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => WorkoutModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при поиске тренировок: $e');
     }
   }
 
   // Фильтрация по сложности
-  Future<List<Workout>> filterWorkoutsByDifficulty(String userId, String difficulty) async {
+  Future<List<Workout>> filterWorkoutsByDifficulty(
+      String userId, String difficulty) async {
     try {
       final response = await _supabase
           .from('workouts')
@@ -218,9 +213,11 @@ class SupabaseWorkoutService {
           .eq('difficulty', difficulty)
           .order('created_at', ascending: false);
 
-      return response.map((json) => WorkoutModel.fromJson(json).toEntity()).toList();
+      return response
+          .map((json) => WorkoutModel.fromJson(json).toEntity())
+          .toList();
     } catch (e) {
       throw Exception('Ошибка при фильтрации тренировок: $e');
     }
   }
-} 
+}

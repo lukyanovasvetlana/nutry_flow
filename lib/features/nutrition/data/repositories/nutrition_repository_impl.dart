@@ -14,20 +14,21 @@ class NutritionRepositoryImpl implements NutritionRepository {
 
   NutritionRepositoryImpl(this._apiService, this._cacheService);
 
+  @override
   Future<List<FoodItem>> searchFoodItems(String query, {int limit = 20}) async {
     try {
       // Add to recent searches
       await _cacheService.addRecentSearch(query);
-      
+
       // Try to get from API
       final models = await _apiService.searchFoodItems(query, limit: limit);
       final entities = models.map((model) => model.toEntity()).toList();
-      
+
       // Cache individual items
       for (final model in models) {
         await _cacheService.cacheFoodItem(model);
       }
-      
+
       return entities;
     } catch (e) {
       // Return empty list if API fails
@@ -35,6 +36,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
+  @override
   Future<FoodItem?> getFoodItemById(String id) async {
     try {
       // Try cache first
@@ -42,14 +44,14 @@ class NutritionRepositoryImpl implements NutritionRepository {
       if (cachedModel != null) {
         return cachedModel.toEntity();
       }
-      
+
       // Try API
       final model = await _apiService.getFoodItemById(id);
       if (model != null) {
         await _cacheService.cacheFoodItem(model);
         return model.toEntity();
       }
-      
+
       return null;
     } catch (e) {
       // Try cache as fallback
@@ -58,14 +60,16 @@ class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
+  @override
   Future<FoodItem?> getFoodItemByBarcode(String barcode) async {
     try {
       // Try cache first
-      final cachedModel = await _cacheService.getCachedFoodItemByBarcode(barcode);
+      final cachedModel =
+          await _cacheService.getCachedFoodItemByBarcode(barcode);
       if (cachedModel != null) {
         return cachedModel.toEntity();
       }
-      
+
       // Try API
       final model = await _apiService.getFoodItemByBarcode(barcode);
       if (model != null) {
@@ -73,11 +77,12 @@ class NutritionRepositoryImpl implements NutritionRepository {
         await _cacheService.cacheFoodItemByBarcode(barcode, model);
         return model.toEntity();
       }
-      
+
       return null;
     } catch (e) {
       // Try cache as fallback
-      final cachedModel = await _cacheService.getCachedFoodItemByBarcode(barcode);
+      final cachedModel =
+          await _cacheService.getCachedFoodItemByBarcode(barcode);
       return cachedModel?.toEntity();
     }
   }
@@ -89,7 +94,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
       if (cachedCategories != null && cachedCategories.isNotEmpty) {
         return cachedCategories;
       }
-      
+
       // Try API
       final categories = await _apiService.getFoodCategories();
       await _cacheService.cacheFoodCategories(categories);
@@ -101,22 +106,26 @@ class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
-  Future<List<FoodItem>> getFoodItemsByCategory(String category, {int limit = 20}) async {
+  @override
+  Future<List<FoodItem>> getFoodItemsByCategory(String category,
+      {int limit = 20}) async {
     try {
-      final models = await _apiService.getFoodItemsByCategory(category, limit: limit);
+      final models =
+          await _apiService.getFoodItemsByCategory(category, limit: limit);
       final entities = models.map((model) => model.toEntity()).toList();
-      
+
       // Cache individual items
       for (final model in models) {
         await _cacheService.cacheFoodItem(model);
       }
-      
+
       return entities;
     } catch (e) {
       return [];
     }
   }
 
+  @override
   Future<List<FoodItem>> getPopularFoodItems({int limit = 20}) async {
     try {
       // Try cache first
@@ -124,11 +133,11 @@ class NutritionRepositoryImpl implements NutritionRepository {
       if (cachedModels != null && cachedModels.isNotEmpty) {
         return cachedModels.map((model) => model.toEntity()).toList();
       }
-      
+
       // Try API
       final models = await _apiService.getPopularFoodItems(limit: limit);
       await _cacheService.cachePopularFoodItems(models);
-      
+
       return models.map((model) => model.toEntity()).toList();
     } catch (e) {
       // Return cache as fallback
@@ -137,89 +146,97 @@ class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
+  @override
   Future<FoodItem> createFoodItem(FoodItem foodItem) async {
     final model = FoodItemModel.fromEntity(foodItem);
     final createdModel = await _apiService.createFoodItem(model);
-    
+
     // Cache the created item
     await _cacheService.cacheFoodItem(createdModel);
-    
+
     return createdModel.toEntity();
   }
 
+  @override
   Future<FoodItem> updateFoodItem(FoodItem foodItem) async {
     final model = FoodItemModel.fromEntity(foodItem);
     final updatedModel = await _apiService.updateFoodItem(model);
-    
+
     // Update cache
     await _cacheService.cacheFoodItem(updatedModel);
-    
+
     return updatedModel.toEntity();
   }
 
   Future<void> deleteFoodItem(String id) async {
     await _apiService.deleteFoodItem(id);
-    
+
     // Remove from cache
     // Note: We can't directly remove from SharedPreferences by pattern,
     // so we'll let the cache naturally expire
   }
 
+  @override
   Future<FoodEntry> addFoodEntry(FoodEntry entry) async {
     final model = FoodEntryModel.fromEntity(entry);
     final createdModel = await _apiService.createFoodEntry(model);
-    
+
     // Update cache for the date
     await _updateFoodEntriesCache(entry.userId, entry.consumedAt ?? entry.date);
-    
+
     return createdModel.toEntity();
   }
 
+  @override
   Future<FoodEntry> updateFoodEntry(FoodEntry entry) async {
     final model = FoodEntryModel.fromEntity(entry);
     final updatedModel = await _apiService.updateFoodEntry(model);
-    
+
     // Update cache for the date
     await _updateFoodEntriesCache(entry.userId, entry.consumedAt ?? entry.date);
-    
+
     return updatedModel.toEntity();
   }
 
+  @override
   Future<void> deleteFoodEntry(String entryId) async {
     await _apiService.deleteFoodEntry(entryId);
-    
+
     // Note: We can't update cache here since we don't have userId and date
     // Cache will be updated when the user refreshes the data
   }
 
-  Future<List<FoodEntry>> getFoodEntriesByDate(String userId, DateTime date) async {
+  @override
+  Future<List<FoodEntry>> getFoodEntriesByDate(
+      String userId, DateTime date) async {
     try {
       // Try cache first
-      final cachedModels = await _cacheService.getCachedFoodEntries(userId, date);
+      final cachedModels =
+          await _cacheService.getCachedFoodEntries(userId, date);
       if (cachedModels != null) {
         return cachedModels.map((model) => model.toEntity()).toList();
       }
-      
+
       // Try API
       final models = await _apiService.getFoodEntriesByDate(userId, date);
       await _cacheService.cacheFoodEntries(userId, date, models);
-      
+
       return models.map((model) => model.toEntity()).toList();
     } catch (e) {
       // Return cache as fallback
-      final cachedModels = await _cacheService.getCachedFoodEntries(userId, date);
+      final cachedModels =
+          await _cacheService.getCachedFoodEntries(userId, date);
       return cachedModels?.map((model) => model.toEntity()).toList() ?? [];
     }
   }
 
+  @override
   Future<List<FoodEntry>> getFoodEntriesByDateRange(
-    String userId, 
-    DateTime startDate, 
-    DateTime endDate
-  ) async {
+      String userId, DateTime startDate, DateTime endDate) async {
     try {
-      final models = await _apiService.getFoodEntriesByDateRange(userId, startDate, endDate);
-      
+      final models = await _apiService.getFoodEntriesByDateRange(
+          userId, startDate, endDate);
+
       // Cache entries by date
       final entriesByDate = <DateTime, List<FoodEntryModel>>{};
       for (final model in models) {
@@ -230,160 +247,169 @@ class NutritionRepositoryImpl implements NutritionRepository {
         );
         entriesByDate.putIfAbsent(date, () => []).add(model);
       }
-      
+
       for (final entry in entriesByDate.entries) {
         await _cacheService.cacheFoodEntries(userId, entry.key, entry.value);
       }
-      
+
       return models.map((model) => model.toEntity()).toList();
     } catch (e) {
       return [];
     }
   }
 
+  @override
   Future<List<FoodEntry>> getFoodEntriesByMealType(
-    String userId, 
-    DateTime date, 
-    MealType mealType
-  ) async {
+      String userId, DateTime date, MealType mealType) async {
     try {
-      final models = await _apiService.getFoodEntriesByMealType(userId, date, mealType);
+      final models =
+          await _apiService.getFoodEntriesByMealType(userId, date, mealType);
       return models.map((model) => model.toEntity()).toList();
     } catch (e) {
       // Try to get from cached entries and filter
-      final cachedModels = await _cacheService.getCachedFoodEntries(userId, date);
+      final cachedModels =
+          await _cacheService.getCachedFoodEntries(userId, date);
       if (cachedModels != null) {
-        final filteredModels = cachedModels
-            .where((model) => model.mealType == mealType)
-            .toList();
+        final filteredModels =
+            cachedModels.where((model) => model.mealType == mealType).toList();
         return filteredModels.map((model) => model.toEntity()).toList();
       }
       return [];
     }
   }
 
-  Future<NutritionSummary?> getDailyNutritionSummary(String userId, DateTime date) async {
+  Future<NutritionSummary?> getDailyNutritionSummary(
+      String userId, DateTime date) async {
     try {
       // Try cache first
-      final cachedModel = await _cacheService.getCachedNutritionSummary(userId, date);
+      final cachedModel =
+          await _cacheService.getCachedNutritionSummary(userId, date);
       if (cachedModel != null) {
         return cachedModel.toEntity();
       }
-      
+
       // Try API
       final model = await _apiService.getNutritionSummary(userId, date);
       if (model != null) {
         await _cacheService.cacheNutritionSummary(userId, model);
         return model.toEntity();
       }
-      
+
       return null;
     } catch (e) {
       // Return cache as fallback
-      final cachedModel = await _cacheService.getCachedNutritionSummary(userId, date);
+      final cachedModel =
+          await _cacheService.getCachedNutritionSummary(userId, date);
       return cachedModel?.toEntity();
     }
   }
 
-  Future<NutritionSummary> getNutritionSummaryByDate(String userId, DateTime date) async {
+  @override
+  Future<NutritionSummary> getNutritionSummaryByDate(
+      String userId, DateTime date) async {
     try {
       // Try cache first
-      final cachedModel = await _cacheService.getCachedNutritionSummary(userId, date);
+      final cachedModel =
+          await _cacheService.getCachedNutritionSummary(userId, date);
       if (cachedModel != null) {
         return cachedModel.toEntity();
       }
-      
+
       // Try API
       final model = await _apiService.getNutritionSummary(userId, date);
       if (model != null) {
         await _cacheService.cacheNutritionSummary(userId, model);
         return model.toEntity();
       }
-      
+
       // Create empty summary if none exists
       return NutritionSummary.fromEntries(date, []);
     } catch (e) {
       // Return cache as fallback or empty summary
-      final cachedModel = await _cacheService.getCachedNutritionSummary(userId, date);
+      final cachedModel =
+          await _cacheService.getCachedNutritionSummary(userId, date);
       return cachedModel?.toEntity() ?? NutritionSummary.fromEntries(date, []);
     }
   }
 
   Future<List<NutritionSummary>> getWeeklyNutritionSummaries(
-    String userId, 
-    DateTime startDate
-  ) async {
+      String userId, DateTime startDate) async {
     final endDate = startDate.add(const Duration(days: 6));
     return getNutritionSummariesByDateRange(userId, startDate, endDate);
   }
 
   Future<List<NutritionSummary>> getMonthlyNutritionSummaries(
-    String userId, 
-    DateTime month
-  ) async {
+      String userId, DateTime month) async {
     final startDate = DateTime(month.year, month.month, 1);
     final endDate = DateTime(month.year, month.month + 1, 0);
     return getNutritionSummariesByDateRange(userId, startDate, endDate);
   }
 
+  @override
   Future<List<NutritionSummary>> getNutritionSummariesByDateRange(
-    String userId, 
-    DateTime startDate, 
-    DateTime endDate
-  ) async {
+      String userId, DateTime startDate, DateTime endDate) async {
     try {
       final models = await _apiService.getNutritionSummariesByDateRange(
-        userId, 
-        startDate, 
-        endDate
-      );
-      
+          userId, startDate, endDate);
+
       // Cache individual summaries
       for (final model in models) {
         await _cacheService.cacheNutritionSummary(userId, model);
       }
-      
+
       return models.map((model) => model.toEntity()).toList();
     } catch (e) {
       return [];
     }
   }
 
-  Future<List<FoodItem>> getUserFavoriteFoodItems(String userId, {int limit = 10}) async {
+  @override
+  Future<List<FoodItem>> getUserFavoriteFoodItems(String userId,
+      {int limit = 10}) async {
     try {
       // Try cache first
       final cachedModels = await _cacheService.getFavoriteFoodItems(userId);
       if (cachedModels != null && cachedModels.isNotEmpty) {
-        return cachedModels.take(limit).map((model) => model.toEntity()).toList();
+        return cachedModels
+            .take(limit)
+            .map((model) => model.toEntity())
+            .toList();
       }
-      
+
       // Try API
       final models = await _apiService.getUserFavoriteFoodItems(userId);
       await _cacheService.cacheFavoriteFoodItems(userId, models);
-      
+
       return models.take(limit).map((model) => model.toEntity()).toList();
     } catch (e) {
       // Return cache as fallback
       final cachedModels = await _cacheService.getFavoriteFoodItems(userId);
-      return cachedModels?.take(limit).map((model) => model.toEntity()).toList() ?? [];
+      return cachedModels
+              ?.take(limit)
+              .map((model) => model.toEntity())
+              .toList() ??
+          [];
     }
   }
 
   Future<void> addFoodItemToFavorites(String userId, String foodItemId) async {
     await _apiService.addFoodItemToFavorites(userId, foodItemId);
-    
+
     // Invalidate favorites cache
     await _cacheService.cacheFavoriteFoodItems(userId, []);
   }
 
-  Future<void> removeFoodItemFromFavorites(String userId, String foodItemId) async {
+  Future<void> removeFoodItemFromFavorites(
+      String userId, String foodItemId) async {
     await _apiService.removeFoodItemFromFavorites(userId, foodItemId);
-    
+
     // Invalidate favorites cache
     await _cacheService.cacheFavoriteFoodItems(userId, []);
   }
 
-  Future<List<FoodItem>> getRecommendedFoodItems(String userId, {int limit = 10}) async {
+  @override
+  Future<List<FoodItem>> getRecommendedFoodItems(String userId,
+      {int limit = 10}) async {
     try {
       final models = await _apiService.getRecommendedFoodItems(userId);
       return models.take(limit).map((model) => model.toEntity()).toList();
@@ -393,12 +419,15 @@ class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
-  Future<Map<String, bool>> checkDailyNutritionGoals(String userId, DateTime date) async {
+  @override
+  Future<Map<String, bool>> checkDailyNutritionGoals(
+      String userId, DateTime date) async {
     try {
       final summary = await getNutritionSummaryByDate(userId, date);
       // This is a simplified implementation - in real app you'd get user goals
       return {
-        'calories': summary.totalCalories >= 1200 && summary.totalCalories <= 2500,
+        'calories':
+            summary.totalCalories >= 1200 && summary.totalCalories <= 2500,
         'protein': summary.totalProtein >= 50,
         'fats': summary.totalFats >= 20 && summary.totalFats <= 80,
         'carbs': summary.totalCarbs >= 100 && summary.totalCarbs <= 300,
@@ -413,14 +442,16 @@ class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
+  @override
   Future<Map<String, double>> getNutritionTrends(
     String userId,
     DateTime startDate,
     DateTime endDate,
   ) async {
     try {
-      final summaries = await getNutritionSummariesByDateRange(userId, startDate, endDate);
-      
+      final summaries =
+          await getNutritionSummariesByDateRange(userId, startDate, endDate);
+
       if (summaries.isEmpty) {
         return {
           'avg_calories': 0.0,
@@ -430,10 +461,18 @@ class NutritionRepositoryImpl implements NutritionRepository {
         };
       }
 
-      final avgCalories = summaries.map((s) => s.totalCalories).reduce((a, b) => a + b) / summaries.length;
-      final avgProtein = summaries.map((s) => s.totalProtein).reduce((a, b) => a + b) / summaries.length;
-      final avgFats = summaries.map((s) => s.totalFats).reduce((a, b) => a + b) / summaries.length;
-      final avgCarbs = summaries.map((s) => s.totalCarbs).reduce((a, b) => a + b) / summaries.length;
+      final avgCalories =
+          summaries.map((s) => s.totalCalories).reduce((a, b) => a + b) /
+              summaries.length;
+      final avgProtein =
+          summaries.map((s) => s.totalProtein).reduce((a, b) => a + b) /
+              summaries.length;
+      final avgFats =
+          summaries.map((s) => s.totalFats).reduce((a, b) => a + b) /
+              summaries.length;
+      final avgCarbs =
+          summaries.map((s) => s.totalCarbs).reduce((a, b) => a + b) /
+              summaries.length;
 
       return {
         'avg_calories': avgCalories,
@@ -458,14 +497,14 @@ class NutritionRepositoryImpl implements NutritionRepository {
       if (cachedSuggestions != null && cachedSuggestions.isNotEmpty) {
         return cachedSuggestions;
       }
-      
+
       // Generate suggestions from search results
       final searchResults = await searchFoodItems(query, limit: 5);
       final suggestions = searchResults.map((item) => item.name).toList();
-      
+
       // Cache suggestions
       await _cacheService.cacheSearchSuggestions(query, suggestions);
-      
+
       return suggestions;
     } catch (e) {
       return [];
@@ -480,34 +519,40 @@ class NutritionRepositoryImpl implements NutritionRepository {
     await _cacheService.clearRecentSearches();
   }
 
-  Future<List<FoodEntry>> getRecentFoodEntries(String userId, {int limit = 10}) async {
+  @override
+  Future<List<FoodEntry>> getRecentFoodEntries(String userId,
+      {int limit = 10}) async {
     try {
-      final models = await _apiService.getRecentFoodEntries(userId, limit: limit);
+      final models =
+          await _apiService.getRecentFoodEntries(userId, limit: limit);
       return models.map((model) => model.toEntity()).toList();
     } catch (e) {
       return [];
     }
   }
 
+  @override
   Future<Map<DateTime, NutritionSummary>> getWeeklyNutritionStats(
     String userId,
     DateTime weekStart,
   ) async {
     try {
       final endDate = weekStart.add(const Duration(days: 6));
-      final summaries = await getNutritionSummariesByDateRange(userId, weekStart, endDate);
-      
+      final summaries =
+          await getNutritionSummariesByDateRange(userId, weekStart, endDate);
+
       final stats = <DateTime, NutritionSummary>{};
       for (final summary in summaries) {
         stats[summary.date] = summary;
       }
-      
+
       return stats;
     } catch (e) {
       return {};
     }
   }
 
+  @override
   Future<Map<DateTime, NutritionSummary>> getMonthlyNutritionStats(
     String userId,
     DateTime monthStart,
@@ -515,13 +560,14 @@ class NutritionRepositoryImpl implements NutritionRepository {
     try {
       final startDate = DateTime(monthStart.year, monthStart.month, 1);
       final endDate = DateTime(monthStart.year, monthStart.month + 1, 0);
-      final summaries = await getNutritionSummariesByDateRange(userId, startDate, endDate);
-      
+      final summaries =
+          await getNutritionSummariesByDateRange(userId, startDate, endDate);
+
       final stats = <DateTime, NutritionSummary>{};
       for (final summary in summaries) {
         stats[summary.date] = summary;
       }
-      
+
       return stats;
     } catch (e) {
       return {};
@@ -533,17 +579,17 @@ class NutritionRepositoryImpl implements NutritionRepository {
     try {
       final models = await _apiService.getFoodEntriesByDate(userId, date);
       await _cacheService.cacheFoodEntries(userId, date, models);
-      
+
       // Also update nutrition summary cache
       final entries = models.map((model) => model.toEntity()).toList();
       final summary = NutritionSummary.fromEntries(date, entries);
       final summaryModel = NutritionSummaryModel.fromEntity(summary);
       await _cacheService.cacheNutritionSummary(userId, summaryModel);
-      
+
       // Update API summary
       await _apiService.createOrUpdateNutritionSummary(userId, summaryModel);
     } catch (e) {
       // Ignore cache update errors
     }
   }
-} 
+}

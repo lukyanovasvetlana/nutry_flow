@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nutry_flow/features/meal_plan/domain/entities/meal_plan.dart';
-import 'package:nutry_flow/features/meal_plan/domain/entities/meal.dart';
 import 'package:nutry_flow/features/meal_plan/data/repositories/meal_plan_repository.dart';
 import 'dart:developer' as developer;
 
@@ -19,7 +18,7 @@ class LoadMealPlans extends MealPlanEvent {
 
 class CreateMealPlan extends MealPlanEvent {
   final MealPlan mealPlan;
-  
+
   const CreateMealPlan(this.mealPlan);
 
   @override
@@ -28,7 +27,7 @@ class CreateMealPlan extends MealPlanEvent {
 
 class UpdateMealPlan extends MealPlanEvent {
   final MealPlan mealPlan;
-  
+
   const UpdateMealPlan(this.mealPlan);
 
   @override
@@ -37,7 +36,7 @@ class UpdateMealPlan extends MealPlanEvent {
 
 class DeleteMealPlan extends MealPlanEvent {
   final String mealPlanId;
-  
+
   const DeleteMealPlan(this.mealPlanId);
 
   @override
@@ -46,7 +45,7 @@ class DeleteMealPlan extends MealPlanEvent {
 
 class ActivateMealPlan extends MealPlanEvent {
   final String mealPlanId;
-  
+
   const ActivateMealPlan(this.mealPlanId);
 
   @override
@@ -59,8 +58,8 @@ class LoadActiveMealPlan extends MealPlanEvent {
 
 class AddMealToPlan extends MealPlanEvent {
   final String mealPlanId;
-  final Meal meal;
-  
+  final PlannedMeal meal;
+
   const AddMealToPlan(this.mealPlanId, this.meal);
 
   @override
@@ -70,7 +69,7 @@ class AddMealToPlan extends MealPlanEvent {
 class RemoveMealFromPlan extends MealPlanEvent {
   final String mealPlanId;
   final String mealId;
-  
+
   const RemoveMealFromPlan(this.mealPlanId, this.mealId);
 
   @override
@@ -92,7 +91,7 @@ class MealPlanLoading extends MealPlanState {}
 class MealPlanLoaded extends MealPlanState {
   final List<MealPlan> mealPlans;
   final MealPlan? activeMealPlan;
-  
+
   const MealPlanLoaded({
     required this.mealPlans,
     this.activeMealPlan,
@@ -114,7 +113,7 @@ class MealPlanLoaded extends MealPlanState {
 
 class MealPlanError extends MealPlanState {
   final String message;
-  
+
   const MealPlanError(this.message);
 
   @override
@@ -123,7 +122,7 @@ class MealPlanError extends MealPlanState {
 
 class MealPlanSuccess extends MealPlanState {
   final String message;
-  
+
   const MealPlanSuccess(this.message);
 
   @override
@@ -136,9 +135,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
 
   MealPlanBloc({
     required MealPlanRepository mealPlanRepository,
-  }) : _mealPlanRepository = mealPlanRepository,
-       super(MealPlanInitial()) {
-    
+  })  : _mealPlanRepository = mealPlanRepository,
+        super(MealPlanInitial()) {
     on<LoadMealPlans>(_onLoadMealPlans);
     on<CreateMealPlan>(_onCreateMealPlan);
     on<UpdateMealPlan>(_onUpdateMealPlan);
@@ -154,7 +152,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Loading meal plans', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Loading meal plans',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       final mealPlans = await _mealPlanRepository.getUserMealPlans();
@@ -165,9 +164,11 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
         activeMealPlan: activeMealPlan,
       ));
 
-      developer.log('🍽️ MealPlanBloc: Loaded ${mealPlans.length} meal plans', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Loaded ${mealPlans.length} meal plans',
+          name: 'MealPlanBloc');
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Load meal plans failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Load meal plans failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось загрузить планы питания: $e'));
     }
   }
@@ -177,7 +178,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Creating meal plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Creating meal plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       await _mealPlanRepository.saveMealPlan(event.mealPlan);
@@ -192,9 +194,11 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
       ));
 
       emit(MealPlanSuccess('План питания создан успешно'));
-      developer.log('🍽️ MealPlanBloc: Meal plan created successfully', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Meal plan created successfully',
+          name: 'MealPlanBloc');
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Create meal plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Create meal plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось создать план питания: $e'));
     }
   }
@@ -204,7 +208,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Updating meal plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Updating meal plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       await _mealPlanRepository.saveMealPlan(event.mealPlan);
@@ -219,9 +224,11 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
       ));
 
       emit(MealPlanSuccess('План питания обновлен успешно'));
-      developer.log('🍽️ MealPlanBloc: Meal plan updated successfully', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Meal plan updated successfully',
+          name: 'MealPlanBloc');
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Update meal plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Update meal plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось обновить план питания: $e'));
     }
   }
@@ -231,7 +238,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Deleting meal plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Deleting meal plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       await _mealPlanRepository.deleteMealPlan(event.mealPlanId);
@@ -246,9 +254,11 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
       ));
 
       emit(MealPlanSuccess('План питания удален успешно'));
-      developer.log('🍽️ MealPlanBloc: Meal plan deleted successfully', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Meal plan deleted successfully',
+          name: 'MealPlanBloc');
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Delete meal plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Delete meal plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось удалить план питания: $e'));
     }
   }
@@ -258,7 +268,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Activating meal plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Activating meal plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       await _mealPlanRepository.activateMealPlan(event.mealPlanId);
@@ -273,9 +284,11 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
       ));
 
       emit(MealPlanSuccess('План питания активирован успешно'));
-      developer.log('🍽️ MealPlanBloc: Meal plan activated successfully', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Meal plan activated successfully',
+          name: 'MealPlanBloc');
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Activate meal plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Activate meal plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось активировать план питания: $e'));
     }
   }
@@ -285,7 +298,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Loading active meal plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Loading active meal plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       final activeMealPlan = await _mealPlanRepository.getActiveMealPlan();
@@ -301,9 +315,11 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
         ));
       }
 
-      developer.log('🍽️ MealPlanBloc: Active meal plan loaded', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Active meal plan loaded',
+          name: 'MealPlanBloc');
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Load active meal plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Load active meal plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось загрузить активный план питания: $e'));
     }
   }
@@ -313,7 +329,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Adding meal to plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Adding meal to plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       // Находим план и добавляем блюдо
@@ -324,7 +341,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
         );
 
         if (mealPlanIndex != -1) {
-          final updatedMealPlan = currentState.mealPlans[mealPlanIndex].copyWith(
+          final updatedMealPlan =
+              currentState.mealPlans[mealPlanIndex].copyWith(
             meals: [...currentState.mealPlans[mealPlanIndex].meals, event.meal],
           );
 
@@ -340,11 +358,13 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
           ));
 
           emit(MealPlanSuccess('Блюдо добавлено в план питания'));
-          developer.log('🍽️ MealPlanBloc: Meal added to plan successfully', name: 'MealPlanBloc');
+          developer.log('🍽️ MealPlanBloc: Meal added to plan successfully',
+              name: 'MealPlanBloc');
         }
       }
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Add meal to plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Add meal to plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось добавить блюдо в план питания: $e'));
     }
   }
@@ -354,7 +374,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     Emitter<MealPlanState> emit,
   ) async {
     try {
-      developer.log('🍽️ MealPlanBloc: Removing meal from plan', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Removing meal from plan',
+          name: 'MealPlanBloc');
       emit(MealPlanLoading());
 
       // Находим план и удаляем блюдо
@@ -369,7 +390,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
               .where((meal) => meal.id != event.mealId)
               .toList();
 
-          final updatedMealPlan = currentState.mealPlans[mealPlanIndex].copyWith(
+          final updatedMealPlan =
+              currentState.mealPlans[mealPlanIndex].copyWith(
             meals: updatedMeals,
           );
 
@@ -385,12 +407,14 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
           ));
 
           emit(MealPlanSuccess('Блюдо удалено из плана питания'));
-          developer.log('🍽️ MealPlanBloc: Meal removed from plan successfully', name: 'MealPlanBloc');
+          developer.log('🍽️ MealPlanBloc: Meal removed from plan successfully',
+              name: 'MealPlanBloc');
         }
       }
     } catch (e) {
-      developer.log('🍽️ MealPlanBloc: Remove meal from plan failed: $e', name: 'MealPlanBloc');
+      developer.log('🍽️ MealPlanBloc: Remove meal from plan failed: $e',
+          name: 'MealPlanBloc');
       emit(MealPlanError('Не удалось удалить блюдо из плана питания: $e'));
     }
   }
-} 
+}

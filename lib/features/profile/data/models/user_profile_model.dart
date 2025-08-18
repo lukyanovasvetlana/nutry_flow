@@ -38,46 +38,50 @@ class UserProfileModel extends UserProfile {
       lastName: json['last_name'] as String,
       email: json['email'] as String,
       phone: json['phone'] as String?,
-      dateOfBirth: json['date_of_birth'] != null 
-        ? DateTime.parse(json['date_of_birth'] as String)
-        : null,
-      gender: json['gender'] != null 
-        ? Gender.values.firstWhere((g) => g.name == json['gender'])
-        : null,
+      dateOfBirth: json['date_of_birth'] != null
+          ? DateTime.parse(json['date_of_birth'] as String)
+          : null,
+      gender: json['gender'] != null
+          ? Gender.values.firstWhere((g) => g.name == json['gender'])
+          : null,
       height: json['height'] as double?,
       weight: json['weight'] as double?,
       activityLevel: json['activity_level'] != null
-        ? ActivityLevel.values.firstWhere((a) => a.name == json['activity_level'])
-        : null,
+          ? ActivityLevel.values
+              .firstWhere((a) => a.name == json['activity_level'])
+          : null,
       avatarUrl: json['avatar_url'] as String?,
       dietaryPreferences: json['dietary_preferences'] != null
-        ? (json['dietary_preferences'] as List<dynamic>)
-            .map((e) => DietaryPreference.values.firstWhere((d) => d.name == e))
-            .toList()
-        : const [],
+          ? (json['dietary_preferences'] as List<dynamic>)
+              .map((e) =>
+                  DietaryPreference.values.firstWhere((d) => d.name == e))
+              .toList()
+          : const [],
       allergies: json['allergies'] != null
-        ? List<String>.from(json['allergies'] as List)
-        : const [],
+          ? List<String>.from(json['allergies'] as List)
+          : const [],
       healthConditions: json['health_conditions'] != null
-        ? List<String>.from(json['health_conditions'] as List)
-        : const [],
+          ? List<String>.from(json['health_conditions'] as List)
+          : const [],
       fitnessGoals: json['fitness_goals'] != null
-        ? List<String>.from(json['fitness_goals'] as List)
-        : const [],
+          ? List<String>.from(json['fitness_goals'] as List)
+          : const [],
       targetWeight: json['target_weight'] as double?,
       targetCalories: json['target_calories'] as int?,
       targetProtein: json['target_protein'] as double?,
       targetCarbs: json['target_carbs'] as double?,
       targetFat: json['target_fat'] as double?,
       foodRestrictions: json['food_restrictions'] as String?,
-      pushNotificationsEnabled: json['push_notifications_enabled'] as bool? ?? true,
-      emailNotificationsEnabled: json['email_notifications_enabled'] as bool? ?? true,
+      pushNotificationsEnabled:
+          json['push_notifications_enabled'] as bool? ?? true,
+      emailNotificationsEnabled:
+          json['email_notifications_enabled'] as bool? ?? true,
       createdAt: json['created_at'] != null
-        ? DateTime.parse(json['created_at'] as String)
-        : null,
+          ? DateTime.parse(json['created_at'] as String)
+          : null,
       updatedAt: json['updated_at'] != null
-        ? DateTime.parse(json['updated_at'] as String)
-        : null,
+          ? DateTime.parse(json['updated_at'] as String)
+          : null,
     );
   }
 
@@ -194,8 +198,10 @@ class UserProfileModel extends UserProfile {
       targetCarbs: targetCarbs ?? this.targetCarbs,
       targetFat: targetFat ?? this.targetFat,
       foodRestrictions: foodRestrictions ?? this.foodRestrictions,
-      pushNotificationsEnabled: pushNotificationsEnabled ?? this.pushNotificationsEnabled,
-      emailNotificationsEnabled: emailNotificationsEnabled ?? this.emailNotificationsEnabled,
+      pushNotificationsEnabled:
+          pushNotificationsEnabled ?? this.pushNotificationsEnabled,
+      emailNotificationsEnabled:
+          emailNotificationsEnabled ?? this.emailNotificationsEnabled,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -204,6 +210,6 @@ class UserProfileModel extends UserProfile {
   @override
   String toString() {
     return 'UserProfileModel(id: $id, fullName: $fullName, email: $email, '
-           'completeness: ${profileCompleteness.toStringAsFixed(1)}%)';
+        'completeness: ${profileCompleteness.toStringAsFixed(1)}%)';
   }
-} 
+}

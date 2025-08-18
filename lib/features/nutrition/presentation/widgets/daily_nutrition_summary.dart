@@ -8,11 +8,11 @@ class DailyNutritionSummary extends StatelessWidget {
   final MealType? selectedMealType;
 
   const DailyNutritionSummary({
-    Key? key,
+    super.key,
     required this.summary,
     this.onMealTypeFilterChanged,
     this.selectedMealType,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +32,15 @@ class DailyNutritionSummary extends StatelessWidget {
                 Text(
                   'Дневная сводка',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 const Spacer(),
                 if (onMealTypeFilterChanged != null)
                   IconButton(
                     icon: Icon(
-                      selectedMealType == null 
-                          ? Icons.filter_list 
+                      selectedMealType == null
+                          ? Icons.filter_list
                           : Icons.filter_list_off,
                     ),
                     onPressed: () => onMealTypeFilterChanged!(null),
@@ -48,16 +48,16 @@ class DailyNutritionSummary extends StatelessWidget {
                   ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Main nutrition info
             Row(
               children: [
                 Expanded(
                   child: _buildNutritionCard(
                     'Калории',
-                    '${summary.totalCalories.toStringAsFixed(0)}',
+                    summary.totalCalories.toStringAsFixed(0),
                     'ккал',
                     Icons.local_fire_department,
                     Colors.orange,
@@ -68,7 +68,7 @@ class DailyNutritionSummary extends StatelessWidget {
                 Expanded(
                   child: _buildNutritionCard(
                     'Белки',
-                    '${summary.totalProtein.toStringAsFixed(1)}',
+                    summary.totalProtein.toStringAsFixed(1),
                     'г',
                     Icons.fitness_center,
                     Colors.red,
@@ -77,15 +77,15 @@ class DailyNutritionSummary extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             Row(
               children: [
                 Expanded(
                   child: _buildNutritionCard(
                     'Жиры',
-                    '${summary.totalFats.toStringAsFixed(1)}',
+                    summary.totalFats.toStringAsFixed(1),
                     'г',
                     Icons.opacity,
                     Colors.yellow[700]!,
@@ -96,7 +96,7 @@ class DailyNutritionSummary extends StatelessWidget {
                 Expanded(
                   child: _buildNutritionCard(
                     'Углеводы',
-                    '${summary.totalCarbs.toStringAsFixed(1)}',
+                    summary.totalCarbs.toStringAsFixed(1),
                     'г',
                     Icons.grain,
                     Colors.blue,
@@ -105,19 +105,19 @@ class DailyNutritionSummary extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Meal breakdown
             Text(
               'По приёмам пищи',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             Row(
               children: [
                 Expanded(
@@ -235,7 +235,7 @@ class DailyNutritionSummary extends StatelessWidget {
     MealType mealType,
   ) {
     final isSelected = selectedMealType == mealType;
-    
+
     return GestureDetector(
       onTap: () => onMealTypeFilterChanged?.call(isSelected ? null : mealType),
       child: Container(
@@ -256,7 +256,7 @@ class DailyNutritionSummary extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${calories.toStringAsFixed(0)}',
+              calories.toStringAsFixed(0),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
@@ -297,4 +297,4 @@ class DailyNutritionSummary extends StatelessWidget {
     const defaultCarbs = 250.0;
     return summary.totalCarbs / defaultCarbs;
   }
-} 
+}

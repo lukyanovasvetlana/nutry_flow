@@ -15,7 +15,7 @@ class ProfileFormSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -68,4 +68,4 @@ class ProfileFormSection extends StatelessWidget {
       ),
     );
   }
-} 
+}

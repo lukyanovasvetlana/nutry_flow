@@ -120,4 +120,4 @@ class Achievement extends Equatable {
         metadata,
         isVisible,
       ];
-} 
+}

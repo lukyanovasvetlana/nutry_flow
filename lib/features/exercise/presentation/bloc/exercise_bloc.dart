@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:nutry_flow/features/exercise/domain/entities/exercise.dart';
-import 'package:nutry_flow/features/exercise/domain/entities/workout.dart';
-import 'package:nutry_flow/features/exercise/domain/entities/workout_session.dart';
+import 'package:nutry_flow/features/activity/domain/entities/exercise.dart';
+import 'package:nutry_flow/features/activity/domain/entities/workout.dart';
+import 'package:nutry_flow/features/activity/domain/entities/activity_session.dart';
 import 'package:nutry_flow/features/exercise/data/repositories/exercise_repository.dart';
 import 'dart:developer' as developer;
 
@@ -20,7 +20,7 @@ class LoadExercises extends ExerciseEvent {
 
 class LoadExercisesByCategory extends ExerciseEvent {
   final String category;
-  
+
   const LoadExercisesByCategory(this.category);
 
   @override
@@ -29,7 +29,7 @@ class LoadExercisesByCategory extends ExerciseEvent {
 
 class CreateExercise extends ExerciseEvent {
   final Exercise exercise;
-  
+
   const CreateExercise(this.exercise);
 
   @override
@@ -38,7 +38,7 @@ class CreateExercise extends ExerciseEvent {
 
 class UpdateExercise extends ExerciseEvent {
   final Exercise exercise;
-  
+
   const UpdateExercise(this.exercise);
 
   @override
@@ -47,7 +47,7 @@ class UpdateExercise extends ExerciseEvent {
 
 class DeleteExercise extends ExerciseEvent {
   final String exerciseId;
-  
+
   const DeleteExercise(this.exerciseId);
 
   @override
@@ -60,7 +60,7 @@ class LoadWorkouts extends ExerciseEvent {
 
 class CreateWorkout extends ExerciseEvent {
   final Workout workout;
-  
+
   const CreateWorkout(this.workout);
 
   @override
@@ -69,7 +69,7 @@ class CreateWorkout extends ExerciseEvent {
 
 class UpdateWorkout extends ExerciseEvent {
   final Workout workout;
-  
+
   const UpdateWorkout(this.workout);
 
   @override
@@ -78,7 +78,7 @@ class UpdateWorkout extends ExerciseEvent {
 
 class DeleteWorkout extends ExerciseEvent {
   final String workoutId;
-  
+
   const DeleteWorkout(this.workoutId);
 
   @override
@@ -87,7 +87,7 @@ class DeleteWorkout extends ExerciseEvent {
 
 class StartWorkoutSession extends ExerciseEvent {
   final String workoutId;
-  
+
   const StartWorkoutSession(this.workoutId);
 
   @override
@@ -99,7 +99,7 @@ class CompleteWorkoutSession extends ExerciseEvent {
   final int durationMinutes;
   final int caloriesBurned;
   final String? notes;
-  
+
   const CompleteWorkoutSession({
     required this.sessionId,
     required this.durationMinutes,
@@ -108,7 +108,8 @@ class CompleteWorkoutSession extends ExerciseEvent {
   });
 
   @override
-  List<Object?> get props => [sessionId, durationMinutes, caloriesBurned, notes];
+  List<Object?> get props =>
+      [sessionId, durationMinutes, caloriesBurned, notes];
 }
 
 class LoadWorkoutHistory extends ExerciseEvent {
@@ -130,9 +131,9 @@ class ExerciseLoading extends ExerciseState {}
 class ExerciseLoaded extends ExerciseState {
   final List<Exercise> exercises;
   final List<Workout> workouts;
-  final List<WorkoutSession> workoutHistory;
+  final List<ActivitySession> workoutHistory;
   final String? selectedCategory;
-  
+
   const ExerciseLoaded({
     required this.exercises,
     required this.workouts,
@@ -141,12 +142,13 @@ class ExerciseLoaded extends ExerciseState {
   });
 
   @override
-  List<Object?> get props => [exercises, workouts, workoutHistory, selectedCategory];
+  List<Object?> get props =>
+      [exercises, workouts, workoutHistory, selectedCategory];
 
   ExerciseLoaded copyWith({
     List<Exercise>? exercises,
     List<Workout>? workouts,
-    List<WorkoutSession>? workoutHistory,
+    List<ActivitySession>? workoutHistory,
     String? selectedCategory,
   }) {
     return ExerciseLoaded(
@@ -160,7 +162,7 @@ class ExerciseLoaded extends ExerciseState {
 
 class ExerciseError extends ExerciseState {
   final String message;
-  
+
   const ExerciseError(this.message);
 
   @override
@@ -169,7 +171,7 @@ class ExerciseError extends ExerciseState {
 
 class ExerciseSuccess extends ExerciseState {
   final String message;
-  
+
   const ExerciseSuccess(this.message);
 
   @override
@@ -177,8 +179,8 @@ class ExerciseSuccess extends ExerciseState {
 }
 
 class WorkoutSessionActive extends ExerciseState {
-  final WorkoutSession session;
-  
+  final ActivitySession session;
+
   const WorkoutSessionActive(this.session);
 
   @override
@@ -191,9 +193,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
 
   ExerciseBloc({
     required ExerciseRepository exerciseRepository,
-  }) : _exerciseRepository = exerciseRepository,
-       super(ExerciseInitial()) {
-    
+  })  : _exerciseRepository = exerciseRepository,
+        super(ExerciseInitial()) {
     on<LoadExercises>(_onLoadExercises);
     on<LoadExercisesByCategory>(_onLoadExercisesByCategory);
     on<CreateExercise>(_onCreateExercise);
@@ -229,9 +230,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
         ));
       }
 
-      developer.log('💪 ExerciseBloc: Loaded ${exercises.length} exercises', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Loaded ${exercises.length} exercises',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Load exercises failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Load exercises failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось загрузить упражнения: $e'));
     }
   }
@@ -241,10 +244,13 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     Emitter<ExerciseState> emit,
   ) async {
     try {
-      developer.log('💪 ExerciseBloc: Loading exercises by category: ${event.category}', name: 'ExerciseBloc');
+      developer.log(
+          '💪 ExerciseBloc: Loading exercises by category: ${event.category}',
+          name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
-      final exercises = await _exerciseRepository.getExercisesByCategory(event.category);
+      final exercises =
+          await _exerciseRepository.getExercisesByCategory(event.category);
 
       if (state is ExerciseLoaded) {
         final currentState = state as ExerciseLoaded;
@@ -261,9 +267,12 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
         ));
       }
 
-      developer.log('💪 ExerciseBloc: Loaded ${exercises.length} exercises for category ${event.category}', name: 'ExerciseBloc');
+      developer.log(
+          '💪 ExerciseBloc: Loaded ${exercises.length} exercises for category ${event.category}',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Load exercises by category failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Load exercises by category failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось загрузить упражнения по категории: $e'));
     }
   }
@@ -293,9 +302,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       }
 
       emit(ExerciseSuccess('Упражнение создано успешно'));
-      developer.log('💪 ExerciseBloc: Exercise created successfully', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Exercise created successfully',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Create exercise failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Create exercise failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось создать упражнение: $e'));
     }
   }
@@ -325,9 +336,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       }
 
       emit(ExerciseSuccess('Упражнение обновлено успешно'));
-      developer.log('💪 ExerciseBloc: Exercise updated successfully', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Exercise updated successfully',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Update exercise failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Update exercise failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось обновить упражнение: $e'));
     }
   }
@@ -358,9 +371,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       }
 
       emit(ExerciseSuccess('Упражнение удалено успешно'));
-      developer.log('💪 ExerciseBloc: Exercise deleted successfully', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Exercise deleted successfully',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Delete exercise failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Delete exercise failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось удалить упражнение: $e'));
     }
   }
@@ -386,9 +401,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
         ));
       }
 
-      developer.log('💪 ExerciseBloc: Loaded ${workouts.length} workouts', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Loaded ${workouts.length} workouts',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Load workouts failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Load workouts failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось загрузить тренировки: $e'));
     }
   }
@@ -418,9 +435,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       }
 
       emit(ExerciseSuccess('Тренировка создана успешно'));
-      developer.log('💪 ExerciseBloc: Workout created successfully', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Workout created successfully',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Create workout failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Create workout failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось создать тренировку: $e'));
     }
   }
@@ -450,9 +469,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       }
 
       emit(ExerciseSuccess('Тренировка обновлена успешно'));
-      developer.log('💪 ExerciseBloc: Workout updated successfully', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Workout updated successfully',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Update workout failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Update workout failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось обновить тренировку: $e'));
     }
   }
@@ -483,9 +504,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       }
 
       emit(ExerciseSuccess('Тренировка удалена успешно'));
-      developer.log('💪 ExerciseBloc: Workout deleted successfully', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Workout deleted successfully',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Delete workout failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Delete workout failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось удалить тренировку: $e'));
     }
   }
@@ -495,25 +518,30 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     Emitter<ExerciseState> emit,
   ) async {
     try {
-      developer.log('💪 ExerciseBloc: Starting workout session', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Starting workout session',
+          name: 'ExerciseBloc');
 
-      final session = WorkoutSession(
+      final session = ActivitySession(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
+        userId: '', // Нужно получить из текущего пользователя
         workoutId: event.workoutId,
+        status: ActivitySessionStatus.inProgress,
         startedAt: DateTime.now(),
         completedAt: null,
         durationMinutes: 0,
         caloriesBurned: 0,
-        status: 'in_progress',
         notes: null,
+        createdAt: DateTime.now(),
       );
 
       await _exerciseRepository.saveWorkoutSession(session);
 
       emit(WorkoutSessionActive(session));
-      developer.log('💪 ExerciseBloc: Workout session started', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Workout session started',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Start workout session failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Start workout session failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось начать тренировку: $e'));
     }
   }
@@ -523,26 +551,32 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     Emitter<ExerciseState> emit,
   ) async {
     try {
-      developer.log('💪 ExerciseBloc: Completing workout session', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Completing workout session',
+          name: 'ExerciseBloc');
 
       // В реальном приложении нужно обновить существующую сессию
-      final session = WorkoutSession(
+      final session = ActivitySession(
         id: event.sessionId,
+        userId: '', // Нужно получить из текущего пользователя
         workoutId: '', // Нужно получить из активной сессии
-        startedAt: DateTime.now().subtract(Duration(minutes: event.durationMinutes)),
+        status: ActivitySessionStatus.completed,
+        startedAt:
+            DateTime.now().subtract(Duration(minutes: event.durationMinutes)),
         completedAt: DateTime.now(),
         durationMinutes: event.durationMinutes,
         caloriesBurned: event.caloriesBurned,
-        status: 'completed',
         notes: event.notes,
+        createdAt: DateTime.now(),
       );
 
       await _exerciseRepository.saveWorkoutSession(session);
 
       emit(ExerciseSuccess('Тренировка завершена успешно'));
-      developer.log('💪 ExerciseBloc: Workout session completed', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Workout session completed',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Complete workout session failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Complete workout session failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось завершить тренировку: $e'));
     }
   }
@@ -552,7 +586,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     Emitter<ExerciseState> emit,
   ) async {
     try {
-      developer.log('💪 ExerciseBloc: Loading workout history', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Loading workout history',
+          name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
       final workoutHistory = await _exerciseRepository.getWorkoutHistory();
@@ -568,10 +603,13 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
         ));
       }
 
-      developer.log('💪 ExerciseBloc: Loaded ${workoutHistory.length} workout sessions', name: 'ExerciseBloc');
+      developer.log(
+          '💪 ExerciseBloc: Loaded ${workoutHistory.length} workout sessions',
+          name: 'ExerciseBloc');
     } catch (e) {
-      developer.log('💪 ExerciseBloc: Load workout history failed: $e', name: 'ExerciseBloc');
+      developer.log('💪 ExerciseBloc: Load workout history failed: $e',
+          name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось загрузить историю тренировок: $e'));
     }
   }
-} 
+}

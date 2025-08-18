@@ -12,8 +12,11 @@ import '../../../grocery_list/presentation/screens/grocery_list_screen.dart';
 import '../../../menu/presentation/screens/healthy_menu_screen.dart';
 import '../../../exercise/presentation/screens/exercise_screen_redesigned.dart';
 import '../../../analytics/presentation/screens/analytics_screen.dart';
+import '../../../../shared/design/tokens/design_tokens.dart';
 import '../../../../shared/theme/app_colors.dart';
-import '../../../../shared/theme/app_styles.dart';
+import '../../../../shared/design/components/cards/nutry_card.dart';
+import '../../../profile/domain/entities/user_profile.dart';
+import '../../../profile/data/services/profile_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,54 +26,134 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  String? userName;
-  int selectedChartIndex = 0; // 0 - расходы, 1 - продукты, 2 - калории
+  int selectedChartIndex = 0;
+  UserProfile? _userProfile;
+  bool _isLoadingProfile = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUserName();
+    _loadUserProfile();
   }
 
-  Future<void> _loadUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('userName') ?? 'Гость';
-    });
+  Future<void> _loadUserProfile() async {
+    try {
+      // Сначала пробуем загрузить из SharedPreferences (если пользователь регистрировался)
+      final prefs = await SharedPreferences.getInstance();
+      final userName = prefs.getString('userName');
+      final userLastName = prefs.getString('userLastName');
+
+      if (userName != null && userName.isNotEmpty) {
+        // Создаем локальный профиль из SharedPreferences
+        final localProfile = UserProfile(
+          id: 'local-user',
+          firstName: userName,
+          lastName: userLastName ?? '',
+          email: prefs.getString('userEmail') ?? 'user@example.com',
+          phone: null,
+          dateOfBirth: null,
+          gender: null,
+          height: null,
+          weight: null,
+          activityLevel: null,
+          avatarUrl: null,
+          dietaryPreferences: const [],
+          allergies: const [],
+          healthConditions: const [],
+          fitnessGoals: const [],
+          targetWeight: null,
+          targetCalories: null,
+          targetProtein: null,
+          targetCarbs: null,
+          targetFat: null,
+          foodRestrictions: null,
+          pushNotificationsEnabled: true,
+          emailNotificationsEnabled: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        if (mounted) {
+          setState(() {
+            _userProfile = localProfile;
+            _isLoadingProfile = false;
+          });
+        }
+        return;
+      }
+
+      // Если нет локального профиля, используем MockProfileService для демо-режима
+      final profileService = MockProfileService();
+      final profile = await profileService.getCurrentUserProfile();
+
+      if (mounted) {
+        setState(() {
+          _userProfile = profile;
+          _isLoadingProfile = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingProfile = false;
+        });
+      }
+    }
   }
 
-  Future<void> _refreshData() async {
-    await _loadUserName();
+  String _getGreeting() {
+    if (_isLoadingProfile) return 'Добро пожаловать!';
+    if (_userProfile == null) return 'Добро пожаловать!';
+
+    final firstName = _userProfile!.firstName;
+    if (firstName.isNotEmpty) {
+      final hour = DateTime.now().hour;
+      String timeGreeting;
+
+      if (hour >= 5 && hour < 12) {
+        timeGreeting = 'Доброе утро';
+      } else if (hour >= 12 && hour < 17) {
+        timeGreeting = 'Добрый день';
+      } else if (hour >= 17 && hour < 22) {
+        timeGreeting = 'Добрый вечер';
+      } else {
+        timeGreeting = 'Доброй ночи';
+      }
+
+      return '$timeGreeting, $firstName!';
+    }
+
+    return 'Добро пожаловать!';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.dynamicBackground,
       body: Stack(
         children: [
-          RefreshIndicator(
-            onRefresh: _refreshData,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 4),
-                          // Логотип и приветствие
-                          _buildHeader(),
-                          const SizedBox(height: 8),
-                          
-                          // Статистика сверху
-                          StatsOverview(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        // Логотип и приветствие
+                        _buildHeader(),
+                        const SizedBox(height: 24),
+
+                        // Статистика сверху
+                        NutryCard(
+                          backgroundColor: AppColors.dynamicCard,
+                          child: StatsOverview(
                             selectedIndex: selectedChartIndex,
                             onCardTap: (index) {
                               setState(() {
@@ -78,18 +161,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               });
                             },
                           ),
-                          const SizedBox(height: 8),
-                          
-                          // Диаграммы
-                          _buildChartsSection(),
-                          const SizedBox(height: 8),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Диаграммы
+                        _buildChartsSection(),
+                        const SizedBox(height: 24),
+                      ],
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
           // Плавающая иконка меню
           Positioned(
@@ -103,39 +186,123 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildHeader() {
-    return Center(
-      child: Column(
-        children: [
-          Image.asset(
-            'assets/images/Logo.png',
-            width: 80,
-            height: 80,
-          ),
-          const SizedBox(height: 0),
-          Text(
-            'Привет, ${userName ?? 'Гость'}!\nДавай начнем наш путь по улучшению здоровья',
-            textAlign: TextAlign.center,
-            style: AppStyles.headlineSmall,
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.dynamicPrimary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.restaurant_menu,
+                color: AppColors.dynamicOnPrimary,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _getGreeting(), // Приветствие по имени
+                    style: DesignTokens.typography.headlineLargeStyle.copyWith(
+                      color: AppColors.dynamicTextPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Ваш персональный помощник по питанию',
+                    style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                      color: AppColors.dynamicTextSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildChartsSection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Гистограмма
-        _buildMainChart(),
-        const SizedBox(height: 8),
-        
-        // Круговая диаграмма
-        _buildBreakdownChart(),
+        Text(
+          'Аналитика питания',
+          style: DesignTokens.typography.titleLargeStyle.copyWith(
+            color: AppColors.dynamicTextPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Основная диаграмма в зависимости от выбранной карточки
+        _buildChartCard(
+          title: _getChartTitle(),
+          icon: _getChartIcon(),
+          color: _getChartColor(),
+          child: _getChartWidget(),
+        ),
+        const SizedBox(height: 16),
+
+        // Круговая диаграмма для детализации
+        _buildChartCard(
+          title: _getBreakdownChartTitle(),
+          icon: _getBreakdownChartIcon(),
+          color: _getBreakdownChartColor(),
+          child: _getBreakdownChartWidget(),
+        ),
       ],
     );
   }
 
-  Widget _buildMainChart() {
+  String _getChartTitle() {
+    switch (selectedChartIndex) {
+      case 0:
+        return 'Стоимость';
+      case 1:
+        return 'Продукты';
+      case 2:
+        return 'Калории';
+      default:
+        return 'Аналитика';
+    }
+  }
+
+  IconData _getChartIcon() {
+    switch (selectedChartIndex) {
+      case 0:
+        return Icons.account_balance_wallet;
+      case 1:
+        return Icons.shopping_basket;
+      case 2:
+        return Icons.local_fire_department;
+      default:
+        return Icons.analytics;
+    }
+  }
+
+  Color _getChartColor() {
+    switch (selectedChartIndex) {
+      case 0:
+        return AppColors.dynamicGreen;
+      case 1:
+        return AppColors.dynamicYellow;
+      case 2:
+        return AppColors.dynamicOrange;
+      default:
+        return AppColors.dynamicPrimary;
+    }
+  }
+
+  Widget _getChartWidget() {
     switch (selectedChartIndex) {
       case 0:
         return const ExpenseChart();
@@ -148,7 +315,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Widget _buildBreakdownChart() {
+  String _getBreakdownChartTitle() {
+    switch (selectedChartIndex) {
+      case 0:
+        return 'Детализация расходов';
+      case 1:
+        return 'Категории продуктов';
+      case 2:
+        return 'Распределение калорий';
+      default:
+        return 'Детализация';
+    }
+  }
+
+  IconData _getBreakdownChartIcon() {
+    switch (selectedChartIndex) {
+      case 0:
+        return Icons.pie_chart;
+      case 1:
+        return Icons.category;
+      case 2:
+        return Icons.donut_large;
+      default:
+        return Icons.analytics;
+    }
+  }
+
+  Color _getBreakdownChartColor() {
+    switch (selectedChartIndex) {
+      case 0:
+        return AppColors.dynamicInfo;
+      case 1:
+        return AppColors.dynamicGray;
+      case 2:
+        return AppColors.dynamicError;
+      default:
+        return AppColors.dynamicSecondary;
+    }
+  }
+
+  Widget _getBreakdownChartWidget() {
     switch (selectedChartIndex) {
       case 0:
         return const ExpenseBreakdownChart();
@@ -161,133 +367,165 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Widget _buildFloatingMenu() {
-    return PopupMenuButton<String>(
-      icon: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Icon(
-          Icons.menu,
-          color: AppColors.button,
-          size: 24,
-        ),
+  Widget _buildChartCard({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required Widget child,
+  }) {
+    return NutryCard(
+      backgroundColor: AppColors.dynamicCard,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: DesignTokens.typography.titleMediumStyle.copyWith(
+                  color: AppColors.dynamicTextPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height:
+                300, // Увеличил с 250 до 300 для лучшего отображения увеличенных диаграмм
+            child: child,
+          ),
+        ],
       ),
-      onSelected: (String value) {
-        switch (value) {
-          case 'menu':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HealthyMenuScreen()),
-            );
-            break;
-          case 'exercises':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ExerciseScreenRedesigned()),
-            );
-            break;
-          case 'health_articles':
-            Navigator.pushNamed(context, '/health-articles');
-            break;
-          case 'analytics':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AnalyticsScreen()),
-            );
-            break;
-          case 'developer_analytics':
-            Navigator.pushNamed(context, '/developer-analytics');
-            break;
-          case 'ab_testing':
-            Navigator.pushNamed(context, '/ab-testing');
-            break;
-          case 'profile':
-            Navigator.pushNamed(context, '/profile-settings');
-            break;
-          case 'grocery':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const GroceryListScreen()),
-            );
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        const PopupMenuItem<String>(
-          value: 'menu',
-          child: ListTile(
-            leading: Icon(Icons.restaurant, color: AppColors.button),
-            title: Text('Меню'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'exercises',
-          child: ListTile(
-            leading: Icon(Icons.fitness_center, color: AppColors.button),
-            title: Text('Упражнения'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'health_articles',
-          child: ListTile(
-            leading: Icon(Icons.article, color: AppColors.button),
-            title: Text('Статьи о здоровье'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'analytics',
-          child: ListTile(
-            leading: Icon(Icons.analytics, color: AppColors.button),
-            title: Text('Аналитика'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'developer_analytics',
-          child: ListTile(
-            leading: Icon(Icons.developer_mode, color: AppColors.button),
-            title: Text('Аналитика разработчика'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'ab_testing',
-          child: ListTile(
-            leading: Icon(Icons.science, color: AppColors.button),
-            title: Text('A/B Тестирование'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'grocery',
-          child: ListTile(
-            leading: Icon(Icons.shopping_cart, color: AppColors.button),
-            title: Text('Список покупок'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const PopupMenuItem<String>(
-          value: 'profile',
-          child: ListTile(
-            leading: Icon(Icons.person, color: AppColors.button),
-            title: Text('Профиль'),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-      ],
     );
   }
-} 
+
+  Widget _buildFloatingMenu() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.dynamicSurface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.dynamicShadow.withOpacity(0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: PopupMenuButton<String>(
+        icon: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.dynamicPrimary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.menu,
+            color: AppColors.dynamicOnPrimary,
+            size: 24,
+          ),
+        ),
+        onSelected: (String value) {
+          switch (value) {
+            case 'menu':
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const HealthyMenuScreen()),
+              );
+              break;
+            case 'exercises':
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ExerciseScreenRedesigned()),
+              );
+              break;
+            case 'health_articles':
+              Navigator.pushNamed(context, '/health-articles');
+              break;
+            case 'analytics':
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AnalyticsScreen()),
+              );
+              break;
+            case 'developer_analytics':
+              Navigator.pushNamed(context, '/developer-analytics');
+              break;
+            case 'ab_testing':
+              Navigator.pushNamed(context, '/ab-testing');
+              break;
+            case 'profile':
+              Navigator.pushNamed(context, '/profile-settings');
+              break;
+            case 'grocery':
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const GroceryListScreen()),
+              );
+              break;
+          }
+        },
+        itemBuilder: (context) => [
+          _buildMenuItem(
+              'menu', 'Меню', Icons.restaurant, AppColors.dynamicPrimary),
+          _buildMenuItem('exercises', 'Упражнения', Icons.fitness_center,
+              AppColors.dynamicSecondary),
+          _buildMenuItem('health_articles', 'Статьи о здоровье', Icons.article,
+              AppColors.dynamicTertiary),
+          _buildMenuItem(
+              'analytics', 'Аналитика', Icons.analytics, AppColors.dynamicInfo),
+          _buildMenuItem('developer_analytics', 'Аналитика разработчика',
+              Icons.developer_mode, AppColors.dynamicWarning),
+          _buildMenuItem('ab_testing', 'A/B Тестирование', Icons.science,
+              AppColors.dynamicSuccess),
+          _buildMenuItem('grocery', 'Список покупок', Icons.shopping_cart,
+              AppColors.dynamicNutritionWater),
+          _buildMenuItem('profile', 'Профиль', Icons.person,
+              AppColors.dynamicNutritionFiber),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+      String value, String title, IconData icon, Color color) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: DesignTokens.typography.bodyLargeStyle.copyWith(
+            color: AppColors.dynamicTextPrimary,
+          ),
+        ),
+        contentPadding: EdgeInsets.zero,
+      ),
+    );
+  }
+}

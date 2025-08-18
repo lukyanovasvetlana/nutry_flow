@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutry_flow/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:nutry_flow/features/meal_plan/presentation/screens/meal_details_screen.dart';
-import 'package:nutry_flow/app.dart';
 
 void main() {
   group('Dashboard to MealDetails Navigation Tests', () {

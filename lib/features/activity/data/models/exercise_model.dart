@@ -190,4 +190,4 @@ class ExerciseModel {
         return 'advanced';
     }
   }
-} 
+}

@@ -79,4 +79,4 @@ class AnalyticsEventModel extends AnalyticsEvent {
         userId.hashCode ^
         sessionId.hashCode;
   }
-} 
+}

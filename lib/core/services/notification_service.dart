@@ -1,28 +1,28 @@
 import 'dart:convert';
-import 'dart:io';
+// import 'dart:io';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:nutry_flow/core/services/supabase_service.dart';
+// import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'dart:developer' as developer;
-import 'package:timezone/timezone.dart' as tz;
+// import 'package:timezone/timezone.dart' as tz;
 
 // Обработчик фоновых сообщений
 // @pragma('vm:entry-point')
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   developer.log('🔔 Background message received: ${message.messageId}', name: 'NotificationService');
-//   
+//
 //   // Инициализируем уведомления для фонового режима
 //   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //       FlutterLocalNotificationsPlugin();
-//   
+//
 //   const AndroidInitializationSettings initializationSettingsAndroid =
 //       AndroidInitializationSettings('@mipmap/ic_launcher');
-//   
+//
 //   const InitializationSettings initializationSettings =
 //       InitializationSettings(android: initializationSettingsAndroid);
-//   
+//
 //   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-//   
+//
 //   // Показываем локальное уведомление
 //   await _showLocalNotification(message);
 // }
@@ -37,13 +37,13 @@ import 'package:timezone/timezone.dart' as tz;
 //     priority: Priority.high,
 //     showWhen: true,
 //   );
-//   
+//
 //   const NotificationDetails platformChannelSpecifics =
 //       NotificationDetails(android: androidPlatformChannelSpecifics);
-//   
+//
 //   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //       FlutterLocalNotificationsPlugin();
-//   
+//
 //   await flutterLocalNotificationsPlugin.show(
 //     message.hashCode,
 //     message.notification?.title ?? 'NutryFlow',
@@ -67,9 +67,6 @@ class NotificationService {
   bool _isInitialized = false;
 
   // Типы уведомлений
-  static const String _mealReminderChannel = 'meal_reminders';
-  static const String _workoutReminderChannel = 'workout_reminders';
-  static const String _goalReminderChannel = 'goal_reminders';
   static const String _generalChannel = 'general_notifications';
 
   /// Инициализация уведомлений
@@ -77,13 +74,15 @@ class NotificationService {
     if (_isInitialized) return;
 
     try {
-      developer.log('🔔 NotificationService: Initializing notification service', name: 'NotificationService');
+      developer.log('🔔 NotificationService: Initializing notification service',
+          name: 'NotificationService');
 
-      final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+      final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
       // Настройка для Android
-      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-      
+      const androidSettings =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
+
       // Настройка для iOS
       const iosSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
@@ -98,27 +97,31 @@ class NotificationService {
       );
 
       // Инициализация
-      await _flutterLocalNotificationsPlugin.initialize(
+      await flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
         onDidReceiveNotificationResponse: _onNotificationTapped,
       );
 
       // Настройка Firebase Messaging
       // _firebaseMessaging = FirebaseMessaging.instance;
-      
+
       // Запрос разрешений
       // await _requestPermissions();
-      
+
       // Настройка обработчиков сообщений
       // await _setupMessageHandlers();
-      
+
       // Создание каналов уведомлений
       await _createNotificationChannels();
 
       _isInitialized = true;
-      developer.log('🔔 NotificationService: Notification service initialized successfully', name: 'NotificationService');
+      developer.log(
+          '🔔 NotificationService: Notification service initialized successfully',
+          name: 'NotificationService');
     } catch (e) {
-      developer.log('🔔 NotificationService: Failed to initialize notification service: $e', name: 'NotificationService');
+      developer.log(
+          '🔔 NotificationService: Failed to initialize notification service: $e',
+          name: 'NotificationService');
       rethrow;
     }
   }
@@ -223,9 +226,12 @@ class NotificationService {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(achievementChannel);
 
-      developer.log('🔔 NotificationService: Notification channels created', name: 'NotificationService');
+      developer.log('🔔 NotificationService: Notification channels created',
+          name: 'NotificationService');
     } catch (e) {
-      developer.log('🔔 NotificationService: Failed to create notification channels: $e', name: 'NotificationService');
+      developer.log(
+          '🔔 NotificationService: Failed to create notification channels: $e',
+          name: 'NotificationService');
     }
   }
 
@@ -246,25 +252,6 @@ class NotificationService {
   //     developer.log('🔔 FCM Token refreshed: $newToken', name: 'NotificationService');
   //   });
   // }
-
-  /// Сохранение FCM токена в Supabase
-  Future<void> _saveFCMTokenToSupabase(String token) async {
-    try {
-      final user = SupabaseService.instance.currentUser;
-      if (user != null) {
-        await SupabaseService.instance.saveUserData('user_fcm_tokens', {
-          'user_id': user.id,
-          'token': token,
-          'platform': Platform.isIOS ? 'ios' : 'android',
-          'created_at': DateTime.now().toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String(),
-        });
-        developer.log('🔔 FCM token saved to Supabase', name: 'NotificationService');
-      }
-    } catch (e) {
-      developer.log('🔔 Failed to save FCM token to Supabase: $e', name: 'NotificationService');
-    }
-  }
 
   /// Обработка сообщений в foreground
   // void _handleForegroundMessage(RemoteMessage message) {
@@ -299,31 +286,6 @@ class NotificationService {
   //       break;
   //   }
   // }
-
-  /// Обработка нажатия на локальное уведомление
-  void _handleLocalNotificationTap(NotificationResponse response) {
-    developer.log('🔔 Local notification tapped: ${response.payload}', name: 'NotificationService');
-
-    if (response.payload != null) {
-      final data = json.decode(response.payload!);
-      final type = data['type'];
-
-      switch (type) {
-        case 'meal_reminder':
-          _handleMealReminder(data);
-          break;
-        case 'workout_reminder':
-          _handleWorkoutReminder(data);
-          break;
-        case 'goal_achievement':
-          _handleGoalAchievement(data);
-          break;
-        default:
-          _handleGeneralNotification(data);
-          break;
-      }
-    }
-  }
 
   /// Показ локального уведомления из сообщения
   // Future<void> _showLocalNotificationFromMessage(RemoteMessage message) async {
@@ -370,25 +332,29 @@ class NotificationService {
 
   /// Обработка напоминания о еде
   void _handleMealReminder(Map<String, dynamic> data) {
-    developer.log('🔔 Handling meal reminder: $data', name: 'NotificationService');
+    developer.log('🔔 Handling meal reminder: $data',
+        name: 'NotificationService');
     // Здесь можно добавить навигацию к экрану еды
   }
 
   /// Обработка напоминания о тренировке
   void _handleWorkoutReminder(Map<String, dynamic> data) {
-    developer.log('🔔 Handling workout reminder: $data', name: 'NotificationService');
+    developer.log('🔔 Handling workout reminder: $data',
+        name: 'NotificationService');
     // Здесь можно добавить навигацию к экрану тренировок
   }
 
   /// Обработка достижения цели
   void _handleGoalAchievement(Map<String, dynamic> data) {
-    developer.log('🔔 Handling goal achievement: $data', name: 'NotificationService');
+    developer.log('🔔 Handling goal achievement: $data',
+        name: 'NotificationService');
     // Здесь можно добавить навигацию к экрану целей
   }
 
   /// Обработка общего уведомления
   void _handleGeneralNotification(Map<String, dynamic> data) {
-    developer.log('🔔 Handling general notification: $data', name: 'NotificationService');
+    developer.log('🔔 Handling general notification: $data',
+        name: 'NotificationService');
     // Здесь можно добавить общую обработку
   }
 
@@ -397,7 +363,7 @@ class NotificationService {
     required int id,
     required String title,
     required String body,
-    required tz.TZDateTime scheduledDate,
+    required DateTime scheduledDate,
     String? payload,
     String channelId = _generalChannel,
   }) async {
@@ -414,31 +380,30 @@ class NotificationService {
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    await _localNotifications.zonedSchedule(
+    await _localNotifications.show(
       id,
       title,
       body,
-      scheduledDate,
       platformChannelSpecifics,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       payload: payload,
     );
 
-    developer.log('🔔 Local notification scheduled for: $scheduledDate', name: 'NotificationService');
+    developer.log('🔔 Local notification scheduled for: $scheduledDate',
+        name: 'NotificationService');
   }
 
   /// Отмена локального уведомления
   Future<void> cancelLocalNotification(int id) async {
     await _localNotifications.cancel(id);
-    developer.log('🔔 Local notification cancelled: $id', name: 'NotificationService');
+    developer.log('🔔 Local notification cancelled: $id',
+        name: 'NotificationService');
   }
 
   /// Отмена всех локальных уведомлений
   Future<void> cancelAllLocalNotifications() async {
     await _localNotifications.cancelAll();
-    developer.log('🔔 All local notifications cancelled', name: 'NotificationService');
+    developer.log('🔔 All local notifications cancelled',
+        name: 'NotificationService');
   }
 
   /// Получение FCM токена
@@ -447,21 +412,25 @@ class NotificationService {
   /// Обработка нажатия на локальное уведомление
   void _onNotificationTapped(NotificationResponse response) {
     try {
-      developer.log('🔔 NotificationService: Local notification tapped: ${response.payload}', name: 'NotificationService');
-      
+      developer.log(
+          '🔔 NotificationService: Local notification tapped: ${response.payload}',
+          name: 'NotificationService');
+
       if (response.payload != null) {
         final data = json.decode(response.payload!);
         _handleNotificationData(data);
       }
     } catch (e) {
-      developer.log('🔔 NotificationService: Failed to handle notification tap: $e', name: 'NotificationService');
+      developer.log(
+          '🔔 NotificationService: Failed to handle notification tap: $e',
+          name: 'NotificationService');
     }
   }
 
   /// Обработка данных уведомления
   void _handleNotificationData(Map<String, dynamic> data) {
     final type = data['type'] as String?;
-    
+
     switch (type) {
       case 'meal_reminder':
         _handleMealReminder(data);
@@ -482,7 +451,7 @@ class NotificationService {
   // void _onMessageReceived(RemoteMessage message) {
   //   try {
   //     developer.log('🔔 NotificationService: Firebase message received: ${message.notification?.title}', name: 'NotificationService');
-  //     
+  //
   //     final data = message.data;
   //     _handleNotificationData(data);
   //   } catch (e) {
@@ -494,7 +463,7 @@ class NotificationService {
   // void _onNotificationOpenedApp(RemoteMessage message) {
   //   try {
   //     developer.log('🔔 NotificationService: Firebase notification opened: ${message.notification?.title}', name: 'NotificationService');
-  //     
+  //
   //     final data = message.data;
   //     _handleNotificationData(data);
   //   } catch (e) {
@@ -502,28 +471,6 @@ class NotificationService {
   //   }
   // }
 
-  /// Обработка обновления токена
-  void _onTokenRefresh(String newToken) {
-    try {
-      _fcmToken = newToken;
-      _saveFCMToken(newToken);
-      developer.log('🔔 NotificationService: FCM token refreshed: $newToken', name: 'NotificationService');
-    } catch (e) {
-      developer.log('🔔 NotificationService: Failed to handle token refresh: $e', name: 'NotificationService');
-    }
-  }
-
-  /// Сохранение FCM токена
-  Future<void> _saveFCMToken(String token) async {
-    try {
-      _fcmToken = token;
-      // Здесь можно сохранить токен в локальное хранилище или Supabase
-      developer.log('🔔 NotificationService: FCM token saved: $token', name: 'NotificationService');
-    } catch (e) {
-      developer.log('🔔 NotificationService: Failed to save FCM token: $e', name: 'NotificationService');
-    }
-  }
-
   /// Проверка инициализации
   bool get isInitialized => _isInitialized;
-} 
+}

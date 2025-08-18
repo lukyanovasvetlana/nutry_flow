@@ -27,11 +27,11 @@ import '../presentation/bloc/activity_bloc.dart';
 /// Extension для доступа к зависимостям Activity
 extension ActivityDependencies on GetIt {
   static GetIt get instance => GetIt.instance;
-  
+
   static Future<void> initialize() async {
     // Инициализация будет выполнена через @module аннотацию
   }
-  
+
   static void reset() {
     // Сброс зависимостей
   }
@@ -41,177 +41,195 @@ extension ActivityDependencies on GetIt {
 abstract class ActivityModule {
   // Services
   @lazySingleton
-  SupabaseExerciseService get supabaseExerciseService => SupabaseExerciseService();
-  
+  SupabaseExerciseService get supabaseExerciseService =>
+      SupabaseExerciseService();
+
   @lazySingleton
   SupabaseWorkoutService get supabaseWorkoutService => SupabaseWorkoutService();
-  
+
   @lazySingleton
-  ActivityTrackingService get activityTrackingService => ActivityTrackingService();
+  ActivityTrackingService get activityTrackingService =>
+      ActivityTrackingService();
 
   // Repositories
   @lazySingleton
-  ExerciseRepository get exerciseRepository => ExerciseRepositoryImpl(supabaseExerciseService);
-  
+  ExerciseRepository get exerciseRepository =>
+      ExerciseRepositoryImpl(supabaseExerciseService);
+
   @lazySingleton
-  WorkoutRepository get workoutRepository => WorkoutRepositoryImpl(supabaseWorkoutService);
-  
+  WorkoutRepository get workoutRepository =>
+      WorkoutRepositoryImpl(supabaseWorkoutService);
+
   @lazySingleton
-  ActivityRepository get activityRepository => ActivityRepositoryImpl(activityTrackingService);
+  ActivityRepository get activityRepository =>
+      ActivityRepositoryImpl(activityTrackingService);
 
   // Exercise Use Cases
   @lazySingleton
-  GetExercisesUseCase get getExercisesUseCase => GetExercisesUseCase(exerciseRepository);
-  
+  GetExercisesUseCase get getExercisesUseCase =>
+      GetExercisesUseCase(exerciseRepository);
+
   @lazySingleton
-  GetExerciseByIdUseCase get getExerciseByIdUseCase => GetExerciseByIdUseCase(exerciseRepository);
-  
+  GetExerciseByIdUseCase get getExerciseByIdUseCase =>
+      GetExerciseByIdUseCase(exerciseRepository);
+
   @lazySingleton
-  SearchExercisesUseCase get searchExercisesUseCase => SearchExercisesUseCase(exerciseRepository);
-  
+  SearchExercisesUseCase get searchExercisesUseCase =>
+      SearchExercisesUseCase(exerciseRepository);
+
   @lazySingleton
-  FilterExercisesByCategoryUseCase get filterExercisesByCategoryUseCase => 
+  FilterExercisesByCategoryUseCase get filterExercisesByCategoryUseCase =>
       FilterExercisesByCategoryUseCase(exerciseRepository);
-  
+
   @lazySingleton
-  FilterExercisesByDifficultyUseCase get filterExercisesByDifficultyUseCase => 
+  FilterExercisesByDifficultyUseCase get filterExercisesByDifficultyUseCase =>
       FilterExercisesByDifficultyUseCase(exerciseRepository);
-  
+
   @lazySingleton
-  GetFavoriteExercisesUseCase get getFavoriteExercisesUseCase => 
+  GetFavoriteExercisesUseCase get getFavoriteExercisesUseCase =>
       GetFavoriteExercisesUseCase(exerciseRepository);
-  
+
   @lazySingleton
-  ToggleFavoriteExerciseUseCase get toggleFavoriteExerciseUseCase => 
+  ToggleFavoriteExerciseUseCase get toggleFavoriteExerciseUseCase =>
       ToggleFavoriteExerciseUseCase(exerciseRepository);
-  
+
   @lazySingleton
-  GetExerciseCategoriesUseCase get getExerciseCategoriesUseCase => 
+  GetExerciseCategoriesUseCase get getExerciseCategoriesUseCase =>
       GetExerciseCategoriesUseCase(exerciseRepository);
-  
+
   @lazySingleton
-  GetExerciseDifficultiesUseCase get getExerciseDifficultiesUseCase => 
+  GetExerciseDifficultiesUseCase get getExerciseDifficultiesUseCase =>
       GetExerciseDifficultiesUseCase(exerciseRepository);
 
   // Workout Use Cases
   @lazySingleton
-  GetUserWorkoutsUseCase get getUserWorkoutsUseCase => GetUserWorkoutsUseCase(workoutRepository);
-  
+  GetUserWorkoutsUseCase get getUserWorkoutsUseCase =>
+      GetUserWorkoutsUseCase(workoutRepository);
+
   @lazySingleton
-  GetWorkoutByIdUseCase get getWorkoutByIdUseCase => GetWorkoutByIdUseCase(workoutRepository);
-  
+  GetWorkoutByIdUseCase get getWorkoutByIdUseCase =>
+      GetWorkoutByIdUseCase(workoutRepository);
+
   @lazySingleton
-  GetWorkoutTemplatesUseCase get getWorkoutTemplatesUseCase => 
+  GetWorkoutTemplatesUseCase get getWorkoutTemplatesUseCase =>
       GetWorkoutTemplatesUseCase(workoutRepository);
-  
+
   @lazySingleton
-  CreateWorkoutUseCase get createWorkoutUseCase => CreateWorkoutUseCase(workoutRepository);
-  
+  CreateWorkoutUseCase get createWorkoutUseCase =>
+      CreateWorkoutUseCase(workoutRepository);
+
   @lazySingleton
-  UpdateWorkoutUseCase get updateWorkoutUseCase => UpdateWorkoutUseCase(workoutRepository);
-  
+  UpdateWorkoutUseCase get updateWorkoutUseCase =>
+      UpdateWorkoutUseCase(workoutRepository);
+
   @lazySingleton
-  DeleteWorkoutUseCase get deleteWorkoutUseCase => DeleteWorkoutUseCase(workoutRepository);
-  
+  DeleteWorkoutUseCase get deleteWorkoutUseCase =>
+      DeleteWorkoutUseCase(workoutRepository);
+
   @lazySingleton
-  SaveWorkoutAsTemplateUseCase get saveWorkoutAsTemplateUseCase => 
+  SaveWorkoutAsTemplateUseCase get saveWorkoutAsTemplateUseCase =>
       SaveWorkoutAsTemplateUseCase(workoutRepository);
-  
+
   @lazySingleton
-  SearchWorkoutsUseCase get searchWorkoutsUseCase => SearchWorkoutsUseCase(workoutRepository);
-  
+  SearchWorkoutsUseCase get searchWorkoutsUseCase =>
+      SearchWorkoutsUseCase(workoutRepository);
+
   @lazySingleton
-  FilterWorkoutsByDifficultyUseCase get filterWorkoutsByDifficultyUseCase => 
+  FilterWorkoutsByDifficultyUseCase get filterWorkoutsByDifficultyUseCase =>
       FilterWorkoutsByDifficultyUseCase(workoutRepository);
 
   // Activity Use Cases
   @lazySingleton
-  StartActivitySessionUseCase get startActivitySessionUseCase => 
+  StartActivitySessionUseCase get startActivitySessionUseCase =>
       StartActivitySessionUseCase(activityRepository);
-  
+
   @lazySingleton
-  UpdateActivitySessionUseCase get updateActivitySessionUseCase => 
+  UpdateActivitySessionUseCase get updateActivitySessionUseCase =>
       UpdateActivitySessionUseCase(activityRepository);
-  
+
   @lazySingleton
-  CompleteActivitySessionUseCase get completeActivitySessionUseCase => 
+  CompleteActivitySessionUseCase get completeActivitySessionUseCase =>
       CompleteActivitySessionUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetCurrentSessionUseCase get getCurrentSessionUseCase => 
+  GetCurrentSessionUseCase get getCurrentSessionUseCase =>
       GetCurrentSessionUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetUserSessionsUseCase get getUserSessionsUseCase => 
+  GetUserSessionsUseCase get getUserSessionsUseCase =>
       GetUserSessionsUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetSessionByIdUseCase get getSessionByIdUseCase => GetSessionByIdUseCase(activityRepository);
-  
+  GetSessionByIdUseCase get getSessionByIdUseCase =>
+      GetSessionByIdUseCase(activityRepository);
+
   @lazySingleton
-  GetDailyStatsUseCase get getDailyStatsUseCase => GetDailyStatsUseCase(activityRepository);
-  
+  GetDailyStatsUseCase get getDailyStatsUseCase =>
+      GetDailyStatsUseCase(activityRepository);
+
   @lazySingleton
-  GetWeeklyStatsUseCase get getWeeklyStatsUseCase => GetWeeklyStatsUseCase(activityRepository);
-  
+  GetWeeklyStatsUseCase get getWeeklyStatsUseCase =>
+      GetWeeklyStatsUseCase(activityRepository);
+
   @lazySingleton
-  GetMonthlyStatsUseCase get getMonthlyStatsUseCase => GetMonthlyStatsUseCase(activityRepository);
-  
+  GetMonthlyStatsUseCase get getMonthlyStatsUseCase =>
+      GetMonthlyStatsUseCase(activityRepository);
+
   @lazySingleton
-  UpdateDailyStatsUseCase get updateDailyStatsUseCase => 
+  UpdateDailyStatsUseCase get updateDailyStatsUseCase =>
       UpdateDailyStatsUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetActivityAnalyticsUseCase get getActivityAnalyticsUseCase => 
+  GetActivityAnalyticsUseCase get getActivityAnalyticsUseCase =>
       GetActivityAnalyticsUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetTotalWorkoutsUseCase get getTotalWorkoutsUseCase => 
+  GetTotalWorkoutsUseCase get getTotalWorkoutsUseCase =>
       GetTotalWorkoutsUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetTotalDurationUseCase get getTotalDurationUseCase => 
+  GetTotalDurationUseCase get getTotalDurationUseCase =>
       GetTotalDurationUseCase(activityRepository);
-  
+
   @lazySingleton
-  GetTotalCaloriesBurnedUseCase get getTotalCaloriesBurnedUseCase => 
+  GetTotalCaloriesBurnedUseCase get getTotalCaloriesBurnedUseCase =>
       GetTotalCaloriesBurnedUseCase(activityRepository);
 
   // BLoCs
   @lazySingleton
   ExerciseBloc get exerciseBloc => ExerciseBloc(
-    getExercisesUseCase,
-    searchExercisesUseCase,
-    filterExercisesByCategoryUseCase,
-    filterExercisesByDifficultyUseCase,
-    getFavoriteExercisesUseCase,
-    toggleFavoriteExerciseUseCase,
-    getExerciseCategoriesUseCase,
-    getExerciseDifficultiesUseCase,
-  );
-  
+        getExercisesUseCase,
+        searchExercisesUseCase,
+        filterExercisesByCategoryUseCase,
+        filterExercisesByDifficultyUseCase,
+        getFavoriteExercisesUseCase,
+        toggleFavoriteExerciseUseCase,
+        getExerciseCategoriesUseCase,
+        getExerciseDifficultiesUseCase,
+      );
+
   @lazySingleton
   WorkoutBloc get workoutBloc => WorkoutBloc(
-    getUserWorkoutsUseCase,
-    getWorkoutTemplatesUseCase,
-    createWorkoutUseCase,
-    updateWorkoutUseCase,
-    deleteWorkoutUseCase,
-    saveWorkoutAsTemplateUseCase,
-    searchWorkoutsUseCase,
-    filterWorkoutsByDifficultyUseCase,
-  );
-  
+        getUserWorkoutsUseCase,
+        getWorkoutTemplatesUseCase,
+        createWorkoutUseCase,
+        updateWorkoutUseCase,
+        deleteWorkoutUseCase,
+        saveWorkoutAsTemplateUseCase,
+        searchWorkoutsUseCase,
+        filterWorkoutsByDifficultyUseCase,
+      );
+
   @lazySingleton
   ActivityBloc get activityBloc => ActivityBloc(
-    startActivitySessionUseCase,
-    updateActivitySessionUseCase,
-    completeActivitySessionUseCase,
-    getCurrentSessionUseCase,
-    getUserSessionsUseCase,
-    getDailyStatsUseCase,
-    getWeeklyStatsUseCase,
-    getMonthlyStatsUseCase,
-    getActivityAnalyticsUseCase,
-  );
-} 
+        startActivitySessionUseCase,
+        updateActivitySessionUseCase,
+        completeActivitySessionUseCase,
+        getCurrentSessionUseCase,
+        getUserSessionsUseCase,
+        getDailyStatsUseCase,
+        getWeeklyStatsUseCase,
+        getMonthlyStatsUseCase,
+        getActivityAnalyticsUseCase,
+      );
+}

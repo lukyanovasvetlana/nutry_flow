@@ -32,7 +32,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    
+
     if (widget.initialQuery != null) {
       _searchController.text = widget.initialQuery!;
       _performSearch(widget.initialQuery!);
@@ -145,7 +145,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
               ],
             ),
           ),
-          
+
           // Content
           Expanded(
             child: TabBarView(
@@ -153,13 +153,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
               children: [
                 // Search tab
                 _buildSearchTab(),
-                
+
                 // Popular tab
                 _buildContentTab(),
-                
+
                 // Favorites tab
                 _buildContentTab(),
-                
+
                 // Recommendations tab
                 _buildContentTab(),
               ],
@@ -176,7 +176,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
         if (state is NutritionSearchInitial) {
           return _buildInitialContent();
         }
-        
+
         return _buildContentTab();
       },
     );
@@ -212,8 +212,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
                 Text(
                   state.message,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                        color: Colors.grey[600],
+                      ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -235,8 +235,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
                 Text(
                   state.message,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.red[600],
-                  ),
+                        color: Colors.red[600],
+                      ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -285,12 +285,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           const SizedBox(height: 16),
           FoodCategoriesGrid(
             onCategorySelected: (category) {
-              context.read<NutritionSearchCubit>().getFoodItemsByCategory(category);
+              context
+                  .read<NutritionSearchCubit>()
+                  .getFoodItemsByCategory(category);
             },
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Popular foods section
           Text(
             'Популярные продукты',
@@ -304,4 +306,4 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       ),
     );
   }
-} 
+}

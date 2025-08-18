@@ -50,7 +50,8 @@ class GetNutritionDiaryUseCase {
     final normalizedDate = DateTime(date.year, date.month, date.day);
 
     // Получаем записи о приеме пищи за день
-    final entries = await _repository.getFoodEntriesByDate(userId, normalizedDate);
+    final entries =
+        await _repository.getFoodEntriesByDate(userId, normalizedDate);
 
     // Группируем записи по типам приемов пищи
     final entriesByMeal = _groupEntriesByMealType(entries);
@@ -107,17 +108,19 @@ class GetNutritionDiaryUseCase {
     String? foodCategory,
   }) async {
     final diaries = await getForDateRange(userId, startDate, endDate);
-    
+
     if (mealType == null && foodCategory == null) {
       return diaries;
     }
 
-    return await Future.wait(diaries.map((diary) async {
+    return Future.wait(diaries.map((diary) async {
       List<FoodEntry> filteredEntries = diary.allEntries;
 
       // Фильтруем по типу приема пищи
       if (mealType != null) {
-        filteredEntries = filteredEntries.where((entry) => entry.mealType == mealType).toList();
+        filteredEntries = filteredEntries
+            .where((entry) => entry.mealType == mealType)
+            .toList();
       }
 
       // Фильтруем по категории продукта
@@ -135,7 +138,8 @@ class GetNutritionDiaryUseCase {
 
       // Создаем новый дневник с отфильтрованными записями
       final filteredEntriesByMeal = _groupEntriesByMealType(filteredEntries);
-      final filteredSummary = NutritionSummary.fromEntries(diary.date, filteredEntries);
+      final filteredSummary =
+          NutritionSummary.fromEntries(diary.date, filteredEntries);
 
       return NutritionDiary(
         date: diary.date,
@@ -170,18 +174,18 @@ class GetNutritionDiaryUseCase {
     }
 
     // Получаем записи за период
-    final entries = await _repository.getFoodEntriesByDateRange(userId, startDate, endDate);
+    final entries =
+        await _repository.getFoodEntriesByDateRange(userId, startDate, endDate);
 
     // Группируем записи по датам
     final entriesByDate = _groupEntriesByDate(entries);
 
     // Создаем дневники для каждой даты
     final diaries = <NutritionDiary>[];
-    
-    for (var date = startDate; 
-         date.isBefore(endDate.add(const Duration(days: 1))); 
-         date = date.add(const Duration(days: 1))) {
-      
+
+    for (var date = startDate;
+        date.isBefore(endDate.add(const Duration(days: 1)));
+        date = date.add(const Duration(days: 1))) {
       final dateEntries = entriesByDate[_dateKey(date)] ?? [];
       final entriesByMeal = _groupEntriesByMealType(dateEntries);
       final summary = await _getSummaryForDate(userId, date, dateEntries);
@@ -207,16 +211,17 @@ class GetNutritionDiaryUseCase {
       throw ArgumentError('ID пользователя не может быть пустым');
     }
 
-    return await _repository.getFoodEntriesByMealType(userId, date, mealType);
+    return _repository.getFoodEntriesByMealType(userId, date, mealType);
   }
 
   /// Получает последние записи пользователя
-  Future<List<FoodEntry>> getRecentEntries(String userId, {int limit = 10}) async {
+  Future<List<FoodEntry>> getRecentEntries(String userId,
+      {int limit = 10}) async {
     if (userId.trim().isEmpty) {
       throw ArgumentError('ID пользователя не может быть пустым');
     }
 
-    return await _repository.getRecentFoodEntries(userId, limit: limit);
+    return _repository.getRecentFoodEntries(userId, limit: limit);
   }
 
   /// Получает статистику питания за неделю
@@ -228,7 +233,7 @@ class GetNutritionDiaryUseCase {
       throw ArgumentError('ID пользователя не может быть пустым');
     }
 
-    return await _repository.getWeeklyNutritionStats(userId, weekStart);
+    return _repository.getWeeklyNutritionStats(userId, weekStart);
   }
 
   /// Получает статистику питания за месяц
@@ -240,7 +245,7 @@ class GetNutritionDiaryUseCase {
       throw ArgumentError('ID пользователя не может быть пустым');
     }
 
-    return await _repository.getMonthlyNutritionStats(userId, monthStart);
+    return _repository.getMonthlyNutritionStats(userId, monthStart);
   }
 
   /// Анализирует соблюдение целей питания
@@ -250,22 +255,25 @@ class GetNutritionDiaryUseCase {
     NutritionGoals goals,
   ) async {
     final diary = await execute(userId, date);
-    
+
     return NutritionGoalsAnalysis(
       date: date,
       goals: goals,
       actual: diary.summary,
-      caloriesPercentage: diary.summary.getCaloriesPercentage(goals.dailyCalories),
+      caloriesPercentage:
+          diary.summary.getCaloriesPercentage(goals.dailyCalories),
       proteinPercentage: diary.summary.getProteinPercentage(goals.dailyProtein),
       fatsPercentage: diary.summary.getFatsPercentage(goals.dailyFats),
       carbsPercentage: diary.summary.getCarbsPercentage(goals.dailyCarbs),
       isCaloriesExceeded: diary.summary.isCaloriesExceeded(goals.dailyCalories),
-      remainingCalories: diary.summary.getRemainingCalories(goals.dailyCalories),
+      remainingCalories:
+          diary.summary.getRemainingCalories(goals.dailyCalories),
     );
   }
 
   /// Группирует записи по типам приемов пищи
-  Map<MealType, List<FoodEntry>> _groupEntriesByMealType(List<FoodEntry> entries) {
+  Map<MealType, List<FoodEntry>> _groupEntriesByMealType(
+      List<FoodEntry> entries) {
     final grouped = <MealType, List<FoodEntry>>{};
 
     for (final entry in entries) {
@@ -274,7 +282,8 @@ class GetNutritionDiaryUseCase {
 
     // Сортируем записи в каждой группе по времени
     for (final mealEntries in grouped.values) {
-      mealEntries.sort((a, b) => (a.consumedAt ?? a.date).compareTo(b.consumedAt ?? b.date));
+      mealEntries.sort(
+          (a, b) => (a.consumedAt ?? a.date).compareTo(b.consumedAt ?? b.date));
     }
 
     return grouped;
@@ -373,10 +382,13 @@ class NutritionGoalsAnalysis {
 
   /// Проверяет, достигнуты ли все цели
   bool get allGoalsAchieved {
-    return caloriesPercentage >= 90 && caloriesPercentage <= 110 &&
-           proteinPercentage >= 80 &&
-           fatsPercentage >= 20 && fatsPercentage <= 35 &&
-           carbsPercentage >= 45 && carbsPercentage <= 65;
+    return caloriesPercentage >= 90 &&
+        caloriesPercentage <= 110 &&
+        proteinPercentage >= 80 &&
+        fatsPercentage >= 20 &&
+        fatsPercentage <= 35 &&
+        carbsPercentage >= 45 &&
+        carbsPercentage <= 65;
   }
 
   /// Получает процент общего выполнения целей
@@ -418,4 +430,4 @@ class NutritionGoalsAnalysis {
     if (percentage >= target) return 100.0;
     return percentage;
   }
-} 
+}

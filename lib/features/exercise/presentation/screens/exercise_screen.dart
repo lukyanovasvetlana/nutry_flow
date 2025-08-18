@@ -6,7 +6,7 @@ import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_styles.dart';
 
 class ExerciseScreen extends StatefulWidget {
-  const ExerciseScreen({Key? key}) : super(key: key);
+  const ExerciseScreen({super.key});
 
   @override
   State<ExerciseScreen> createState() => _ExerciseScreenState();
@@ -40,12 +40,16 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
     // Apply category filter
     if (_selectedCategory != 'All') {
-      filtered = filtered.where((exercise) => exercise.category == _selectedCategory).toList();
+      filtered = filtered
+          .where((exercise) => exercise.category == _selectedCategory)
+          .toList();
     }
 
     // Apply difficulty filter
     if (_selectedDifficulty != 'All') {
-      filtered = filtered.where((exercise) => exercise.difficulty == _selectedDifficulty).toList();
+      filtered = filtered
+          .where((exercise) => exercise.difficulty == _selectedDifficulty)
+          .toList();
     }
 
     setState(() {
@@ -70,7 +74,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Категория', style: AppStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
+              Text('Категория',
+                  style: AppStyles.bodyLarge
+                      .copyWith(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               DropdownButton<String>(
                 value: _selectedCategory,
@@ -88,12 +94,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              Text('Сложность', style: AppStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
+              Text('Сложность',
+                  style: AppStyles.bodyLarge
+                      .copyWith(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               DropdownButton<String>(
                 value: _selectedDifficulty,
                 isExpanded: true,
-                items: ExerciseService.getDifficulties().map((String difficulty) {
+                items:
+                    ExerciseService.getDifficulties().map((String difficulty) {
                   String displayText = difficulty;
                   switch (difficulty) {
                     case 'All':
@@ -145,12 +154,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.dynamicBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.dynamicBackground,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.dynamicTextPrimary),
           onPressed: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
@@ -158,13 +167,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         title: Text(
           'Упражнения',
           style: AppStyles.headlineMedium.copyWith(
-            color: AppColors.textPrimary,
+            color: AppColors.dynamicTextPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.menu, color: AppColors.textPrimary),
+            icon: Icon(Icons.menu, color: AppColors.dynamicTextPrimary),
             onPressed: () {
               // Handle menu action
             },
@@ -179,50 +188,54 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: AppColors.dynamicSurface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: AppColors.dynamicBorder),
                     ),
                     child: TextField(
                       onChanged: _onSearchChanged,
                       decoration: InputDecoration(
                         hintText: 'Поиск упражнений',
-                        hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                        prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                        hintStyle: AppStyles.bodyMedium
+                            .copyWith(color: AppColors.dynamicTextSecondary),
+                        prefixIcon: Icon(Icons.search,
+                            color: AppColors.dynamicTextSecondary),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
-                Container(
+                DecoratedBox(
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: AppColors.dynamicSurface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: AppColors.dynamicBorder),
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.more_horiz, color: AppColors.textSecondary),
+                    icon: Icon(Icons.more_horiz,
+                        color: AppColors.dynamicTextSecondary),
                     onPressed: _showFilterDialog,
                   ),
                 ),
                 const SizedBox(width: 12),
-                Container(
+                DecoratedBox(
                   decoration: BoxDecoration(
-                    color: AppColors.button,
+                    color: AppColors.dynamicButton,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextButton.icon(
                     onPressed: () {
                       // Handle add exercise
                     },
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text(
+                    icon: Icon(Icons.add, color: AppColors.dynamicOnPrimary),
+                    label: Text(
                       'Добавить упражнение',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppColors.dynamicOnPrimary),
                     ),
                   ),
                 ),
@@ -241,7 +254,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   child: Text(
                     'Название упражнения',
                     style: AppStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.dynamicTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -251,7 +264,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     'Подходы',
                     textAlign: TextAlign.center,
                     style: AppStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.dynamicTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -261,7 +274,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     'Повторения',
                     textAlign: TextAlign.center,
                     style: AppStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.dynamicTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -271,7 +284,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     'Отдых',
                     textAlign: TextAlign.center,
                     style: AppStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.dynamicTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -299,4 +312,4 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       ),
     );
   }
-} 
+}

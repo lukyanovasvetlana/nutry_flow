@@ -10,7 +10,7 @@ class GetUserWorkoutsUseCase {
   GetUserWorkoutsUseCase(this.repository);
 
   Future<Either<String, List<Workout>>> call(String userId) async {
-    return await repository.getUserWorkouts(userId);
+    return repository.getUserWorkouts(userId);
   }
 }
 
@@ -21,7 +21,7 @@ class GetWorkoutByIdUseCase {
   GetWorkoutByIdUseCase(this.repository);
 
   Future<Either<String, Workout?>> call(String id) async {
-    return await repository.getWorkoutById(id);
+    return repository.getWorkoutById(id);
   }
 }
 
@@ -32,7 +32,7 @@ class GetWorkoutTemplatesUseCase {
   GetWorkoutTemplatesUseCase(this.repository);
 
   Future<Either<String, List<Workout>>> call(String userId) async {
-    return await repository.getWorkoutTemplates(userId);
+    return repository.getWorkoutTemplates(userId);
   }
 }
 
@@ -43,7 +43,7 @@ class CreateWorkoutUseCase {
   CreateWorkoutUseCase(this.repository);
 
   Future<Either<String, Workout>> call(Workout workout) async {
-    return await repository.createWorkout(workout);
+    return repository.createWorkout(workout);
   }
 }
 
@@ -54,7 +54,7 @@ class UpdateWorkoutUseCase {
   UpdateWorkoutUseCase(this.repository);
 
   Future<Either<String, Workout>> call(Workout workout) async {
-    return await repository.updateWorkout(workout);
+    return repository.updateWorkout(workout);
   }
 }
 
@@ -65,7 +65,7 @@ class DeleteWorkoutUseCase {
   DeleteWorkoutUseCase(this.repository);
 
   Future<Either<String, void>> call(String id) async {
-    return await repository.deleteWorkout(id);
+    return repository.deleteWorkout(id);
   }
 }
 
@@ -76,7 +76,7 @@ class SaveWorkoutAsTemplateUseCase {
   SaveWorkoutAsTemplateUseCase(this.repository);
 
   Future<Either<String, void>> call(String workoutId) async {
-    return await repository.saveAsTemplate(workoutId);
+    return repository.saveAsTemplate(workoutId);
   }
 }
 
@@ -86,11 +86,12 @@ class SearchWorkoutsUseCase {
 
   SearchWorkoutsUseCase(this.repository);
 
-  Future<Either<String, List<Workout>>> call(String userId, String query) async {
+  Future<Either<String, List<Workout>>> call(
+      String userId, String query) async {
     if (query.trim().isEmpty) {
-      return await repository.getUserWorkouts(userId);
+      return repository.getUserWorkouts(userId);
     }
-    return await repository.searchWorkouts(userId, query.trim());
+    return repository.searchWorkouts(userId, query.trim());
   }
 }
 
@@ -100,7 +101,8 @@ class FilterWorkoutsByDifficultyUseCase {
 
   FilterWorkoutsByDifficultyUseCase(this.repository);
 
-  Future<Either<String, List<Workout>>> call(String userId, String difficulty) async {
-    return await repository.filterWorkoutsByDifficulty(userId, difficulty);
+  Future<Either<String, List<Workout>>> call(
+      String userId, String difficulty) async {
+    return repository.filterWorkoutsByDifficulty(userId, difficulty);
   }
-} 
+}

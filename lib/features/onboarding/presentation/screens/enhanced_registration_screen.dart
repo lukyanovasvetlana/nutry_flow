@@ -5,36 +5,23 @@ import '../bloc/auth_bloc.dart';
 import '../../di/onboarding_dependencies.dart';
 
 class EnhancedRegistrationScreen extends StatefulWidget {
-  const EnhancedRegistrationScreen({Key? key}) : super(key: key);
+  const EnhancedRegistrationScreen({super.key});
 
   @override
-  State<EnhancedRegistrationScreen> createState() => _EnhancedRegistrationScreenState();
+  State<EnhancedRegistrationScreen> createState() =>
+      _EnhancedRegistrationScreenState();
 }
 
-class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen> {
+class _EnhancedRegistrationScreenState
+    extends State<EnhancedRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-
-  // Состояния валидации
-  bool _isEmailValid = false;
-  bool _isPasswordValid = false;
-  bool _isConfirmPasswordValid = false;
-  bool _showEmailError = false;
-  bool _showPasswordError = false;
-  bool _showConfirmPasswordError = false;
-
-  String? _emailError;
-  String? _passwordError;
-  String? _confirmPasswordError;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(_validateEmail);
-    _passwordController.addListener(_validatePassword);
-    _confirmPasswordController.addListener(_validateConfirmPassword);
   }
 
   @override
@@ -45,99 +32,65 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
     super.dispose();
   }
 
-  void _validateEmail() {
-    final email = _emailController.text;
-    setState(() {
-      if (email.isEmpty) {
-        _emailError = 'Введите email адрес';
-        _isEmailValid = false;
-        _showEmailError = false;
-      } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-        _emailError = 'Введите корректный email адрес';
-        _isEmailValid = false;
-        _showEmailError = true;
-      } else {
-        _emailError = null;
-        _isEmailValid = true;
-        _showEmailError = false;
-      }
-    });
-  }
+  Future<void> _register(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
-  void _validatePassword() {
-    final password = _passwordController.text;
-    setState(() {
-      if (password.isEmpty) {
-        _passwordError = 'Введите пароль';
-        _isPasswordValid = false;
-        _showPasswordError = false;
-      } else if (password.length < 6) {
-        _passwordError = 'Пароль должен содержать минимум 6 символов';
-        _isPasswordValid = false;
-        _showPasswordError = true;
-      } else if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)').hasMatch(password)) {
-        _passwordError = 'Пароль должен содержать буквы и цифры';
-        _isPasswordValid = false;
-        _showPasswordError = true;
-      } else {
-        _passwordError = null;
-        _isPasswordValid = true;
-        _showPasswordError = false;
-      }
-    });
-    _validateConfirmPassword(); // Revalidate confirm password
-  }
-
-  void _validateConfirmPassword() {
-    final confirmPassword = _confirmPasswordController.text;
-    final password = _passwordController.text;
-    setState(() {
-      if (confirmPassword.isEmpty) {
-        _confirmPasswordError = 'Подтвердите пароль';
-        _isConfirmPasswordValid = false;
-        _showConfirmPasswordError = false;
-      } else if (confirmPassword != password) {
-        _confirmPasswordError = 'Пароли не совпадают';
-        _isConfirmPasswordValid = false;
-        _showConfirmPasswordError = true;
-      } else {
-        _confirmPasswordError = null;
-        _isConfirmPasswordValid = true;
-        _showConfirmPasswordError = false;
-      }
-    });
-  }
-
-  bool get _isFormValid => _isEmailValid && _isPasswordValid && _isConfirmPasswordValid;
-
-  void _register(BuildContext context) {
-    if (_isFormValid) {
-      context.read<AuthBloc>().add(SignUpRequested(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      ));
-    } else {
-      setState(() {
-        _showEmailError = !_isEmailValid;
-        _showPasswordError = !_isPasswordValid;
-        _showConfirmPasswordError = !_isConfirmPasswordValid;
-      });
+    try {
+      // Здесь будет логика регистрации
+      print('🔵 Registration: Attempting registration...');
+    } catch (e) {
+      print('🔴 Registration: Error during registration: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('🔵 Registration: build called');
     return BlocProvider(
-      create: (context) => OnboardingDependencies.instance.createAuthBloc(),
+      create: (context) {
+        print('🔵 Registration: Creating AuthBloc via OnboardingDependencies');
+        final authBloc = OnboardingDependencies.instance.createAuthBloc();
+        print('🔵 Registration: AuthBloc created: ${authBloc.runtimeType}');
+        return authBloc;
+      },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          print(
+              '🔵 Registration: BlocListener received state: ${state.runtimeType}');
           if (state is AuthAuthenticated) {
-            Navigator.pushReplacementNamed(context, '/goals-setup');
+            print(
+                '🔵 Registration: User authenticated, navigating to profile setup');
+            Navigator.pushReplacementNamed(context, '/profile-info');
           } else if (state is AuthError) {
+            // Улучшенная обработка ошибок
+            String errorMessage = state.message;
+
+            // Специальная обработка сетевых ошибок
+            if (errorMessage.contains('Failed host lookup') ||
+                errorMessage.contains('SocketException') ||
+                errorMessage.contains('NetworkException')) {
+              errorMessage =
+                  'Ошибка подключения к серверу. Проверьте интернет-соединение и попробуйте снова.';
+            } else if (errorMessage.contains('AuthRetryableFetchException')) {
+              errorMessage = 'Сервер временно недоступен. Попробуйте позже.';
+            } else if (errorMessage.contains('Invalid login credentials')) {
+              errorMessage = 'Неверный email или пароль.';
+            } else if (errorMessage.contains('User already registered')) {
+              errorMessage = 'Пользователь с таким email уже зарегистрирован.';
+            }
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(errorMessage),
                 backgroundColor: Colors.red,
+                duration: const Duration(seconds: 5),
+                action: SnackBarAction(
+                  label: 'OK',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
+                ),
               ),
             );
           }
@@ -170,7 +123,10 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                     const SizedBox(height: 30),
                     Text(
                       'Создайте аккаунт для доступа к приложению',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 40),
@@ -192,21 +148,30 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: AppColors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.email),
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 enabled: !isLoading,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) return 'Пожалуйста, введите email';
-                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Пожалуйста, введите корректный email';
+                                  if (value == null || value.isEmpty) {
+                                    return 'Пожалуйста, введите email';
+                                  }
+                                  if (!RegExp(
+                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                      .hasMatch(value)) {
+                                    return 'Пожалуйста, введите корректный email';
+                                  }
                                   return null;
                                 },
                               ),
@@ -222,21 +187,28 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: AppColors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.lock),
                                 ),
                                 obscureText: true,
                                 enabled: !isLoading,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) return 'Пожалуйста, введите пароль';
-                                  if (value.length < 6) return 'Пароль должен быть не менее 6 символов';
+                                  if (value == null || value.isEmpty) {
+                                    return 'Пожалуйста, введите пароль';
+                                  }
+                                  if (value.length < 6) {
+                                    return 'Пароль должен быть не менее 6 символов';
+                                  }
                                   return null;
                                 },
                               ),
@@ -252,20 +224,25 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: AppColors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.lock_outline),
                                 ),
                                 obscureText: true,
                                 enabled: !isLoading,
                                 validator: (value) {
-                                  if (value != _passwordController.text) return 'Пароли не совпадают';
+                                  if (value != _passwordController.text) {
+                                    return 'Пароли не совпадают';
+                                  }
                                   return null;
                                 },
                               ),
@@ -273,17 +250,27 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: isLoading ? null : () => _register(context),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => _register(context),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.button,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
                                   child: isLoading
-                                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white)))
                                       : const Text('Зарегистрироваться'),
                                 ),
                               ),
@@ -293,10 +280,14 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
                               SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
-                                  onPressed: isLoading ? null : () => Navigator.pushReplacementNamed(context, '/login'),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => Navigator.pushReplacementNamed(
+                                          context, '/login'),
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: AppColors.button),
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -324,179 +315,6 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
     );
   }
 
-  Widget _buildEmailField(bool isLoading) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: _emailController,
-          decoration: InputDecoration(
-            labelText: 'Email',
-            border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.green, width: 2),
-            ),
-            errorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red, width: 2),
-            ),
-            prefixIcon: const Icon(Icons.email),
-          ),
-          keyboardType: TextInputType.emailAddress,
-          enabled: !isLoading,
-        ),
-        if (_showEmailError && _emailError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 12),
-            child: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  _emailError!,
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildPasswordField(bool isLoading) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: _passwordController,
-          decoration: InputDecoration(
-            labelText: 'Пароль',
-            border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.green, width: 2),
-            ),
-            errorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red, width: 2),
-            ),
-            prefixIcon: const Icon(Icons.lock),
-          ),
-          obscureText: true,
-          enabled: !isLoading,
-        ),
-        if (_showPasswordError && _passwordError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 12),
-            child: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 16),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    _passwordError!,
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildConfirmPasswordField(bool isLoading) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: _confirmPasswordController,
-          decoration: InputDecoration(
-            labelText: 'Подтвердите пароль',
-            border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.green, width: 2),
-            ),
-            errorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red, width: 2),
-            ),
-            prefixIcon: const Icon(Icons.lock_outline),
-          ),
-          obscureText: true,
-          enabled: !isLoading,
-        ),
-        if (_showConfirmPasswordError && _confirmPasswordError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 12),
-            child: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  _confirmPasswordError!,
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildRegisterButton(BuildContext context, bool isLoading) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : () => _register(context),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.button,
-          foregroundColor: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-            inherit: false,
-          ),
-        ),
-        child: isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : const Text('Зарегистрироваться'),
-      ),
-    );
-  }
-
   Widget _buildDivider() {
     return Row(
       children: [
@@ -513,32 +331,6 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
         ),
         Expanded(child: Divider(color: Colors.grey[400])),
       ],
-    );
-  }
-
-  Widget _buildLoginButton(BuildContext context, bool isLoading) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: OutlinedButton(
-        onPressed: isLoading ? null : () {
-          Navigator.pushReplacementNamed(context, '/login');
-        },
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.button, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          'Уже есть аккаунт? Войти',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: AppColors.button,
-          ),
-        ),
-      ),
     );
   }
 
@@ -575,4 +367,4 @@ class _EnhancedRegistrationScreenState extends State<EnhancedRegistrationScreen>
       ),
     );
   }
-} 
+}

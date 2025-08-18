@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../../domain/entities/calendar_event.dart';
 import '../../data/services/calendar_service.dart';
@@ -44,17 +45,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   List<CalendarEvent> get eventsForSelectedDay {
-    return events.where((e) =>
-      e.dateTime.year == selectedMonth.year &&
-      e.dateTime.month == selectedMonth.month &&
-      e.dateTime.day == selectedDay
-    ).toList();
+    return events
+        .where((e) =>
+            e.dateTime.year == selectedMonth.year &&
+            e.dateTime.month == selectedMonth.month &&
+            e.dateTime.day == selectedDay)
+        .toList();
   }
 
   Map<int, List<CalendarEvent>> get eventsByDay {
     final map = <int, List<CalendarEvent>>{};
     for (final e in events) {
-      if (e.dateTime.year == selectedMonth.year && e.dateTime.month == selectedMonth.month) {
+      if (e.dateTime.year == selectedMonth.year &&
+          e.dateTime.month == selectedMonth.month) {
         map.putIfAbsent(e.dateTime.day, () => []).add(e);
       }
     }
@@ -64,8 +67,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
   String _monthName(int month) {
     const months = [
       '',
-      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+      'Январь',
+      'Февраль',
+      'Март',
+      'Апрель',
+      'Май',
+      'Июнь',
+      'Июль',
+      'Август',
+      'Сентябрь',
+      'Октябрь',
+      'Ноябрь',
+      'Декабрь'
     ];
     return months[month];
   }
@@ -73,16 +86,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
   String _weekdayName(int weekday) {
     const weekdays = [
       '',
-      'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'
+      'Понедельник',
+      'Вторник',
+      'Среда',
+      'Четверг',
+      'Пятница',
+      'Суббота',
+      'Воскресенье'
     ];
     return weekdays[weekday];
   }
 
   Color _categoryColor(String category) {
-    if (category == 'Зелёные') return AppColors.green;
-    if (category == 'Злаки') return AppColors.yellow;
-    if (category == 'Фрукты') return AppColors.orange;
-    return Colors.grey;
+    if (category == 'Зелёные') return context.success;
+    if (category == 'Злаки') return context.nutritionCarbs;
+    if (category == 'Фрукты') return context.tertiary;
+    return context.onSurfaceVariant;
   }
 
   void _showMonthPicker() {
@@ -129,11 +148,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       title: Text(
                         _monthName(month),
                         style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color: isSelected ? AppColors.green : Colors.black87,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          color:
+                              isSelected ? context.primary : context.onSurface,
                         ),
                       ),
-                      trailing: isSelected ? const Icon(Icons.check, color: AppColors.green) : null,
+                      trailing: isSelected
+                          ? Icon(Icons.check, color: context.primary)
+                          : null,
                       onTap: () {
                         setState(() {
                           selectedMonth = DateTime(selectedMonth.year, month);
@@ -154,7 +177,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _showYearPicker() {
     final currentYear = DateTime.now().year;
     final years = List.generate(5, (index) => currentYear - 1 + index);
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -197,11 +220,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       title: Text(
                         year.toString(),
                         style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color: isSelected ? AppColors.green : Colors.black87,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          color:
+                              isSelected ? context.primary : context.onSurface,
                         ),
                       ),
-                      trailing: isSelected ? const Icon(Icons.check, color: AppColors.green) : null,
+                      trailing: isSelected
+                          ? Icon(Icons.check, color: context.primary)
+                          : null,
                       onTap: () {
                         setState(() {
                           selectedMonth = DateTime(year, selectedMonth.month);
@@ -222,12 +249,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: context.onSurface),
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
@@ -236,17 +263,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
             );
           },
         ),
-        title: const Text(
+        title: Text(
           'Календарь',
           style: TextStyle(
-            color: Colors.black,
+            color: context.onSurface,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_horiz, color: Colors.black),
+            icon: Icon(Icons.more_horiz, color: context.onSurface),
             onPressed: () {},
           ),
         ],
@@ -255,7 +282,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : error != null
-                ? Center(child: Text('Ошибка: $error'))
+                ? Center(
+                    child: Text('Ошибка: $error',
+                        style: TextStyle(color: context.onSurface)))
                 : SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -269,8 +298,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: _StatCard(
                                 icon: Icons.restaurant_menu,
                                 label: 'Планирование\nпитания',
-                                count: events.where((e) => e.category == 'Meal Planning').length,
-                                color: AppColors.green,
+                                count: events
+                                    .where((e) => e.category == 'Meal Planning')
+                                    .length,
+                                color: context.primary,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -278,8 +309,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: _StatCard(
                                 icon: Icons.directions_run,
                                 label: 'Физическая\nактивность',
-                                count: events.where((e) => e.category == 'Physical Activities').length,
-                                color: AppColors.yellow,
+                                count: events
+                                    .where((e) =>
+                                        e.category == 'Physical Activities')
+                                    .length,
+                                color: context.warning,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -287,8 +321,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: _StatCard(
                                 icon: Icons.event,
                                 label: 'Встречи\nи события',
-                                count: events.where((e) => e.category == 'Appointments').length,
-                                color: AppColors.orange,
+                                count: events
+                                    .where((e) => e.category == 'Appointments')
+                                    .length,
+                                color: context.tertiary,
                               ),
                             ),
                           ],
@@ -303,14 +339,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: GestureDetector(
                                 onTap: _showMonthPicker,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: context.surface,
                                     borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: Colors.grey.shade300),
+                                    border: Border.all(color: context.outline),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Flexible(
                                         child: Text(
@@ -318,12 +356,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 13,
-                                            color: Colors.grey[800],
+                                            color: context.onSurface,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      const Icon(Icons.keyboard_arrow_down, color: Colors.grey, size: 14),
+                                      Icon(Icons.keyboard_arrow_down,
+                                          color: context.onSurfaceVariant,
+                                          size: 14),
                                     ],
                                   ),
                                 ),
@@ -336,24 +376,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: GestureDetector(
                                 onTap: _showYearPicker,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: context.surface,
                                     borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: Colors.grey.shade300),
+                                    border: Border.all(color: context.outline),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         selectedMonth.year.toString(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 13,
-                                          color: Colors.grey[800],
+                                          color: context.onSurface,
                                         ),
                                       ),
-                                      const Icon(Icons.keyboard_arrow_down, color: Colors.grey, size: 14),
+                                      Icon(Icons.keyboard_arrow_down,
+                                          color: context.onSurfaceVariant,
+                                          size: 14),
                                     ],
                                   ),
                                 ),
@@ -361,16 +405,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             const SizedBox(width: 6),
                             // Кнопка добавления события
-                            Container(
+                            DecoratedBox(
                               decoration: BoxDecoration(
-                                color: AppColors.green,
+                                color: context.primary,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: IconButton(
-                                icon: const Icon(Icons.add, color: Colors.white, size: 18),
+                                icon: Icon(Icons.add,
+                                    color: context.onPrimary, size: 18),
                                 onPressed: () {},
                                 padding: const EdgeInsets.all(6),
-                                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                constraints: const BoxConstraints(
+                                    minWidth: 28, minHeight: 28),
                               ),
                             ),
                           ],
@@ -383,19 +429,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             children: [
                               _FilterChip(
                                 label: 'Планирование питания',
-                                color: AppColors.green,
+                                color: context.primary,
                                 isSelected: true,
                               ),
                               const SizedBox(width: 8),
                               _FilterChip(
                                 label: 'Физическая активность',
-                                color: AppColors.yellow,
+                                color: context.warning,
                                 isSelected: true,
                               ),
                               const SizedBox(width: 8),
                               _FilterChip(
                                 label: 'Встречи',
-                                color: AppColors.orange,
+                                color: context.tertiary,
                                 isSelected: true,
                               ),
                             ],
@@ -411,38 +457,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         ),
                         const SizedBox(height: 24),
                         // Schedule Details
-                        const Text(
+                        Text(
                           'Детали расписания',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: context.onSurface,
                           ),
                         ),
                         const SizedBox(height: 16),
                         if (eventsForSelectedDay.isEmpty)
-                          const Text('Нет событий на этот день', style: TextStyle(color: Colors.grey)),
+                          Text('Нет событий на этот день',
+                              style:
+                                  TextStyle(color: context.onSurfaceVariant)),
                         ...eventsForSelectedDay.map((e) => Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: _EventCard(
                                 category: e.category,
                                 categoryColor: _categoryColor(e.category),
                                 title: e.title,
-                                date: '${_weekdayName(e.dateTime.weekday)}, ${e.dateTime.day} ${_monthName(e.dateTime.month)} ${e.dateTime.year}',
-                                time: TimeOfDay.fromDateTime(e.dateTime).format(context),
+                                date:
+                                    '${_weekdayName(e.dateTime.weekday)}, ${e.dateTime.day} ${_monthName(e.dateTime.month)} ${e.dateTime.year}',
+                                time: TimeOfDay.fromDateTime(e.dateTime)
+                                    .format(context),
                                 location: e.location ?? '',
                                 note: e.note ?? '',
                               ),
                             )),
                         const SizedBox(height: 32),
                         // Footer
-                        const Center(
+                        Center(
                           child: Column(
                             children: [
                               Text(
                                 'Copyright © 2024 Peterdraw',
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: context.onSurfaceVariant,
                                   fontSize: 12,
                                 ),
                               ),
@@ -452,10 +502,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    _FooterLink(text: 'Политика конфиденциальности'),
-                                    Text(' · ', style: TextStyle(color: Colors.grey)),
+                                    _FooterLink(
+                                        text: 'Политика конфиденциальности'),
+                                    Text(' · ',
+                                        style: TextStyle(
+                                            color: context.onSurfaceVariant)),
                                     _FooterLink(text: 'Условия использования'),
-                                    Text(' · ', style: TextStyle(color: Colors.grey)),
+                                    Text(' · ',
+                                        style: TextStyle(
+                                            color: context.onSurfaceVariant)),
                                     _FooterLink(text: 'Контакты'),
                                   ],
                                 ),
@@ -464,11 +519,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  _SocialIcon(icon: Icons.facebook, color: Colors.blue),
-                                  _SocialIcon(icon: Icons.message, color: Colors.blue),
-                                  _SocialIcon(icon: Icons.camera_alt, color: Colors.pink),
-                                  _SocialIcon(icon: Icons.play_arrow, color: Colors.red),
-                                  _SocialIcon(icon: Icons.link, color: Colors.blue),
+                                  _SocialIcon(
+                                      icon: Icons.facebook,
+                                      color: context.info),
+                                  _SocialIcon(
+                                      icon: Icons.message, color: context.info),
+                                  _SocialIcon(
+                                      icon: Icons.camera_alt,
+                                      color: context.nutritionProtein),
+                                  _SocialIcon(
+                                      icon: Icons.play_arrow,
+                                      color: context.error),
+                                  _SocialIcon(
+                                      icon: Icons.link, color: context.primary),
                                 ],
                               ),
                             ],
@@ -501,11 +564,11 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.dynamicShadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -524,10 +587,10 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             count.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.dynamicTextPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -536,7 +599,7 @@ class _StatCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey[600],
+              color: AppColors.dynamicTextSecondary,
               height: 1.2,
             ),
           ),
@@ -609,11 +672,11 @@ class _CalendarGrid extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.dynamicShadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -631,7 +694,7 @@ class _CalendarGrid extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
+                          color: context.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -649,21 +712,24 @@ class _CalendarGrid extends StatelessWidget {
                   7,
                   (day) {
                     // Вычисляем первый день месяца и количество дней в месяце
-                    final firstDayOfMonth = DateTime(selectedMonth.year, selectedMonth.month, 1);
-                    final lastDayOfMonth = DateTime(selectedMonth.year, selectedMonth.month + 1, 0);
+                    final firstDayOfMonth =
+                        DateTime(selectedMonth.year, selectedMonth.month, 1);
+                    final lastDayOfMonth = DateTime(
+                        selectedMonth.year, selectedMonth.month + 1, 0);
                     final daysInMonth = lastDayOfMonth.day;
-                    
+
                     // Вычисляем день недели для первого дня месяца (1 = понедельник, 7 = воскресенье)
                     final firstWeekday = firstDayOfMonth.weekday;
-                    
+
                     // Вычисляем номер дня в месяце
                     final dayInMonth = week * 7 + day - (firstWeekday - 1) + 1;
-                    
+
                     if (dayInMonth < 1 || dayInMonth > daysInMonth) {
                       return const SizedBox(width: 32);
                     }
-                    
-                    final hasEvent = eventsByDay[dayInMonth]?.isNotEmpty ?? false;
+
+                    final hasEvent =
+                        eventsByDay[dayInMonth]?.isNotEmpty ?? false;
                     final isSelected = dayInMonth == selectedDay;
 
                     return GestureDetector(
@@ -672,10 +738,12 @@ class _CalendarGrid extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.green.withValues(alpha: 0.1) : null,
+                          color: isSelected
+                              ? context.primary.withValues(alpha: 0.1)
+                              : null,
                           borderRadius: BorderRadius.circular(8),
                           border: isSelected
-                              ? Border.all(color: AppColors.green, width: 1.5)
+                              ? Border.all(color: context.primary, width: 1.5)
                               : null,
                         ),
                         child: Stack(
@@ -685,8 +753,12 @@ class _CalendarGrid extends StatelessWidget {
                               dayInMonth.toString(),
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                color: isSelected ? AppColors.green : Colors.black87,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: isSelected
+                                    ? context.primary
+                                    : context.onSurface,
                               ),
                             ),
                             if (hasEvent)
@@ -696,7 +768,7 @@ class _CalendarGrid extends StatelessWidget {
                                   width: 4,
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: AppColors.green,
+                                    color: context.primary,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -740,11 +812,11 @@ class _EventCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: context.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -771,10 +843,10 @@ class _EventCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: context.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -787,15 +859,15 @@ class _EventCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: context.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: context.outlineVariant),
             ),
             child: Text(
               note,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.grey[700],
+                color: context.onSurfaceVariant,
                 height: 1.5,
               ),
             ),
@@ -807,9 +879,10 @@ class _EventCard extends StatelessWidget {
               OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.green,
-                  side: const BorderSide(color: AppColors.green),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  foregroundColor: context.primary,
+                  side: BorderSide(color: context.primary),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -820,9 +893,10 @@ class _EventCard extends StatelessWidget {
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.green,
-                  backgroundColor: AppColors.green.withValues(alpha: 0.1),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  foregroundColor: context.primary,
+                  backgroundColor: context.primary.withValues(alpha: 0.1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -853,7 +927,7 @@ class _EventInfoRow extends StatelessWidget {
         Icon(
           icon,
           size: 16,
-          color: Colors.grey[600],
+          color: context.onSurfaceVariant,
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -861,7 +935,7 @@ class _EventInfoRow extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: 13,
-              color: Colors.grey[700],
+              color: context.onSurfaceVariant,
             ),
           ),
         ),
@@ -880,7 +954,7 @@ class _FooterLink extends StatelessWidget {
     return TextButton(
       onPressed: () {},
       style: TextButton.styleFrom(
-        foregroundColor: Colors.grey[600],
+        foregroundColor: context.onSurfaceVariant,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -913,4 +987,4 @@ class _SocialIcon extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
     );
   }
-} 
+}

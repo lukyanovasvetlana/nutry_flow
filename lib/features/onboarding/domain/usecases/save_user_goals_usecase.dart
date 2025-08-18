@@ -35,22 +35,22 @@ class SaveUserGoalsUseCase {
       if (!goals.isValid) {
         return SaveUserGoalsResult.failure('Invalid goals data');
       }
-      
+
       // Получаем текущего пользователя
       final currentUser = await _authRepository.getCurrentUser();
       if (currentUser == null) {
         return SaveUserGoalsResult.failure('User not authenticated');
       }
-      
+
       // Валидация бизнес-правил
       final validationError = _validateBusinessRules(goals);
       if (validationError != null) {
         return SaveUserGoalsResult.failure(validationError);
       }
-      
+
       // Сохраняем цели
       await _userGoalsRepository.saveUserGoals(goals, currentUser.id);
-      
+
       return SaveUserGoalsResult.success();
     } catch (e) {
       return SaveUserGoalsResult.failure('Failed to save goals: $e');
@@ -65,14 +65,14 @@ class SaveUserGoalsUseCase {
         return 'Target weight must be between 30 and 300 kg';
       }
     }
-    
+
     // Проверка целевых калорий
     if (goals.targetCalories != null) {
       if (goals.targetCalories! < 800 || goals.targetCalories! > 5000) {
         return 'Target calories must be between 800 and 5000';
       }
     }
-    
+
     return null;
   }
-} 
+}

@@ -42,14 +42,24 @@ class PreviewRecipeModal extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: photos.first.file != null
-                      ? Image.file(photos.first.file!, height: 180, width: double.infinity, fit: BoxFit.cover)
+                      ? Image.file(photos.first.file!,
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.cover)
                       : (photos.first.url != null
-                          ? Image.network(photos.first.url!, height: 180, width: double.infinity, fit: BoxFit.cover)
+                          ? Image.network(photos.first.url,
+                              height: 180,
+                              width: double.infinity,
+                              fit: BoxFit.cover)
                           : const SizedBox(height: 180)),
                 ),
               const SizedBox(height: 16),
               // Название и категория
-              Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold)),
               if (category != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -66,11 +76,14 @@ class PreviewRecipeModal extends StatelessWidget {
                 Text(description, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 16),
               // Ингредиенты
-              Text('Ингредиенты', style: Theme.of(context).textTheme.titleMedium),
-              ...ingredients.map((ing) => Text('• ${ing.name} — ${ing.amount} ${ing.unit}')),
+              Text('Ингредиенты',
+                  style: Theme.of(context).textTheme.titleMedium),
+              ...ingredients.map(
+                  (ing) => Text('• ${ing.name} — ${ing.amount} ${ing.unit}')),
               const SizedBox(height: 16),
               // Шаги
-              Text('Шаги приготовления', style: Theme.of(context).textTheme.titleMedium),
+              Text('Шаги приготовления',
+                  style: Theme.of(context).textTheme.titleMedium),
               ...steps.map((step) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
@@ -82,7 +95,8 @@ class PreviewRecipeModal extends StatelessWidget {
                         if (step.imageUrl != null)
                           Padding(
                             padding: const EdgeInsets.only(left: 8),
-                            child: Image.file(File(step.imageUrl!), width: 40, height: 40, fit: BoxFit.cover),
+                            child: Image.file(File(step.imageUrl!),
+                                width: 40, height: 40, fit: BoxFit.cover),
                           ),
                       ],
                     ),
@@ -93,7 +107,8 @@ class PreviewRecipeModal extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Нутриенты (на порцию):', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Нутриенты (на порцию):',
+                        style: Theme.of(context).textTheme.titleMedium),
                     Text('Калории: ${nutritionFacts!.calories} ккал'),
                     Text('Белки: ${nutritionFacts!.protein} г'),
                     Text('Жиры: ${nutritionFacts!.fat} г'),
@@ -114,4 +129,4 @@ class PreviewRecipeModal extends StatelessWidget {
       ),
     );
   }
-} 
+}

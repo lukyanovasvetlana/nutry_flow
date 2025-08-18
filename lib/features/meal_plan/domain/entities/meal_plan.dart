@@ -107,8 +107,8 @@ class PlannedMeal {
   bool get isToday {
     final now = DateTime.now();
     return date.year == now.year &&
-           date.month == now.month &&
-           date.day == now.day;
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   /// Проверяет, является ли прием пищи просроченным
@@ -193,11 +193,12 @@ class MealPlan {
 
   /// Получает приемы пищи для конкретной даты
   List<PlannedMeal> getMealsForDate(DateTime date) {
-    return meals.where((meal) =>
-      meal.date.year == date.year &&
-      meal.date.month == date.month &&
-      meal.date.day == date.day
-    ).toList();
+    return meals
+        .where((meal) =>
+            meal.date.year == date.year &&
+            meal.date.month == date.month &&
+            meal.date.day == date.day)
+        .toList();
   }
 
   /// Получает приемы пищи по типу
@@ -217,4 +218,4 @@ class MealPlan {
     final now = DateTime.now();
     return now.isAfter(startDate) && now.isBefore(endDate);
   }
-} 
+}

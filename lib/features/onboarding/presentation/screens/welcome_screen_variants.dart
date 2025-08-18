@@ -10,7 +10,7 @@ class WelcomeScreenControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -34,38 +34,41 @@ class WelcomeScreenControl extends StatelessWidget {
                     borderRadius: BorderRadius.circular(60),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.restaurant_menu,
-                    size: 60,
-                    color: AppColors.primary,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(60),
+                    child: const Icon(
+                      Icons.restaurant_menu,
+                      size: 60,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
                 // Заголовок
                 Text(
-                  'Добро пожаловать в NutryFlow',
+                  'Добро пожаловать в Nutrigo',
                   style: AppStyles.headline4.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 100), // Увеличил с 16 до 40
                 // Подзаголовок
                 Text(
                   'Ваш персональный помощник для здорового питания и активного образа жизни',
                   style: AppStyles.body1.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const Spacer(),
+                const SizedBox(height: 80), // Увеличил с 32 до 50
                 // Кнопки
                 Column(
                   children: [
@@ -151,22 +154,26 @@ class WelcomeScreenVariantA extends StatelessWidget {
                   borderRadius: BorderRadius.circular(70),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 30,
                       offset: const Offset(0, 15),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.fitness_center,
-                  size: 70,
-                  color: Colors.white,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(70),
+                  child: Image.asset(
+                    'assets/images/nutrigo_logo.png',
+                    width: 70,
+                    height: 70,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
               // Заголовок
               Text(
-                'NutryFlow',
+                'Nutrigo',
                 style: AppStyles.headline3.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
@@ -183,14 +190,8 @@ class WelcomeScreenVariantA extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 40),
-              // Преимущества
-              _buildFeatureItem(Icons.person, 'Персонализация'),
-              const SizedBox(height: 16),
-              _buildFeatureItem(Icons.track_changes, 'Отслеживание прогресса'),
-              const SizedBox(height: 16),
-              _buildFeatureItem(Icons.restaurant, 'Планы питания'),
-              const Spacer(),
+              const SizedBox(
+                  height: 80), // Увеличил отступ между текстом и кнопками
               // Кнопки
               Column(
                 children: [
@@ -260,32 +261,6 @@ class WelcomeScreenVariantA extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildFeatureItem(IconData icon, String text) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          text,
-          style: AppStyles.body1.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 /// Вариант B экрана приветствия
@@ -295,7 +270,7 @@ class WelcomeScreenVariantB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -318,10 +293,10 @@ class WelcomeScreenVariantB extends StatelessWidget {
                   width: 160,
                   height: 160,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(80),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 2,
                     ),
                   ),
@@ -344,24 +319,15 @@ class WelcomeScreenVariantB extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Подзаголовок
                 Text(
-                  'Присоединяйтесь к тысячам пользователей, которые уже изменили свою жизнь с NutryFlow',
+                  'Присоединяйтесь к тысячам пользователей, которые уже изменили свою жизнь с Nutrigo',
                   style: AppStyles.body1.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 48),
-                // Статистика
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatItem('10K+', 'Пользователей'),
-                    _buildStatItem('95%', 'Довольных клиентов'),
-                    _buildStatItem('24/7', 'Поддержка'),
-                  ],
-                ),
-                const Spacer(),
+                const SizedBox(
+                    height: 150), // Увеличил отступ между текстом и кнопками
                 // Кнопки
                 Column(
                   children: [
@@ -421,24 +387,4 @@ class WelcomeScreenVariantB extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildStatItem(String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: AppStyles.headline5.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: AppStyles.caption.copyWith(
-            color: Colors.white.withOpacity(0.8),
-          ),
-        ),
-      ],
-    );
-  }
-} 
+}

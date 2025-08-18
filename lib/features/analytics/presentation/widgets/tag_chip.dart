@@ -16,7 +16,7 @@ class TagChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _getColorFromHex(tag.color);
-    
+
     return Container(
       margin: const EdgeInsets.only(right: 4, bottom: 8),
       child: Material(
@@ -30,7 +30,7 @@ class TagChip extends StatelessWidget {
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                                  color: color.withValues(alpha: 0.3),
+                color: color.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -49,7 +49,8 @@ class TagChip extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
@@ -78,4 +79,4 @@ class TagChip extends StatelessWidget {
       return AppColors.button;
     }
   }
-} 
+}

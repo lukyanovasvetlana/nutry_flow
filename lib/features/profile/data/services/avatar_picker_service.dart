@@ -86,7 +86,7 @@ class AvatarPickerService {
   /// Request camera permission
   Future<PermissionResult> _requestCameraPermission() async {
     final status = await Permission.camera.request();
-    
+
     switch (status) {
       case PermissionStatus.granted:
         return PermissionResult.granted();
@@ -104,7 +104,7 @@ class AvatarPickerService {
   /// Request photo library permission
   Future<PermissionResult> _requestPhotoLibraryPermission() async {
     Permission permission;
-    
+
     if (Platform.isIOS) {
       permission = Permission.photos;
     } else {
@@ -116,9 +116,9 @@ class AvatarPickerService {
         permission = Permission.storage;
       }
     }
-    
+
     final status = await permission.request();
-    
+
     switch (status) {
       case PermissionStatus.granted:
       case PermissionStatus.limited: // iOS limited access
@@ -147,14 +147,16 @@ class AvatarPickerService {
       const maxSizeBytes = 10 * 1024 * 1024; // 10MB
       if (fileSize > maxSizeBytes) {
         final sizeMB = (fileSize / (1024 * 1024)).toStringAsFixed(1);
-        return ValidationResult.invalid('Image is too large (${sizeMB}MB). Maximum size is 10MB.');
+        return ValidationResult.invalid(
+            'Image is too large (${sizeMB}MB). Maximum size is 10MB.');
       }
 
       // Check file extension
       final extension = file.path.split('.').last.toLowerCase();
       const allowedExtensions = ['jpg', 'jpeg', 'png', 'heic', 'webp'];
       if (!allowedExtensions.contains(extension)) {
-        return ValidationResult.invalid('Unsupported file format. Please use JPG, PNG, HEIC, or WebP.');
+        return ValidationResult.invalid(
+            'Unsupported file format. Please use JPG, PNG, HEIC, or WebP.');
       }
 
       return ValidationResult.valid();
@@ -166,7 +168,7 @@ class AvatarPickerService {
   /// Check if camera is available
   Future<bool> isCameraAvailable() async {
     try {
-      return await _imagePicker.supportsImageSource(ImageSource.camera);
+      return _imagePicker.supportsImageSource(ImageSource.camera);
     } catch (e) {
       return false;
     }
@@ -175,7 +177,7 @@ class AvatarPickerService {
   /// Check if gallery is available
   Future<bool> isGalleryAvailable() async {
     try {
-      return await _imagePicker.supportsImageSource(ImageSource.gallery);
+      return _imagePicker.supportsImageSource(ImageSource.gallery);
     } catch (e) {
       return false;
     }
@@ -183,7 +185,7 @@ class AvatarPickerService {
 
   /// Open app settings for permission
   Future<bool> openSettings() async {
-    return await openAppSettings();
+    return openAppSettings();
   }
 }
 
@@ -258,4 +260,4 @@ class PermissionResult {
         isGranted: false,
         shouldShowDialog: shouldShowDialog,
       );
-} 
+}

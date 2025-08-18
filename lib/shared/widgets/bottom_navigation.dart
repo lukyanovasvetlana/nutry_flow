@@ -86,8 +86,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
     return BottomNavigationBar(
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Меню'),
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Календарь'),
-        BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Активность'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today), label: 'Календарь'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center), label: 'Активность'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
         BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Настройки'),
       ],
@@ -99,4 +101,4 @@ class _BottomNavigationState extends State<BottomNavigation> {
       unselectedItemColor: Colors.grey[600],
     );
   }
-} 
+}

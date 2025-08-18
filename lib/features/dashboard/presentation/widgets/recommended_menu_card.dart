@@ -12,4 +12,4 @@ class RecommendedMenuCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

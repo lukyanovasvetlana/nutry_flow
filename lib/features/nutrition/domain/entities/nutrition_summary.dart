@@ -59,10 +59,9 @@ class NutritionSummary extends Equatable {
       totalSodium += entry.totalSodium;
 
       // Группируем по типам приемов пищи
-      caloriesByMeal[entry.mealType] = 
+      caloriesByMeal[entry.mealType] =
           (caloriesByMeal[entry.mealType] ?? 0) + entry.totalCalories;
-      entriesByMeal[entry.mealType] = 
-          (entriesByMeal[entry.mealType] ?? 0) + 1;
+      entriesByMeal[entry.mealType] = (entriesByMeal[entry.mealType] ?? 0) + 1;
     }
 
     return NutritionSummary(
@@ -139,4 +138,4 @@ class NutritionSummary extends Equatable {
   String toString() {
     return 'NutritionSummary(date: $date, calories: $totalCalories, entries: $totalEntries)';
   }
-} 
+}

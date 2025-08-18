@@ -144,4 +144,4 @@ class FoodItem extends Equatable {
   String toString() {
     return 'FoodItem(id: $id, name: $name, brand: $brand, calories: $caloriesPer100g/100g)';
   }
-} 
+}

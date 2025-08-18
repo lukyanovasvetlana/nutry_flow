@@ -54,7 +54,7 @@ class AuthorCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                
+
                 // Author info
                 Expanded(
                   child: Column(
@@ -83,7 +83,7 @@ class AuthorCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      
+
                       // Title
                       Text(
                         author.title,
@@ -93,12 +93,13 @@ class AuthorCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
-                      
+
                       // Stats
                       Row(
                         children: [
                           Expanded(
-                            child: _buildStat('${author.articlesCount}', 'статей'),
+                            child:
+                                _buildStat('${author.articlesCount}', 'статей'),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -147,4 +148,4 @@ class AuthorCard extends StatelessWidget {
     }
     return count.toString();
   }
-} 
+}

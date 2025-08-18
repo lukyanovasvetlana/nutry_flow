@@ -8,6 +8,6 @@ class GetAllExercisesUseCase {
   GetAllExercisesUseCase(this._repository);
 
   Future<Either<String, List<Exercise>>> execute() async {
-    return await _repository.getAllExercises();
+    return _repository.getAllExercises();
   }
-} 
+}

@@ -1,4 +1,6 @@
 /// Entity класс целей пользователя
+library;
+
 import 'package:equatable/equatable.dart';
 
 class UserGoals extends Equatable {
@@ -37,9 +39,7 @@ class UserGoals extends Equatable {
   });
 
   bool get isValid {
-    return id.isNotEmpty && 
-           userId.isNotEmpty && 
-           fitnessGoals.isNotEmpty;
+    return id.isNotEmpty && userId.isNotEmpty && fitnessGoals.isNotEmpty;
   }
 
   UserGoals copyWith({
@@ -103,7 +103,8 @@ class UserGoals extends Equatable {
       id: json['id'] as String,
       userId: json['user_id'] as String,
       fitnessGoals: List<String>.from(json['fitness_goals'] as List),
-      dietaryPreferences: List<String>.from(json['dietary_preferences'] as List),
+      dietaryPreferences:
+          List<String>.from(json['dietary_preferences'] as List),
       healthConditions: List<String>.from(json['health_conditions'] as List),
       allergens: List<String>.from(json['allergens'] ?? []),
       workoutTypes: List<String>.from(json['workout_types'] ?? []),
@@ -118,7 +119,7 @@ class UserGoals extends Equatable {
     );
   }
 
-    @override
+  @override
   List<Object?> get props => [
         id,
         userId,
@@ -141,4 +142,4 @@ class UserGoals extends Equatable {
   String toString() {
     return 'UserGoals(id: $id, userId: $userId, fitnessGoals: $fitnessGoals, workoutTypes: $workoutTypes, workoutFrequency: $workoutFrequency)';
   }
-} 
+}

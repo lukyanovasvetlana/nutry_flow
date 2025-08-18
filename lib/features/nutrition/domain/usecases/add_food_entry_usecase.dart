@@ -54,7 +54,8 @@ class AddFoodEntryUseCase {
       userId: userId,
       foodItemId: foodItem.id,
       foodName: foodItem.name,
-      quantity: grams / 100.0, // Convert grams to standard quantity (100g = 1.0)
+      quantity:
+          grams / 100.0, // Convert grams to standard quantity (100g = 1.0)
       unit: 'g',
       mealType: mealType,
       date: consumedAt,
@@ -73,7 +74,7 @@ class AddFoodEntryUseCase {
     );
 
     // Сохранение в репозитории
-    return await _repository.addFoodEntry(entry);
+    return _repository.addFoodEntry(entry);
   }
 
   /// Валидирует входные данные для добавления записи
@@ -85,34 +86,42 @@ class AddFoodEntryUseCase {
   }) {
     // Проверка ID пользователя
     if (userId.trim().isEmpty) {
-      return AddFoodEntryValidationResult.invalid('ID пользователя не может быть пустым');
+      return AddFoodEntryValidationResult.invalid(
+          'ID пользователя не может быть пустым');
     }
 
     // Проверка продукта питания
     if (foodItem.name.trim().isEmpty) {
-      return AddFoodEntryValidationResult.invalid('Название продукта не может быть пустым');
+      return AddFoodEntryValidationResult.invalid(
+          'Название продукта не может быть пустым');
     }
 
     // Проверка количества в граммах
     if (grams <= 0) {
-      return AddFoodEntryValidationResult.invalid('Количество должно быть больше 0');
+      return AddFoodEntryValidationResult.invalid(
+          'Количество должно быть больше 0');
     }
 
-    if (grams > 10000) { // Максимум 10 кг за один прием
-      return AddFoodEntryValidationResult.invalid('Количество не может превышать 10000 грамм');
+    if (grams > 10000) {
+      // Максимум 10 кг за один прием
+      return AddFoodEntryValidationResult.invalid(
+          'Количество не может превышать 10000 грамм');
     }
 
     // Проверка даты потребления
     final now = DateTime.now();
-    final maxPastDate = now.subtract(const Duration(days: 365)); // Максимум год назад
+    final maxPastDate =
+        now.subtract(const Duration(days: 365)); // Максимум год назад
     final maxFutureDate = now.add(const Duration(days: 1)); // Максимум завтра
 
     if (consumedAt.isBefore(maxPastDate)) {
-      return AddFoodEntryValidationResult.invalid('Дата потребления не может быть более года назад');
+      return AddFoodEntryValidationResult.invalid(
+          'Дата потребления не может быть более года назад');
     }
 
     if (consumedAt.isAfter(maxFutureDate)) {
-      return AddFoodEntryValidationResult.invalid('Дата потребления не может быть в будущем');
+      return AddFoodEntryValidationResult.invalid(
+          'Дата потребления не может быть в будущем');
     }
 
     return AddFoodEntryValidationResult.valid();
@@ -133,14 +142,15 @@ class AddFoodEntryUseCase {
   }) async {
     try {
       // Получаем текущую суммарную информацию за день
-      final currentSummary = await _repository.getNutritionSummaryByDate(userId, date);
-      
+      final currentSummary =
+          await _repository.getNutritionSummaryByDate(userId, date);
+
       // Рассчитываем калории для добавляемой записи
       final additionalCalories = foodItem.calculateCalories(grams);
-      
+
       // Проверяем, превысит ли общее количество калорий дневную цель
       final totalCalories = currentSummary.totalCalories + additionalCalories;
-      
+
       return totalCalories > dailyCalorieGoal;
     } catch (e) {
       // Если не удалось получить данные, предполагаем, что лимит не будет превышен
@@ -166,48 +176,52 @@ class AddFoodEntryUseCase {
   double _getBreakfastPortionSize(FoodItem foodItem) {
     // Примерные размеры порций для завтрака
     final category = foodItem.category?.toLowerCase() ?? '';
-    
-    if (category.contains('крупа') || category.contains('каша')) return 50.0; // Сухая крупа
+
+    if (category.contains('крупа') || category.contains('каша')) {
+      return 50.0; // Сухая крупа
+    }
     if (category.contains('хлеб')) return 30.0;
-    if (category.contains('молоко') || category.contains('йогурт')) return 200.0;
+    if (category.contains('молоко') || category.contains('йогурт')) {
+      return 200.0;
+    }
     if (category.contains('фрукт')) return 150.0;
     if (category.contains('яйцо')) return 60.0;
-    
+
     return 100.0; // Стандартная порция
   }
 
   double _getLunchPortionSize(FoodItem foodItem) {
     // Примерные размеры порций для обеда
     final category = foodItem.category?.toLowerCase() ?? '';
-    
+
     if (category.contains('мясо') || category.contains('рыба')) return 120.0;
     if (category.contains('гарнир') || category.contains('крупа')) return 150.0;
     if (category.contains('овощи')) return 200.0;
     if (category.contains('суп')) return 300.0;
-    
+
     return 120.0; // Стандартная порция
   }
 
   double _getDinnerPortionSize(FoodItem foodItem) {
     // Примерные размеры порций для ужина (меньше, чем на обед)
     final category = foodItem.category?.toLowerCase() ?? '';
-    
+
     if (category.contains('мясо') || category.contains('рыба')) return 100.0;
     if (category.contains('овощи')) return 200.0;
     if (category.contains('салат')) return 150.0;
-    
+
     return 100.0; // Стандартная порция
   }
 
   double _getSnackPortionSize(FoodItem foodItem) {
     // Примерные размеры порций для перекуса
     final category = foodItem.category?.toLowerCase() ?? '';
-    
+
     if (category.contains('орехи')) return 30.0;
     if (category.contains('фрукт')) return 100.0;
     if (category.contains('йогурт')) return 125.0;
     if (category.contains('печенье')) return 25.0;
-    
+
     return 50.0; // Стандартная порция для перекуса
   }
-} 
+}

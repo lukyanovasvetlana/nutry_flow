@@ -7,10 +7,10 @@ class SimpleExerciseCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   const SimpleExerciseCard({
-    Key? key,
+    super.key,
     required this.exercise,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<SimpleExerciseCard> createState() => _SimpleExerciseCardState();
@@ -20,7 +20,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  
+
   bool _isPressed = false;
 
   @override
@@ -30,7 +30,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 0.98,
@@ -163,7 +163,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
                         ),
                       ),
                       const SizedBox(width: 16),
-                      
+
                       // Exercise icon
                       Container(
                         width: 50,
@@ -179,7 +179,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
                         ),
                       ),
                       const SizedBox(width: 16),
-                      
+
                       // Exercise info
                       Expanded(
                         child: Column(
@@ -208,7 +208,8 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
                                   ),
                                   child: Text(
                                     widget.exercise.category,
-                                    style: context.typography.bodySmallStyle.copyWith(
+                                    style: context.typography.bodySmallStyle
+                                        .copyWith(
                                       color: context.colors.onSurfaceVariant,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -228,7 +229,7 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
                           ],
                         ),
                       ),
-                      
+
                       // Quick info
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -242,7 +243,9 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            widget.exercise.duration != null ? 'время' : 'подходы',
+                            widget.exercise.duration != null
+                                ? 'время'
+                                : 'подходы',
                             style: context.typography.bodySmallStyle.copyWith(
                               color: context.colors.onSurfaceVariant,
                             ),
@@ -259,4 +262,4 @@ class _SimpleExerciseCardState extends State<SimpleExerciseCard>
       },
     );
   }
-} 
+}

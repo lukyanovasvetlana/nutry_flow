@@ -1,4 +1,3 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/food_entry.dart';
 
 class FoodEntryModel {
@@ -68,8 +67,8 @@ class FoodEntryModel {
       sodium: (json['sodium'] as num).toDouble(),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      consumedAt: json['consumed_at'] != null 
-          ? DateTime.parse(json['consumed_at'] as String) 
+      consumedAt: json['consumed_at'] != null
+          ? DateTime.parse(json['consumed_at'] as String)
           : null,
       notes: json['notes'] as String?,
       grams: json['grams'] != null ? (json['grams'] as num).toDouble() : null,
@@ -150,4 +149,4 @@ class FoodEntryModel {
       grams: entity.grams,
     );
   }
-} 
+}

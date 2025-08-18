@@ -5,7 +5,7 @@ import '../bloc/auth_bloc.dart';
 import '../../di/onboarding_dependencies.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key? key}) : super(key: key);
+  const RegistrationScreen({super.key});
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -15,7 +15,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -26,16 +27,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _register(BuildContext context) {
-    print('🟢 RegistrationScreen: _register called');
     if (_formKey.currentState!.validate()) {
-      print('🟢 RegistrationScreen: Form is valid, sending SignUpRequested');
       context.read<AuthBloc>().add(SignUpRequested(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      ));
-    } else {
-      print('🟢 RegistrationScreen: Form validation failed');
-    }
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          ));
+    } else {}
   }
 
   void _onRegistrationSuccess(BuildContext context) {
@@ -44,19 +41,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('🟢 RegistrationScreen: build called');
     return BlocProvider(
       create: (context) {
-        print('🟢 RegistrationScreen: Creating AuthBloc');
         final authBloc = OnboardingDependencies.instance.createAuthBloc();
-        print('🟢 RegistrationScreen: AuthBloc created successfully');
         return authBloc;
       },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          print('🟡 RegistrationScreen: BlocListener received state: ${state.runtimeType}');
           if (state is AuthError) {
-            print('🟡 RegistrationScreen: AuthError - ${state.message}');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -64,8 +56,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             );
           } else if (state is AuthAuthenticated) {
-            print('🟡 RegistrationScreen: AuthAuthenticated - ${state.user.email}');
-            print('🟡 RegistrationScreen: Going to profile-info');
             _onRegistrationSuccess(context);
           }
         },
@@ -99,7 +89,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     const SizedBox(height: 30),
                     Text(
                       'Создайте аккаунт для доступа к приложению',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 40),
@@ -120,13 +113,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: AppColors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.email),
                                 ),
@@ -136,7 +132,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   if (value == null || value.isEmpty) {
                                     return 'Пожалуйста, введите email';
                                   }
-                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                  if (!RegExp(
+                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                      .hasMatch(value)) {
                                     return 'Пожалуйста, введите корректный email';
                                   }
                                   return null;
@@ -154,13 +152,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: AppColors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.lock),
                                 ),
@@ -188,13 +189,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: AppColors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.lock_outline),
                                 ),
@@ -209,15 +213,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                               const SizedBox(height: 40),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 56.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 56.0),
                                 child: SizedBox(
                                   width: double.infinity,
                                   height: 50,
                                   child: ElevatedButton(
-                                    onPressed: state is AuthLoading ? null : () {
-                                      print('🟢 RegistrationScreen: Register button pressed');
-                                      _register(context);
-                                    },
+                                    onPressed: state is AuthLoading
+                                        ? null
+                                        : () {
+                                            _register(context);
+                                          },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.button,
                                       foregroundColor: Colors.white,
@@ -237,7 +243,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             width: 20,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white),
                                             ),
                                           )
                                         : const Text('Зарегистрироваться'),
@@ -245,13 +253,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              
+
                               // Разделитель
                               Row(
                                 children: [
-                                  Expanded(child: Divider(color: Colors.grey[400])),
+                                  Expanded(
+                                      child: Divider(color: Colors.grey[400])),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
                                     child: Text(
                                       'или',
                                       style: TextStyle(
@@ -260,23 +270,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       ),
                                     ),
                                   ),
-                                  Expanded(child: Divider(color: Colors.grey[400])),
+                                  Expanded(
+                                      child: Divider(color: Colors.grey[400])),
                                 ],
                               ),
                               const SizedBox(height: 30),
-                              
+
                               // Кнопка входа
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 56.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 56.0),
                                 child: SizedBox(
                                   width: double.infinity,
                                   height: 50,
                                   child: OutlinedButton(
-                                    onPressed: state is AuthLoading ? null : () {
-                                      Navigator.pushReplacementNamed(context, '/login');
-                                    },
+                                    onPressed: state is AuthLoading
+                                        ? null
+                                        : () {
+                                            Navigator.pushReplacementNamed(
+                                                context, '/login');
+                                          },
                                     style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: AppColors.button, width: 1.5),
+                                      side: BorderSide(
+                                          color: AppColors.button, width: 1.5),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
                                       ),
@@ -293,7 +309,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              
+
                               // Политика конфиденциальности
                               Center(
                                 child: Column(
@@ -308,14 +324,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     const SizedBox(height: 4),
                                     GestureDetector(
                                       onTap: () {
-                                        Navigator.pushNamed(context, '/privacy-policy');
+                                        Navigator.pushNamed(
+                                            context, '/privacy-policy');
                                       },
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
                                         child: const Text(
                                           'Политикой конфиденциальности',
                                           style: TextStyle(
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                             color: Colors.blue,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,
@@ -341,4 +360,4 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
-} 
+}

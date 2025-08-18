@@ -10,19 +10,19 @@ class FoodItemCard extends StatelessWidget {
   final double portionSize;
 
   const FoodItemCard({
-    Key? key,
+    super.key,
     required this.foodItem,
     this.onTap,
     this.onFavoriteToggle,
     this.isFavorite = false,
     this.showActions = true,
     this.portionSize = 100.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -61,9 +61,9 @@ class FoodItemCard extends StatelessWidget {
                           )
                         : _buildPlaceholderImage(),
                   ),
-                  
+
                   const SizedBox(width: 12),
-                  
+
                   // Food info
                   Expanded(
                     child: Column(
@@ -78,7 +78,7 @@ class FoodItemCard extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        
+
                         if (foodItem.brand != null) ...[
                           const SizedBox(height: 4),
                           Text(
@@ -88,7 +88,7 @@ class FoodItemCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        
+
                         if (foodItem.category != null) ...[
                           const SizedBox(height: 4),
                           Container(
@@ -111,7 +111,7 @@ class FoodItemCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // Actions
                   if (showActions) ...[
                     Column(
@@ -119,14 +119,15 @@ class FoodItemCard extends StatelessWidget {
                         if (onFavoriteToggle != null)
                           IconButton(
                             icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
                               color: isFavorite ? Colors.red : null,
                             ),
                             onPressed: onFavoriteToggle,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),
-                        
                         if (foodItem.isVerified) ...[
                           const SizedBox(height: 8),
                           Icon(
@@ -140,9 +141,9 @@ class FoodItemCard extends StatelessWidget {
                   ],
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Nutrition info
               Row(
                 children: [
@@ -180,7 +181,7 @@ class FoodItemCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               // Portion size info
               if (portionSize != 100.0) ...[
                 const SizedBox(height: 8),
@@ -191,7 +192,7 @@ class FoodItemCard extends StatelessWidget {
                   ),
                 ),
               ],
-              
+
               // Description
               if (foodItem.description != null) ...[
                 const SizedBox(height: 12),
@@ -227,7 +228,8 @@ class FoodItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNutritionItem(String label, String value, IconData icon, Color color) {
+  Widget _buildNutritionItem(
+      String label, String value, IconData icon, Color color) {
     return Column(
       children: [
         Icon(
@@ -253,4 +255,4 @@ class FoodItemCard extends StatelessWidget {
       ],
     );
   }
-} 
+}

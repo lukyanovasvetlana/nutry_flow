@@ -8,10 +8,10 @@ class ExerciseCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const ExerciseCard({
-    Key? key,
+    super.key,
     required this.exercise,
     this.onTap,
-  }) : super(key: key);
+  });
 
   Color _getCategoryColor() {
     switch (exercise.category) {
@@ -68,10 +68,10 @@ class ExerciseCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 0,
-      color: AppColors.surface,
+      color: AppColors.dynamicCard,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: AppColors.border, width: 1),
+        side: BorderSide(color: AppColors.dynamicBorder, width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -90,12 +90,12 @@ class ExerciseCard extends StatelessWidget {
                 ),
                 child: Icon(
                   _getExerciseIcon(),
-                  color: Colors.black87,
+                  color: AppColors.dynamicTextPrimary,
                   size: 24,
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Exercise Name
               Expanded(
                 flex: 2,
@@ -103,40 +103,40 @@ class ExerciseCard extends StatelessWidget {
                   exercise.name,
                   style: AppStyles.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: AppColors.dynamicTextPrimary,
                   ),
                 ),
               ),
-              
+
               // Sets
               Expanded(
                 child: Text(
                   '${exercise.sets}',
                   textAlign: TextAlign.center,
                   style: AppStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.dynamicTextSecondary,
                   ),
                 ),
               ),
-              
+
               // Reps
               Expanded(
                 child: Text(
                   _getDisplayReps(),
                   textAlign: TextAlign.center,
                   style: AppStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.dynamicTextSecondary,
                   ),
                 ),
               ),
-              
+
               // Rest
               Expanded(
                 child: Text(
                   _getDisplayRest(),
                   textAlign: TextAlign.center,
                   style: AppStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.dynamicTextSecondary,
                   ),
                 ),
               ),
@@ -146,4 +146,4 @@ class ExerciseCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -15,7 +15,7 @@ class GoalsSetupScreen extends StatelessWidget {
 }
 
 class GoalsSetupView extends StatelessWidget {
-  const GoalsSetupView();
+  const GoalsSetupView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +90,7 @@ class GoalsSetupView extends StatelessWidget {
             );
             // Переход к дашборду
             Navigator.pushNamedAndRemoveUntil(
-              context, 
-              '/app', 
-              (route) => false
-            );
+                context, '/app', (route) => false);
           }
         },
         child: BlocBuilder<GoalsSetupBloc, GoalsSetupState>(
@@ -103,7 +100,7 @@ class GoalsSetupView extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -112,29 +109,30 @@ class GoalsSetupView extends StatelessWidget {
                   // Индикатор прогресса
                   _buildProgressIndicator(),
                   const SizedBox(height: 24),
-                  
+
                   // Выбор основной цели
                   _buildGoalSelection(context),
                   const SizedBox(height: 32),
-                  
+
                   // Целевые параметры
-                  if (state is GoalsSetupLoaded && state.goals.fitnessGoals.isNotEmpty) ...[
+                  if (state is GoalsSetupLoaded &&
+                      state.goals.fitnessGoals.isNotEmpty) ...[
                     _buildTargetParameters(context, state.goals),
                     const SizedBox(height: 32),
                   ],
-                  
+
                   // Диетические предпочтения
                   _buildDietaryPreferences(context, state),
                   const SizedBox(height: 32),
-                  
+
                   // Настройка активности
                   _buildActivitySettings(context, state),
                   const SizedBox(height: 32),
-                  
+
                   // Кнопки навигации
                   _buildNavigationButtons(context, state),
                   const SizedBox(height: 16),
-                  
+
                   // Кнопка пропуска
                   _buildSkipButton(context),
                 ],
@@ -212,16 +210,19 @@ class GoalsSetupView extends StatelessWidget {
 
     return BlocBuilder<GoalsSetupBloc, GoalsSetupState>(
       builder: (context, state) {
-        final selectedGoal = state is GoalsSetupLoaded && state.goals.fitnessGoals.isNotEmpty ? state.goals.fitnessGoals.first : null;
-        
+        final selectedGoal =
+            state is GoalsSetupLoaded && state.goals.fitnessGoals.isNotEmpty
+                ? state.goals.fitnessGoals.first
+                : null;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Выберите основную цель',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             GridView.builder(
@@ -237,17 +238,23 @@ class GoalsSetupView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final goal = goals[index];
                 final isSelected = selectedGoal == goal['id'];
-                
+
                 return GestureDetector(
                   onTap: () {
-                    context.read<GoalsSetupBloc>().add(GoalSelected(goal['id'] as String));
+                    context
+                        .read<GoalsSetupBloc>()
+                        .add(GoalSelected(goal['id'] as String));
                   },
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: isSelected ? (goal['color'] as Color).withValues(alpha: 0.1) : Colors.grey[50],
+                      color: isSelected
+                          ? (goal['color'] as Color).withValues(alpha: 0.1)
+                          : Colors.grey[50],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected ? (goal['color'] as Color) : Colors.grey[300]!,
+                        color: isSelected
+                            ? (goal['color'] as Color)
+                            : Colors.grey[300]!,
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -262,18 +269,22 @@ class GoalsSetupView extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           goal['title'] as String,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? (goal['color'] as Color) : Colors.black,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: isSelected
+                                        ? (goal['color'] as Color)
+                                        : Colors.black,
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           goal['description'] as String,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -295,11 +306,11 @@ class GoalsSetupView extends StatelessWidget {
         Text(
           'Параметры',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 16),
-        
+
         // Рост
         TextFormField(
           decoration: const InputDecoration(
@@ -308,15 +319,16 @@ class GoalsSetupView extends StatelessWidget {
             border: UnderlineInputBorder(),
           ),
           keyboardType: TextInputType.number,
-          initialValue: goals.targetWeight?.toString(), // TODO: заменить на height, если появится
+          initialValue: goals.targetWeight
+              ?.toString(), // TODO: заменить на height, если появится
           onChanged: (value) {
             context.read<GoalsSetupBloc>().add(
-              TargetWeightChanged(double.tryParse(value)),
-            );
+                  TargetWeightChanged(double.tryParse(value)),
+                );
           },
         ),
         const SizedBox(height: 16),
-        
+
         // Вес
         TextFormField(
           decoration: const InputDecoration(
@@ -328,12 +340,12 @@ class GoalsSetupView extends StatelessWidget {
           initialValue: goals.targetWeight?.toString(),
           onChanged: (value) {
             context.read<GoalsSetupBloc>().add(
-              TargetWeightChanged(double.tryParse(value)),
-            );
+                  TargetWeightChanged(double.tryParse(value)),
+                );
           },
         ),
         const SizedBox(height: 16),
-        
+
         // Временные рамки
         Text(
           'Период достижения цели',
@@ -390,11 +402,11 @@ class GoalsSetupView extends StatelessWidget {
         Text(
           'Диетические предпочтения',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 16),
-        
+
         // Тип диеты
         Text(
           'Тип диеты',
@@ -402,7 +414,9 @@ class GoalsSetupView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: state.goals.dietaryPreferences.isNotEmpty ? state.goals.dietaryPreferences.first : null,
+          value: state.goals.dietaryPreferences.isNotEmpty
+              ? state.goals.dietaryPreferences.first
+              : null,
           decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             hintText: 'Выберите тип диеты',
@@ -420,7 +434,7 @@ class GoalsSetupView extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        
+
         // Аллергены
         Text(
           'Пищевые аллергии',
@@ -448,14 +462,6 @@ class GoalsSetupView extends StatelessWidget {
   }
 
   Widget _buildActivitySettings(BuildContext context, GoalsSetupState state) {
-    final workoutTypes = [
-      'Кардио',
-      'Силовые тренировки',
-      'Йога/Стретчинг',
-      'Командные виды спорта',
-      'Домашние тренировки',
-    ];
-
     if (state is! GoalsSetupLoaded) {
       return const SizedBox.shrink();
     }
@@ -466,11 +472,11 @@ class GoalsSetupView extends StatelessWidget {
         Text(
           'Настройка активности',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 16),
-        
+
         // Тип тренировок
         Text(
           'Тип тренировок',
@@ -489,7 +495,8 @@ class GoalsSetupView extends StatelessWidget {
                 const SizedBox(width: 8),
                 Flexible(
                   flex: 2, // Больше места для "Силовых тренировок"
-                  child: _buildWorkoutTypeChip(context, state, 'Силовые тренировки'),
+                  child: _buildWorkoutTypeChip(
+                      context, state, 'Силовые тренировки'),
                 ),
               ],
             ),
@@ -499,12 +506,14 @@ class GoalsSetupView extends StatelessWidget {
               children: [
                 Flexible(
                   flex: 1,
-                  child: _buildWorkoutTypeChip(context, state, 'Йога/Стретчинг'),
+                  child:
+                      _buildWorkoutTypeChip(context, state, 'Йога/Стретчинг'),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
                   flex: 1,
-                  child: _buildWorkoutTypeChipWithFade(context, state, 'Командные виды спорта'),
+                  child: _buildWorkoutTypeChipWithFade(
+                      context, state, 'Командные виды спорта'),
                 ),
               ],
             ),
@@ -514,7 +523,8 @@ class GoalsSetupView extends StatelessWidget {
               children: [
                 Flexible(
                   flex: 2, // Делаем этот элемент в 2 раза шире
-                  child: _buildWorkoutTypeChip(context, state, 'Домашние тренировки'),
+                  child: _buildWorkoutTypeChip(
+                      context, state, 'Домашние тренировки'),
                 ),
                 const SizedBox(width: 8),
                 const Flexible(
@@ -526,7 +536,7 @@ class GoalsSetupView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        
+
         // Частота тренировок
         Text(
           'Частота тренировок (раз в неделю)',
@@ -534,21 +544,24 @@ class GoalsSetupView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Slider(
-          value: (state.goals.workoutFrequency != null && state.goals.workoutFrequency! >= 1 && state.goals.workoutFrequency! <= 7)
-            ? state.goals.workoutFrequency!.toDouble()
-            : 1.0,
+          value: (state.goals.workoutFrequency != null &&
+                  state.goals.workoutFrequency! >= 1 &&
+                  state.goals.workoutFrequency! <= 7)
+              ? state.goals.workoutFrequency!.toDouble()
+              : 1.0,
           min: 1,
           max: 7,
           divisions: 6,
-          label: '${(state.goals.workoutFrequency != null && state.goals.workoutFrequency! >= 1 && state.goals.workoutFrequency! <= 7)
-            ? state.goals.workoutFrequency
-            : 1}',
+          label:
+              '${(state.goals.workoutFrequency != null && state.goals.workoutFrequency! >= 1 && state.goals.workoutFrequency! <= 7) ? state.goals.workoutFrequency : 1}',
           activeColor: AppColors.yellow,
           onChanged: (value) {
-            context.read<GoalsSetupBloc>().add(WorkoutFrequencyChanged(value.round()));
+            context
+                .read<GoalsSetupBloc>()
+                .add(WorkoutFrequencyChanged(value.round()));
           },
         ),
-        
+
         // Продолжительность тренировок
         Text(
           'Продолжительность тренировки (минуты)',
@@ -556,18 +569,21 @@ class GoalsSetupView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Slider(
-          value: (state.goals.targetProtein != null && state.goals.targetProtein! >= 15 && state.goals.targetProtein! <= 120)
-            ? state.goals.targetProtein!.toDouble()
-            : 15.0,
+          value: (state.goals.targetProtein != null &&
+                  state.goals.targetProtein! >= 15 &&
+                  state.goals.targetProtein! <= 120)
+              ? state.goals.targetProtein!.toDouble()
+              : 15.0,
           min: 15,
           max: 120,
           divisions: 7,
-          label: '${(state.goals.targetProtein != null && state.goals.targetProtein! >= 15 && state.goals.targetProtein! <= 120)
-            ? state.goals.targetProtein
-            : 15}', // TODO: заменить на workoutDuration
+          label:
+              '${(state.goals.targetProtein != null && state.goals.targetProtein! >= 15 && state.goals.targetProtein! <= 120) ? state.goals.targetProtein : 15}', // TODO: заменить на workoutDuration
           activeColor: AppColors.yellow,
           onChanged: (value) {
-            context.read<GoalsSetupBloc>().add(WorkoutDurationChanged(value.round()));
+            context
+                .read<GoalsSetupBloc>()
+                .add(WorkoutDurationChanged(value.round()));
           },
         ),
       ],
@@ -576,7 +592,7 @@ class GoalsSetupView extends StatelessWidget {
 
   Widget _buildNavigationButtons(BuildContext context, GoalsSetupState state) {
     final canProceed = state is GoalsSetupLoaded && state.isValid;
-    
+
     return Row(
       children: [
         Expanded(
@@ -599,15 +615,11 @@ class GoalsSetupView extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            onPressed: canProceed ? () {
-              print('🟤 GoalsSetupScreen: Завершить button pressed');
-              print('🟤 GoalsSetupScreen: canProceed = $canProceed');
-              print('🟤 GoalsSetupScreen: state = ${state.runtimeType}');
-              if (state is GoalsSetupLoaded) {
-                print('🟤 GoalsSetupScreen: state.isValid = ${state.isValid}');
-              }
-              context.read<GoalsSetupBloc>().add(SaveGoals());
-            } : null,
+            onPressed: canProceed
+                ? () {
+                    context.read<GoalsSetupBloc>().add(SaveGoals());
+                  }
+                : null,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -627,11 +639,7 @@ class GoalsSetupView extends StatelessWidget {
       height: 50,
       child: TextButton(
         onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(
-            context, 
-            '/app', 
-            (route) => false
-          );
+          Navigator.pushNamedAndRemoveUntil(context, '/app', (route) => false);
         },
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -650,12 +658,14 @@ class GoalsSetupView extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkoutTypeChip(BuildContext context, GoalsSetupState state, String type) {
+  Widget _buildWorkoutTypeChip(
+      BuildContext context, GoalsSetupState state, String type) {
     if (state is! GoalsSetupLoaded) {
       return const SizedBox.shrink();
     }
-    
-    final isSelected = state.goals.workoutTypes.contains(type); // теперь используем workoutTypes
+
+    final isSelected = state.goals.workoutTypes
+        .contains(type); // теперь используем workoutTypes
     return FilterChip(
       label: Text(
         type,
@@ -678,12 +688,14 @@ class GoalsSetupView extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkoutTypeChipWithFade(BuildContext context, GoalsSetupState state, String type) {
+  Widget _buildWorkoutTypeChipWithFade(
+      BuildContext context, GoalsSetupState state, String type) {
     if (state is! GoalsSetupLoaded) {
       return const SizedBox.shrink();
     }
-    
-    final isSelected = state.goals.workoutTypes.contains(type); // теперь используем workoutTypes
+
+    final isSelected = state.goals.workoutTypes
+        .contains(type); // теперь используем workoutTypes
     return FilterChip(
       label: ShaderMask(
         shaderCallback: (bounds) {
@@ -727,4 +739,4 @@ class GoalsSetupView extends StatelessWidget {
     if (month >= 2 && month <= 4) return 'месяца';
     return 'месяцев';
   }
-} 
+}

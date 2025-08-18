@@ -5,10 +5,10 @@ class DateSelector extends StatelessWidget {
   final Function(DateTime) onDateChanged;
 
   const DateSelector({
-    Key? key,
+    super.key,
     required this.selectedDate,
     required this.onDateChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +30,12 @@ class DateSelector extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.chevron_left),
             onPressed: () {
-              final previousDay = selectedDate.subtract(const Duration(days: 1));
+              final previousDay =
+                  selectedDate.subtract(const Duration(days: 1));
               onDateChanged(previousDay);
             },
           ),
-          
+
           // Date display
           Expanded(
             child: GestureDetector(
@@ -75,19 +76,20 @@ class DateSelector extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Next day button
           IconButton(
             icon: const Icon(Icons.chevron_right),
             onPressed: () {
               final nextDay = selectedDate.add(const Duration(days: 1));
               // Don't allow future dates
-              if (nextDay.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+              if (nextDay
+                  .isBefore(DateTime.now().add(const Duration(days: 1)))) {
                 onDateChanged(nextDay);
               }
             },
           ),
-          
+
           // Today button
           TextButton(
             onPressed: () {
@@ -108,7 +110,7 @@ class DateSelector extends StatelessWidget {
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
-    
+
     if (date != null) {
       onDateChanged(date);
     }
@@ -165,4 +167,4 @@ class DateSelector extends StatelessWidget {
         return '';
     }
   }
-} 
+}

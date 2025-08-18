@@ -24,4 +24,4 @@ class RecipeStep {
       'image_url': imageUrl,
     };
   }
-} 
+}

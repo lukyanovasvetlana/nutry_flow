@@ -147,6 +147,10 @@ class ScrumAutomation:
     
     def send_notification(self, webhook_url: str, message: str):
         """Отправить уведомление в Slack/Discord"""
+        if not webhook_url or not webhook_url.strip():
+            print("Warning: No webhook URL provided. Skipping notification.")
+            return
+            
         payload = {
             "text": message
         }
@@ -257,8 +261,10 @@ def main():
         report = scrum.generate_daily_report()
         print(report)
         
-        if args.webhook_url:
+        if args.webhook_url and args.webhook_url.strip():
             scrum.send_notification(args.webhook_url, report)
+        else:
+            print("No webhook URL provided. Skipping notification.")
     
     elif args.action == 'velocity':
         sprint_data = scrum.get_sprint_issues()

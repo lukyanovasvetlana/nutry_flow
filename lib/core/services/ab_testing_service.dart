@@ -1,6 +1,5 @@
 // import 'package:firebase_remote_config/firebase_remote_config.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:nutry_flow/core/services/analytics_service.dart';
 import 'package:nutry_flow/core/services/monitoring_service.dart';
 import 'package:nutry_flow/core/services/firebase_interfaces.dart';
 import 'dart:developer' as developer;
@@ -31,7 +30,8 @@ class ABTestingService {
     if (_isInitialized) return;
 
     try {
-      developer.log('🧪 ABTestingService: Initializing A/B testing service', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Initializing A/B testing service',
+          name: 'ABTestingService');
 
       _remoteConfig = MockFirebaseRemoteConfig.instance;
       _analytics = MockFirebaseAnalytics.instance;
@@ -58,12 +58,16 @@ class ABTestingService {
       await _remoteConfig.fetchAndActivate();
 
       _isInitialized = true;
-      developer.log('🧪 ABTestingService: A/B testing service initialized successfully', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: A/B testing service initialized successfully',
+          name: 'ABTestingService');
 
       // Логируем активные эксперименты
       await _logActiveExperiments();
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to initialize A/B testing service: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to initialize A/B testing service: $e',
+          name: 'ABTestingService');
       rethrow;
     }
   }
@@ -86,9 +90,12 @@ class ABTestingService {
         parameters: experiments,
       );
 
-      developer.log('🧪 ABTestingService: Active experiments logged: $experiments', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Active experiments logged: $experiments',
+          name: 'ABTestingService');
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to log active experiments: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to log active experiments: $e',
+          name: 'ABTestingService');
     }
   }
 
@@ -97,7 +104,9 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_welcomeScreenVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get welcome screen variant: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get welcome screen variant: $e',
+          name: 'ABTestingService');
       return 'control';
     }
   }
@@ -107,7 +116,9 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_onboardingFlowVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get onboarding flow variant: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get onboarding flow variant: $e',
+          name: 'ABTestingService');
       return 'standard';
     }
   }
@@ -117,7 +128,9 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_dashboardLayoutVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get dashboard layout variant: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get dashboard layout variant: $e',
+          name: 'ABTestingService');
       return 'grid';
     }
   }
@@ -127,7 +140,8 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_mealPlanVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get meal plan variant: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get meal plan variant: $e',
+          name: 'ABTestingService');
       return 'list';
     }
   }
@@ -137,7 +151,8 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_workoutVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get workout variant: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get workout variant: $e',
+          name: 'ABTestingService');
       return 'card';
     }
   }
@@ -147,7 +162,9 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_notificationVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get notification variant: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get notification variant: $e',
+          name: 'ABTestingService');
       return 'push';
     }
   }
@@ -157,7 +174,9 @@ class ABTestingService {
     try {
       return _remoteConfig.getString(_colorSchemeVariantKey);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get color scheme variant: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get color scheme variant: $e',
+          name: 'ABTestingService');
       return 'default';
     }
   }
@@ -167,12 +186,13 @@ class ABTestingService {
     try {
       final flagsJson = _remoteConfig.getString(_featureFlagsKey);
       if (flagsJson.isEmpty) return {};
-      
+
       // Парсим JSON строку в Map
       // В реальном приложении используйте dart:convert
       return _parseFeatureFlags(flagsJson);
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get feature flags: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get feature flags: $e',
+          name: 'ABTestingService');
       return {};
     }
   }
@@ -183,7 +203,8 @@ class ABTestingService {
       if (json.isEmpty) return {};
       return jsonDecode(json) as Map<String, dynamic>;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to parse feature flags: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to parse feature flags: $e',
+          name: 'ABTestingService');
       return {};
     }
   }
@@ -194,7 +215,8 @@ class ABTestingService {
       final flags = getFeatureFlags();
       return flags[featureName] == true;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to check feature flag: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to check feature flag: $e',
+          name: 'ABTestingService');
       return false;
     }
   }
@@ -215,9 +237,13 @@ class ABTestingService {
         },
       );
 
-      developer.log('🧪 ABTestingService: Experiment exposure tracked: $experimentName - $variant', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Experiment exposure tracked: $experimentName - $variant',
+          name: 'ABTestingService');
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to track experiment exposure: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to track experiment exposure: $e',
+          name: 'ABTestingService');
     }
   }
 
@@ -239,25 +265,32 @@ class ABTestingService {
         },
       );
 
-      developer.log('🧪 ABTestingService: Experiment conversion tracked: $experimentName - $variant - $conversionType', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Experiment conversion tracked: $experimentName - $variant - $conversionType',
+          name: 'ABTestingService');
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to track experiment conversion: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to track experiment conversion: $e',
+          name: 'ABTestingService');
     }
   }
 
   /// Принудительное обновление конфигурации
   Future<void> forceUpdate() async {
     try {
-      developer.log('🧪 ABTestingService: Forcing configuration update', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Forcing configuration update',
+          name: 'ABTestingService');
 
       await _remoteConfig.fetchAndActivate();
 
       // Логируем обновленные эксперименты
       await _logActiveExperiments();
 
-      developer.log('🧪 ABTestingService: Configuration updated successfully', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Configuration updated successfully',
+          name: 'ABTestingService');
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to force update: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to force update: $e',
+          name: 'ABTestingService');
       rethrow;
     }
   }
@@ -267,7 +300,8 @@ class ABTestingService {
     try {
       return _remoteConfig.lastFetchTime;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get last fetch time: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get last fetch time: $e',
+          name: 'ABTestingService');
       return DateTime.now();
     }
   }
@@ -277,7 +311,8 @@ class ABTestingService {
     try {
       return _remoteConfig.lastFetchStatus;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get fetch status: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get fetch status: $e',
+          name: 'ABTestingService');
       return RemoteConfigFetchStatus.noFetchYet;
     }
   }
@@ -295,7 +330,9 @@ class ABTestingService {
         'color_scheme': getColorSchemeVariant(),
       };
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get all active experiments: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get all active experiments: $e',
+          name: 'ABTestingService');
       return {};
     }
   }
@@ -333,9 +370,12 @@ class ABTestingService {
         parameters: eventParams,
       );
 
-      developer.log('🧪 ABTestingService: User event tracked: $eventName - $experimentName - $variant', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: User event tracked: $eventName - $experimentName - $variant',
+          name: 'ABTestingService');
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to track user event: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to track user event: $e',
+          name: 'ABTestingService');
     }
   }
 
@@ -344,12 +384,15 @@ class ABTestingService {
     try {
       final value = _remoteConfig.getDouble(key);
       // Если значение равно 0.0 и ключ не существует, возвращаем defaultValue
-      if (value == 0.0 && !(_remoteConfig as MockFirebaseRemoteConfig).hasKey(key)) {
+      if (value == 0.0 &&
+          !(_remoteConfig as MockFirebaseRemoteConfig).hasKey(key)) {
         return defaultValue;
       }
       return value;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get numeric value for $key: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get numeric value for $key: $e',
+          name: 'ABTestingService');
       return defaultValue;
     }
   }
@@ -359,24 +402,30 @@ class ABTestingService {
     try {
       final value = _remoteConfig.getBool(key);
       // Если значение равно false и ключ не существует, возвращаем defaultValue
-      if (value == false && !(_remoteConfig as MockFirebaseRemoteConfig).hasKey(key)) {
+      if (value == false &&
+          !(_remoteConfig as MockFirebaseRemoteConfig).hasKey(key)) {
         return defaultValue;
       }
       return value;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get boolean value for $key: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get boolean value for $key: $e',
+          name: 'ABTestingService');
       return defaultValue;
     }
   }
 
   /// Получение JSON объекта из Remote Config
-  Map<String, dynamic> getJsonValue(String key, {Map<String, dynamic> defaultValue = const {}}) {
+  Map<String, dynamic> getJsonValue(String key,
+      {Map<String, dynamic> defaultValue = const {}}) {
     try {
       final jsonString = _remoteConfig.getString(key);
       if (jsonString.isEmpty) return defaultValue;
       return jsonDecode(jsonString) as Map<String, dynamic>;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get JSON value for $key: $e', name: 'ABTestingService');
+      developer.log(
+          '🧪 ABTestingService: Failed to get JSON value for $key: $e',
+          name: 'ABTestingService');
       return defaultValue;
     }
   }
@@ -387,7 +436,8 @@ class ABTestingService {
       final variant = _getExperimentVariant(experimentName);
       return variant != 'control' && variant.isNotEmpty;
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to check test group: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to check test group: $e',
+          name: 'ABTestingService');
       return false;
     }
   }
@@ -414,7 +464,8 @@ class ABTestingService {
           return _remoteConfig.getString(experimentName);
       }
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get experiment variant: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get experiment variant: $e',
+          name: 'ABTestingService');
       return 'control';
     }
   }
@@ -424,15 +475,17 @@ class ABTestingService {
     try {
       return {
         'total_experiments': getAllActiveExperiments().length,
-        'test_groups': getAllActiveExperiments().entries
+        'test_groups': getAllActiveExperiments()
+            .entries
             .where((entry) => entry.value != 'control')
             .length,
         'last_update': getLastFetchTime().toIso8601String(),
         'fetch_status': getFetchStatus().toString(),
       };
     } catch (e) {
-      developer.log('🧪 ABTestingService: Failed to get experiment stats: $e', name: 'ABTestingService');
+      developer.log('🧪 ABTestingService: Failed to get experiment stats: $e',
+          name: 'ABTestingService');
       return {};
     }
   }
-} 
+}

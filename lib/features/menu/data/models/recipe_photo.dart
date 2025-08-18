@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:uuid/uuid.dart';
 
 /// Модель фотографии рецепта
 class RecipePhoto {
@@ -82,4 +81,4 @@ class RecipePhoto {
   String toString() {
     return 'RecipePhoto(id: $id, url: $url, order: $order)';
   }
-} 
+}

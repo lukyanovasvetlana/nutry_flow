@@ -8,11 +8,11 @@ class PortionSizeInput extends StatefulWidget {
   final Function(double) onPortionChanged;
 
   const PortionSizeInput({
-    Key? key,
+    super.key,
     required this.foodItem,
     required this.initialPortion,
     required this.onPortionChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<PortionSizeInput> createState() => _PortionSizeInputState();
@@ -103,20 +103,20 @@ class _PortionSizeInputState extends State<PortionSizeInput> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Portion slider
         Slider(
           value: _currentPortion.clamp(1, 1000),
           min: 1,
           max: 1000,
           divisions: 999,
-          onChanged: (value) => _updatePortion(value),
+          onChanged: _updatePortion,
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Quick portion buttons
         Wrap(
           spacing: 8,
@@ -128,9 +128,9 @@ class _PortionSizeInputState extends State<PortionSizeInput> {
             _buildQuickPortionButton(250, '250г'),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Nutrition preview for current portion
         Container(
           padding: const EdgeInsets.all(12),
@@ -170,7 +170,7 @@ class _PortionSizeInputState extends State<PortionSizeInput> {
 
   Widget _buildQuickPortionButton(double portion, String label) {
     final isSelected = _currentPortion == portion;
-    
+
     return GestureDetector(
       onTap: () => _updatePortion(portion),
       child: Container(
@@ -210,4 +210,4 @@ class _PortionSizeInputState extends State<PortionSizeInput> {
       ],
     );
   }
-} 
+}

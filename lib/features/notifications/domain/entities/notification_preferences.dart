@@ -41,9 +41,11 @@ class NotificationPreferences extends Equatable {
   }) {
     return NotificationPreferences(
       mealRemindersEnabled: mealRemindersEnabled ?? this.mealRemindersEnabled,
-      workoutRemindersEnabled: workoutRemindersEnabled ?? this.workoutRemindersEnabled,
+      workoutRemindersEnabled:
+          workoutRemindersEnabled ?? this.workoutRemindersEnabled,
       goalRemindersEnabled: goalRemindersEnabled ?? this.goalRemindersEnabled,
-      generalNotificationsEnabled: generalNotificationsEnabled ?? this.generalNotificationsEnabled,
+      generalNotificationsEnabled:
+          generalNotificationsEnabled ?? this.generalNotificationsEnabled,
       mealReminderTime: mealReminderTime ?? this.mealReminderTime,
       workoutReminderTime: workoutReminderTime ?? this.workoutReminderTime,
       goalReminderTime: goalReminderTime ?? this.goalReminderTime,
@@ -68,13 +70,13 @@ class NotificationPreferences extends Equatable {
       workoutRemindersEnabled: json['workoutRemindersEnabled'] ?? true,
       goalRemindersEnabled: json['goalRemindersEnabled'] ?? true,
       generalNotificationsEnabled: json['generalNotificationsEnabled'] ?? true,
-      mealReminderTime: json['mealReminderTime'] != null 
+      mealReminderTime: json['mealReminderTime'] != null
           ? DateTime.parse(json['mealReminderTime'])
           : null,
-      workoutReminderTime: json['workoutReminderTime'] != null 
+      workoutReminderTime: json['workoutReminderTime'] != null
           ? DateTime.parse(json['workoutReminderTime'])
           : null,
-      goalReminderTime: json['goalReminderTime'] != null 
+      goalReminderTime: json['goalReminderTime'] != null
           ? DateTime.parse(json['goalReminderTime'])
           : null,
     );
@@ -91,4 +93,4 @@ class NotificationPreferences extends Equatable {
       goalReminderTime: null,
     );
   }
-} 
+}

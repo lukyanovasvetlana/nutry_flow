@@ -9,10 +9,12 @@ class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   late NotificationPreferences _preferences;
   bool _isLoading = false;
 
@@ -138,7 +140,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           children: [
             SwitchListTile(
               title: const Text('Напоминания о еде'),
-              subtitle: const Text('Получать уведомления о времени приема пищи'),
+              subtitle:
+                  const Text('Получать уведомления о времени приема пищи'),
               value: _preferences.mealRemindersEnabled,
               onChanged: (value) {
                 setState(() {
@@ -159,7 +162,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       : 'Не установлено',
                 ),
                 trailing: const Icon(Icons.access_time),
-                onTap: () => _selectMealReminderTime(),
+                onTap: _selectMealReminderTime,
               ),
             ],
           ],
@@ -177,7 +180,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           children: [
             SwitchListTile(
               title: const Text('Напоминания о тренировках'),
-              subtitle: const Text('Получать уведомления о запланированных тренировках'),
+              subtitle: const Text(
+                  'Получать уведомления о запланированных тренировках'),
               value: _preferences.workoutRemindersEnabled,
               onChanged: (value) {
                 setState(() {
@@ -198,7 +202,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       : 'Не установлено',
                 ),
                 trailing: const Icon(Icons.access_time),
-                onTap: () => _selectWorkoutReminderTime(),
+                onTap: _selectWorkoutReminderTime,
               ),
             ],
           ],
@@ -237,7 +241,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       : 'Не установлено',
                 ),
                 trailing: const Icon(Icons.access_time),
-                onTap: () => _selectGoalReminderTime(),
+                onTap: _selectGoalReminderTime,
               ),
             ],
           ],
@@ -340,6 +344,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   }
 
   void _savePreferences() {
-    context.read<NotificationBloc>().add(SaveNotificationPreferences(_preferences));
+    context
+        .read<NotificationBloc>()
+        .add(SaveNotificationPreferences(_preferences));
   }
-} 
+}

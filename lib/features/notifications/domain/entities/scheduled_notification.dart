@@ -150,7 +150,8 @@ class ScheduledNotification extends Equatable {
   bool get isToday {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final scheduledDay = DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day);
+    final scheduledDay =
+        DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day);
     return today.isAtSameMomentAs(scheduledDay);
   }
 
@@ -158,7 +159,8 @@ class ScheduledNotification extends Equatable {
   bool get isTomorrow {
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
-    final scheduledDay = DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day);
+    final scheduledDay =
+        DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day);
     return tomorrow.isAtSameMomentAs(scheduledDay);
   }
 
@@ -174,4 +176,4 @@ class ScheduledNotification extends Equatable {
       return '${scheduledDate.day.toString().padLeft(2, '0')}.${scheduledDate.month.toString().padLeft(2, '0')} в ${scheduledDate.hour.toString().padLeft(2, '0')}:${scheduledDate.minute.toString().padLeft(2, '0')}';
     }
   }
-} 
+}

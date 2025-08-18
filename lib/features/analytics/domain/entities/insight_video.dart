@@ -35,4 +35,4 @@ class InsightVideo {
 
   @override
   int get hashCode => id.hashCode;
-} 
+}

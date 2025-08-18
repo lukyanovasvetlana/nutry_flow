@@ -5,10 +5,10 @@ class SearchBarWidget extends StatefulWidget {
   final VoidCallback onClear;
 
   const SearchBarWidget({
-    Key? key,
+    super.key,
     required this.onSearchChanged,
     required this.onClear,
-  }) : super(key: key);
+  });
 
   @override
   State<SearchBarWidget> createState() => _SearchBarWidgetState();
@@ -42,7 +42,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12),
@@ -63,10 +63,11 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         onChanged: widget.onSearchChanged,
       ),
     );
   }
-} 
+}

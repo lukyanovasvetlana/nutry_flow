@@ -182,7 +182,8 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
                       },
                     ),
                     const SizedBox(height: 16),
-                    const Text('Тип цели:', style: TextStyle(fontWeight: FontWeight.w500)),
+                    const Text('Тип цели:',
+                        style: TextStyle(fontWeight: FontWeight.w500)),
                     const SizedBox(height: 8),
                     SegmentedButton<String>(
                       segments: const [
@@ -225,7 +226,9 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
                                 return 'Введите текущий вес';
                               }
                               final weight = double.tryParse(value);
-                              if (weight == null || weight < 30 || weight > 300) {
+                              if (weight == null ||
+                                  weight < 30 ||
+                                  weight > 300) {
                                 return 'Вес должен быть от 30 до 300 кг';
                               }
                               return null;
@@ -246,7 +249,9 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
                                 return 'Введите целевой вес';
                               }
                               final weight = double.tryParse(value);
-                              if (weight == null || weight < 30 || weight > 300) {
+                              if (weight == null ||
+                                  weight < 30 ||
+                                  weight > 300) {
                                 return 'Вес должен быть от 30 до 300 кг';
                               }
                               return null;
@@ -257,8 +262,8 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
                     ),
                     const SizedBox(height: 16),
                     ListTile(
-                      title: Text(_weightTargetDate == null 
-                          ? 'Выберите целевую дату' 
+                      title: Text(_weightTargetDate == null
+                          ? 'Выберите целевую дату'
                           : 'Целевая дата: ${_formatDate(_weightTargetDate!)}'),
                       leading: const Icon(Icons.calendar_today),
                       trailing: const Icon(Icons.arrow_forward_ios),
@@ -345,8 +350,8 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
                   ),
                   const SizedBox(height: 16),
                   ListTile(
-                    title: Text(_activityTargetDate == null 
-                        ? 'Выберите целевую дату' 
+                    title: Text(_activityTargetDate == null
+                        ? 'Выберите целевую дату'
                         : 'Целевая дата: ${_formatDate(_activityTargetDate!)}'),
                     leading: const Icon(Icons.calendar_today),
                     trailing: const Icon(Icons.arrow_forward_ios),
@@ -432,8 +437,8 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
                   ),
                   const SizedBox(height: 16),
                   ListTile(
-                    title: Text(_nutritionTargetDate == null 
-                        ? 'Выберите целевую дату' 
+                    title: Text(_nutritionTargetDate == null
+                        ? 'Выберите целевую дату'
                         : 'Целевая дата: ${_formatDate(_nutritionTargetDate!)}'),
                     leading: const Icon(Icons.calendar_today),
                     trailing: const Icon(Icons.arrow_forward_ios),
@@ -463,7 +468,8 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
     );
   }
 
-  Future<void> _selectDate(BuildContext context, Function(DateTime) onDateSelected) async {
+  Future<void> _selectDate(
+      BuildContext context, Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 30)),
@@ -492,52 +498,54 @@ class _GoalsSetupScreenState extends State<GoalsSetupScreen>
     final targetWeight = double.parse(_targetWeightController.text);
 
     context.read<GoalsBloc>().add(CreateGoal(
-      userId: 'demo-user-id', // В реальном приложении получать из AuthBloc
-      type: GoalType.weight,
-      title: _weightGoalTitleController.text,
-      targetValue: targetWeight,
-      unit: 'кг',
-      targetDate: _weightTargetDate,
-      metadata: {
-        'weightGoalType': _weightGoalType,
-        'startValue': currentWeight,
-        'tolerance': 1.0,
-      },
-    ));
+          userId: 'demo-user-id', // В реальном приложении получать из AuthBloc
+          type: GoalType.weight,
+          title: _weightGoalTitleController.text,
+          targetValue: targetWeight,
+          unit: 'кг',
+          targetDate: _weightTargetDate,
+          metadata: {
+            'weightGoalType': _weightGoalType,
+            'startValue': currentWeight,
+            'tolerance': 1.0,
+          },
+        ));
   }
 
   void _createActivityGoal(BuildContext context) {
     final workoutsPerWeek = int.tryParse(_workoutsPerWeekController.text) ?? 3;
-    final minutesPerWorkout = int.tryParse(_minutesPerWorkoutController.text) ?? 60;
-    final totalMinutesPerWeek = (workoutsPerWeek * minutesPerWorkout).toDouble();
+    final minutesPerWorkout =
+        int.tryParse(_minutesPerWorkoutController.text) ?? 60;
+    final totalMinutesPerWeek =
+        (workoutsPerWeek * minutesPerWorkout).toDouble();
 
     context.read<GoalsBloc>().add(CreateGoal(
-      userId: 'demo-user-id',
-      type: GoalType.activity,
-      title: _activityGoalTitleController.text,
-      targetValue: totalMinutesPerWeek,
-      unit: 'мин/неделя',
-      targetDate: _activityTargetDate,
-      metadata: {
-        'workoutsPerWeek': workoutsPerWeek,
-        'durationPerWorkout': minutesPerWorkout,
-      },
-    ));
+          userId: 'demo-user-id',
+          type: GoalType.activity,
+          title: _activityGoalTitleController.text,
+          targetValue: totalMinutesPerWeek,
+          unit: 'мин/неделя',
+          targetDate: _activityTargetDate,
+          metadata: {
+            'workoutsPerWeek': workoutsPerWeek,
+            'durationPerWorkout': minutesPerWorkout,
+          },
+        ));
   }
 
   void _createNutritionGoal(BuildContext context) {
     final waterIntake = double.tryParse(_waterIntakeController.text) ?? 2.0;
 
     context.read<GoalsBloc>().add(CreateGoal(
-      userId: 'demo-user-id',
-      type: GoalType.nutrition,
-      title: _nutritionGoalTitleController.text,
-      targetValue: waterIntake,
-      unit: 'л/день',
-      targetDate: _nutritionTargetDate,
-      metadata: {
-        'targetCalories': int.tryParse(_caloriesController.text) ?? 2000,
-      },
-    ));
+          userId: 'demo-user-id',
+          type: GoalType.nutrition,
+          title: _nutritionGoalTitleController.text,
+          targetValue: waterIntake,
+          unit: 'л/день',
+          targetDate: _nutritionTargetDate,
+          metadata: {
+            'targetCalories': int.tryParse(_caloriesController.text) ?? 2000,
+          },
+        ));
   }
-} 
+}

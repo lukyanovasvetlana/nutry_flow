@@ -82,7 +82,8 @@ class _ProgressScreenState extends State<ProgressScreen>
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
-                      onPressed: () => _goalsBloc.add(const LoadGoals('demo_user')),
+                      onPressed: () =>
+                          _goalsBloc.add(const LoadGoals('demo_user')),
                       icon: const Icon(Icons.refresh),
                       label: const Text('Повторить'),
                     ),
@@ -145,7 +146,8 @@ class _ProgressScreenState extends State<ProgressScreen>
   }
 
   Widget _buildActivityTab(List<Goal> goals, List<ProgressEntry> entries) {
-    final activityGoals = goals.where((g) => g.type == GoalType.activity).toList();
+    final activityGoals =
+        goals.where((g) => g.type == GoalType.activity).toList();
     final workoutEntries = entries
         .where((e) => e.type == ProgressEntryType.workout)
         .toList()
@@ -209,7 +211,8 @@ class _ProgressScreenState extends State<ProgressScreen>
   }
 
   Widget _buildNutritionTab(List<Goal> goals, List<ProgressEntry> entries) {
-    final nutritionGoals = goals.where((g) => g.type == GoalType.nutrition).toList();
+    final nutritionGoals =
+        goals.where((g) => g.type == GoalType.nutrition).toList();
     final caloriesEntries = entries
         .where((e) => e.type == ProgressEntryType.calories)
         .toList()
@@ -284,7 +287,7 @@ class _ProgressScreenState extends State<ProgressScreen>
               ),
         ),
         const SizedBox(height: 12),
-        ...goals.map((goal) => _buildGoalCard(goal)),
+        ...goals.map(_buildGoalCard),
       ],
     );
   }
@@ -308,9 +311,10 @@ class _ProgressScreenState extends State<ProgressScreen>
                     children: [
                       Text(
                         goal.title,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -344,7 +348,8 @@ class _ProgressScreenState extends State<ProgressScreen>
             LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0),
               backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(_getProgressColor(progress)),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(_getProgressColor(progress)),
             ),
           ],
         ),
@@ -395,8 +400,10 @@ class _ProgressScreenState extends State<ProgressScreen>
     }
 
     final recentEntries = entries.take(7).toList();
-    final maxValue = recentEntries.map((e) => e.value).reduce((a, b) => a > b ? a : b);
-    final minValue = recentEntries.map((e) => e.value).reduce((a, b) => a < b ? a : b);
+    final maxValue =
+        recentEntries.map((e) => e.value).reduce((a, b) => a > b ? a : b);
+    final minValue =
+        recentEntries.map((e) => e.value).reduce((a, b) => a < b ? a : b);
 
     return Card(
       child: Padding(
@@ -620,7 +627,8 @@ class _ProgressScreenState extends State<ProgressScreen>
                   final date = await showDatePicker(
                     context: context,
                     initialDate: selectedDate,
-                    firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                    firstDate:
+                        DateTime.now().subtract(const Duration(days: 365)),
                     lastDate: DateTime.now(),
                   );
                   if (date != null) {
@@ -714,4 +722,4 @@ class SimpleChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-} 
+}

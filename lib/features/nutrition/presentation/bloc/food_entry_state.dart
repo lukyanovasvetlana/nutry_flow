@@ -47,4 +47,4 @@ class FoodEntryValidationError extends FoodEntryState {
 
   @override
   List<Object> get props => [message];
-} 
+}

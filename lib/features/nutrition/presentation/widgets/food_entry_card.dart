@@ -30,8 +30,8 @@ class FoodEntryCard extends StatelessWidget {
                   child: Text(
                     entry.foodName,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ),
                 if (onEdit != null || onDelete != null)
@@ -65,7 +65,8 @@ class FoodEntryCard extends StatelessWidget {
                             children: [
                               Icon(Icons.delete, size: 16, color: Colors.red),
                               SizedBox(width: 8),
-                              Text('Удалить', style: TextStyle(color: Colors.red)),
+                              Text('Удалить',
+                                  style: TextStyle(color: Colors.red)),
                             ],
                           ),
                         ),
@@ -84,8 +85,8 @@ class FoodEntryCard extends StatelessWidget {
                 Text(
                   '${entry.calories.toStringAsFixed(0)} ккал',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ],
             ),
@@ -118,4 +119,4 @@ class FoodEntryCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

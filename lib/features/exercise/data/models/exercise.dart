@@ -60,4 +60,4 @@ class Exercise {
       'equipment': equipment,
     };
   }
-} 
+}

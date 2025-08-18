@@ -4,7 +4,7 @@ import '../../../../shared/theme/app_colors.dart';
 
 class WeightDataCard extends StatelessWidget {
   final UserProfile? userProfile;
-  
+
   const WeightDataCard({super.key, this.userProfile});
 
   @override
@@ -47,22 +47,22 @@ class WeightDataCard extends StatelessWidget {
                 Text(
                   'Физические\nпараметры',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                  ),
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                      ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Данные о весе и росте
             if (userProfile?.weight != null || userProfile?.height != null)
               _buildParametersSection(context)
             else
               _buildEmptySection(context),
-              
+
             const SizedBox(height: 12),
-            
+
             // ИМТ секция
             _buildBMISection(context),
           ],
@@ -82,10 +82,10 @@ class WeightDataCard extends StatelessWidget {
             Icons.scale,
             AppColors.green,
           ),
-        
+
         if (userProfile?.weight != null && userProfile?.height != null)
           const SizedBox(height: 8),
-          
+
         // Рост
         if (userProfile?.height != null)
           _buildParameterRow(
@@ -98,7 +98,8 @@ class WeightDataCard extends StatelessWidget {
     );
   }
 
-  Widget _buildParameterRow(String label, String value, IconData icon, Color color) {
+  Widget _buildParameterRow(
+      String label, String value, IconData icon, Color color) {
     return Row(
       children: [
         Icon(icon, size: 16, color: color),
@@ -135,9 +136,9 @@ class WeightDataCard extends StatelessWidget {
         Text(
           'Данные не указаны',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey.shade500,
-            fontWeight: FontWeight.w500,
-          ),
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.w500,
+              ),
         ),
       ],
     );
@@ -145,7 +146,7 @@ class WeightDataCard extends StatelessWidget {
 
   Widget _buildBMISection(BuildContext context) {
     final bmi = userProfile?.bmi;
-    
+
     if (bmi == null) {
       return Container(
         padding: const EdgeInsets.all(8),
@@ -252,4 +253,4 @@ class WeightDataCard extends StatelessWidget {
     if (bmi <= 29.9) return Icons.trending_up;
     return Icons.warning;
   }
-} 
+}

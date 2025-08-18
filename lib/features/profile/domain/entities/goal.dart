@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 enum GoalType {
   weight,
-  activity, 
+  activity,
   nutrition,
 }
 
@@ -58,36 +58,43 @@ class Goal extends Equatable {
     if (type == GoalType.weight) {
       final weightGoalType = metadata?['weightGoalType'] as String?;
       final startValue = metadata?['startValue'] as double? ?? currentValue;
-      
+
       if (weightGoalType == 'lose') {
         // Для похудения: чем больше потеряли, тем больше прогресс
         final totalToLose = startValue - targetValue;
         final currentLoss = startValue - currentValue;
-        return totalToLose > 0 ? (currentLoss / totalToLose * 100).clamp(0, 100) : 0;
+        return totalToLose > 0
+            ? (currentLoss / totalToLose * 100).clamp(0, 100)
+            : 0;
       } else if (weightGoalType == 'gain') {
-        // Для набора: чем больше набрали, тем больше прогресс  
+        // Для набора: чем больше набрали, тем больше прогресс
         final totalToGain = targetValue - startValue;
         final currentGain = currentValue - startValue;
-        return totalToGain > 0 ? (currentGain / totalToGain * 100).clamp(0, 100) : 0;
+        return totalToGain > 0
+            ? (currentGain / totalToGain * 100).clamp(0, 100)
+            : 0;
       } else {
         // Для поддержания: насколько близко к целевому весу
         final tolerance = metadata?['tolerance'] as double? ?? 2.0;
         final difference = (currentValue - targetValue).abs();
-        return difference <= tolerance ? 100 : (tolerance / difference * 100).clamp(0, 100);
+        return difference <= tolerance
+            ? 100
+            : (tolerance / difference * 100).clamp(0, 100);
       }
     } else {
       // Для активности и питания: простой процент
-      return targetValue > 0 ? (currentValue / targetValue * 100).clamp(0, 100) : 0;
+      return targetValue > 0
+          ? (currentValue / targetValue * 100).clamp(0, 100)
+          : 0;
     }
   }
 
   bool get isCompleted => status == GoalStatus.completed;
-  
+
   bool get isActive => status == GoalStatus.active;
-  
-  bool get isOverdue => targetDate != null && 
-                       DateTime.now().isAfter(targetDate!) && 
-                       !isCompleted;
+
+  bool get isOverdue =>
+      targetDate != null && DateTime.now().isAfter(targetDate!) && !isCompleted;
 
   int get daysRemaining {
     if (targetDate == null) return -1;
@@ -150,4 +157,4 @@ class Goal extends Equatable {
         createdAt,
         updatedAt,
       ];
-} 
+}

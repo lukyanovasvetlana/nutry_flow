@@ -93,4 +93,4 @@ class ActivitySession extends Equatable {
         exerciseData,
         createdAt,
       ];
-} 
+}

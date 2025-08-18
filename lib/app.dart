@@ -4,8 +4,8 @@ import 'package:nutry_flow/features/calendar/presentation/screens/calendar_scree
 import 'package:nutry_flow/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:nutry_flow/features/meal_plan/presentation/screens/meal_plan_screen.dart';
 
-import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'package:nutry_flow/shared/theme/app_styles.dart';
+import 'package:nutry_flow/shared/theme/theme_manager.dart';
 
 class AppContainer extends StatefulWidget {
   const AppContainer({super.key});
@@ -24,23 +24,61 @@ class _AppContainerState extends State<AppContainer> {
     const MealPlanScreen(),
   ];
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    return _buildMainScreen();
+    return ListenableBuilder(
+      listenable: ThemeManager(),
+      builder: (context, child) {
+        // Получаем текущую тему для принудительного обновления
+        final currentTheme = ThemeManager().currentTheme;
+
+        // Используем AnimatedSwitcher для плавного перехода между темами
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _buildMainScreen(
+              key: ValueKey('app-container-${currentTheme.name}')),
+        );
+      },
+    );
   }
 
-  Widget _buildMainScreen() {
+  Widget _buildMainScreen({Key? key}) {
     return Scaffold(
+      key: key, // Добавляем key для принудительного обновления
       appBar: _selectedIndex == 0
           ? AppBar(
-              backgroundColor: AppColors.surface,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               elevation: 0,
-              title: Text('NutryFlow', style: AppStyles.headlineMedium),
+              title: Text(
+                'Nutrigo',
+                style: AppStyles.headlineMedium.copyWith(
+                  color: Theme.of(context).appBarTheme.foregroundColor,
+                ),
+              ),
               centerTitle: false,
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    ThemeManager().themeIcon,
+                    color: Theme.of(context).appBarTheme.foregroundColor,
+                  ),
+                  onPressed: () async {
+                    // Добавляем индикатор загрузки при переключении темы
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          ThemeManager().currentTheme == ThemeMode.light
+                              ? 'Переключение на темную тему...'
+                              : 'Переключение на светлую тему...',
+                        ),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+
+                    await ThemeManager().toggleTheme();
+                  },
+                ),
+              ],
             )
           : null,
       body: IndexedStack(
@@ -67,9 +105,12 @@ class _AppContainerState extends State<AppContainer> {
           ),
         ],
         currentIndex: _selectedIndex,
-                 backgroundColor: AppColors.background,
-         selectedItemColor: AppColors.button,
-         unselectedItemColor: Colors.grey[600],
+        backgroundColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+        selectedItemColor:
+            Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+        unselectedItemColor:
+            Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -98,26 +139,38 @@ class _PeriodDropdownState extends State<_PeriodDropdown> {
         DropdownButton<String>(
           value: month,
           items: [
-            'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+            'Январь',
+            'Февраль',
+            'Март',
+            'Апрель',
+            'Май',
+            'Июнь',
+            'Июль',
+            'Август',
+            'Сентябрь',
+            'Октябрь',
+            'Ноябрь',
+            'Декабрь'
           ].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
           onChanged: (v) => setState(() => month = v!),
         ),
         SizedBox(width: 4),
         DropdownButton<String>(
           value: year,
-          items: [
-            '2025', '2026', '2027', '2028', '2029', '2030'
-          ].map((y) => DropdownMenuItem(value: y, child: Text(y))).toList(),
+          items: ['2025', '2026', '2027', '2028', '2029', '2030']
+              .map((y) => DropdownMenuItem(value: y, child: Text(y)))
+              .toList(),
           onChanged: (v) => setState(() => year = v!),
         ),
         SizedBox(width: 4),
         DropdownButton<String>(
           value: week,
           items: List.generate(12, (i) => 'Неделя ${i + 1}')
-              .map((w) => DropdownMenuItem(value: w, child: Text(w))).toList(),
+              .map((w) => DropdownMenuItem(value: w, child: Text(w)))
+              .toList(),
           onChanged: (v) => setState(() => week = v!),
         ),
       ],
     );
   }
-} 
+}

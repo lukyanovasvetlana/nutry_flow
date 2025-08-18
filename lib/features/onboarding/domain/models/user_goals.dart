@@ -74,16 +74,16 @@ class UserGoals {
   }
 
   bool get isValid {
-    return mainGoal != null && 
-           height != null &&
-           height! >= 100 &&
-           height! <= 250 &&
-           targetWeight != null && 
-           targetWeight! >= 30 && 
-           targetWeight! <= 300 &&
-           timeframeMonths != null && 
-           timeframeMonths! >= 1 && 
-           timeframeMonths! <= 12;
+    return mainGoal != null &&
+        height != null &&
+        height! >= 100 &&
+        height! <= 250 &&
+        targetWeight != null &&
+        targetWeight! >= 30 &&
+        targetWeight! <= 300 &&
+        timeframeMonths != null &&
+        timeframeMonths! >= 1 &&
+        timeframeMonths! <= 12;
   }
 
   String? get validationError {
@@ -96,7 +96,9 @@ class UserGoals {
     if (targetWeight! < 30 || targetWeight! > 300) {
       return 'Вес должен быть от 30 до 300 кг';
     }
-    if (timeframeMonths == null) return 'Необходимо указать период достижения цели';
+    if (timeframeMonths == null) {
+      return 'Необходимо указать период достижения цели';
+    }
     if (timeframeMonths! < 1 || timeframeMonths! > 12) {
       return 'Период должен быть от 1 до 12 месяцев';
     }
@@ -113,9 +115,9 @@ class UserGoals {
         other.timeframeMonths == timeframeMonths &&
         other.dietType == dietType &&
         other.allergens.length == allergens.length &&
-        other.allergens.every((allergen) => allergens.contains(allergen)) &&
+        other.allergens.every(allergens.contains) &&
         other.workoutTypes.length == workoutTypes.length &&
-        other.workoutTypes.every((type) => workoutTypes.contains(type)) &&
+        other.workoutTypes.every(workoutTypes.contains) &&
         other.workoutFrequency == workoutFrequency &&
         other.workoutDuration == workoutDuration;
   }
@@ -175,4 +177,4 @@ class GoalOption {
       color: json['color'] as String,
     );
   }
-} 
+}

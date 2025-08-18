@@ -43,7 +43,8 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
         _fetchStatus = _getFetchStatusString(status);
       });
     } catch (e) {
-      developer.log('Failed to load A/B testing data: $e', name: 'ABTestingScreen');
+      developer.log('Failed to load A/B testing data: $e',
+          name: 'ABTestingScreen');
     } finally {
       setState(() {
         _isLoading = false;
@@ -179,9 +180,9 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
             ),
             const SizedBox(height: 12),
             ..._activeExperiments.entries.map((entry) => _buildExperimentCard(
-              entry.key,
-              entry.value,
-            )),
+                  entry.key,
+                  entry.value,
+                )),
           ],
         ),
       ),
@@ -241,9 +242,9 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
               )
             else
               ..._featureFlags.entries.map((entry) => _buildFeatureFlagCard(
-                entry.key,
-                entry.value,
-              )),
+                    entry.key,
+                    entry.value,
+                  )),
           ],
         ),
       ),
@@ -297,34 +298,35 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
           'Отследить конверсию цели',
           Icons.track_changes,
           Colors.green,
-          () => _trackGoalConversion(),
+          _trackGoalConversion,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить конверсию регистрации',
           Icons.person_add,
           Colors.orange,
-          () => _trackRegistrationConversion(),
+          _trackRegistrationConversion,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить конверсию покупки',
           Icons.shopping_cart,
           Colors.purple,
-          () => _trackPurchaseConversion(),
+          _trackPurchaseConversion,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Тест флага функции',
           Icons.flag,
           Colors.teal,
-          () => _testFeatureFlag(),
+          _testFeatureFlag,
         ),
       ],
     );
   }
 
-  Widget _buildActionButton(String title, IconData icon, Color color, VoidCallback onPressed) {
+  Widget _buildActionButton(
+      String title, IconData icon, Color color, VoidCallback onPressed) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
@@ -411,7 +413,8 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
     }
   }
 
-  Future<void> _trackExperimentExposure(String experimentName, String variant) async {
+  Future<void> _trackExperimentExposure(
+      String experimentName, String variant) async {
     try {
       await ABTestingService.instance.trackExperimentExposure(
         experimentName: experimentName,
@@ -431,7 +434,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
   Future<void> _trackGoalConversion() async {
     try {
       final experiments = ABTestingService.instance.getAllActiveExperiments();
-      
+
       for (final entry in experiments.entries) {
         await ABTestingService.instance.trackExperimentConversion(
           experimentName: entry.key,
@@ -454,7 +457,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
   Future<void> _trackRegistrationConversion() async {
     try {
       final experiments = ABTestingService.instance.getAllActiveExperiments();
-      
+
       for (final entry in experiments.entries) {
         await ABTestingService.instance.trackExperimentConversion(
           experimentName: entry.key,
@@ -476,7 +479,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
   Future<void> _trackPurchaseConversion() async {
     try {
       final experiments = ABTestingService.instance.getAllActiveExperiments();
-      
+
       for (final entry in experiments.entries) {
         await ABTestingService.instance.trackExperimentConversion(
           experimentName: entry.key,
@@ -498,9 +501,12 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
 
   Future<void> _testFeatureFlag() async {
     try {
-      final isPremiumEnabled = ABTestingService.instance.isFeatureEnabled('premium_features');
-      final isSocialEnabled = ABTestingService.instance.isFeatureEnabled('social_features');
-      final isAIEnabled = ABTestingService.instance.isFeatureEnabled('ai_recommendations');
+      final isPremiumEnabled =
+          ABTestingService.instance.isFeatureEnabled('premium_features');
+      final isSocialEnabled =
+          ABTestingService.instance.isFeatureEnabled('social_features');
+      final isAIEnabled =
+          ABTestingService.instance.isFeatureEnabled('ai_recommendations');
 
       _showSnackBar(
         'Флаги: Premium=$isPremiumEnabled, Social=$isSocialEnabled, AI=$isAIEnabled',
@@ -520,4 +526,4 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
       ),
     );
   }
-} 
+}

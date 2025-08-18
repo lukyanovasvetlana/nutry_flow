@@ -19,7 +19,7 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
   @override
   Future<void> trackEvents(List<AnalyticsEvent> events) async {
-    final eventModels = events.map((e) => AnalyticsEventModel.fromEntity(e)).toList();
+    final eventModels = events.map(AnalyticsEventModel.fromEntity).toList();
     await _analyticsService.trackEvents(eventModels);
   }
 
@@ -62,8 +62,10 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
   }
 
   @override
-  Future<AnalyticsData?> getSavedAnalyticsData(String userId, DateTime date) async {
-    final dataModel = await _analyticsService.getSavedAnalyticsData(userId, date);
+  Future<AnalyticsData?> getSavedAnalyticsData(
+      String userId, DateTime date) async {
+    final dataModel =
+        await _analyticsService.getSavedAnalyticsData(userId, date);
     return dataModel;
   }
 
@@ -86,4 +88,4 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
   Future<void> resetUser() async {
     await _analyticsService.resetUser();
   }
-} 
+}

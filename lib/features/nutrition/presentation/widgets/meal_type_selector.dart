@@ -6,17 +6,17 @@ class MealTypeSelector extends StatelessWidget {
   final Function(MealType) onMealTypeChanged;
 
   const MealTypeSelector({
-    Key? key,
+    super.key,
     required this.selectedMealType,
     required this.onMealTypeChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: MealType.values.map((mealType) {
         final isSelected = selectedMealType == mealType;
-        
+
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -25,13 +25,13 @@ class MealTypeSelector extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: isSelected 
-                      ? Theme.of(context).primaryColor 
+                  color: isSelected
+                      ? Theme.of(context).primaryColor
                       : Colors.grey[200],
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected 
-                        ? Theme.of(context).primaryColor 
+                    color: isSelected
+                        ? Theme.of(context).primaryColor
                         : Colors.grey[300]!,
                   ),
                 ),
@@ -48,7 +48,8 @@ class MealTypeSelector extends StatelessWidget {
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[600],
                         fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -87,4 +88,4 @@ class MealTypeSelector extends StatelessWidget {
         return 'Перекус';
     }
   }
-} 
+}

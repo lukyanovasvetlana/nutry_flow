@@ -36,10 +36,9 @@ class GetUserProfileUseCase {
 
   /// Получает профиль пользователя по ID
   Future<GetUserProfileResult> execute(String userId) async {
-    
     try {
       final profile = await _profileRepository.getUserProfile(userId);
-      
+
       if (profile != null) {
         return GetUserProfileResult.success(profile);
       } else {
@@ -49,4 +48,4 @@ class GetUserProfileUseCase {
       return GetUserProfileResult.failure('Failed to load profile: $e');
     }
   }
-} 
+}

@@ -36,9 +36,15 @@ class MenuItem {
       category: json['category'] as String,
       difficulty: json['difficulty'] as String,
       rating: (json['rating'] as num?)?.toDouble() ?? 0,
-      photos: (json['photos'] as List? ?? []).map((p) => RecipePhoto.fromJson(p)).toList(),
-      ingredients: (json['ingredients'] as List? ?? []).map((i) => Ingredient.fromJson(i)).toList(),
-      steps: (json['steps'] as List? ?? []).map((s) => RecipeStep.fromJson(s)).toList(),
+      photos: (json['photos'] as List? ?? [])
+          .map((p) => RecipePhoto.fromJson(p))
+          .toList(),
+      ingredients: (json['ingredients'] as List? ?? [])
+          .map((i) => Ingredient.fromJson(i))
+          .toList(),
+      steps: (json['steps'] as List? ?? [])
+          .map((s) => RecipeStep.fromJson(s))
+          .toList(),
       nutrition: NutritionFacts.fromJson(json['nutrition']),
     );
   }
@@ -57,4 +63,4 @@ class MenuItem {
       'nutrition': nutrition.toJson(),
     };
   }
-} 
+}

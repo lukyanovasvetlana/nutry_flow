@@ -9,6 +9,8 @@ abstract class WorkoutRepository {
   Future<Either<String, Workout>> updateWorkout(Workout workout);
   Future<Either<String, void>> deleteWorkout(String id);
   Future<Either<String, void>> saveAsTemplate(String workoutId);
-  Future<Either<String, List<Workout>>> searchWorkouts(String userId, String query);
-  Future<Either<String, List<Workout>>> filterWorkoutsByDifficulty(String userId, String difficulty);
-} 
+  Future<Either<String, List<Workout>>> searchWorkouts(
+      String userId, String query);
+  Future<Either<String, List<Workout>>> filterWorkoutsByDifficulty(
+      String userId, String difficulty);
+}

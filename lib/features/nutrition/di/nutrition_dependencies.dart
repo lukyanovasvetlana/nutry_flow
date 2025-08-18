@@ -106,13 +106,18 @@ class NutritionDependencies {
   }
 
   // Getters for easy access
-  static NutritionSearchCubit get nutritionSearchCubit => _getIt<NutritionSearchCubit>();
+  static NutritionSearchCubit get nutritionSearchCubit =>
+      _getIt<NutritionSearchCubit>();
   static FoodEntryCubit get foodEntryCubit => _getIt<FoodEntryCubit>();
-  static NutritionDiaryCubit get nutritionDiaryCubit => _getIt<NutritionDiaryCubit>();
-  
-  static NutritionRepository get nutritionRepository => _getIt<NutritionRepository>();
-  static NutritionApiService get nutritionApiService => _getIt<NutritionApiService>();
-  static NutritionCacheService get nutritionCacheService => _getIt<NutritionCacheService>();
+  static NutritionDiaryCubit get nutritionDiaryCubit =>
+      _getIt<NutritionDiaryCubit>();
+
+  static NutritionRepository get nutritionRepository =>
+      _getIt<NutritionRepository>();
+  static NutritionApiService get nutritionApiService =>
+      _getIt<NutritionApiService>();
+  static NutritionCacheService get nutritionCacheService =>
+      _getIt<NutritionCacheService>();
 
   // Cleanup method
   static void dispose() {
@@ -130,4 +135,4 @@ class NutritionDependencies {
     // Unregister all dependencies
     _getIt.reset();
   }
-} 
+}

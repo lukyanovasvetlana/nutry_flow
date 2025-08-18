@@ -202,7 +202,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     on<FilterWorkoutsByDifficulty>(_onFilterWorkoutsByDifficulty);
   }
 
-  Future<void> _onLoadUserWorkouts(LoadUserWorkouts event, Emitter<WorkoutState> emit) async {
+  Future<void> _onLoadUserWorkouts(
+      LoadUserWorkouts event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
     final result = await _getUserWorkoutsUseCase(event.userId);
@@ -223,7 +224,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onLoadWorkoutTemplates(LoadWorkoutTemplates event, Emitter<WorkoutState> emit) async {
+  Future<void> _onLoadWorkoutTemplates(
+      LoadWorkoutTemplates event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
     final result = await _getWorkoutTemplatesUseCase(event.userId);
@@ -244,7 +246,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onCreateWorkout(CreateWorkout event, Emitter<WorkoutState> emit) async {
+  Future<void> _onCreateWorkout(
+      CreateWorkout event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
     final result = await _createWorkoutUseCase(event.workout);
@@ -259,7 +262,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onUpdateWorkout(UpdateWorkout event, Emitter<WorkoutState> emit) async {
+  Future<void> _onUpdateWorkout(
+      UpdateWorkout event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
     final result = await _updateWorkoutUseCase(event.workout);
@@ -274,7 +278,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onDeleteWorkout(DeleteWorkout event, Emitter<WorkoutState> emit) async {
+  Future<void> _onDeleteWorkout(
+      DeleteWorkout event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
     final result = await _deleteWorkoutUseCase(event.workoutId);
@@ -295,7 +300,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onSaveWorkoutAsTemplate(SaveWorkoutAsTemplate event, Emitter<WorkoutState> emit) async {
+  Future<void> _onSaveWorkoutAsTemplate(
+      SaveWorkoutAsTemplate event, Emitter<WorkoutState> emit) async {
     final result = await _saveAsTemplateUseCase(event.workoutId);
 
     result.fold(
@@ -312,7 +318,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onSearchWorkouts(SearchWorkouts event, Emitter<WorkoutState> emit) async {
+  Future<void> _onSearchWorkouts(
+      SearchWorkouts event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
     final result = await _searchWorkoutsUseCase(event.userId, event.query);
@@ -338,10 +345,12 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
   }
 
-  Future<void> _onFilterWorkoutsByDifficulty(FilterWorkoutsByDifficulty event, Emitter<WorkoutState> emit) async {
+  Future<void> _onFilterWorkoutsByDifficulty(
+      FilterWorkoutsByDifficulty event, Emitter<WorkoutState> emit) async {
     emit(WorkoutLoading());
 
-    final result = await _filterByDifficultyUseCase(event.userId, event.difficulty);
+    final result =
+        await _filterByDifficultyUseCase(event.userId, event.difficulty);
 
     result.fold(
       (error) => emit(WorkoutError(error)),
@@ -363,4 +372,4 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       },
     );
   }
-} 
+}

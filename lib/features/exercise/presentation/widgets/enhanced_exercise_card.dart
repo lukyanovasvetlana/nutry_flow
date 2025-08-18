@@ -7,10 +7,10 @@ class EnhancedExerciseCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   const EnhancedExerciseCard({
-    Key? key,
+    super.key,
     required this.exercise,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedExerciseCard> createState() => _EnhancedExerciseCardState();
@@ -21,7 +21,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _elevationAnimation;
-  
+
   bool _isPressed = false;
 
   @override
@@ -31,7 +31,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 0.98,
@@ -39,7 +39,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
+
     _elevationAnimation = Tween<double>(
       begin: 0.0,
       end: 8.0,
@@ -111,9 +111,9 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
     final minutes = widget.exercise.restSeconds ~/ 60;
     final seconds = widget.exercise.restSeconds % 60;
     if (minutes > 0) {
-      return '${minutes}м ${seconds}с';
+      return '$minutesм $secondsс';
     }
-    return '${seconds}с';
+    return '$secondsс';
   }
 
   Color _getDifficultyColor() {
@@ -170,12 +170,12 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                 onTapUp: _onTapUp,
                 onTapCancel: _onTapCancel,
                 borderRadius: BorderRadius.circular(16),
-                                  child: Container(
-                    padding: const EdgeInsets.all(20),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: _isPressed 
+                      color: _isPressed
                           ? context.colors.primary.withValues(alpha: 0.3)
                           : context.colors.outline,
                       width: _isPressed ? 2 : 1,
@@ -212,7 +212,7 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                         ),
                       ),
                       const SizedBox(width: 20),
-                      
+
                       // Exercise Info
                       Expanded(
                         flex: 2,
@@ -238,16 +238,19 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                                       vertical: 3,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: _getDifficultyColor().withValues(alpha: 0.1),
+                                      color: _getDifficultyColor()
+                                          .withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
                                       widget.exercise.difficulty == 'Beginner'
                                           ? 'Новичок'
-                                          : widget.exercise.difficulty == 'Intermediate'
+                                          : widget.exercise.difficulty ==
+                                                  'Intermediate'
                                               ? 'Средний'
                                               : 'Продвинутый',
-                                      style: context.typography.bodySmallStyle.copyWith(
+                                      style: context.typography.bodySmallStyle
+                                          .copyWith(
                                         color: _getDifficultyColor(),
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -259,7 +262,8 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                                 Flexible(
                                   child: Text(
                                     widget.exercise.category,
-                                    style: context.typography.bodySmallStyle.copyWith(
+                                    style: context.typography.bodySmallStyle
+                                        .copyWith(
                                       color: context.colors.onSurfaceVariant,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -270,20 +274,20 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
                           ],
                         ),
                       ),
-                      
+
                       // Stats columns
                       _buildStatColumn(
                         label: 'Подходы',
                         value: '${widget.exercise.sets}',
                         icon: Icons.repeat,
                       ),
-                      
+
                       _buildStatColumn(
                         label: 'Повторения',
                         value: _getDisplayReps(),
                         icon: Icons.fitness_center,
                       ),
-                      
+
                       _buildStatColumn(
                         label: 'Отдых',
                         value: _getDisplayRest(),
@@ -327,19 +331,19 @@ class _EnhancedExerciseCardState extends State<EnhancedExerciseCard>
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 2),
-                          Text(
-                label,
-                textAlign: TextAlign.center,
-                style: context.typography.bodySmallStyle.copyWith(
-                  color: context.colors.onSurfaceVariant,
-                  fontSize: 10,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: context.typography.bodySmallStyle.copyWith(
+                color: context.colors.onSurfaceVariant,
+                fontSize: 10,
               ),
-            ],
-          ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
-} 
+}

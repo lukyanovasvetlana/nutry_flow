@@ -30,4 +30,4 @@ class Ingredient {
       'nutrition_per_100g': nutritionPer100g.toJson(),
     };
   }
-} 
+}

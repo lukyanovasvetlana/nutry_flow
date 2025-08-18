@@ -15,4 +15,4 @@ class ResetPasswordUseCase {
       return Left(ServerFailure(e.toString()));
     }
   }
-} 
+}

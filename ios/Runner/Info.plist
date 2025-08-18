@@ -49,5 +49,13 @@
 	<string>This app needs access to camera to take photos for your profile avatar.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to photo library to select images for your profile avatar.</string>
+	<!-- Local Network permission for Flutter VM Service (iOS 14+) -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow local network access so Flutter tools can connect for debugging during development.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartVmService._tcp</string>
+		<string>_dartobservatory._tcp</string>
+	</array>
 </dict>
 </plist>

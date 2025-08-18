@@ -28,7 +28,8 @@ class AnalyticsDataModel extends AnalyticsData {
       date: DateTime.parse(json['date'] as String),
       metrics: Map<String, dynamic>.from(json['metrics'] as Map),
       events: (json['events'] as List)
-          .map((eventJson) => AnalyticsEventModel.fromJson(eventJson as Map<String, dynamic>))
+          .map((eventJson) =>
+              AnalyticsEventModel.fromJson(eventJson as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -39,7 +40,9 @@ class AnalyticsDataModel extends AnalyticsData {
       'user_id': userId,
       'date': date.toIso8601String(),
       'metrics': metrics,
-      'events': events.map((event) => (event as AnalyticsEventModel).toJson()).toList(),
+      'events': events
+          .map((event) => (event as AnalyticsEventModel).toJson())
+          .toList(),
     };
   }
 
@@ -63,7 +66,7 @@ class AnalyticsDataModel extends AnalyticsData {
   AnalyticsDataModel addMetric(String key, dynamic value) {
     final updatedMetrics = Map<String, dynamic>.from(metrics);
     updatedMetrics[key] = value;
-    
+
     return AnalyticsDataModel(
       userId: userId,
       date: date,
@@ -100,4 +103,4 @@ class AnalyticsDataModel extends AnalyticsData {
         metrics.toString().hashCode ^
         events.length.hashCode;
   }
-} 
+}

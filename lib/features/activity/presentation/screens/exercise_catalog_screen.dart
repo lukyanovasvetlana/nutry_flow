@@ -7,11 +7,11 @@ import '../../../../shared/design/tokens/design_tokens.dart';
 
 class ExerciseCatalogScreen extends StatefulWidget {
   final String? initialCategory;
-  
+
   const ExerciseCatalogScreen({
-    Key? key,
+    super.key,
     this.initialCategory,
-  }) : super(key: key);
+  });
 
   @override
   State<ExerciseCatalogScreen> createState() => _ExerciseCatalogScreenState();
@@ -29,7 +29,7 @@ class _ExerciseCatalogScreenState extends State<ExerciseCatalogScreen>
     super.initState();
     _exerciseBloc = GetIt.instance.get<ExerciseBloc>();
     _initializeAnimations();
-    
+
     if (widget.initialCategory != null) {
       _exerciseBloc.add(FilterByCategory(widget.initialCategory!));
     } else {
@@ -42,12 +42,12 @@ class _ExerciseCatalogScreenState extends State<ExerciseCatalogScreen>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _listAnimation = CurvedAnimation(
       parent: _listAnimationController,
       curve: Curves.easeOutQuart,
     );
-    
+
     _listAnimationController.forward();
   }
 
@@ -235,10 +235,10 @@ class _ExerciseCatalogScreenState extends State<ExerciseCatalogScreen>
                   side: BorderSide(color: context.colors.outline),
                 ),
               );
-            }).toList(),
+            }),
             const SizedBox(width: 16),
           ],
-          
+
           // Difficulty filter
           if (state.difficulties.isNotEmpty) ...[
             Text(
@@ -266,13 +266,13 @@ class _ExerciseCatalogScreenState extends State<ExerciseCatalogScreen>
                   backgroundColor: context.colors.surfaceVariant,
                   selectedColor: context.colors.primaryLight,
                   labelStyle: context.typography.bodyMediumStyle.copyWith(
-                    color: isSelected 
-                        ? context.colors.onPrimary 
+                    color: isSelected
+                        ? context.colors.onPrimary
                         : context.colors.onSurfaceVariant,
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ],
       ),
@@ -333,4 +333,4 @@ class _ExerciseCatalogScreenState extends State<ExerciseCatalogScreen>
       ),
     );
   }
-} 
+}

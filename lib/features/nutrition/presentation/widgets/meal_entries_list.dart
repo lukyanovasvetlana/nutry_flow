@@ -30,13 +30,13 @@ class MealEntriesList extends StatelessWidget {
         _buildMealHeader(),
         const SizedBox(height: 8),
         ...entries.map((entry) => Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: FoodEntryCard(
-            entry: entry,
-            onEdit: () => onEdit(entry),
-            onDelete: () => onDelete(entry),
-          ),
-        )),
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: FoodEntryCard(
+                entry: entry,
+                onEdit: () => onEdit(entry),
+                onDelete: () => onDelete(entry),
+              ),
+            )),
       ],
     );
   }
@@ -108,4 +108,4 @@ class MealEntriesList extends StatelessWidget {
         return 'Snack';
     }
   }
-} 
+}

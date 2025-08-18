@@ -20,13 +20,11 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
     with TickerProviderStateMixin {
   late ActivityBloc _activityBloc;
   late TabController _tabController;
-  
+
   String _selectedPeriod = 'week';
   DateTime _selectedDate = DateTime.now();
-  
-  ActivityStats? _dailyStats;
+
   List<ActivityStats> _weeklyStats = [];
-  List<ActivityStats> _monthlyStats = [];
   List<ActivitySession> _recentSessions = [];
   Map<String, dynamic> _analytics = {};
 
@@ -46,12 +44,14 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
 
   void _loadStats() {
     final userId = 'current_user_id'; // TODO: Get from auth
-    
+
     _activityBloc.add(LoadDailyStats(userId, _selectedDate));
     _activityBloc.add(LoadWeeklyStats(userId, _getWeekStart(_selectedDate)));
     _activityBloc.add(LoadMonthlyStats(userId, _getMonthStart(_selectedDate)));
-    _activityBloc.add(LoadUserSessions(userId, from: _selectedDate.subtract(const Duration(days: 7))));
-    _activityBloc.add(LoadActivityAnalytics(userId, from: _selectedDate.subtract(const Duration(days: 30))));
+    _activityBloc.add(LoadUserSessions(userId,
+        from: _selectedDate.subtract(const Duration(days: 7))));
+    _activityBloc.add(LoadActivityAnalytics(userId,
+        from: _selectedDate.subtract(const Duration(days: 30))));
   }
 
   DateTime _getWeekStart(DateTime date) {
@@ -94,7 +94,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
           listener: (context, state) {
             if (state is DailyStatsLoaded) {
               setState(() {
-                _dailyStats = state.stats;
+                // _dailyStats = state.stats; // Removed
               });
             } else if (state is WeeklyStatsLoaded) {
               setState(() {
@@ -102,7 +102,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
               });
             } else if (state is MonthlyStatsLoaded) {
               setState(() {
-                _monthlyStats = state.stats;
+                // _monthlyStats = state.stats; // Removed
               });
             } else if (state is UserSessionsLoaded) {
               setState(() {
@@ -220,7 +220,8 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
         ),
         StatsCard(
           title: 'Средняя оценка',
-          value: '${_analytics['averageRating']?.toStringAsFixed(1) ?? '0.0'}/5',
+          value:
+              '${_analytics['averageRating']?.toStringAsFixed(1) ?? '0.0'}/5',
           icon: Icons.star,
           color: context.colors.error,
         ),
@@ -247,10 +248,11 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
             _buildStatRow('Лучший день', _analytics['bestDay'] ?? 'Нет данных'),
-            _buildStatRow('Средняя продолжительность', _formatDuration(_analytics['averageDuration'] ?? 0)),
-            _buildStatRow('Любимое упражнение', _analytics['favoriteExercise'] ?? 'Нет данных'),
+            _buildStatRow('Средняя продолжительность',
+                _formatDuration(_analytics['averageDuration'] ?? 0)),
+            _buildStatRow('Любимое упражнение',
+                _analytics['favoriteExercise'] ?? 'Нет данных'),
             _buildStatRow('Дней подряд', '${_analytics['streakDays'] ?? 0}'),
           ],
         ),
@@ -301,7 +303,6 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
             if (_recentSessions.isEmpty)
               Center(
                 child: Padding(
@@ -353,7 +354,8 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
                       ),
                     ),
                     trailing: Text(
-                      _formatDuration((session.actualDurationMinutes ?? 0) * 60),
+                      _formatDuration(
+                          (session.actualDurationMinutes ?? 0) * 60),
                       style: context.typography.bodyMediumStyle.copyWith(
                         color: context.colors.primary,
                         fontWeight: FontWeight.w600,
@@ -402,15 +404,16 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
             SizedBox(
               height: 200,
               child: ActivityChart(
-                data: _weeklyStats.map((stat) => {
-                  'date': stat.date,
-                  'duration': stat.totalDurationMinutes,
-                  'calories': stat.totalCaloriesBurned,
-                }).toList(),
+                data: _weeklyStats
+                    .map((stat) => {
+                          'date': stat.date,
+                          'duration': stat.totalDurationMinutes,
+                          'calories': stat.totalCaloriesBurned,
+                        })
+                    .toList(),
                 type: 'activity',
               ),
             ),
@@ -439,14 +442,15 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
             SizedBox(
               height: 200,
               child: ActivityChart(
-                data: _weeklyStats.map((stat) => {
-                  'date': stat.date,
-                  'calories': stat.totalCaloriesBurned,
-                }).toList(),
+                data: _weeklyStats
+                    .map((stat) => {
+                          'date': stat.date,
+                          'calories': stat.totalCaloriesBurned,
+                        })
+                    .toList(),
                 type: 'calories',
               ),
             ),
@@ -457,8 +461,9 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
   }
 
   Widget _buildWorkoutTypeChart() {
-    final workoutTypes = _analytics['workoutTypes'] as Map<String, dynamic>? ?? {};
-    
+    final workoutTypes =
+        _analytics['workoutTypes'] as Map<String, dynamic>? ?? {};
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -477,13 +482,13 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
             SizedBox(
               height: 200,
               child: PieChart(
                 PieChartData(
                   sections: workoutTypes.entries.map((entry) {
-                    final total = workoutTypes.values.reduce((sum, value) => sum + value);
+                    final total =
+                        workoutTypes.values.reduce((sum, value) => sum + value);
                     final percentage = entry.value / total;
                     return PieChartSectionData(
                       value: entry.value.toDouble(),
@@ -500,9 +505,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
                 ),
               ),
             ),
-            
             const SizedBox(height: 16),
-            
             Wrap(
               spacing: 16,
               runSpacing: 8,
@@ -584,7 +587,8 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      _formatDuration((session.actualDurationMinutes ?? 0) * 60),
+                      _formatDuration(
+                          (session.actualDurationMinutes ?? 0) * 60),
                       style: context.typography.bodySmallStyle.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),
@@ -627,7 +631,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
       context.colors.error,
       context.colors.outline,
     ];
-    
+
     final index = type.hashCode % colors.length;
     return colors[index];
   }
@@ -639,7 +643,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
-    
+
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
@@ -651,18 +655,18 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
   String _formatDuration(int seconds) {
     final hours = seconds ~/ 3600;
     final minutes = (seconds % 3600) ~/ 60;
-    
+
     if (hours > 0) {
-      return '${hours}ч ${minutes}м';
+      return '$hoursч $minutesм';
     } else {
-      return '${minutes}м';
+      return '$minutesм';
     }
   }
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date).inDays;
-    
+
     if (difference == 0) {
       return 'Сегодня';
     } else if (difference == 1) {
@@ -673,4 +677,4 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
       return '${date.day}.${date.month}.${date.year}';
     }
   }
-} 
+}

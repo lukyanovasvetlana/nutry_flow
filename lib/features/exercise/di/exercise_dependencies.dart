@@ -3,4 +3,4 @@ class ExerciseDependencies {
   static void initialize() {
     // TODO: Реализовать после добавления domain и data/repositories
   }
-} 
+}

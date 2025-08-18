@@ -7,10 +7,10 @@ class ActivityChart extends StatelessWidget {
   final String type;
 
   const ActivityChart({
-    Key? key,
+    super.key,
     required this.data,
     required this.type,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +159,7 @@ class ActivityChart extends StatelessWidget {
     return data.asMap().entries.map((entry) {
       final index = entry.key;
       final item = entry.value;
-      
+
       double value;
       if (type == 'activity') {
         value = (item['duration'] as int).toDouble();
@@ -168,14 +168,14 @@ class ActivityChart extends StatelessWidget {
       } else {
         value = 0;
       }
-      
+
       return FlSpot(index.toDouble(), value);
     }).toList();
   }
 
   double _getMaxY() {
     if (data.isEmpty) return 10;
-    
+
     double maxValue = 0;
     for (final item in data) {
       double value;
@@ -186,13 +186,13 @@ class ActivityChart extends StatelessWidget {
       } else {
         value = 0;
       }
-      
+
       if (value > maxValue) {
         maxValue = value;
       }
     }
-    
+
     // Add some padding to the max value
     return maxValue * 1.2;
   }
-} 
+}

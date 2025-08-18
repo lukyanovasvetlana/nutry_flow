@@ -24,22 +24,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       setState(() {
         _isLoading = true;
       });
-      
+
       // TODO: Добавить реальную логику восстановления пароля
       // Пока что просто имитируем задержку
       Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           _isLoading = false;
         });
-        
+
         // Показываем сообщение об успехе
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Инструкции по восстановлению пароля отправлены на ваш email'),
+            content: Text(
+                'Инструкции по восстановлению пароля отправлены на ваш email'),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Возвращаемся на экран входа
         Navigator.pushReplacementNamed(context, '/login');
       });
@@ -77,7 +78,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 20),
               Text(
                 'Введите email, указанный при регистрации. Мы отправим инструкции по восстановлению пароля.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -97,7 +101,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColors.green, width: 2),
+                          borderSide:
+                              BorderSide(color: AppColors.green, width: 2),
                         ),
                         errorBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
@@ -111,7 +116,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Пожалуйста, введите email';
                         }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value)) {
                           return 'Пожалуйста, введите корректный email';
                         }
                         return null;
@@ -136,7 +142,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               )
                             : const Text('Отправить инструкции'),
@@ -171,4 +178,4 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
     );
   }
-} 
+}

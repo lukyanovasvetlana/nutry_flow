@@ -17,7 +17,8 @@ class AnalyticsService {
     if (_isInitialized) return;
 
     try {
-      developer.log('📊 AnalyticsService: Initializing analytics service', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Initializing analytics service',
+          name: 'AnalyticsService');
 
       _analytics = MockFirebaseAnalytics.instance;
 
@@ -28,9 +29,13 @@ class AnalyticsService {
       await _setDefaultUserProperties();
 
       _isInitialized = true;
-      developer.log('📊 AnalyticsService: Analytics service initialized successfully', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Analytics service initialized successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to initialize analytics service: $e', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Failed to initialize analytics service: $e',
+          name: 'AnalyticsService');
       rethrow;
     }
   }
@@ -40,17 +45,20 @@ class AnalyticsService {
     try {
       await _analytics.setUserProperty(name: 'app_version', value: '1.0.0');
       await _analytics.setUserProperty(name: 'platform', value: 'mobile');
-      
+
       // Получаем информацию о пользователе из Supabase
       final user = SupabaseService.instance.currentUser;
       if (user != null) {
         await _analytics.setUserProperty(name: 'user_id', value: user.id);
         if (user.email != null) {
-          await _analytics.setUserProperty(name: 'user_email', value: user.email!);
+          await _analytics.setUserProperty(
+              name: 'user_email', value: user.email!);
         }
       }
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to set default user properties: $e', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Failed to set default user properties: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -61,20 +69,26 @@ class AnalyticsService {
   }) async {
     try {
       if (!_isInitialized) {
-        developer.log('📊 AnalyticsService: Analytics not initialized, skipping event: $name', name: 'AnalyticsService');
+        developer.log(
+            '📊 AnalyticsService: Analytics not initialized, skipping event: $name',
+            name: 'AnalyticsService');
         return;
       }
 
-      developer.log('📊 AnalyticsService: Logging event: $name with parameters: $parameters', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Logging event: $name with parameters: $parameters',
+          name: 'AnalyticsService');
 
       await _analytics.logEvent(
         name: name,
         parameters: parameters,
       );
 
-      developer.log('📊 AnalyticsService: Event logged successfully: $name', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Event logged successfully: $name',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log event $name: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log event $name: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -86,16 +100,21 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging screen view: $screenName', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging screen view: $screenName',
+          name: 'AnalyticsService');
 
       await _analytics.logScreenView(
         screenName: screenName,
         screenClass: screenClass,
       );
 
-      developer.log('📊 AnalyticsService: Screen view logged successfully: $screenName', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Screen view logged successfully: $screenName',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log screen view $screenName: $e', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Failed to log screen view $screenName: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -107,13 +126,19 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Setting user property: $name = $value', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Setting user property: $name = $value',
+          name: 'AnalyticsService');
 
       await _analytics.setUserProperty(name: name, value: value);
 
-      developer.log('📊 AnalyticsService: User property set successfully: $name', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: User property set successfully: $name',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to set user property $name: $e', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Failed to set user property $name: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -125,7 +150,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging login with method: $method', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging login with method: $method',
+          name: 'AnalyticsService');
 
       await _analytics.logLogin(
         loginMethod: method,
@@ -135,9 +161,11 @@ class AnalyticsService {
         await setUserProperty(name: 'user_id', value: userId);
       }
 
-      developer.log('📊 AnalyticsService: Login logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Login logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log login: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log login: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -149,7 +177,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging sign up with method: $method', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging sign up with method: $method',
+          name: 'AnalyticsService');
 
       await _analytics.logSignUp(
         signUpMethod: method,
@@ -159,9 +188,11 @@ class AnalyticsService {
         await setUserProperty(name: 'user_id', value: userId);
       }
 
-      developer.log('📊 AnalyticsService: Sign up logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Sign up logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log sign up: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log sign up: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -177,7 +208,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging add to cart: $itemName', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging add to cart: $itemName',
+          name: 'AnalyticsService');
 
       await _analytics.logAddToCart(
         items: [
@@ -193,9 +225,11 @@ class AnalyticsService {
         value: price * quantity,
       );
 
-      developer.log('📊 AnalyticsService: Add to cart logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Add to cart logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log add to cart: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log add to cart: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -209,7 +243,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging purchase: $transactionId', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging purchase: $transactionId',
+          name: 'AnalyticsService');
 
       await _analytics.logPurchase(
         transactionId: transactionId,
@@ -218,9 +253,11 @@ class AnalyticsService {
         items: items,
       );
 
-      developer.log('📊 AnalyticsService: Purchase logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Purchase logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log purchase: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log purchase: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -231,15 +268,18 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging search: $searchTerm', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging search: $searchTerm',
+          name: 'AnalyticsService');
 
       await _analytics.logSearch(
         searchTerm: searchTerm,
       );
 
-      developer.log('📊 AnalyticsService: Search logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Search logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log search: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log search: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -251,16 +291,20 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging select content: $contentType - $itemId', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Logging select content: $contentType - $itemId',
+          name: 'AnalyticsService');
 
       await _analytics.logSelectContent(
         contentType: contentType,
         itemId: itemId,
       );
 
-      developer.log('📊 AnalyticsService: Select content logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Select content logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log select content: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log select content: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -273,7 +317,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging goal achievement: $goalName', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging goal achievement: $goalName',
+          name: 'AnalyticsService');
 
       await logEvent(
         name: 'goal_achievement',
@@ -285,9 +330,11 @@ class AnalyticsService {
         },
       );
 
-      developer.log('📊 AnalyticsService: Goal achievement logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Goal achievement logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log goal achievement: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log goal achievement: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -301,7 +348,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging workout: $workoutType', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging workout: $workoutType',
+          name: 'AnalyticsService');
 
       await logEvent(
         name: 'workout_completed',
@@ -314,9 +362,11 @@ class AnalyticsService {
         },
       );
 
-      developer.log('📊 AnalyticsService: Workout logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Workout logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log workout: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log workout: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -332,7 +382,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging meal: $mealType', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging meal: $mealType',
+          name: 'AnalyticsService');
 
       await logEvent(
         name: 'meal_logged',
@@ -347,9 +398,11 @@ class AnalyticsService {
         },
       );
 
-      developer.log('📊 AnalyticsService: Meal logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Meal logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log meal: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log meal: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -363,7 +416,8 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging error: $errorType', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Logging error: $errorType',
+          name: 'AnalyticsService');
 
       await logEvent(
         name: 'app_error',
@@ -376,9 +430,11 @@ class AnalyticsService {
         },
       );
 
-      developer.log('📊 AnalyticsService: Error logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Error logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log error: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log error: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -391,7 +447,9 @@ class AnalyticsService {
     try {
       if (!_isInitialized) return;
 
-      developer.log('📊 AnalyticsService: Logging performance: $metricName = $value', name: 'AnalyticsService');
+      developer.log(
+          '📊 AnalyticsService: Logging performance: $metricName = $value',
+          name: 'AnalyticsService');
 
       await logEvent(
         name: 'performance_metric',
@@ -403,9 +461,11 @@ class AnalyticsService {
         },
       );
 
-      developer.log('📊 AnalyticsService: Performance logged successfully', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Performance logged successfully',
+          name: 'AnalyticsService');
     } catch (e) {
-      developer.log('📊 AnalyticsService: Failed to log performance: $e', name: 'AnalyticsService');
+      developer.log('📊 AnalyticsService: Failed to log performance: $e',
+          name: 'AnalyticsService');
     }
   }
 
@@ -414,4 +474,4 @@ class AnalyticsService {
 
   /// Проверка инициализации
   bool get isInitialized => _isInitialized;
-} 
+}

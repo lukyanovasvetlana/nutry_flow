@@ -107,4 +107,4 @@ class Exercise extends Equatable {
         imageUrl,
         isFavorite,
       ];
-} 
+}

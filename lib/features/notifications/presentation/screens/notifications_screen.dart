@@ -9,12 +9,12 @@ class NotificationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.dynamicBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.dynamicBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.dynamicTextPrimary),
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
@@ -23,7 +23,12 @@ class NotificationsScreen extends StatelessWidget {
             );
           },
         ),
-        title: const Text('Уведомления', style: AppStyles.headlineMedium),
+        title: Text(
+          'Уведомления',
+          style: AppStyles.headlineMedium.copyWith(
+            color: AppColors.dynamicTextPrimary,
+          ),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -35,8 +40,9 @@ class NotificationsScreen extends StatelessWidget {
               Text(
                 'Ваши уведомления',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.dynamicTextPrimary,
+                    ),
               ),
               const SizedBox(height: 24),
               Expanded(
@@ -89,6 +95,7 @@ class NotificationsScreen extends StatelessWidget {
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      color: AppColors.dynamicSurface,
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.2),
@@ -96,24 +103,35 @@ class NotificationsScreen extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.dynamicTextPrimary,
+          ),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(message),
+            Text(
+              message,
+              style: TextStyle(
+                color: AppColors.dynamicTextSecondary,
+              ),
+            ),
             const SizedBox(height: 4),
             Text(
               time,
               style: TextStyle(
-                color: Colors.grey[600],
+                color: AppColors.dynamicTextTertiary,
                 fontSize: 12,
               ),
             ),
           ],
         ),
         trailing: IconButton(
-          icon: const Icon(Icons.more_vert),
+          icon: Icon(
+            Icons.more_vert,
+            color: AppColors.dynamicTextSecondary,
+          ),
           onPressed: () {
             // TODO: Добавить действия с уведомлением
           },
@@ -121,4 +139,4 @@ class NotificationsScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -22,6 +22,7 @@ enum NutryButtonSize {
 /// Создан для интеграции с дизайнером
 class NutryButton extends StatefulWidget {
   final String text;
+  final Widget? child;
   final VoidCallback? onPressed;
   final NutryButtonType type;
   final NutryButtonSize size;
@@ -34,6 +35,7 @@ class NutryButton extends StatefulWidget {
   const NutryButton({
     super.key,
     required this.text,
+    this.child,
     this.onPressed,
     this.type = NutryButtonType.primary,
     this.size = NutryButtonSize.medium,
@@ -46,7 +48,8 @@ class NutryButton extends StatefulWidget {
 
   /// Фабричный метод для создания основной кнопки
   factory NutryButton.primary({
-    required String text,
+    String? text,
+    Widget? child,
     VoidCallback? onPressed,
     NutryButtonSize size = NutryButtonSize.medium,
     IconData? icon,
@@ -54,13 +57,14 @@ class NutryButton extends StatefulWidget {
     double? width,
   }) {
     return NutryButton(
-      text: text,
+      text: text ?? '',
       onPressed: onPressed,
       type: NutryButtonType.primary,
       size: size,
       icon: icon,
       isLoading: isLoading,
       width: width,
+      child: child,
     );
   }
 
@@ -124,6 +128,24 @@ class NutryButton extends StatefulWidget {
     );
   }
 
+  /// Фабричный метод для создания chip кнопки
+  factory NutryButton.chip({
+    required Widget child,
+    VoidCallback? onPressed,
+    bool isSelected = false,
+    NutryButtonSize size = NutryButtonSize.small,
+    double? width,
+  }) {
+    return NutryButton(
+      text: '',
+      onPressed: onPressed,
+      type: isSelected ? NutryButtonType.primary : NutryButtonType.outline,
+      size: size,
+      width: width, // Empty text since we're using child
+      child: child,
+    );
+  }
+
   @override
   State<NutryButton> createState() => _NutryButtonState();
 }
@@ -180,9 +202,6 @@ class _NutryButtonState extends State<NutryButton>
   @override
   Widget build(BuildContext context) {
     final spacing = DesignTokens.spacing;
-    final typography = DesignTokens.typography;
-    final shadows = DesignTokens.shadows;
-    final borders = DesignTokens.borders;
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
@@ -193,7 +212,8 @@ class _NutryButtonState extends State<NutryButton>
             onTapDown: _onTapDown,
             onTapUp: _onTapUp,
             onTapCancel: _onTapCancel,
-            onTap: widget.isEnabled && !widget.isLoading ? widget.onPressed : null,
+            onTap:
+                widget.isEnabled && !widget.isLoading ? widget.onPressed : null,
             child: AnimatedContainer(
               duration: DesignTokens.animations.fast,
               width: widget.width,
@@ -224,10 +244,13 @@ class _NutryButtonState extends State<NutryButton>
                     ),
                     SizedBox(width: spacing.sm),
                   ],
-                  Text(
-                    widget.text,
-                    style: _getTextStyle(),
-                  ),
+                  if (widget.child != null)
+                    widget.child!
+                  else
+                    Text(
+                      widget.text,
+                      style: _getTextStyle(),
+                    ),
                 ],
               ),
             ),
@@ -253,11 +276,14 @@ class _NutryButtonState extends State<NutryButton>
     final spacing = DesignTokens.spacing;
     switch (widget.size) {
       case NutryButtonSize.small:
-        return EdgeInsets.symmetric(horizontal: spacing.md, vertical: spacing.sm);
+        return EdgeInsets.symmetric(
+            horizontal: spacing.md, vertical: spacing.sm);
       case NutryButtonSize.medium:
-        return EdgeInsets.symmetric(horizontal: spacing.lg, vertical: spacing.md);
+        return EdgeInsets.symmetric(
+            horizontal: spacing.lg, vertical: spacing.md);
       case NutryButtonSize.large:
-        return EdgeInsets.symmetric(horizontal: spacing.xl, vertical: spacing.lg);
+        return EdgeInsets.symmetric(
+            horizontal: spacing.xl, vertical: spacing.lg);
     }
   }
 
@@ -336,7 +362,7 @@ class _NutryButtonState extends State<NutryButton>
         color: borderColor,
         width: widget.type == NutryButtonType.outline ? borders.medium : 0,
       ),
-      borderRadius: borders.buttonRadius,
+      borderRadius: BorderRadius.circular(borders.buttonRadius),
       boxShadow: boxShadow,
     );
   }
@@ -399,7 +425,7 @@ class _NutryButtonState extends State<NutryButton>
 /// Виджет для демонстрации всех типов кнопок
 /// Полезен для дизайнера при создании макетов
 class NutryButtonShowcase extends StatelessWidget {
-  const NutryButtonShowcase({Key? key}) : super(key: key);
+  const NutryButtonShowcase({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -453,11 +479,11 @@ class NutryButtonShowcase extends StatelessWidget {
         ),
         SizedBox(height: DesignTokens.spacing.md),
         ...buttons.map((button) => Padding(
-          padding: EdgeInsets.only(bottom: DesignTokens.spacing.sm),
-          child: button,
-        )),
+              padding: EdgeInsets.only(bottom: DesignTokens.spacing.sm),
+              child: button,
+            )),
         SizedBox(height: DesignTokens.spacing.lg),
       ],
     );
   }
-} 
+}

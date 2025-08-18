@@ -8,7 +8,8 @@ part 'nutrition_search_state.dart';
 class NutritionSearchCubit extends Cubit<NutritionSearchState> {
   final SearchFoodItemsUseCase _searchFoodItemsUseCase;
 
-  NutritionSearchCubit(this._searchFoodItemsUseCase) : super(NutritionSearchInitial());
+  NutritionSearchCubit(this._searchFoodItemsUseCase)
+      : super(NutritionSearchInitial());
 
   Future<void> searchFoodItems(String query) async {
     if (query.trim().isEmpty) {
@@ -20,7 +21,7 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.searchByQuery(query);
-      
+
       if (result.items.isNotEmpty) {
         emit(NutritionSearchSuccess(result.items));
       } else {
@@ -36,11 +37,12 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.searchByBarcode(barcode);
-      
+
       if (result != null) {
         emit(NutritionSearchSuccess([result]));
       } else {
-        emit(const NutritionSearchEmpty('Продукт с таким штрихкодом не найден'));
+        emit(
+            const NutritionSearchEmpty('Продукт с таким штрихкодом не найден'));
       }
     } catch (e) {
       emit(NutritionSearchError(e.toString()));
@@ -52,7 +54,7 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.getPopularItems();
-      
+
       if (result.isNotEmpty) {
         emit(NutritionSearchSuccess(result));
       } else {
@@ -68,11 +70,12 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.getItemsByCategory(category);
-      
+
       if (result.isNotEmpty) {
         emit(NutritionSearchSuccess(result));
       } else {
-        emit(const NutritionSearchEmpty('Продукты в этой категории не найдены'));
+        emit(
+            const NutritionSearchEmpty('Продукты в этой категории не найдены'));
       }
     } catch (e) {
       emit(NutritionSearchError(e.toString()));
@@ -84,7 +87,7 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.getFavoriteItems(userId);
-      
+
       if (result.isNotEmpty) {
         emit(NutritionSearchSuccess(result));
       } else {
@@ -100,7 +103,7 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.getRecommendedItems(userId);
-      
+
       if (result.isNotEmpty) {
         emit(NutritionSearchSuccess(result));
       } else {
@@ -119,7 +122,7 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
 
     try {
       final result = await _searchFoodItemsUseCase.getSearchSuggestions(query);
-      
+
       if (result.isNotEmpty) {
         emit(NutritionSearchSuggestions(result));
       } else {
@@ -133,4 +136,4 @@ class NutritionSearchCubit extends Cubit<NutritionSearchState> {
   void clearSearch() {
     emit(NutritionSearchInitial());
   }
-} 
+}

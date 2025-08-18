@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:async';
 import '../bloc/activity_bloc.dart';
-import '../bloc/workout_bloc.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/activity_session.dart';
-import '../widgets/workout_timer.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
 import '../../../analytics/presentation/utils/analytics_tracker.dart';
 
@@ -14,9 +12,9 @@ class WorkoutSessionScreen extends StatefulWidget {
   final Workout workout;
 
   const WorkoutSessionScreen({
-    Key? key,
+    super.key,
     required this.workout,
-  }) : super(key: key);
+  });
 
   @override
   State<WorkoutSessionScreen> createState() => _WorkoutSessionScreenState();
@@ -25,10 +23,8 @@ class WorkoutSessionScreen extends StatefulWidget {
 class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     with TickerProviderStateMixin {
   late ActivityBloc _activityBloc;
-  late WorkoutBloc _workoutBloc;
   late AnimationController _animationController;
-  late Animation<double> _animation;
-  
+
   ActivitySession? _currentSession;
   int _currentExerciseIndex = 0;
   int _currentSet = 1;
@@ -44,10 +40,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   void initState() {
     super.initState();
     _activityBloc = GetIt.instance.get<ActivityBloc>();
-    _workoutBloc = GetIt.instance.get<WorkoutBloc>();
     _initializeAnimations();
     _startWorkoutSession();
-    
+
     // Отслеживаем просмотр экрана тренировки
     AnalyticsTracker.trackScreenView(
       screenName: 'workout_session',
@@ -58,11 +53,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
-    );
-    
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
     );
   }
 
@@ -86,7 +76,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       setState(() {
         _sessionDuration++;
         // Примерный расчет калорий (очень упрощенный)
-        _caloriesBurned = (_sessionDuration / 60 * 8).round(); // 8 калорий в минуту
+        _caloriesBurned =
+            (_sessionDuration / 60 * 8).round(); // 8 калорий в минуту
       });
     });
   }
@@ -118,7 +109,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             Icons.close,
             color: context.colors.onSurface,
           ),
-          onPressed: () => _showExitDialog(),
+          onPressed: _showExitDialog,
         ),
         actions: [
           IconButton(
@@ -235,12 +226,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
         children: [
           _buildProgressIndicator(),
           const SizedBox(height: 24),
-          
           if (_isResting)
             _buildRestTimer()
           else
             _buildExerciseCard(currentExercise, totalSets, totalReps),
-          
           const SizedBox(height: 24),
           _buildExerciseList(),
         ],
@@ -249,8 +238,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   }
 
   Widget _buildProgressIndicator() {
-    final progress = (_currentExerciseIndex + 1) / widget.workout.exercises.length;
-    
+    final progress =
+        (_currentExerciseIndex + 1) / widget.workout.exercises.length;
+
     return Column(
       children: [
         Row(
@@ -281,7 +271,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     );
   }
 
-  Widget _buildExerciseCard(WorkoutExercise exercise, int totalSets, int totalReps) {
+  Widget _buildExerciseCard(
+      WorkoutExercise exercise, int totalSets, int totalReps) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -297,7 +288,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               color: context.colors.primary,
             ),
             const SizedBox(height: 16),
-            
             Text(
               exercise.exercise.name,
               style: context.typography.headlineSmallStyle.copyWith(
@@ -307,7 +297,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            
             Text(
               exercise.exercise.description,
               style: context.typography.bodyMediumStyle.copyWith(
@@ -316,7 +305,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -325,7 +313,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               ],
             ),
             const SizedBox(height: 24),
-            
             Row(
               children: [
                 Expanded(
@@ -390,7 +377,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               color: context.colors.secondary,
             ),
             const SizedBox(height: 16),
-            
             Text(
               'Отдых',
               style: context.typography.headlineSmallStyle.copyWith(
@@ -399,7 +385,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               ),
             ),
             const SizedBox(height: 8),
-            
             Text(
               'Подготовьтесь к следующему упражнению',
               style: context.typography.bodyMediumStyle.copyWith(
@@ -408,7 +393,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            
             Text(
               _formatDuration(_restTimeRemaining),
               style: context.typography.displaySmallStyle.copyWith(
@@ -417,7 +401,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               ),
             ),
             const SizedBox(height: 24),
-            
             ElevatedButton(
               onPressed: _skipRest,
               style: ElevatedButton.styleFrom(
@@ -444,7 +427,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
           ),
         ),
         const SizedBox(height: 12),
-        
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -453,28 +435,28 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             final exercise = widget.workout.exercises[index];
             final isCurrent = index == _currentExerciseIndex;
             final isCompleted = index < _currentExerciseIndex;
-            
+
             return Card(
               margin: const EdgeInsets.only(bottom: 8),
-              color: isCurrent 
-                  ? context.colors.primaryLight 
-                  : isCompleted 
-                      ? context.colors.surfaceVariant 
+              color: isCurrent
+                  ? context.colors.primaryLight
+                  : isCompleted
+                      ? context.colors.surfaceVariant
                       : context.colors.surface,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: isCurrent 
-                      ? context.colors.primary 
-                      : isCompleted 
-                          ? context.colors.onSurfaceVariant 
+                  backgroundColor: isCurrent
+                      ? context.colors.primary
+                      : isCompleted
+                          ? context.colors.onSurfaceVariant
                           : context.colors.outline,
                   child: Text(
                     '${index + 1}',
                     style: TextStyle(
-                      color: isCurrent 
-                          ? context.colors.onPrimary 
-                          : isCompleted 
-                              ? context.colors.surface 
+                      color: isCurrent
+                          ? context.colors.onPrimary
+                          : isCompleted
+                              ? context.colors.surface
                               : context.colors.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
@@ -484,20 +466,20 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                   exercise.exercise.name,
                   style: context.typography.bodyLargeStyle.copyWith(
                     fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
-                    color: isCurrent 
-                        ? context.colors.onPrimary 
+                    color: isCurrent
+                        ? context.colors.onPrimary
                         : context.colors.onSurface,
                   ),
                 ),
                 subtitle: Text(
                   '${exercise.sets ?? 0} x ${exercise.reps ?? 0}',
                   style: context.typography.bodyMediumStyle.copyWith(
-                    color: isCurrent 
-                        ? context.colors.onPrimary.withValues(alpha: 0.7) 
+                    color: isCurrent
+                        ? context.colors.onPrimary.withValues(alpha: 0.7)
                         : context.colors.onSurfaceVariant,
                   ),
                 ),
-                trailing: isCompleted 
+                trailing: isCompleted
                     ? Icon(
                         Icons.check_circle,
                         color: context.colors.primary,
@@ -522,7 +504,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             color: context.colors.primary,
           ),
           const SizedBox(height: 24),
-          
           Text(
             'Тренировка завершена!',
             style: context.typography.headlineMediumStyle.copyWith(
@@ -531,7 +512,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             ),
           ),
           const SizedBox(height: 16),
-          
           Text(
             'Отличная работа! Вы сожгли $_caloriesBurned калорий',
             style: context.typography.bodyLargeStyle.copyWith(
@@ -540,7 +520,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-          
           ElevatedButton(
             onPressed: _completeWorkout,
             style: ElevatedButton.styleFrom(
@@ -604,7 +583,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
 
   void _previousSet() {
     final currentExercise = widget.workout.exercises[_currentExerciseIndex];
-    final totalSets = currentExercise.sets ?? 1;
     final totalReps = currentExercise.reps ?? 1;
 
     if (_currentRep > 1) {
@@ -637,7 +615,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   void _startRest() {
     final currentExercise = widget.workout.exercises[_currentExerciseIndex];
     final restTime = currentExercise.restSeconds ?? 60;
-    
+
     setState(() {
       _isResting = true;
       _restTimeRemaining = restTime;
@@ -682,7 +660,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
         duration: _sessionDuration,
         caloriesBurned: _caloriesBurned,
       );
-      
+
       _activityBloc.add(CompleteActivitySession(_currentSession!.id));
     }
   }
@@ -753,4 +731,4 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
     }
   }
-} 
+}

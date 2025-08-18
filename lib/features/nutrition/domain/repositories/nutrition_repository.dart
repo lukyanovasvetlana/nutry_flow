@@ -61,7 +61,8 @@ abstract class NutritionRepository {
   // === Работа с суммарной информацией ===
 
   /// Получение суммарной информации о питании за день
-  Future<NutritionSummary> getNutritionSummaryByDate(String userId, DateTime date);
+  Future<NutritionSummary> getNutritionSummaryByDate(
+      String userId, DateTime date);
 
   /// Получение суммарной информации о питании за период
   Future<List<NutritionSummary>> getNutritionSummariesByDateRange(
@@ -85,13 +86,16 @@ abstract class NutritionRepository {
   // === Дополнительные методы ===
 
   /// Получение часто используемых продуктов пользователя
-  Future<List<FoodItem>> getUserFavoriteFoodItems(String userId, {int limit = 10});
+  Future<List<FoodItem>> getUserFavoriteFoodItems(String userId,
+      {int limit = 10});
 
   /// Получение рекомендуемых продуктов на основе целей пользователя
-  Future<List<FoodItem>> getRecommendedFoodItems(String userId, {int limit = 10});
+  Future<List<FoodItem>> getRecommendedFoodItems(String userId,
+      {int limit = 10});
 
   /// Проверка достижения дневных целей по питанию
-  Future<Map<String, bool>> checkDailyNutritionGoals(String userId, DateTime date);
+  Future<Map<String, bool>> checkDailyNutritionGoals(
+      String userId, DateTime date);
 
   /// Получение тенденций питания пользователя
   Future<Map<String, double>> getNutritionTrends(
@@ -99,4 +103,4 @@ abstract class NutritionRepository {
     DateTime startDate,
     DateTime endDate,
   );
-} 
+}

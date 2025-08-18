@@ -39,13 +39,10 @@ class ActivityTrackingService {
   Future<ActivitySession> completeActivitySession(String sessionId) async {
     try {
       final now = DateTime.now();
-      await _supabase
-          .from('activity_sessions')
-          .update({
-            'status': 'completed',
-            'completed_at': now.toIso8601String(),
-          })
-          .eq('id', sessionId);
+      await _supabase.from('activity_sessions').update({
+        'status': 'completed',
+        'completed_at': now.toIso8601String(),
+      }).eq('id', sessionId);
 
       final session = await getSessionById(sessionId);
       if (session == null) {
@@ -59,15 +56,10 @@ class ActivityTrackingService {
 
   Future<ActivitySession?> getCurrentSession(String userId) async {
     try {
-      final response = await _supabase
-          .from('activity_sessions')
-          .select('''
+      final response = await _supabase.from('activity_sessions').select('''
             *,
             workouts (*)
-          ''')
-          .eq('user_id', userId)
-          .eq('status', 'in_progress')
-          .maybeSingle();
+          ''').eq('user_id', userId).eq('status', 'in_progress').maybeSingle();
 
       if (response == null) return null;
       return ActivitySessionModel.fromJson(response).toEntity();
@@ -76,25 +68,30 @@ class ActivityTrackingService {
     }
   }
 
-  Future<List<ActivitySession>> getUserSessions(String userId, {DateTime? from, DateTime? to}) async {
+  Future<List<ActivitySession>> getUserSessions(String userId,
+      {DateTime? from, DateTime? to}) async {
     try {
-      final response = await _supabase
-          .from('activity_sessions')
-          .select('''
+      final response = await _supabase.from('activity_sessions').select('''
             *,
             workouts (*)
-          ''')
-          .eq('user_id', userId)
-          .order('started_at', ascending: false);
+          ''').eq('user_id', userId).order('started_at', ascending: false);
 
-      List<ActivitySession> sessions = response.map((json) => ActivitySessionModel.fromJson(json).toEntity()).toList();
-      
+      List<ActivitySession> sessions = response
+          .map((json) => ActivitySessionModel.fromJson(json).toEntity())
+          .toList();
+
       // Фильтруем по датам на стороне Dart
       if (from != null) {
-        sessions = sessions.where((session) => session.startedAt.isAfter(from.subtract(const Duration(seconds: 1)))).toList();
+        sessions = sessions
+            .where((session) => session.startedAt
+                .isAfter(from.subtract(const Duration(seconds: 1))))
+            .toList();
       }
       if (to != null) {
-        sessions = sessions.where((session) => session.startedAt.isBefore(to.add(const Duration(days: 1)))).toList();
+        sessions = sessions
+            .where((session) =>
+                session.startedAt.isBefore(to.add(const Duration(days: 1))))
+            .toList();
       }
 
       return sessions;
@@ -105,14 +102,10 @@ class ActivityTrackingService {
 
   Future<ActivitySession?> getSessionById(String id) async {
     try {
-      final response = await _supabase
-          .from('activity_sessions')
-          .select('''
+      final response = await _supabase.from('activity_sessions').select('''
             *,
             workouts (*)
-          ''')
-          .eq('id', id)
-          .maybeSingle();
+          ''').eq('id', id).maybeSingle();
 
       if (response == null) return null;
       return ActivitySessionModel.fromJson(response).toEntity();
@@ -125,12 +118,11 @@ class ActivityTrackingService {
 
   Future<ActivityStats> getDailyStats(String userId, DateTime date) async {
     try {
-      final dateStr = date.toIso8601String().split('T')[0];
       final response = await _supabase
           .from('activity_stats')
           .select()
           .eq('user_id', userId)
-          .eq('date', dateStr)
+          .eq('date', date.toIso8601String().split('T')[0])
           .maybeSingle();
 
       if (response == null) {
@@ -155,7 +147,8 @@ class ActivityTrackingService {
     }
   }
 
-  Future<List<ActivityStats>> getWeeklyStats(String userId, DateTime weekStart) async {
+  Future<List<ActivityStats>> getWeeklyStats(
+      String userId, DateTime weekStart) async {
     try {
       final weekEnd = weekStart.add(const Duration(days: 7));
       final response = await _supabase
@@ -164,13 +157,17 @@ class ActivityTrackingService {
           .eq('user_id', userId)
           .order('date');
 
-      List<ActivityStats> stats = response.map((json) => ActivityStatsModel.fromJson(json).toEntity()).toList();
-      
+      List<ActivityStats> stats = response
+          .map((json) => ActivityStatsModel.fromJson(json).toEntity())
+          .toList();
+
       // Фильтруем по неделе на стороне Dart
-      stats = stats.where((stat) => 
-        stat.date.isAfter(weekStart.subtract(const Duration(seconds: 1))) && 
-        stat.date.isBefore(weekEnd)
-      ).toList();
+      stats = stats
+          .where((stat) =>
+              stat.date
+                  .isAfter(weekStart.subtract(const Duration(seconds: 1))) &&
+              stat.date.isBefore(weekEnd))
+          .toList();
 
       return stats;
     } catch (e) {
@@ -178,7 +175,8 @@ class ActivityTrackingService {
     }
   }
 
-  Future<List<ActivityStats>> getMonthlyStats(String userId, DateTime monthStart) async {
+  Future<List<ActivityStats>> getMonthlyStats(
+      String userId, DateTime monthStart) async {
     try {
       final monthEnd = DateTime(monthStart.year, monthStart.month + 1, 1);
       final response = await _supabase
@@ -187,13 +185,17 @@ class ActivityTrackingService {
           .eq('user_id', userId)
           .order('date');
 
-      List<ActivityStats> stats = response.map((json) => ActivityStatsModel.fromJson(json).toEntity()).toList();
-      
+      List<ActivityStats> stats = response
+          .map((json) => ActivityStatsModel.fromJson(json).toEntity())
+          .toList();
+
       // Фильтруем по месяцу на стороне Dart
-      stats = stats.where((stat) => 
-        stat.date.isAfter(monthStart.subtract(const Duration(seconds: 1))) && 
-        stat.date.isBefore(monthEnd)
-      ).toList();
+      stats = stats
+          .where((stat) =>
+              stat.date
+                  .isAfter(monthStart.subtract(const Duration(seconds: 1))) &&
+              stat.date.isBefore(monthEnd))
+          .toList();
 
       return stats;
     } catch (e) {
@@ -203,8 +205,6 @@ class ActivityTrackingService {
 
   Future<ActivityStats> updateDailyStats(ActivityStats stats) async {
     try {
-      final dateStr = stats.date.toIso8601String().split('T')[0];
-      
       final response = await _supabase
           .from('activity_stats')
           .upsert(ActivityStatsModel.fromEntity(stats).toJson())
@@ -219,21 +219,26 @@ class ActivityTrackingService {
 
   // Analytics
 
-  Future<Map<String, dynamic>> getActivityAnalytics(String userId, {DateTime? from, DateTime? to}) async {
+  Future<Map<String, dynamic>> getActivityAnalytics(String userId,
+      {DateTime? from, DateTime? to}) async {
     try {
       final sessions = await getUserSessions(userId, from: from, to: to);
-      
-      int totalWorkouts = sessions.length;
-      int totalDuration = sessions.fold(0, (sum, session) => sum + (session.durationMinutes ?? 0));
-      int totalCalories = sessions.fold(0, (sum, session) => sum + (session.caloriesBurned ?? 0));
-      
+
+      final int totalWorkouts = sessions.length;
+      final int totalDuration = sessions.fold(
+          0, (sum, session) => sum + (session.durationMinutes ?? 0));
+      final int totalCalories = sessions.fold(
+          0, (sum, session) => sum + (session.caloriesBurned ?? 0));
+
       // Категории упражнений
-      Map<String, int> categoryBreakdown = {};
+      final Map<String, int> categoryBreakdown = {};
       for (final session in sessions) {
         if (session.workout != null) {
           for (final exercise in session.workout!.exercises) {
-            final category = _getCategoryDisplayName(exercise.exercise.category);
-            categoryBreakdown[category] = (categoryBreakdown[category] ?? 0) + 1;
+            final category =
+                _getCategoryDisplayName(exercise.exercise.category);
+            categoryBreakdown[category] =
+                (categoryBreakdown[category] ?? 0) + 1;
           }
         }
       }
@@ -242,11 +247,15 @@ class ActivityTrackingService {
         'total_workouts': totalWorkouts,
         'total_duration_minutes': totalDuration,
         'total_calories_burned': totalCalories,
-        'average_duration': totalWorkouts > 0 ? totalDuration / totalWorkouts : 0,
-        'average_calories': totalWorkouts > 0 ? totalCalories / totalWorkouts : 0,
+        'average_duration':
+            totalWorkouts > 0 ? totalDuration / totalWorkouts : 0,
+        'average_calories':
+            totalWorkouts > 0 ? totalCalories / totalWorkouts : 0,
         'category_breakdown': categoryBreakdown,
-        'most_active_category': categoryBreakdown.isNotEmpty 
-            ? categoryBreakdown.entries.reduce((a, b) => a.value > b.value ? a : b).key 
+        'most_active_category': categoryBreakdown.isNotEmpty
+            ? categoryBreakdown.entries
+                .reduce((a, b) => a.value > b.value ? a : b)
+                .key
             : 'Нет данных',
       };
     } catch (e) {
@@ -268,7 +277,8 @@ class ActivityTrackingService {
     }
   }
 
-  Future<int> getTotalDuration(String userId, {DateTime? from, DateTime? to}) async {
+  Future<int> getTotalDuration(String userId,
+      {DateTime? from, DateTime? to}) async {
     try {
       final response = await _supabase
           .from('activity_sessions')
@@ -276,8 +286,9 @@ class ActivityTrackingService {
           .eq('user_id', userId)
           .eq('status', 'completed');
 
-      List<Map<String, dynamic>> sessions = List<Map<String, dynamic>>.from(response);
-      
+      List<Map<String, dynamic>> sessions =
+          List<Map<String, dynamic>>.from(response);
+
       // Фильтруем по датам на стороне Dart
       if (from != null) {
         sessions = sessions.where((session) {
@@ -292,13 +303,15 @@ class ActivityTrackingService {
         }).toList();
       }
 
-      return sessions.fold<int>(0, (sum, json) => sum + ((json['duration_minutes'] ?? 0) as int));
+      return sessions.fold<int>(
+          0, (sum, json) => sum + ((json['duration_minutes'] ?? 0) as int));
     } catch (e) {
       throw Exception('Ошибка при получении общего времени: $e');
     }
   }
 
-  Future<int> getTotalCaloriesBurned(String userId, {DateTime? from, DateTime? to}) async {
+  Future<int> getTotalCaloriesBurned(String userId,
+      {DateTime? from, DateTime? to}) async {
     try {
       final response = await _supabase
           .from('activity_sessions')
@@ -306,8 +319,9 @@ class ActivityTrackingService {
           .eq('user_id', userId)
           .eq('status', 'completed');
 
-      List<Map<String, dynamic>> sessions = List<Map<String, dynamic>>.from(response);
-      
+      List<Map<String, dynamic>> sessions =
+          List<Map<String, dynamic>>.from(response);
+
       // Фильтруем по датам на стороне Dart
       if (from != null) {
         sessions = sessions.where((session) {
@@ -322,7 +336,8 @@ class ActivityTrackingService {
         }).toList();
       }
 
-      return sessions.fold<int>(0, (sum, json) => sum + ((json['calories_burned'] ?? 0) as int));
+      return sessions.fold<int>(
+          0, (sum, json) => sum + ((json['calories_burned'] ?? 0) as int));
     } catch (e) {
       throw Exception('Ошибка при получении общего количества калорий: $e');
     }
@@ -352,4 +367,4 @@ class ActivityTrackingService {
         return 'Другое';
     }
   }
-} 
+}

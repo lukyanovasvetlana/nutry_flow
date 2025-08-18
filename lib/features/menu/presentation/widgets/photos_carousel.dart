@@ -71,16 +71,16 @@ class _PhotosCarouselState extends State<PhotosCarousel> {
             itemCount: allPhotos.length,
             itemBuilder: (context, index) {
               final photo = allPhotos[index];
-              
+
               if (photo.id == 'add') {
                 return _buildAddPhotoButton();
               }
-              
+
               return _buildPhotoItem(photo);
             },
           ),
         ),
-        
+
         // Page indicators
         if (allPhotos.length > 1)
           Padding(
@@ -181,4 +181,4 @@ class _PhotosCarouselState extends State<PhotosCarousel> {
       ),
     );
   }
-} 
+}

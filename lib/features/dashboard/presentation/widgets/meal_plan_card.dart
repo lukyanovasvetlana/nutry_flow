@@ -37,7 +37,8 @@ class MealPlanCard extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  Icon(Icons.arrow_forward_ios, color: AppColors.green, size: 16),
+                  Icon(Icons.arrow_forward_ios,
+                      color: AppColors.green, size: 16),
                 ],
               ),
               SizedBox(height: 12),
@@ -69,4 +70,4 @@ class MealPlanCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

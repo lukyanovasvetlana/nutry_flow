@@ -28,4 +28,4 @@ class NutritionInfo {
       'carbs': carbs,
     };
   }
-} 
+}

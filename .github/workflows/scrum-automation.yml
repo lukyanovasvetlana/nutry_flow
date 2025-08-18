@@ -55,13 +55,21 @@ jobs:
       - name: Run Scrum Automation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          # Check if Slack webhook is configured
+          SLACK_WEBHOOK_URL="${{ secrets.SLACK_WEBHOOK_URL || '' }}"
+          if [ -n "$SLACK_WEBHOOK_URL" ] && [ "$SLACK_WEBHOOK_URL" != "null" ] && [ "$SLACK_WEBHOOK_URL" != "" ]; then
+            WEBHOOK_PARAM="--webhook-url $SLACK_WEBHOOK_URL"
+          else
+            WEBHOOK_PARAM=""
+            echo "Warning: SLACK_WEBHOOK_URL not configured. Slack notifications will be skipped."
+          fi
+          
           python scripts/scrum_automation.py \
             --action ${{ github.event.inputs.action || 'daily-report' }} \
             --github-token ${{ secrets.GITHUB_TOKEN }} \
             --repo ${{ github.repository }} \
-            --webhook-url ${{ secrets.SLACK_WEBHOOK_URL }} \
+            $WEBHOOK_PARAM \
             --sprint-number ${{ github.event.inputs.sprint_number || '' }} \
             --start-date ${{ github.event.inputs.start_date || '' }} \
             --end-date ${{ github.event.inputs.end_date || '' }} \

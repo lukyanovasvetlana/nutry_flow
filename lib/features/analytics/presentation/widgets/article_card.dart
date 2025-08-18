@@ -20,11 +20,11 @@ class ArticleCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: AppColors.dynamicShadow.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -64,7 +64,7 @@ class ArticleCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Category and featured badge
         Row(
           children: [
@@ -104,7 +104,7 @@ class ArticleCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        
+
         // Title
         Text(
           article.title,
@@ -115,7 +115,7 @@ class ArticleCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
-        
+
         // Description
         Text(
           article.description,
@@ -126,7 +126,7 @@ class ArticleCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 16),
-        
+
         // Author and metadata
         Row(
           children: [
@@ -203,7 +203,7 @@ class ArticleCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 16),
-        
+
         // Content
         Expanded(
           child: Column(
@@ -219,7 +219,7 @@ class ArticleCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
-              
+
               // Author and metadata
               Row(
                 children: [
@@ -240,7 +240,7 @@ class ArticleCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              
+
               // Date and read time
               Row(
                 children: [
@@ -278,4 +278,4 @@ class ArticleCard extends StatelessWidget {
       ],
     );
   }
-} 
+}

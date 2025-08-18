@@ -8,11 +8,11 @@ class ExerciseCard extends StatelessWidget {
   final VoidCallback? onFavoriteToggle;
 
   const ExerciseCard({
-    Key? key,
+    super.key,
     required this.exercise,
     this.onTap,
     this.onFavoriteToggle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +57,11 @@ class ExerciseCard extends StatelessWidget {
                   if (onFavoriteToggle != null)
                     IconButton(
                       icon: Icon(
-                        exercise.isFavorite 
-                            ? Icons.favorite 
+                        exercise.isFavorite
+                            ? Icons.favorite
                             : Icons.favorite_border,
-                        color: exercise.isFavorite 
-                            ? context.colors.error 
+                        color: exercise.isFavorite
+                            ? context.colors.error
                             : context.colors.onSurfaceVariant,
                       ),
                       onPressed: onFavoriteToggle,
@@ -260,4 +260,4 @@ class ExerciseCard extends StatelessWidget {
         return Icons.fitness_center;
     }
   }
-} 
+}

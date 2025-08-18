@@ -4,8 +4,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../data/services/avatar_picker_service.dart';
-import '../../data/services/image_processing_service.dart';
-import '../../domain/usecases/avatar_upload_usecase.dart';
 import '../screens/avatar_crop_screen.dart';
 import '../../../../shared/theme/app_colors.dart';
 
@@ -36,7 +34,6 @@ class AvatarManagerWidget extends StatefulWidget {
 
 class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
   final AvatarPickerService _pickerService = AvatarPickerService();
-  late final AvatarUploadUseCase _uploadUseCase;
 
   bool _isUploading = false;
 
@@ -89,16 +86,16 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
             child: _buildAvatarImage(),
           ),
         ),
-        
+
         // Upload progress overlay
         if (_isUploading)
           Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
+            child: const DecoratedBox(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.black54,
               ),
-              child: const Center(
+              child: Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeWidth: 3,
@@ -112,7 +109,7 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
           Positioned(
             bottom: 0,
             right: 0,
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.green,
                 shape: BoxShape.circle,
@@ -222,10 +219,10 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
     Color? color,
   }) {
     final buttonColor = color ?? AppColors.green;
-    
+
     return Material(
-      color: enabled 
-          ? buttonColor.withValues(alpha: 0.1) 
+      color: enabled
+          ? buttonColor.withValues(alpha: 0.1)
           : Colors.grey.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
@@ -308,7 +305,8 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
 
   Future<void> _handlePickerResult(AvatarPickerResult result) async {
     if (result.isPermissionDenied) {
-      _showPermissionDialog(result.errorMessage!, result.shouldShowPermissionDialog);
+      _showPermissionDialog(
+          result.errorMessage!, result.shouldShowPermissionDialog);
       return;
     }
 
@@ -340,11 +338,11 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
     try {
       // Simulate upload for now - will be replaced with real implementation
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // Simulate success
       const mockAvatarUrl = 'https://example.com/avatar.jpg';
       widget.onAvatarUploaded(mockAvatarUrl);
-      
+
       _showSuccess('Аватар успешно обновлен!');
     } catch (e) {
       _showError('Ошибка загрузки: $e');
@@ -371,23 +369,24 @@ class _AvatarManagerWidgetState extends State<AvatarManagerWidget> {
 
   Future<bool> _showDeleteConfirmation() async {
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удалить фото профиля?'),
-        content: const Text('Это действие нельзя отменить.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Отмена'),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Удалить фото профиля?'),
+            content: const Text('Это действие нельзя отменить.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Отмена'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Удалить'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   void _showPermissionDialog(String message, bool canOpenSettings) {
@@ -514,7 +513,7 @@ class AvatarOptionsBottomSheet extends StatelessWidget {
     Color? color,
   }) {
     final optionColor = color ?? AppColors.green;
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -569,4 +568,4 @@ class AvatarOptionsBottomSheet extends StatelessWidget {
       ),
     );
   }
-} 
+}

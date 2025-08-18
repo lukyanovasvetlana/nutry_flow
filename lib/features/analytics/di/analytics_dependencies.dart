@@ -5,7 +5,8 @@ import '../presentation/bloc/analytics_bloc.dart';
 
 /// Зависимости для модуля аналитики
 class AnalyticsDependencies {
-  static final AnalyticsDependencies _instance = AnalyticsDependencies._internal();
+  static final AnalyticsDependencies _instance =
+      AnalyticsDependencies._internal();
   factory AnalyticsDependencies() => _instance;
   AnalyticsDependencies._internal();
 
@@ -13,18 +14,16 @@ class AnalyticsDependencies {
 
   /// Инициализирует зависимости аналитики
   Future<void> initialize() async {
-    print('🔍 AnalyticsDependencies: Initializing analytics dependencies...');
-
     final getIt = GetIt.instance;
 
     // Регистрируем сервис
     getIt.registerLazySingleton<AnalyticsService>(
-      () => AnalyticsService(),
+      AnalyticsService.new,
     );
 
     // Регистрируем репозиторий
     getIt.registerLazySingleton<AnalyticsRepository>(
-      () => AnalyticsRepository(),
+      AnalyticsRepository.new,
     );
 
     // Регистрируем BLoC
@@ -36,8 +35,6 @@ class AnalyticsDependencies {
 
     // Инициализируем сервис
     await getIt<AnalyticsService>().initialize();
-
-    print('🔍 AnalyticsDependencies: All analytics dependencies initialized successfully');
   }
 
   /// Получает AnalyticsBloc
@@ -54,4 +51,4 @@ class AnalyticsDependencies {
   AnalyticsRepository getAnalyticsRepository() {
     return GetIt.instance<AnalyticsRepository>();
   }
-} 
+}

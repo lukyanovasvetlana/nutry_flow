@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nutry_flow/shared/theme/app_colors.dart';
+import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 
 class TopBar extends StatefulWidget {
-  const TopBar({Key? key}) : super(key: key);
+  const TopBar({super.key});
 
   @override
   State<TopBar> createState() => _TopBarState();
@@ -16,7 +16,7 @@ class _TopBarState extends State<TopBar> {
   void _showWeekPicker() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
+      builder: (context) => SizedBox(
         height: 300,
         child: Column(
           children: [
@@ -44,15 +44,17 @@ class _TopBarState extends State<TopBar> {
                   'Неделя 10',
                   'Неделя 11',
                   'Неделя 12',
-                ].map((week) => ListTile(
-                  title: Text(week),
-                  onTap: () {
-                    setState(() {
-                      selectedWeek = week;
-                    });
-                    Navigator.pop(context);
-                  },
-                )).toList(),
+                ]
+                    .map((week) => ListTile(
+                          title: Text(week),
+                          onTap: () {
+                            setState(() {
+                              selectedWeek = week;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ))
+                    .toList(),
               ),
             ),
           ],
@@ -64,7 +66,7 @@ class _TopBarState extends State<TopBar> {
   void _showMonthPicker() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
+      builder: (context) => SizedBox(
         height: 300,
         child: Column(
           children: [
@@ -92,15 +94,17 @@ class _TopBarState extends State<TopBar> {
                   'Октябрь',
                   'Ноябрь',
                   'Декабрь',
-                ].map((month) => ListTile(
-                  title: Text(month),
-                  onTap: () {
-                    setState(() {
-                      selectedMonth = month;
-                    });
-                    Navigator.pop(context);
-                  },
-                )).toList(),
+                ]
+                    .map((month) => ListTile(
+                          title: Text(month),
+                          onTap: () {
+                            setState(() {
+                              selectedMonth = month;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ))
+                    .toList(),
               ),
             ),
           ],
@@ -112,7 +116,7 @@ class _TopBarState extends State<TopBar> {
   void _showYearPicker() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
+      builder: (context) => SizedBox(
         height: 300,
         child: Column(
           children: [
@@ -134,15 +138,17 @@ class _TopBarState extends State<TopBar> {
                   '2028',
                   '2029',
                   '2030',
-                ].map((year) => ListTile(
-                  title: Text(year),
-                  onTap: () {
-                    setState(() {
-                      selectedYear = year;
-                    });
-                    Navigator.pop(context);
-                  },
-                )).toList(),
+                ]
+                    .map((year) => ListTile(
+                          title: Text(year),
+                          onTap: () {
+                            setState(() {
+                              selectedYear = year;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ))
+                    .toList(),
               ),
             ),
           ],
@@ -162,7 +168,10 @@ class _TopBarState extends State<TopBar> {
               onTap: _showMonthPicker,
               child: Text(
                 selectedMonth,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF2D3748)),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: context.onSurface),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -173,7 +182,10 @@ class _TopBarState extends State<TopBar> {
               onTap: _showYearPicker,
               child: Text(
                 selectedYear,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF2D3748)),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: context.onSurface),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -185,9 +197,13 @@ class _TopBarState extends State<TopBar> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [BoxShadow(color: Color(0x11000000), blurRadius: 2)],
+                  boxShadow: [
+                    BoxShadow(
+                        color: context.shadow.withValues(alpha: 0.07),
+                        blurRadius: 2)
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -195,29 +211,34 @@ class _TopBarState extends State<TopBar> {
                     Flexible(
                       child: Text(
                         selectedWeek,
-                        style: TextStyle(fontSize: 12, color: Color(0xFF2D3748), fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: context.onSurface,
+                            fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     SizedBox(width: 4),
-                    Icon(Icons.keyboard_arrow_down, color: Color(0xFFBDBDBD), size: 16),
+                    Icon(Icons.keyboard_arrow_down,
+                        color: context.onSurfaceVariant, size: 16),
                   ],
                 ),
               ),
             ),
           ),
           Spacer(),
-          Icon(Icons.search, color: Color(0xFFBDBDBD), size: 20),
+          Icon(Icons.search, color: context.onSurfaceVariant, size: 20),
           SizedBox(width: 8),
-          Icon(Icons.filter_alt_outlined, color: Color(0xFFBDBDBD), size: 20),
+          Icon(Icons.filter_alt_outlined,
+              color: context.onSurfaceVariant, size: 20),
           SizedBox(width: 8),
           CircleAvatar(
-            backgroundColor: AppColors.green,
-            child: Icon(Icons.add, color: Colors.white, size: 18),
+            backgroundColor: context.primary,
             radius: 16,
+            child: Icon(Icons.add, color: context.onPrimary, size: 18),
           ),
         ],
       ),
     );
   }
-} 
+}

@@ -8,7 +8,7 @@ import '../../../../app.dart';
 import '../../../../config/supabase_config.dart';
 
 class HealthyMenuScreen extends StatefulWidget {
-  const HealthyMenuScreen({Key? key}) : super(key: key);
+  const HealthyMenuScreen({super.key});
 
   @override
   State<HealthyMenuScreen> createState() => _HealthyMenuScreenState();
@@ -26,19 +26,14 @@ class _HealthyMenuScreenState extends State<HealthyMenuScreen> {
   }
 
   void _initializeService() {
-    print('🍽️ HealthyMenuScreen: Initializing service - isDemo: ${SupabaseConfig.isDemo}');
-    
     if (SupabaseConfig.isDemo) {
-      print('🍽️ HealthyMenuScreen: Using MockRecipeService');
       _recipeService = MockRecipeService();
     } else {
-      print('🍽️ HealthyMenuScreen: Using RecipeService');
       _recipeService = RecipeService();
     }
   }
 
   void _loadRecipes() {
-    print('🍽️ HealthyMenuScreen: Loading recipes');
     setState(() {
       _recipesFuture = _recipeService.getAllRecipes();
     });
@@ -95,7 +90,8 @@ class _HealthyMenuScreenState extends State<HealthyMenuScreen> {
             return Center(child: Text('Ошибка загрузки: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Рецептов пока нет. Добавьте первый!'));
+            return const Center(
+                child: Text('Рецептов пока нет. Добавьте первый!'));
           }
 
           final recipes = snapshot.data!;
@@ -114,4 +110,4 @@ class _HealthyMenuScreenState extends State<HealthyMenuScreen> {
       ),
     );
   }
-} 
+}

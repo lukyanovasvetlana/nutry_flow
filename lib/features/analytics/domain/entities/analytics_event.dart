@@ -173,4 +173,4 @@ class AnalyticsEvent {
   String toString() {
     return 'AnalyticsEvent(name: $name, parameters: $parameters, timestamp: $timestamp)';
   }
-} 
+}

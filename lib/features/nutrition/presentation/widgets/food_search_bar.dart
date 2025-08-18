@@ -10,13 +10,13 @@ class FoodSearchBar extends StatefulWidget {
   final String? hintText;
 
   const FoodSearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     required this.focusNode,
     required this.onChanged,
     required this.onSubmitted,
     this.hintText,
-  }) : super(key: key);
+  });
 
   @override
   State<FoodSearchBar> createState() => _FoodSearchBarState();
@@ -39,8 +39,8 @@ class _FoodSearchBarState extends State<FoodSearchBar> {
 
   void _onFocusChange() {
     setState(() {
-      _showSuggestions = widget.focusNode.hasFocus && 
-                        widget.controller.text.isNotEmpty;
+      _showSuggestions =
+          widget.focusNode.hasFocus && widget.controller.text.isNotEmpty;
     });
   }
 
@@ -48,9 +48,9 @@ class _FoodSearchBarState extends State<FoodSearchBar> {
     setState(() {
       _showSuggestions = value.isNotEmpty && widget.focusNode.hasFocus;
     });
-    
+
     widget.onChanged(value);
-    
+
     // Get search suggestions for non-empty queries
     if (value.trim().isNotEmpty && value.length >= 2) {
       context.read<NutritionSearchCubit>().getSearchSuggestions(value);
@@ -108,7 +108,7 @@ class _FoodSearchBarState extends State<FoodSearchBar> {
           },
           textInputAction: TextInputAction.search,
         ),
-        
+
         // Search suggestions
         if (_showSuggestions)
           BlocBuilder<NutritionSearchCubit, NutritionSearchState>(
@@ -148,4 +148,4 @@ class _FoodSearchBarState extends State<FoodSearchBar> {
       ],
     );
   }
-} 
+}

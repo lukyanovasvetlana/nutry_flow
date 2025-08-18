@@ -1,7 +1,6 @@
 import 'package:nutry_flow/core/services/analytics_service.dart';
 import 'package:nutry_flow/core/services/performance_service.dart';
 import 'package:nutry_flow/core/services/crashlytics_service.dart';
-import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'dart:developer' as developer;
 
 class MonitoringService {
@@ -17,7 +16,8 @@ class MonitoringService {
     if (_isInitialized) return;
 
     try {
-      developer.log('📊 MonitoringService: Initializing monitoring services', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Initializing monitoring services',
+          name: 'MonitoringService');
 
       // Инициализируем все сервисы параллельно
       await Future.wait([
@@ -27,9 +27,13 @@ class MonitoringService {
       ]);
 
       _isInitialized = true;
-      developer.log('📊 MonitoringService: All monitoring services initialized successfully', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: All monitoring services initialized successfully',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to initialize monitoring services: $e', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Failed to initialize monitoring services: $e',
+          name: 'MonitoringService');
       rethrow;
     }
   }
@@ -52,9 +56,12 @@ class MonitoringService {
         await AnalyticsService.instance.logScreenView(screenName: screenName);
       }
 
-      developer.log('📊 MonitoringService: Event tracked successfully: $eventName', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Event tracked successfully: $eventName',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track event: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track event: $e',
+          name: 'MonitoringService');
       await _logError('Event tracking failed', e);
     }
   }
@@ -67,16 +74,19 @@ class MonitoringService {
     try {
       // Логируем просмотр экрана
       await AnalyticsService.instance.logScreenView(screenName: screenName);
-      
+
       // Выполняем функцию загрузки экрана
       await screenLoadFunction();
-      
+
       // Отслеживаем время загрузки экрана
       await PerformanceService.instance.trackScreenLoadTime(screenName);
 
-      developer.log('📊 MonitoringService: Screen tracked successfully: $screenName', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Screen tracked successfully: $screenName',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track screen: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track screen: $e',
+          name: 'MonitoringService');
       await _logError('Screen tracking failed', e);
     }
   }
@@ -102,7 +112,7 @@ class MonitoringService {
         );
         rethrow;
       }
-      
+
       // Отслеживаем производительность API запроса
       await PerformanceService.instance.trackApiRequest(endpoint, method);
 
@@ -116,9 +126,12 @@ class MonitoringService {
         },
       );
 
-      developer.log('📊 MonitoringService: API request tracked successfully: $method $endpoint', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: API request tracked successfully: $method $endpoint',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track API request: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track API request: $e',
+          name: 'MonitoringService');
       await _logError('API request tracking failed', e);
     }
   }
@@ -134,7 +147,7 @@ class MonitoringService {
       if (actionFunction != null) {
         // Выполняем действие
         await actionFunction();
-        
+
         // Отслеживаем время отклика UI
         await PerformanceService.instance.trackUIResponseTime(actionName);
       }
@@ -149,9 +162,12 @@ class MonitoringService {
         },
       );
 
-      developer.log('📊 MonitoringService: User action tracked successfully: $actionName', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: User action tracked successfully: $actionName',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track user action: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track user action: $e',
+          name: 'MonitoringService');
       await _logError('User action tracking failed', e);
     }
   }
@@ -184,9 +200,11 @@ class MonitoringService {
         additionalData: additionalData,
       );
 
-      developer.log('📊 MonitoringService: Error tracked successfully', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Error tracked successfully',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track error: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track error: $e',
+          name: 'MonitoringService');
     }
   }
 
@@ -199,9 +217,12 @@ class MonitoringService {
       // Отслеживаем использование памяти
       await PerformanceService.instance.trackMemoryUsage();
 
-      developer.log('📊 MonitoringService: App performance tracked successfully', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: App performance tracked successfully',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track app performance: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track app performance: $e',
+          name: 'MonitoringService');
       await _logError('App performance tracking failed', e);
     }
   }
@@ -214,7 +235,8 @@ class MonitoringService {
   }) async {
     try {
       // Устанавливаем пользовательские данные
-      await AnalyticsService.instance.setUserProperty(name: 'user_id', value: userId);
+      await AnalyticsService.instance
+          .setUserProperty(name: 'user_id', value: userId);
       await CrashlyticsService.instance.setUserIdentifier(userId);
 
       // Логируем начало сеанса
@@ -227,9 +249,12 @@ class MonitoringService {
         },
       );
 
-      developer.log('📊 MonitoringService: User session tracked successfully: $sessionType', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: User session tracked successfully: $sessionType',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track user session: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track user session: $e',
+          name: 'MonitoringService');
       await _logError('User session tracking failed', e);
     }
   }
@@ -260,9 +285,13 @@ class MonitoringService {
         },
       );
 
-      developer.log('📊 MonitoringService: Goal achievement tracked successfully: $goalName', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Goal achievement tracked successfully: $goalName',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track goal achievement: $e', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Failed to track goal achievement: $e',
+          name: 'MonitoringService');
       await _logError('Goal achievement tracking failed', e);
     }
   }
@@ -296,9 +325,12 @@ class MonitoringService {
         },
       );
 
-      developer.log('📊 MonitoringService: Workout tracked successfully: $workoutType', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Workout tracked successfully: $workoutType',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track workout: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track workout: $e',
+          name: 'MonitoringService');
       await _logError('Workout tracking failed', e);
     }
   }
@@ -338,9 +370,12 @@ class MonitoringService {
         },
       );
 
-      developer.log('📊 MonitoringService: Meal tracked successfully: $mealType', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Meal tracked successfully: $mealType',
+          name: 'MonitoringService');
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to track meal: $e', name: 'MonitoringService');
+      developer.log('📊 MonitoringService: Failed to track meal: $e',
+          name: 'MonitoringService');
       await _logError('Meal tracking failed', e);
     }
   }
@@ -358,7 +393,9 @@ class MonitoringService {
         },
       );
     } catch (e) {
-      developer.log('📊 MonitoringService: Failed to log error in _logError: $e', name: 'MonitoringService');
+      developer.log(
+          '📊 MonitoringService: Failed to log error in _logError: $e',
+          name: 'MonitoringService');
     }
   }
 
@@ -369,4 +406,4 @@ class MonitoringService {
   AnalyticsService get analytics => AnalyticsService.instance;
   PerformanceService get performance => PerformanceService.instance;
   CrashlyticsService get crashlytics => CrashlyticsService.instance;
-} 
+}

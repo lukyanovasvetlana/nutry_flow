@@ -40,8 +40,8 @@ class WorkoutExerciseModel {
       restSeconds: json['rest_seconds'],
       duration: json['duration'],
       notes: json['notes'],
-      exercise: json['exercises'] != null 
-          ? ExerciseModel.fromJson(json['exercises']) 
+      exercise: json['exercises'] != null
+          ? ExerciseModel.fromJson(json['exercises'])
           : null,
       createdAt: DateTime.parse(json['created_at']),
     );
@@ -65,16 +65,17 @@ class WorkoutExerciseModel {
   WorkoutExercise toEntity() {
     return WorkoutExercise(
       id: id,
-      exercise: exercise?.toEntity() ?? Exercise(
-        id: exerciseId,
-        name: 'Unknown Exercise',
-        category: ExerciseCategory.legs,
-        difficulty: ExerciseDifficulty.beginner,
-        iconName: 'fitness_center',
-        description: '',
-        targetMuscles: [],
-        equipment: [],
-      ),
+      exercise: exercise?.toEntity() ??
+          Exercise(
+            id: exerciseId,
+            name: 'Unknown Exercise',
+            category: ExerciseCategory.legs,
+            difficulty: ExerciseDifficulty.beginner,
+            iconName: 'fitness_center',
+            description: '',
+            targetMuscles: [],
+            equipment: [],
+          ),
       orderIndex: orderIndex,
       sets: sets,
       reps: reps,
@@ -183,7 +184,8 @@ class WorkoutModel {
       estimatedDurationMinutes: workout.estimatedDurationMinutes,
       difficulty: _difficultyToString(workout.difficulty),
       isTemplate: workout.isTemplate,
-      exercises: workout.exercises.map((e) => WorkoutExerciseModel.fromEntity(e)).toList(),
+      exercises:
+          workout.exercises.map(WorkoutExerciseModel.fromEntity).toList(),
       createdAt: workout.createdAt,
       updatedAt: workout.updatedAt,
     );
@@ -212,4 +214,4 @@ class WorkoutModel {
         return 'advanced';
     }
   }
-} 
+}

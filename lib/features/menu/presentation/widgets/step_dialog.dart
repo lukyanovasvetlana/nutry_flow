@@ -24,9 +24,12 @@ class _StepDialogState extends State<StepDialog> {
   @override
   void initState() {
     super.initState();
-    _descriptionController = TextEditingController(text: widget.step?.description ?? '');
-    _durationController = TextEditingController(text: widget.step?.duration?.toString() ?? '');
-    _temperatureController = TextEditingController(text: widget.step?.temperature?.toString() ?? '');
+    _descriptionController =
+        TextEditingController(text: widget.step?.description ?? '');
+    _durationController =
+        TextEditingController(text: widget.step?.duration?.toString() ?? '');
+    _temperatureController =
+        TextEditingController(text: widget.step?.temperature?.toString() ?? '');
   }
 
   @override
@@ -113,9 +116,9 @@ class _StepDialogState extends State<StepDialog> {
         createdAt: widget.step?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
       );
-      
+
       widget.onSave(step);
       Navigator.of(context).pop();
     }
   }
-} 
+}

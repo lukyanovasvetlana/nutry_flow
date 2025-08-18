@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutry_flow/shared/theme/app_colors.dart';
+import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 import 'package:nutry_flow/shared/theme/app_styles.dart';
 import '../../../../app.dart';
 import '../widgets/top_bar.dart';
@@ -25,12 +25,12 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.background,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: context.onSurface),
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
@@ -39,9 +39,9 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             );
           },
         ),
-        title: const Text(
+        title: Text(
           'План питания',
-          style: AppStyles.headlineMedium,
+          style: AppStyles.headlineMedium.copyWith(color: context.onSurface),
         ),
         centerTitle: true,
       ),
@@ -49,11 +49,13 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
         child: Column(
           children: [
             TopBar(),
-            MealTypeToggle(selectedMealType: selectedMealType, onMealTypeChanged: _onMealTypeChanged),
+            MealTypeToggle(
+                selectedMealType: selectedMealType,
+                onMealTypeChanged: _onMealTypeChanged),
             Expanded(child: MealPlanGrid(selectedMealType: selectedMealType)),
           ],
         ),
       ),
     );
   }
-} 
+}

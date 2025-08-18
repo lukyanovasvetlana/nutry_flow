@@ -4,7 +4,7 @@ import '../../../../shared/theme/app_colors.dart';
 
 class HeaderCard extends StatelessWidget {
   final UserProfile? userProfile;
-  
+
   const HeaderCard({super.key, this.userProfile});
 
   @override
@@ -12,7 +12,7 @@ class HeaderCard extends StatelessWidget {
     if (userProfile == null) {
       return _buildEmptyProfile(context);
     }
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -52,7 +52,7 @@ class HeaderCard extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.green, width: 2),
@@ -67,25 +67,25 @@ class HeaderCard extends StatelessWidget {
       child: CircleAvatar(
         radius: 32,
         backgroundColor: Colors.grey.shade200,
-        backgroundImage: userProfile?.avatarUrl != null 
-          ? NetworkImage(userProfile!.avatarUrl!)
-          : null,
-        child: userProfile?.avatarUrl == null
-          ? _buildAvatarPlaceholder()
-          : null,
+        backgroundImage: userProfile?.avatarUrl != null
+            ? NetworkImage(userProfile!.avatarUrl!)
+            : null,
+        child:
+            userProfile?.avatarUrl == null ? _buildAvatarPlaceholder() : null,
       ),
     );
   }
 
   Widget _buildAvatarPlaceholder() {
-    String? name = userProfile?.fullName;
+    final String? name = userProfile?.fullName;
     if (name != null && name.isNotEmpty) {
       // Показать инициалы
-      String initials = name.split(' ')
+      final String initials = name
+          .split(' ')
           .take(2)
           .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
           .join('');
-      
+
       return Text(
         initials,
         style: TextStyle(
@@ -111,24 +111,24 @@ class HeaderCard extends StatelessWidget {
         Text(
           userProfile?.fullName ?? 'Имя не указано',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
         ),
         const SizedBox(height: 4),
         Text(
           userProfile?.email ?? 'Email не указан',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Colors.grey.shade600,
-          ),
+                color: Colors.grey.shade600,
+              ),
         ),
         if (userProfile?.age != null) ...[
           const SizedBox(height: 4),
           Text(
             '${userProfile!.age} лет',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey.shade500,
-            ),
+                  color: Colors.grey.shade500,
+                ),
           ),
         ],
       ],
@@ -136,7 +136,7 @@ class HeaderCard extends StatelessWidget {
   }
 
   Widget _buildEditButton(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.green.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -157,7 +157,7 @@ class HeaderCard extends StatelessWidget {
 
   Widget _buildAdditionalInfo(BuildContext context) {
     final completeness = _calculateCompleteness();
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -181,12 +181,12 @@ class HeaderCard extends StatelessWidget {
             ),
           const Spacer(),
           Icon(
-            userProfile?.profileCompleteness == 1.0 
-              ? Icons.verified_user 
-              : Icons.info_outline,
-            color: userProfile?.profileCompleteness == 1.0 
-              ? AppColors.green 
-              : Colors.orange,
+            userProfile?.profileCompleteness == 1.0
+                ? Icons.verified_user
+                : Icons.info_outline,
+            color: userProfile?.profileCompleteness == 1.0
+                ? AppColors.green
+                : Colors.orange,
             size: 16,
           ),
         ],
@@ -242,16 +242,16 @@ class HeaderCard extends StatelessWidget {
             Text(
               'Профиль не заполнен',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Заполните информацию о себе для персонализации',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey.shade600,
-              ),
+                    color: Colors.grey.shade600,
+                  ),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
@@ -273,7 +273,7 @@ class HeaderCard extends StatelessWidget {
 
   double _calculateCompleteness() {
     if (userProfile == null) return 0.0;
-    
+
     return userProfile!.profileCompleteness * 100;
   }
 
@@ -289,4 +289,4 @@ class HeaderCard extends StatelessWidget {
     if (bmi <= 29.9) return AppColors.orange; // Избыток
     return Colors.red; // Ожирение
   }
-} 
+}

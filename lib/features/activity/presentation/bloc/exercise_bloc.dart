@@ -163,7 +163,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     on<LoadDifficulties>(_onLoadDifficulties);
   }
 
-  Future<void> _onLoadExercises(LoadExercises event, Emitter<ExerciseState> emit) async {
+  Future<void> _onLoadExercises(
+      LoadExercises event, Emitter<ExerciseState> emit) async {
     emit(ExerciseLoading());
 
     final result = await _getExercisesUseCase();
@@ -192,7 +193,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     );
   }
 
-  Future<void> _onSearchExercises(SearchExercises event, Emitter<ExerciseState> emit) async {
+  Future<void> _onSearchExercises(
+      SearchExercises event, Emitter<ExerciseState> emit) async {
     if (state is ExerciseLoaded) {
       final currentState = state as ExerciseLoaded;
       emit(ExerciseLoading());
@@ -213,7 +215,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     }
   }
 
-  Future<void> _onFilterByCategory(FilterByCategory event, Emitter<ExerciseState> emit) async {
+  Future<void> _onFilterByCategory(
+      FilterByCategory event, Emitter<ExerciseState> emit) async {
     if (state is ExerciseLoaded) {
       final currentState = state as ExerciseLoaded;
       emit(ExerciseLoading());
@@ -233,7 +236,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     }
   }
 
-  Future<void> _onFilterByDifficulty(FilterByDifficulty event, Emitter<ExerciseState> emit) async {
+  Future<void> _onFilterByDifficulty(
+      FilterByDifficulty event, Emitter<ExerciseState> emit) async {
     if (state is ExerciseLoaded) {
       final currentState = state as ExerciseLoaded;
       emit(ExerciseLoading());
@@ -253,7 +257,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     }
   }
 
-  Future<void> _onLoadFavoriteExercises(LoadFavoriteExercises event, Emitter<ExerciseState> emit) async {
+  Future<void> _onLoadFavoriteExercises(
+      LoadFavoriteExercises event, Emitter<ExerciseState> emit) async {
     emit(ExerciseLoading());
 
     final result = await _getFavoriteExercisesUseCase(event.userId);
@@ -275,7 +280,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     );
   }
 
-  Future<void> _onToggleFavorite(ToggleFavorite event, Emitter<ExerciseState> emit) async {
+  Future<void> _onToggleFavorite(
+      ToggleFavorite event, Emitter<ExerciseState> emit) async {
     final result = await _toggleFavoriteUseCase(event.userId, event.exerciseId);
 
     result.fold(
@@ -287,7 +293,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     );
   }
 
-  Future<void> _onLoadCategories(LoadCategories event, Emitter<ExerciseState> emit) async {
+  Future<void> _onLoadCategories(
+      LoadCategories event, Emitter<ExerciseState> emit) async {
     final result = await _getCategoriesUseCase();
 
     result.fold(
@@ -301,7 +308,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     );
   }
 
-  Future<void> _onLoadDifficulties(LoadDifficulties event, Emitter<ExerciseState> emit) async {
+  Future<void> _onLoadDifficulties(
+      LoadDifficulties event, Emitter<ExerciseState> emit) async {
     final result = await _getDifficultiesUseCase();
 
     result.fold(
@@ -314,4 +322,4 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       },
     );
   }
-} 
+}

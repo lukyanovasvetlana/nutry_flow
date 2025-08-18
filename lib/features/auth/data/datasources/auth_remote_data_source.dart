@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
+import '../../../../config/supabase_config.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> signIn(String email, String password);
@@ -17,17 +18,47 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signIn(String email, String password) async {
     try {
+      print('🔐 AuthRemoteDataSource: Starting signin for $email');
+
+      // Проверяем демо-режим
+      final isDemo = SupabaseConfig.isDemo;
+      print('🔐 AuthRemoteDataSource: Demo mode = $isDemo');
+
+      if (isDemo) {
+        print('🔐 AuthRemoteDataSource: Demo mode detected, simulating signin');
+
+        // Симулируем успешный вход в демо-режиме
+        await Future.delayed(const Duration(seconds: 1));
+
+        // Создаем демо-пользователя
+        final demoUser = User(
+          id: 'demo-user-id-${DateTime.now().millisecondsSinceEpoch}',
+          email: email,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+          appMetadata: {},
+          userMetadata: {},
+          aud: 'authenticated',
+          role: 'authenticated',
+        );
+
+        print('🔐 AuthRemoteDataSource: Demo signin successful for $email');
+        return UserModel.fromSupabaseUser(demoUser);
+      }
+
+      // Реальный вход через Supabase
       final response = await _supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
-      
+
       if (response.user == null) {
         throw Exception('Failed to sign in: No user returned');
       }
-      
-      return UserModel.fromSupabaseUser(response.user!);
+
+      return UserModel.fromSupabaseUser(response.user);
     } catch (e) {
+      print('🔐 AuthRemoteDataSource: Signin failed: $e');
       throw Exception('Failed to sign in: $e');
     }
   }
@@ -35,17 +66,47 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signUp(String email, String password) async {
     try {
+      print('🔐 AuthRemoteDataSource: Starting signup for $email');
+
+      // Проверяем демо-режим
+      final isDemo = SupabaseConfig.isDemo;
+      print('🔐 AuthRemoteDataSource: Demo mode = $isDemo');
+
+      if (isDemo) {
+        print('🔐 AuthRemoteDataSource: Demo mode detected, simulating signup');
+
+        // Симулируем успешную регистрацию в демо-режиме
+        await Future.delayed(const Duration(seconds: 1));
+
+        // Создаем демо-пользователя
+        final demoUser = User(
+          id: 'demo-user-id-${DateTime.now().millisecondsSinceEpoch}',
+          email: email,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+          appMetadata: {},
+          userMetadata: {},
+          aud: 'authenticated',
+          role: 'authenticated',
+        );
+
+        print('🔐 AuthRemoteDataSource: Demo signup successful for $email');
+        return UserModel.fromSupabaseUser(demoUser);
+      }
+
+      // Реальная регистрация через Supabase
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
       );
-      
+
       if (response.user == null) {
         throw Exception('Failed to sign up: No user returned');
       }
-      
-      return UserModel.fromSupabaseUser(response.user!);
+
+      return UserModel.fromSupabaseUser(response.user);
     } catch (e) {
+      print('🔐 AuthRemoteDataSource: Signup failed: $e');
       throw Exception('Failed to sign up: $e');
     }
   }

@@ -12,4 +12,4 @@ class SleepCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

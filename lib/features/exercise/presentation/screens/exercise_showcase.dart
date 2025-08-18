@@ -3,7 +3,7 @@ import 'exercise_screen_redesigned.dart';
 import 'exercise_screen.dart';
 
 class ExerciseShowcase extends StatefulWidget {
-  const ExerciseShowcase({Key? key}) : super(key: key);
+  const ExerciseShowcase({super.key});
 
   @override
   State<ExerciseShowcase> createState() => _ExerciseShowcaseState();
@@ -15,7 +15,7 @@ class _ExerciseShowcaseState extends State<ExerciseShowcase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _showNewDesign 
+      body: _showNewDesign
           ? const ExerciseScreenRedesigned()
           : const ExerciseScreen(),
       floatingActionButton: FloatingActionButton.extended(
@@ -30,4 +30,4 @@ class _ExerciseShowcaseState extends State<ExerciseShowcase> {
       ),
     );
   }
-} 
+}

@@ -61,7 +61,7 @@ class TrackProgressUseCase {
       throw ArgumentError('User ID не может быть пустым');
     }
 
-    return await _repository.getProgressEntries(
+    return _repository.getProgressEntries(
       userId,
       goalId: goalId,
       type: type,
@@ -148,13 +148,14 @@ class TrackProgressUseCase {
     }
   }
 
-  Future<void> _updateGoalProgress(String goalId, double value, ProgressEntryType type) async {
+  Future<void> _updateGoalProgress(
+      String goalId, double value, ProgressEntryType type) async {
     final goal = await _repository.getGoalById(goalId);
     if (goal == null) return;
 
     // Обновляем текущее значение цели в зависимости от типа
     double newCurrentValue = value;
-    
+
     // Для некоторых типов целей нужна специальная логика
     if (goal.type == GoalType.weight && type == ProgressEntryType.weight) {
       newCurrentValue = value;
@@ -173,19 +174,20 @@ class TrackProgressUseCase {
     if (goal.isCompleted) return;
 
     bool isCompleted = false;
-    
+
     switch (goal.type) {
       case GoalType.weight:
         final weightGoalType = goal.metadata?['weightGoalType'] as String?;
         final tolerance = goal.metadata?['tolerance'] as double? ?? 1.0;
-        
+
         if (weightGoalType == 'lose') {
           isCompleted = goal.currentValue <= goal.targetValue;
         } else if (weightGoalType == 'gain') {
           isCompleted = goal.currentValue >= goal.targetValue;
         } else {
           // maintain
-          isCompleted = (goal.currentValue - goal.targetValue).abs() <= tolerance;
+          isCompleted =
+              (goal.currentValue - goal.targetValue).abs() <= tolerance;
         }
         break;
       case GoalType.activity:
@@ -210,10 +212,12 @@ class TrackProgressUseCase {
   Future<void> _checkForAchievements(String userId, ProgressEntry entry) async {
     // Здесь можно добавить логику проверки различных достижений
     // Например, за постоянство, рекорды, серии и т.д.
-    
+
     // Пример: достижение за первую запись прогресса
-    final existingEntries = await _repository.getProgressEntries(userId, type: entry.type);
-    if (existingEntries.length == 1) { // Первая запись этого типа
+    final existingEntries =
+        await _repository.getProgressEntries(userId, type: entry.type);
+    if (existingEntries.length == 1) {
+      // Первая запись этого типа
       await _addFirstEntryAchievement(userId, entry);
     }
   }
@@ -236,7 +240,8 @@ class TrackProgressUseCase {
     await _repository.addAchievement(achievement);
   }
 
-  Future<void> _addFirstEntryAchievement(String userId, ProgressEntry entry) async {
+  Future<void> _addFirstEntryAchievement(
+      String userId, ProgressEntry entry) async {
     final achievement = Achievement(
       id: _uuid.v4(),
       userId: userId,
@@ -283,4 +288,4 @@ class TrackProgressUseCase {
   String _formatDateKey(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
-} 
+}

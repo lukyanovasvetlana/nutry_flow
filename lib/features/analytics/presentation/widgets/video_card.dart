@@ -42,10 +42,10 @@ class VideoCard extends StatelessWidget {
                 Container(
                   width: 120,
                   height: 80,
-                            decoration: BoxDecoration(
-            color: AppColors.button.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
+                  decoration: BoxDecoration(
+                    color: AppColors.button.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Stack(
                     children: [
                       const Center(
@@ -80,7 +80,7 @@ class VideoCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                
+
                 // Video content
                 Expanded(
                   child: Column(
@@ -88,7 +88,8 @@ class VideoCard extends StatelessWidget {
                     children: [
                       // Category
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.button.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
@@ -103,7 +104,7 @@ class VideoCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      
+
                       // Title
                       Text(
                         video.title,
@@ -114,7 +115,7 @@ class VideoCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
-                      
+
                       // Author and metadata
                       Row(
                         children: [
@@ -138,7 +139,7 @@ class VideoCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      
+
                       // Date
                       Text(
                         video.date,
@@ -157,4 +158,4 @@ class VideoCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

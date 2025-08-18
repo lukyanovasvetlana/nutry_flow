@@ -8,11 +8,11 @@ class WorkoutTimer extends StatefulWidget {
   final bool autoStart;
 
   const WorkoutTimer({
-    Key? key,
+    super.key,
     required this.initialSeconds,
     this.onComplete,
     this.autoStart = false,
-  }) : super(key: key);
+  });
 
   @override
   State<WorkoutTimer> createState() => _WorkoutTimerState();
@@ -23,7 +23,7 @@ class _WorkoutTimerState extends State<WorkoutTimer>
   late Timer _timer;
   late AnimationController _animationController;
   late Animation<double> _animation;
-  
+
   int _remainingSeconds = 0;
   bool _isRunning = false;
   bool _isCompleted = false;
@@ -32,12 +32,12 @@ class _WorkoutTimerState extends State<WorkoutTimer>
   void initState() {
     super.initState();
     _remainingSeconds = widget.initialSeconds;
-    
+
     _animationController = AnimationController(
       duration: Duration(seconds: widget.initialSeconds),
       vsync: this,
     );
-    
+
     _animation = Tween<double>(
       begin: 1.0,
       end: 0.0,
@@ -88,7 +88,7 @@ class _WorkoutTimerState extends State<WorkoutTimer>
 
     _timer.cancel();
     _animationController.stop();
-    
+
     setState(() {
       _isRunning = false;
     });
@@ -98,7 +98,7 @@ class _WorkoutTimerState extends State<WorkoutTimer>
     if (_isRunning || _isCompleted) return;
 
     _animationController.forward();
-    
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _remainingSeconds--;
@@ -122,7 +122,7 @@ class _WorkoutTimerState extends State<WorkoutTimer>
   void _resetTimer() {
     _timer.cancel();
     _animationController.reset();
-    
+
     setState(() {
       _remainingSeconds = widget.initialSeconds;
       _isRunning = false;
@@ -166,17 +166,17 @@ class _WorkoutTimerState extends State<WorkoutTimer>
                           strokeWidth: 8,
                           backgroundColor: context.colors.surfaceVariant,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            _isCompleted 
-                                ? context.colors.primary 
-                                : _isRunning 
-                                    ? context.colors.secondary 
+                            _isCompleted
+                                ? context.colors.primary
+                                : _isRunning
+                                    ? context.colors.secondary
                                     : context.colors.outline,
                           ),
                         );
                       },
                     ),
                   ),
-                  
+
                   // Time Text
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -190,10 +190,10 @@ class _WorkoutTimerState extends State<WorkoutTimer>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _isCompleted 
-                            ? 'Завершено' 
-                            : _isRunning 
-                                ? 'Время' 
+                        _isCompleted
+                            ? 'Завершено'
+                            : _isRunning
+                                ? 'Время'
                                 : 'Готово',
                         style: context.typography.bodySmallStyle.copyWith(
                           color: context.colors.onSurfaceVariant,
@@ -204,9 +204,9 @@ class _WorkoutTimerState extends State<WorkoutTimer>
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Control Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -232,7 +232,6 @@ class _WorkoutTimerState extends State<WorkoutTimer>
                         foregroundColor: context.colors.onPrimary,
                       ),
                     ),
-                  
                   ElevatedButton.icon(
                     onPressed: _resetTimer,
                     icon: const Icon(Icons.refresh),
@@ -260,4 +259,4 @@ class _WorkoutTimerState extends State<WorkoutTimer>
       ),
     );
   }
-} 
+}

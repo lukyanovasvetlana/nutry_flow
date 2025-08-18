@@ -31,12 +31,12 @@ class _ModernLoadingIndicatorState extends State<ModernLoadingIndicator>
   @override
   void initState() {
     super.initState();
-    
+
     _rotationController = AnimationController(
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    
+
     _scaleController = AnimationController(
       duration: DesignTokens.animations.normal,
       vsync: this,
@@ -129,7 +129,7 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    
+
     _shimmerAnimation = Tween<double>(
       begin: -1.0,
       end: 1.0,
@@ -148,7 +148,8 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
       padding: EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
         color: DesignTokens.colors.surface,
-        borderRadius: DesignTokens.borders.cardRadius,
+        borderRadius:
+            BorderRadius.circular(DesignTokens.borders.cardRadius.toDouble()),
         boxShadow: DesignTokens.shadows.sm,
       ),
       child: Column(
@@ -179,7 +180,8 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
     );
   }
 
-  Widget _buildShimmerBox(double width, double height, {bool isCircle = false}) {
+  Widget _buildShimmerBox(double width, double height,
+      {bool isCircle = false}) {
     return AnimatedBuilder(
       animation: _shimmerAnimation,
       builder: (context, child) {
@@ -187,9 +189,9 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
           width: width,
           height: height,
           decoration: BoxDecoration(
-            borderRadius: isCircle 
+            borderRadius: isCircle
                 ? BorderRadius.circular(height / 2)
-                : BorderRadius.circular(DesignTokens.borders.sm),
+                : BorderRadius.circular(DesignTokens.borders.sm.toDouble()),
             gradient: LinearGradient(
               colors: [
                 DesignTokens.colors.outline.withValues(alpha: 0.1),
@@ -221,7 +223,8 @@ class RecipeListSkeleton extends StatelessWidget {
     return ListView.separated(
       padding: EdgeInsets.all(DesignTokens.spacing.md),
       itemCount: itemCount,
-      separatorBuilder: (context, index) => SizedBox(height: DesignTokens.spacing.md),
+      separatorBuilder: (context, index) =>
+          SizedBox(height: DesignTokens.spacing.md),
       itemBuilder: (context, index) => const RecipeCardSkeleton(),
     );
   }
@@ -247,7 +250,7 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    
+
     _shimmerAnimation = Tween<double>(
       begin: -1.0,
       end: 1.0,
@@ -262,18 +265,20 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: DesignTokens.colors.surface,
-        borderRadius: DesignTokens.borders.cardRadius,
+        borderRadius:
+            BorderRadius.circular(DesignTokens.borders.cardRadius.toDouble()),
         boxShadow: DesignTokens.shadows.sm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Изображение
-          _buildShimmerBox(double.infinity, 200, borderRadius: DesignTokens.borders.lg),
-          
+          _buildShimmerBox(double.infinity, 200,
+              borderRadius: DesignTokens.borders.lg),
+
           Padding(
             padding: EdgeInsets.all(DesignTokens.spacing.md),
             child: Column(
@@ -282,20 +287,22 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
                 // Заголовок
                 _buildShimmerBox(200, 20),
                 SizedBox(height: DesignTokens.spacing.sm),
-                
+
                 // Описание
                 _buildShimmerBox(double.infinity, 16),
                 SizedBox(height: DesignTokens.spacing.xs),
                 _buildShimmerBox(150, 16),
-                
+
                 SizedBox(height: DesignTokens.spacing.md),
-                
+
                 // Теги и время
                 Row(
                   children: [
-                    _buildShimmerBox(60, 24, borderRadius: DesignTokens.borders.full),
+                    _buildShimmerBox(60, 24,
+                        borderRadius: DesignTokens.borders.full),
                     SizedBox(width: DesignTokens.spacing.sm),
-                    _buildShimmerBox(80, 24, borderRadius: DesignTokens.borders.full),
+                    _buildShimmerBox(80, 24,
+                        borderRadius: DesignTokens.borders.full),
                     const Spacer(),
                     _buildShimmerBox(40, 16),
                   ],
@@ -316,7 +323,8 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
           width: width,
           height: height,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius ?? DesignTokens.borders.sm),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? DesignTokens.borders.sm),
             gradient: LinearGradient(
               colors: [
                 DesignTokens.colors.outline.withValues(alpha: 0.1),
@@ -358,11 +366,13 @@ class FullScreenLoading extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DesignTokens.borders.xl),
+                  borderRadius:
+                      BorderRadius.circular(DesignTokens.borders.xl.toDouble()),
                   boxShadow: DesignTokens.shadows.lg,
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignTokens.borders.xl),
+                  borderRadius:
+                      BorderRadius.circular(DesignTokens.borders.xl.toDouble()),
                   child: Image.asset(
                     'assets/images/Logo.png',
                     fit: BoxFit.cover,
@@ -371,7 +381,6 @@ class FullScreenLoading extends StatelessWidget {
               ),
               SizedBox(height: DesignTokens.spacing.xl),
             ],
-            
             ModernLoadingIndicator(
               size: 64,
               message: message ?? 'Загружаем ваши данные...',
@@ -411,7 +420,8 @@ class ErrorStateWidget extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 color: DesignTokens.colors.error.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(DesignTokens.borders.full),
+                borderRadius:
+                    BorderRadius.circular(DesignTokens.borders.full.toDouble()),
               ),
               child: Icon(
                 icon,
@@ -419,9 +429,7 @@ class ErrorStateWidget extends StatelessWidget {
                 color: DesignTokens.colors.error,
               ),
             ),
-            
             SizedBox(height: DesignTokens.spacing.lg),
-            
             Text(
               title,
               textAlign: TextAlign.center,
@@ -431,9 +439,7 @@ class ErrorStateWidget extends StatelessWidget {
                 color: DesignTokens.colors.onSurface,
               ),
             ),
-            
             SizedBox(height: DesignTokens.spacing.sm),
-            
             Text(
               message,
               textAlign: TextAlign.center,
@@ -443,10 +449,8 @@ class ErrorStateWidget extends StatelessWidget {
                 height: DesignTokens.typography.lineHeightLoose,
               ),
             ),
-            
             if (onRetry != null) ...[
               SizedBox(height: DesignTokens.spacing.xl),
-              
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),
@@ -459,7 +463,8 @@ class ErrorStateWidget extends StatelessWidget {
                     vertical: DesignTokens.spacing.md,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: DesignTokens.borders.buttonRadius,
+                    borderRadius: BorderRadius.circular(
+                        DesignTokens.borders.buttonRadius.toDouble()),
                   ),
                 ),
               ),
@@ -501,7 +506,8 @@ class EmptyStateWidget extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                 gradient: DesignTokens.colors.secondaryGradient.scale(0.3),
-                borderRadius: BorderRadius.circular(DesignTokens.borders.full),
+                borderRadius:
+                    BorderRadius.circular(DesignTokens.borders.full.toDouble()),
               ),
               child: Icon(
                 icon,
@@ -509,9 +515,7 @@ class EmptyStateWidget extends StatelessWidget {
                 color: DesignTokens.colors.primary,
               ),
             ),
-            
             SizedBox(height: DesignTokens.spacing.xl),
-            
             Text(
               title,
               textAlign: TextAlign.center,
@@ -521,9 +525,7 @@ class EmptyStateWidget extends StatelessWidget {
                 color: DesignTokens.colors.onSurface,
               ),
             ),
-            
             SizedBox(height: DesignTokens.spacing.md),
-            
             Text(
               message,
               textAlign: TextAlign.center,
@@ -533,10 +535,8 @@ class EmptyStateWidget extends StatelessWidget {
                 height: DesignTokens.typography.lineHeightLoose,
               ),
             ),
-            
             if (actionText != null && onAction != null) ...[
               SizedBox(height: DesignTokens.spacing.xl),
-              
               ElevatedButton(
                 onPressed: onAction,
                 style: ElevatedButton.styleFrom(
@@ -547,7 +547,8 @@ class EmptyStateWidget extends StatelessWidget {
                     vertical: DesignTokens.spacing.md,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: DesignTokens.borders.buttonRadius,
+                    borderRadius: BorderRadius.circular(
+                        DesignTokens.borders.buttonRadius.toDouble()),
                   ),
                 ),
                 child: Text(actionText!),
@@ -570,4 +571,4 @@ extension LinearGradientExtension on LinearGradient {
       end: end,
     );
   }
-} 
+}

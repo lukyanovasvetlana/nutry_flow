@@ -60,7 +60,8 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                 if (state is ProfileLoaded) {
                   return IconButton(
                     icon: Icon(Icons.edit),
-                    onPressed: () => _navigateToEditProfile(context, state.profile),
+                    onPressed: () =>
+                        _navigateToEditProfile(context, state.profile),
                   );
                 }
                 return SizedBox.shrink();
@@ -118,23 +119,27 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                     ),
                     SizedBox(height: 24),
                     ElevatedButton(
-                      onPressed: () => _profileBloc.add(LoadProfile(widget.userId)),
-                      child: Text('Повторить'),
+                      onPressed: () =>
+                          _profileBloc.add(LoadProfile(widget.userId)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                      child: Text('Повторить'),
                     ),
                   ],
                 ),
               );
             }
 
-            if (state is ProfileLoaded || state is ProfileUpdating || state is ProfileUpdated) {
+            if (state is ProfileLoaded ||
+                state is ProfileUpdating ||
+                state is ProfileUpdated) {
               final profile = state is ProfileLoaded
                   ? state.profile
                   : state is ProfileUpdating
@@ -156,27 +161,27 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                         profile: profile,
                         onAvatarTap: () => _showAvatarOptions(context),
                       ),
-                      
+
                       SizedBox(height: 24),
-                      
+
                       // Personal Information Card
                       ProfileInfoCard(profile: profile),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Health Stats Card
                       ProfileStatsCard(profile: profile),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Goals and Targets Card
                       ProfileGoalsCard(profile: profile),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Quick Actions
                       _buildQuickActions(context, profile),
-                      
+
                       SizedBox(height: 32),
                     ],
                   ),
@@ -402,7 +407,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
     Color? color,
   }) {
     final optionColor = color ?? Colors.green;
-    
+
     return Material(
       color: optionColor.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(8),
@@ -436,10 +441,11 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
 
   void _uploadAvatar(BuildContext context, String source) {
     // Simulate image path
-    final imagePath = source == 'camera' ? '/camera/image.jpg' : '/gallery/image.jpg';
-    
+    final imagePath =
+        source == 'camera' ? '/camera/image.jpg' : '/gallery/image.jpg';
+
     _profileBloc.add(UploadAvatar(widget.userId, imagePath));
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Загрузка фото...'),
@@ -450,7 +456,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
 
   void _deleteAvatar(BuildContext context) {
     _profileBloc.add(DeleteAvatar(widget.userId));
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Фото удалено'),
@@ -462,7 +468,8 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
   void _shareProfile(BuildContext context, UserProfile profile) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Функция "Поделиться" будет доступна в следующих версиях'),
+        content:
+            Text('Функция "Поделиться" будет доступна в следующих версиях'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -476,4 +483,4 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
       ),
     );
   }
-} 
+}

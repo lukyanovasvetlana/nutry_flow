@@ -122,7 +122,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
 
   Future<void> _showSelectionDialog(BuildContext context) async {
     final TextEditingController customController = TextEditingController();
-    List<T> tempSelected = List.from(selectedItems);
+    final List<T> tempSelected = List.from(selectedItems);
 
     await showDialog(
       context: context,
@@ -151,7 +151,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                     activeColor: AppColors.green,
                   );
                 }),
-                
+
                 // Custom input if allowed
                 if (canAddCustom) ...[
                   const Divider(),
@@ -222,4 +222,4 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
       ),
     );
   }
-} 
+}

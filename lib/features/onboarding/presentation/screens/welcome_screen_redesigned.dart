@@ -5,7 +5,8 @@ class WelcomeScreenRedesigned extends StatefulWidget {
   const WelcomeScreenRedesigned({super.key});
 
   @override
-  State<WelcomeScreenRedesigned> createState() => _WelcomeScreenRedesignedState();
+  State<WelcomeScreenRedesigned> createState() =>
+      _WelcomeScreenRedesignedState();
 }
 
 class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
@@ -20,9 +21,10 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/Logo.png',
-                width: 200,
-                height: 200,
+                'assets/images/logo.png',
+                width: 80,
+                height: 80,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 40),
               Text(
@@ -34,7 +36,10 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
               Text(
                 'Ваш персональный помощник в мире здорового питания',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(color: Colors.grey),
               ),
               const SizedBox(height: 60),
               SizedBox(
@@ -80,4 +85,4 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
       ),
     );
   }
-} 
+}

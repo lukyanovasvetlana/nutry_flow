@@ -5,7 +5,7 @@ import '../bloc/auth_bloc.dart';
 import '../../di/onboarding_dependencies.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -24,16 +24,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login(BuildContext context) {
-    print('🟢 LoginScreen: _login called');
     if (_formKey.currentState!.validate()) {
-      print('🟢 LoginScreen: Form is valid, sending SignInRequested');
       context.read<AuthBloc>().add(SignInRequested(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      ));
-    } else {
-      print('🟢 LoginScreen: Form validation failed');
-    }
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          ));
+    } else {}
   }
 
   void _onLoginSuccess(BuildContext context) {
@@ -42,12 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('🟢 LoginScreen: build called');
     return BlocProvider(
       create: (context) {
-        print('🟢 LoginScreen: Creating AuthBloc');
         final authBloc = OnboardingDependencies.instance.createAuthBloc();
-        print('🟢 LoginScreen: AuthBloc created successfully');
         return authBloc;
       },
       child: Scaffold(
@@ -64,9 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
-            print('🟡 LoginScreen: BlocListener received state: ${state.runtimeType}');
             if (state is AuthError) {
-              print('🟡 LoginScreen: AuthError - ${state.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
@@ -74,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             } else if (state is AuthAuthenticated) {
-              print('🟡 LoginScreen: AuthAuthenticated - ${state.user.email}');
               _onLoginSuccess(context);
             }
           },
@@ -100,13 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 10),
                         Text(
                           'Добро пожаловать обратно!',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 40),
-                        
+
                         Form(
                           key: _formKey,
                           child: Column(
@@ -130,14 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (value == null || value.isEmpty) {
                                     return 'Введите email';
                                   }
-                                  if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+                                  if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                                      .hasMatch(value)) {
                                     return 'Некорректный email';
                                   }
                                   return null;
                                 },
                               ),
                               const SizedBox(height: 20),
-                              
+
                               // Password поле
                               TextFormField(
                                 controller: _passwordController,
@@ -161,14 +153,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                               ),
                               const SizedBox(height: 12),
-                              
+
                               // Забыли пароль?
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: TextButton(
-                                  onPressed: state is AuthLoading ? null : () {
-                                    Navigator.pushNamed(context, '/forgot-password');
-                                  },
+                                  onPressed: state is AuthLoading
+                                      ? null
+                                      : () {
+                                          Navigator.pushNamed(
+                                              context, '/forgot-password');
+                                        },
                                   child: Text(
                                     'Забыли пароль?',
                                     style: TextStyle(
@@ -179,16 +174,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              
+
                               // Кнопка входа
                               SizedBox(
                                 width: double.infinity,
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: state is AuthLoading ? null : () {
-                                    print('🟢 LoginScreen: Login button pressed');
-                                    _login(context);
-                                  },
+                                  onPressed: state is AuthLoading
+                                      ? null
+                                      : () {
+                                          _login(context);
+                                        },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.button,
                                     foregroundColor: Colors.white,
@@ -203,7 +199,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
                                           ),
                                         )
                                       : const Text(
@@ -216,13 +214,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              
+
                               // Разделитель
                               Row(
                                 children: [
-                                  Expanded(child: Divider(color: Colors.grey[400])),
+                                  Expanded(
+                                      child: Divider(color: Colors.grey[400])),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
                                     child: Text(
                                       'или',
                                       style: TextStyle(
@@ -231,21 +231,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                   ),
-                                  Expanded(child: Divider(color: Colors.grey[400])),
+                                  Expanded(
+                                      child: Divider(color: Colors.grey[400])),
                                 ],
                               ),
                               const SizedBox(height: 30),
-                              
+
                               // Кнопка регистрации
                               SizedBox(
                                 width: double.infinity,
                                 height: 50,
                                 child: OutlinedButton(
-                                  onPressed: state is AuthLoading ? null : () {
-                                    Navigator.pushReplacementNamed(context, '/registration');
-                                  },
+                                  onPressed: state is AuthLoading
+                                      ? null
+                                      : () {
+                                          Navigator.pushReplacementNamed(
+                                              context, '/registration');
+                                        },
                                   style: OutlinedButton.styleFrom(
-                                    side: BorderSide(color: AppColors.button, width: 1.5),
+                                    side: BorderSide(
+                                        color: AppColors.button, width: 1.5),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
                                     ),
@@ -261,15 +266,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              
+
                               // Политика конфиденциальности
                               Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pushNamed(context, '/privacy-policy');
+                                    Navigator.pushNamed(
+                                        context, '/privacy-policy');
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
                                     child: const Text(
                                       'Политика конфиденциальности',
                                       style: TextStyle(
@@ -297,4 +304,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-} 
+}

@@ -5,9 +5,9 @@ class ProfileStatsCard extends StatelessWidget {
   final UserProfile profile;
 
   const ProfileStatsCard({
-    Key? key,
+    super.key,
     required this.profile,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ProfileStatsCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            
+
             // BMI Section
             if (profile.height != null && profile.weight != null) ...[
               _buildBMISection(),
@@ -38,7 +38,7 @@ class ProfileStatsCard extends StatelessWidget {
               Divider(),
               SizedBox(height: 16),
             ],
-            
+
             // Physical Stats
             Row(
               children: [
@@ -63,9 +63,9 @@ class ProfileStatsCard extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             SizedBox(height: 12),
-            
+
             // Target Weight
             if (profile.targetWeight != null) ...[
               Row(
@@ -84,13 +84,18 @@ class ProfileStatsCard extends StatelessWidget {
                     child: _buildStatCard(
                       icon: Icons.trending_up,
                       label: 'Осталось',
-                      value: profile.weight != null 
-                          ? '${(profile.targetWeight! - profile.weight!).abs().toStringAsFixed(1)}'
+                      value: profile.weight != null
+                          ? (profile.targetWeight! - profile.weight!)
+                              .abs()
+                              .toStringAsFixed(1)
                           : '-',
                       unit: 'кг',
-                      color: profile.weight != null && profile.targetWeight != null
-                          ? (profile.weight! > profile.targetWeight! ? Colors.red : Colors.green)
-                          : Colors.grey,
+                      color:
+                          profile.weight != null && profile.targetWeight != null
+                              ? (profile.weight! > profile.targetWeight!
+                                  ? Colors.red
+                                  : Colors.green)
+                              : Colors.grey,
                     ),
                   ),
                 ],
@@ -99,7 +104,7 @@ class ProfileStatsCard extends StatelessWidget {
               Divider(),
               SizedBox(height: 16),
             ],
-            
+
             // Calorie Targets
             if (profile.targetCalories != null) ...[
               Text(
@@ -111,7 +116,6 @@ class ProfileStatsCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              
               Row(
                 children: [
                   Expanded(
@@ -135,8 +139,9 @@ class ProfileStatsCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
-              if (profile.targetProtein != null || profile.targetCarbs != null || profile.targetFat != null) ...[
+              if (profile.targetProtein != null ||
+                  profile.targetCarbs != null ||
+                  profile.targetFat != null) ...[
                 SizedBox(height: 12),
                 Row(
                   children: [
@@ -150,7 +155,9 @@ class ProfileStatsCard extends StatelessWidget {
                           color: Colors.indigo,
                         ),
                       ),
-                    if (profile.targetProtein != null && (profile.targetCarbs != null || profile.targetFat != null))
+                    if (profile.targetProtein != null &&
+                        (profile.targetCarbs != null ||
+                            profile.targetFat != null))
                       SizedBox(width: 12),
                     if (profile.targetCarbs != null)
                       Expanded(
@@ -162,7 +169,8 @@ class ProfileStatsCard extends StatelessWidget {
                           color: Colors.amber,
                         ),
                       ),
-                    if (profile.targetCarbs != null && profile.targetFat != null)
+                    if (profile.targetCarbs != null &&
+                        profile.targetFat != null)
                       SizedBox(width: 12),
                     if (profile.targetFat != null)
                       Expanded(
@@ -187,7 +195,7 @@ class ProfileStatsCard extends StatelessWidget {
   Widget _buildBMISection() {
     final bmi = profile.bmi;
     final bmiCategory = profile.bmiCategory;
-    
+
     Color bmiColor;
     switch (bmiCategory) {
       case BMICategory.underweight:
@@ -206,7 +214,7 @@ class ProfileStatsCard extends StatelessWidget {
         bmiColor = Colors.grey;
         break;
     }
-    
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -262,7 +270,7 @@ class ProfileStatsCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12),
-          
+
           // BMI Scale
           Container(
             height: 8,
@@ -281,7 +289,7 @@ class ProfileStatsCard extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned(
-                                     left: _getBMIPosition(bmi ?? 0.0),
+                  left: _getBMIPosition(bmi ?? 0.0),
                   top: -2,
                   child: Container(
                     width: 12,
@@ -300,7 +308,7 @@ class ProfileStatsCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -358,7 +366,7 @@ class ProfileStatsCard extends StatelessWidget {
     } else {
       position = 100;
     }
-    
+
     // Convert to pixels (assuming container width of ~300px)
     return (position / 100) * 250;
   }
@@ -428,4 +436,4 @@ class ProfileStatsCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

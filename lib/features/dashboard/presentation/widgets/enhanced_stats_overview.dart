@@ -7,7 +7,7 @@ import '../../../exercise/presentation/screens/exercise_screen_redesigned.dart';
 class EnhancedStatsOverview extends StatefulWidget {
   final Function(int) onCardTap;
   final int selectedIndex;
-  
+
   const EnhancedStatsOverview({
     super.key,
     required this.onCardTap,
@@ -37,19 +37,19 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
     );
 
     // Создаем контроллеры для каждой карточки
-    _cardControllers = List.generate(3, (index) => 
-      AnimationController(
-        duration: DesignTokens.animations.fast,
-        vsync: this,
-      )
-    );
+    _cardControllers = List.generate(
+        3,
+        (index) => AnimationController(
+              duration: DesignTokens.animations.fast,
+              vsync: this,
+            ));
 
     // Создаем анимации масштабирования для каждой карточки
-    _cardAnimations = _cardControllers.map((controller) =>
-      Tween<double>(begin: 1.0, end: 0.95).animate(
-        CurvedAnimation(parent: controller, curve: DesignTokens.animations.easeInOut)
-      )
-    ).toList();
+    _cardAnimations = _cardControllers
+        .map((controller) => Tween<double>(begin: 1.0, end: 0.95).animate(
+            CurvedAnimation(
+                parent: controller, curve: DesignTokens.animations.easeInOut)))
+        .toList();
 
     // Запускаем появление карточек с задержкой
     _animateCardsIn();
@@ -68,7 +68,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
   @override
   void dispose() {
     _animationController.dispose();
-    for (var controller in _cardControllers) {
+    for (final controller in _cardControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -76,7 +76,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 140,
       child: Row(
         children: [
@@ -128,7 +128,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
     required LinearGradient gradient,
   }) {
     final isSelected = widget.selectedIndex == index;
-    
+
     return Expanded(
       child: AnimatedBuilder(
         animation: _cardAnimations[index],
@@ -148,14 +148,16 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                 decoration: BoxDecoration(
                   gradient: isSelected ? gradient : null,
                   color: isSelected ? null : DesignTokens.colors.surface,
-                  borderRadius: DesignTokens.borders.cardRadius,
-                  boxShadow: isSelected 
+                  borderRadius:
+                      BorderRadius.circular(DesignTokens.borders.cardRadius),
+                  boxShadow: isSelected
                       ? DesignTokens.shadows.lg
                       : DesignTokens.shadows.sm,
-                  border: isSelected 
-                      ? null 
+                  border: isSelected
+                      ? null
                       : Border.all(
-                          color: DesignTokens.colors.outline.withValues(alpha: 0.1),
+                          color: DesignTokens.colors.outline
+                              .withValues(alpha: 0.1),
                           width: DesignTokens.borders.thin,
                         ),
                 ),
@@ -171,47 +173,51 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                           Container(
                             padding: EdgeInsets.all(DesignTokens.spacing.sm),
                             decoration: BoxDecoration(
-                              color: isSelected 
-                                  ? DesignTokens.colors.onPrimary.withValues(alpha: 0.2)
+                              color: isSelected
+                                  ? DesignTokens.colors.onPrimary
+                                      .withValues(alpha: 0.2)
                                   : color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
+                              borderRadius: BorderRadius.circular(
+                                  DesignTokens.borders.sm),
                             ),
                             child: Icon(
                               icon,
                               size: DesignTokens.spacing.iconMedium,
-                              color: isSelected 
+                              color: isSelected
                                   ? DesignTokens.colors.onPrimary
                                   : color,
                             ),
                           ),
-                          _buildChangeIndicator(change, changePositive, isSelected),
+                          _buildChangeIndicator(
+                              change, changePositive, isSelected),
                         ],
                       ),
-                      
+
                       SizedBox(height: DesignTokens.spacing.md),
-                      
+
                       // Значение
                       Text(
                         value,
                         style: TextStyle(
                           fontSize: DesignTokens.typography.headlineSmall,
                           fontWeight: DesignTokens.typography.bold,
-                          color: isSelected 
+                          color: isSelected
                               ? DesignTokens.colors.onPrimary
                               : DesignTokens.colors.onSurface,
                         ),
                       ),
-                      
+
                       SizedBox(height: DesignTokens.spacing.xs),
-                      
+
                       // Заголовок
                       Text(
                         title,
                         style: TextStyle(
                           fontSize: DesignTokens.typography.bodySmall,
                           fontWeight: DesignTokens.typography.medium,
-                          color: isSelected 
-                              ? DesignTokens.colors.onPrimary.withValues(alpha: 0.8)
+                          color: isSelected
+                              ? DesignTokens.colors.onPrimary
+                                  .withValues(alpha: 0.8)
                               : DesignTokens.colors.onSurfaceVariant,
                         ),
                       ),
@@ -226,16 +232,17 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
     );
   }
 
-  Widget _buildChangeIndicator(String change, bool isPositive, bool isSelected) {
+  Widget _buildChangeIndicator(
+      String change, bool isPositive, bool isSelected) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: DesignTokens.spacing.sm,
         vertical: DesignTokens.spacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isSelected 
+        color: isSelected
             ? DesignTokens.colors.onPrimary.withValues(alpha: 0.2)
-            : (isPositive 
+            : (isPositive
                 ? DesignTokens.colors.success.withValues(alpha: 0.1)
                 : DesignTokens.colors.error.withValues(alpha: 0.1)),
         borderRadius: BorderRadius.circular(DesignTokens.borders.full),
@@ -244,11 +251,13 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isPositive ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+            isPositive
+                ? Icons.trending_up_rounded
+                : Icons.trending_down_rounded,
             size: DesignTokens.spacing.iconSmall,
-            color: isSelected 
+            color: isSelected
                 ? DesignTokens.colors.onPrimary
-                : (isPositive 
+                : (isPositive
                     ? DesignTokens.colors.success
                     : DesignTokens.colors.error),
           ),
@@ -258,9 +267,9 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
             style: TextStyle(
               fontSize: DesignTokens.typography.labelSmall,
               fontWeight: DesignTokens.typography.semiBold,
-              color: isSelected 
+              color: isSelected
                   ? DesignTokens.colors.onPrimary
-                  : (isPositive 
+                  : (isPositive
                       ? DesignTokens.colors.success
                       : DesignTokens.colors.error),
             ),
@@ -274,7 +283,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
 /// Улучшенная карточка приветствия с персонализацией
 class EnhancedWelcomeCard extends StatefulWidget {
   final String? userName;
-  
+
   const EnhancedWelcomeCard({
     super.key,
     this.userName,
@@ -328,7 +337,7 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
     final currentHour = DateTime.now().hour;
     String greeting;
     IconData greetingIcon;
-    
+
     if (currentHour < 12) {
       greeting = 'Доброе утро';
       greetingIcon = Icons.wb_sunny_rounded;
@@ -349,7 +358,8 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
           padding: EdgeInsets.all(DesignTokens.spacing.lg),
           decoration: BoxDecoration(
             gradient: DesignTokens.colors.primaryGradient,
-            borderRadius: DesignTokens.borders.cardRadius,
+            borderRadius:
+                BorderRadius.circular(DesignTokens.borders.cardRadius),
             boxShadow: DesignTokens.shadows.lg,
           ),
           child: Row(
@@ -360,19 +370,21 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                 height: DesignTokens.spacing.avatarMedium,
                 decoration: BoxDecoration(
                   color: DesignTokens.colors.onPrimary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(DesignTokens.borders.full),
+                  borderRadius:
+                      BorderRadius.circular(DesignTokens.borders.full),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignTokens.borders.full),
+                  borderRadius:
+                      BorderRadius.circular(DesignTokens.borders.full),
                   child: Image.asset(
                     'assets/images/Logo.png',
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              
+
               SizedBox(width: DesignTokens.spacing.md),
-              
+
               // Приветствие и имя
               Expanded(
                 child: Column(
@@ -383,14 +395,16 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                         Icon(
                           greetingIcon,
                           size: DesignTokens.spacing.iconSmall,
-                          color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
+                          color: DesignTokens.colors.onPrimary
+                              .withValues(alpha: 0.8),
                         ),
                         SizedBox(width: DesignTokens.spacing.xs),
                         Text(
                           greeting,
                           style: TextStyle(
                             fontSize: DesignTokens.typography.bodyMedium,
-                            color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
+                            color: DesignTokens.colors.onPrimary
+                                .withValues(alpha: 0.8),
                             fontWeight: DesignTokens.typography.medium,
                           ),
                         ),
@@ -410,26 +424,30 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                       'Готовы к новому дню здорового питания?',
                       style: TextStyle(
                         fontSize: DesignTokens.typography.bodySmall,
-                        color: DesignTokens.colors.onPrimary.withValues(alpha: 0.7),
+                        color: DesignTokens.colors.onPrimary
+                            .withValues(alpha: 0.7),
                         fontWeight: DesignTokens.typography.regular,
                       ),
                     ),
                   ],
                 ),
               ),
-              
+
               // Кнопка настроек
               IconButton(
-                onPressed: () => Navigator.pushNamed(context, '/profile-settings'),
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/profile-settings'),
                 icon: Icon(
                   Icons.settings_rounded,
                   color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
                   size: DesignTokens.spacing.iconMedium,
                 ),
                 style: IconButton.styleFrom(
-                  backgroundColor: DesignTokens.colors.onPrimary.withValues(alpha: 0.1),
+                  backgroundColor:
+                      DesignTokens.colors.onPrimary.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
+                    borderRadius:
+                        BorderRadius.circular(DesignTokens.borders.sm),
                   ),
                 ),
               ),
@@ -483,7 +501,8 @@ class QuickActions extends StatelessWidget {
                 color: DesignTokens.colors.accent,
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ExerciseScreenRedesigned()),
+                  MaterialPageRoute(
+                      builder: (context) => const ExerciseScreenRedesigned()),
                 ),
               ),
             ],
@@ -506,7 +525,8 @@ class QuickActions extends StatelessWidget {
           padding: EdgeInsets.all(DesignTokens.spacing.md),
           decoration: BoxDecoration(
             color: DesignTokens.colors.surface,
-            borderRadius: DesignTokens.borders.cardRadius,
+            borderRadius:
+                BorderRadius.circular(DesignTokens.borders.cardRadius),
             boxShadow: DesignTokens.shadows.sm,
             border: Border.all(
               color: DesignTokens.colors.outline.withValues(alpha: 0.1),
@@ -543,4 +563,4 @@ class QuickActions extends StatelessWidget {
       ),
     );
   }
-} 
+}

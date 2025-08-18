@@ -23,4 +23,4 @@ class InsightTag {
 
   @override
   int get hashCode => id.hashCode;
-} 
+}

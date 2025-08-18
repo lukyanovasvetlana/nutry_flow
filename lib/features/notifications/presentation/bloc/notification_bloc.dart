@@ -19,7 +19,7 @@ class LoadNotificationPreferences extends NotificationEvent {
 
 class SaveNotificationPreferences extends NotificationEvent {
   final NotificationPreferences preferences;
-  
+
   const SaveNotificationPreferences(this.preferences);
 
   @override
@@ -32,7 +32,7 @@ class LoadScheduledNotifications extends NotificationEvent {
 
 class ScheduleNotification extends NotificationEvent {
   final ScheduledNotification notification;
-  
+
   const ScheduleNotification(this.notification);
 
   @override
@@ -41,7 +41,7 @@ class ScheduleNotification extends NotificationEvent {
 
 class CancelNotification extends NotificationEvent {
   final int notificationId;
-  
+
   const CancelNotification(this.notificationId);
 
   @override
@@ -52,7 +52,7 @@ class ScheduleMealReminder extends NotificationEvent {
   final DateTime mealTime;
   final String mealName;
   final String? description;
-  
+
   const ScheduleMealReminder({
     required this.mealTime,
     required this.mealName,
@@ -67,7 +67,7 @@ class ScheduleWorkoutReminder extends NotificationEvent {
   final DateTime workoutTime;
   final String workoutName;
   final String? description;
-  
+
   const ScheduleWorkoutReminder({
     required this.workoutTime,
     required this.workoutName,
@@ -82,7 +82,7 @@ class ScheduleGoalReminder extends NotificationEvent {
   final DateTime reminderTime;
   final String goalName;
   final String? description;
-  
+
   const ScheduleGoalReminder({
     required this.reminderTime,
     required this.goalName,
@@ -97,7 +97,7 @@ class SendGoalAchievementNotification extends NotificationEvent {
   final String userId;
   final String goalName;
   final String? achievement;
-  
+
   const SendGoalAchievementNotification({
     required this.userId,
     required this.goalName,
@@ -111,7 +111,7 @@ class SendGoalAchievementNotification extends NotificationEvent {
 class SendMissedWorkoutNotification extends NotificationEvent {
   final String userId;
   final String workoutName;
-  
+
   const SendMissedWorkoutNotification({
     required this.userId,
     required this.workoutName,
@@ -125,7 +125,7 @@ class SendCalorieExceededNotification extends NotificationEvent {
   final String userId;
   final int targetCalories;
   final int consumedCalories;
-  
+
   const SendCalorieExceededNotification({
     required this.userId,
     required this.targetCalories,
@@ -150,7 +150,7 @@ class NotificationLoading extends NotificationState {}
 
 class NotificationPreferencesLoaded extends NotificationState {
   final NotificationPreferences preferences;
-  
+
   const NotificationPreferencesLoaded(this.preferences);
 
   @override
@@ -159,7 +159,7 @@ class NotificationPreferencesLoaded extends NotificationState {
 
 class ScheduledNotificationsLoaded extends NotificationState {
   final List<ScheduledNotification> notifications;
-  
+
   const ScheduledNotificationsLoaded(this.notifications);
 
   @override
@@ -168,7 +168,7 @@ class ScheduledNotificationsLoaded extends NotificationState {
 
 class NotificationSuccess extends NotificationState {
   final String message;
-  
+
   const NotificationSuccess(this.message);
 
   @override
@@ -177,7 +177,7 @@ class NotificationSuccess extends NotificationState {
 
 class NotificationError extends NotificationState {
   final String message;
-  
+
   const NotificationError(this.message);
 
   @override
@@ -190,9 +190,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   NotificationBloc({
     required NotificationRepository notificationRepository,
-  }) : _notificationRepository = notificationRepository,
-       super(NotificationInitial()) {
-    
+  })  : _notificationRepository = notificationRepository,
+        super(NotificationInitial()) {
     on<LoadNotificationPreferences>(_onLoadNotificationPreferences);
     on<SaveNotificationPreferences>(_onSaveNotificationPreferences);
     on<LoadScheduledNotifications>(_onLoadScheduledNotifications);
@@ -211,15 +210,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Loading notification preferences', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Loading notification preferences',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      final preferences = await _notificationRepository.getNotificationPreferences();
+      final preferences =
+          await _notificationRepository.getNotificationPreferences();
 
       emit(NotificationPreferencesLoaded(preferences));
-      developer.log('🔔 NotificationBloc: Notification preferences loaded successfully', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Notification preferences loaded successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to load notification preferences: $e', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Failed to load notification preferences: $e',
+          name: 'NotificationBloc');
       emit(NotificationError('Не удалось загрузить настройки уведомлений: $e'));
     }
   }
@@ -229,15 +234,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Saving notification preferences', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Saving notification preferences',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.saveNotificationPreferences(event.preferences);
+      await _notificationRepository
+          .saveNotificationPreferences(event.preferences);
 
       emit(NotificationSuccess('Настройки уведомлений сохранены успешно'));
-      developer.log('🔔 NotificationBloc: Notification preferences saved successfully', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Notification preferences saved successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to save notification preferences: $e', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Failed to save notification preferences: $e',
+          name: 'NotificationBloc');
       emit(NotificationError('Не удалось сохранить настройки уведомлений: $e'));
     }
   }
@@ -247,16 +258,23 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Loading scheduled notifications', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Loading scheduled notifications',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      final notifications = await _notificationRepository.getScheduledNotifications();
+      final notifications =
+          await _notificationRepository.getScheduledNotifications();
 
       emit(ScheduledNotificationsLoaded(notifications));
-      developer.log('🔔 NotificationBloc: Scheduled notifications loaded successfully', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Scheduled notifications loaded successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to load scheduled notifications: $e', name: 'NotificationBloc');
-      emit(NotificationError('Не удалось загрузить запланированные уведомления: $e'));
+      developer.log(
+          '🔔 NotificationBloc: Failed to load scheduled notifications: $e',
+          name: 'NotificationBloc');
+      emit(NotificationError(
+          'Не удалось загрузить запланированные уведомления: $e'));
     }
   }
 
@@ -265,15 +283,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Scheduling notification', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Scheduling notification',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.scheduleNotification(event.notification);
 
       emit(NotificationSuccess('Уведомление запланировано успешно'));
-      developer.log('🔔 NotificationBloc: Notification scheduled successfully', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Notification scheduled successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to schedule notification: $e', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Failed to schedule notification: $e',
+          name: 'NotificationBloc');
       emit(NotificationError('Не удалось запланировать уведомление: $e'));
     }
   }
@@ -283,15 +304,19 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Cancelling notification: ${event.notificationId}', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Cancelling notification: ${event.notificationId}',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.cancelNotification(event.notificationId);
 
       emit(NotificationSuccess('Уведомление отменено успешно'));
-      developer.log('🔔 NotificationBloc: Notification cancelled successfully', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Notification cancelled successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to cancel notification: $e', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Failed to cancel notification: $e',
+          name: 'NotificationBloc');
       emit(NotificationError('Не удалось отменить уведомление: $e'));
     }
   }
@@ -301,7 +326,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Scheduling meal reminder', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Scheduling meal reminder',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.scheduleMealReminder(
@@ -311,9 +337,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       );
 
       emit(NotificationSuccess('Напоминание о еде запланировано успешно'));
-      developer.log('🔔 NotificationBloc: Meal reminder scheduled successfully', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Meal reminder scheduled successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to schedule meal reminder: $e', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Failed to schedule meal reminder: $e',
+          name: 'NotificationBloc');
       emit(NotificationError('Не удалось запланировать напоминание о еде: $e'));
     }
   }
@@ -323,7 +351,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Scheduling workout reminder', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Scheduling workout reminder',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.scheduleWorkoutReminder(
@@ -332,11 +361,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         description: event.description,
       );
 
-      emit(NotificationSuccess('Напоминание о тренировке запланировано успешно'));
-      developer.log('🔔 NotificationBloc: Workout reminder scheduled successfully', name: 'NotificationBloc');
+      emit(NotificationSuccess(
+          'Напоминание о тренировке запланировано успешно'));
+      developer.log(
+          '🔔 NotificationBloc: Workout reminder scheduled successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to schedule workout reminder: $e', name: 'NotificationBloc');
-      emit(NotificationError('Не удалось запланировать напоминание о тренировке: $e'));
+      developer.log(
+          '🔔 NotificationBloc: Failed to schedule workout reminder: $e',
+          name: 'NotificationBloc');
+      emit(NotificationError(
+          'Не удалось запланировать напоминание о тренировке: $e'));
     }
   }
 
@@ -345,7 +380,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Scheduling goal reminder', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Scheduling goal reminder',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.scheduleGoalReminder(
@@ -355,10 +391,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       );
 
       emit(NotificationSuccess('Напоминание о цели запланировано успешно'));
-      developer.log('🔔 NotificationBloc: Goal reminder scheduled successfully', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Goal reminder scheduled successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to schedule goal reminder: $e', name: 'NotificationBloc');
-      emit(NotificationError('Не удалось запланировать напоминание о цели: $e'));
+      developer.log('🔔 NotificationBloc: Failed to schedule goal reminder: $e',
+          name: 'NotificationBloc');
+      emit(
+          NotificationError('Не удалось запланировать напоминание о цели: $e'));
     }
   }
 
@@ -367,7 +406,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Sending goal achievement notification', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Sending goal achievement notification',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.sendGoalAchievementNotification(
@@ -376,11 +417,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         achievement: event.achievement,
       );
 
-      emit(NotificationSuccess('Уведомление о достижении цели отправлено успешно'));
-      developer.log('🔔 NotificationBloc: Goal achievement notification sent successfully', name: 'NotificationBloc');
+      emit(NotificationSuccess(
+          'Уведомление о достижении цели отправлено успешно'));
+      developer.log(
+          '🔔 NotificationBloc: Goal achievement notification sent successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to send goal achievement notification: $e', name: 'NotificationBloc');
-      emit(NotificationError('Не удалось отправить уведомление о достижении цели: $e'));
+      developer.log(
+          '🔔 NotificationBloc: Failed to send goal achievement notification: $e',
+          name: 'NotificationBloc');
+      emit(NotificationError(
+          'Не удалось отправить уведомление о достижении цели: $e'));
     }
   }
 
@@ -389,7 +436,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Sending missed workout notification', name: 'NotificationBloc');
+      developer.log('🔔 NotificationBloc: Sending missed workout notification',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.sendMissedWorkoutNotification(
@@ -397,11 +445,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         workoutName: event.workoutName,
       );
 
-      emit(NotificationSuccess('Уведомление о пропущенной тренировке отправлено успешно'));
-      developer.log('🔔 NotificationBloc: Missed workout notification sent successfully', name: 'NotificationBloc');
+      emit(NotificationSuccess(
+          'Уведомление о пропущенной тренировке отправлено успешно'));
+      developer.log(
+          '🔔 NotificationBloc: Missed workout notification sent successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to send missed workout notification: $e', name: 'NotificationBloc');
-      emit(NotificationError('Не удалось отправить уведомление о пропущенной тренировке: $e'));
+      developer.log(
+          '🔔 NotificationBloc: Failed to send missed workout notification: $e',
+          name: 'NotificationBloc');
+      emit(NotificationError(
+          'Не удалось отправить уведомление о пропущенной тренировке: $e'));
     }
   }
 
@@ -410,7 +464,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      developer.log('🔔 NotificationBloc: Sending calorie exceeded notification', name: 'NotificationBloc');
+      developer.log(
+          '🔔 NotificationBloc: Sending calorie exceeded notification',
+          name: 'NotificationBloc');
       emit(NotificationLoading());
 
       await _notificationRepository.sendCalorieExceededNotification(
@@ -419,11 +475,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         consumedCalories: event.consumedCalories,
       );
 
-      emit(NotificationSuccess('Уведомление о превышении калорий отправлено успешно'));
-      developer.log('🔔 NotificationBloc: Calorie exceeded notification sent successfully', name: 'NotificationBloc');
+      emit(NotificationSuccess(
+          'Уведомление о превышении калорий отправлено успешно'));
+      developer.log(
+          '🔔 NotificationBloc: Calorie exceeded notification sent successfully',
+          name: 'NotificationBloc');
     } catch (e) {
-      developer.log('🔔 NotificationBloc: Failed to send calorie exceeded notification: $e', name: 'NotificationBloc');
-      emit(NotificationError('Не удалось отправить уведомление о превышении калорий: $e'));
+      developer.log(
+          '🔔 NotificationBloc: Failed to send calorie exceeded notification: $e',
+          name: 'NotificationBloc');
+      emit(NotificationError(
+          'Не удалось отправить уведомление о превышении калорий: $e'));
     }
   }
-} 
+}

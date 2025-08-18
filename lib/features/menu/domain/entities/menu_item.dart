@@ -14,7 +14,7 @@ class MenuItem {
   final List<Ingredient> ingredients;
   final List<RecipeStep> steps;
   final NutritionFacts? nutrition;
-  
+
   // Дополнительные поля для совместимости
   final int cookingTime; // в минутах
   final int servings;
@@ -38,8 +38,8 @@ class MenuItem {
     this.tags = const [],
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) : createdAt = createdAt ?? DateTime.now(),
-       updatedAt = updatedAt ?? DateTime.now();
+  })  : createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? DateTime.now();
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
     return MenuItem(
@@ -49,15 +49,27 @@ class MenuItem {
       category: json['category'] as String,
       difficulty: json['difficulty'] as String,
       rating: (json['rating'] as num?)?.toDouble() ?? 0,
-      photos: (json['photos'] as List? ?? []).map((p) => RecipePhoto.fromJson(p)).toList(),
-      ingredients: (json['ingredients'] as List? ?? []).map((i) => Ingredient.fromJson(i)).toList(),
-      steps: (json['steps'] as List? ?? []).map((s) => RecipeStep.fromJson(s)).toList(),
-      nutrition: json['nutrition'] != null ? NutritionFacts.fromJson(json['nutrition']) : null,
+      photos: (json['photos'] as List? ?? [])
+          .map((p) => RecipePhoto.fromJson(p))
+          .toList(),
+      ingredients: (json['ingredients'] as List? ?? [])
+          .map((i) => Ingredient.fromJson(i))
+          .toList(),
+      steps: (json['steps'] as List? ?? [])
+          .map((s) => RecipeStep.fromJson(s))
+          .toList(),
+      nutrition: json['nutrition'] != null
+          ? NutritionFacts.fromJson(json['nutrition'])
+          : null,
       cookingTime: json['cooking_time'] as int? ?? 30,
       servings: json['servings'] as int? ?? 1,
       tags: List<String>.from(json['tags'] ?? []),
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
     );
   }
 
@@ -80,4 +92,4 @@ class MenuItem {
       'updated_at': updatedAt.toIso8601String(),
     };
   }
-} 
+}

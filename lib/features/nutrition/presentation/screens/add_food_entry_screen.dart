@@ -14,11 +14,11 @@ class AddFoodEntryScreen extends StatefulWidget {
   final DateTime? initialDate;
 
   const AddFoodEntryScreen({
-    Key? key,
+    super.key,
     required this.foodItem,
     this.initialMealType,
     this.initialDate,
-  }) : super(key: key);
+  });
 
   @override
   State<AddFoodEntryScreen> createState() => _AddFoodEntryScreenState();
@@ -37,11 +37,11 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     _selectedMealType = widget.initialMealType ?? _getCurrentMealType();
     _selectedDate = widget.initialDate ?? DateTime.now();
     _selectedTime = TimeOfDay.now();
-    
+
     _portionController.text = _portionSize.toString();
   }
 
@@ -55,7 +55,7 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
   MealType _getCurrentMealType() {
     final now = TimeOfDay.now();
     final hour = now.hour;
-    
+
     if (hour < 11) return MealType.breakfast;
     if (hour < 16) return MealType.lunch;
     if (hour < 20) return MealType.dinner;
@@ -82,7 +82,7 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
-    
+
     if (date != null) {
       setState(() {
         _selectedDate = date;
@@ -95,7 +95,7 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
       context: context,
       initialTime: _selectedTime,
     );
-    
+
     if (time != null) {
       setState(() {
         _selectedTime = time;
@@ -115,15 +115,15 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
     );
 
     context.read<FoodEntryCubit>().addFoodEntry(
-      userId: 'current_user_id',
-      foodItem: widget.foodItem,
-      grams: _portionSize,
-      mealType: _selectedMealType,
-      consumedAt: consumedAt,
-      notes: _notesController.text.trim().isNotEmpty 
-          ? _notesController.text.trim() 
-          : null,
-    );
+          userId: 'current_user_id',
+          foodItem: widget.foodItem,
+          grams: _portionSize,
+          mealType: _selectedMealType,
+          consumedAt: consumedAt,
+          notes: _notesController.text.trim().isNotEmpty
+              ? _notesController.text.trim()
+              : null,
+        );
   }
 
   @override
@@ -143,7 +143,7 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
                 );
                 Navigator.pop(context, true);
               }
-              
+
               if (state is FoodEntryError) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -180,9 +180,9 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
                 foodItem: widget.foodItem,
                 showActions: false,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Meal type selector
               Text(
                 'Тип приёма пищи',
@@ -193,9 +193,9 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
                 selectedMealType: _selectedMealType,
                 onMealTypeChanged: _onMealTypeChanged,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Portion size input
               Text(
                 'Размер порции',
@@ -207,9 +207,9 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
                 initialPortion: _portionSize,
                 onPortionChanged: _onPortionChanged,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Date and time selection
               Row(
                 children: [
@@ -284,9 +284,9 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Notes input
               Text(
                 'Заметки (необязательно)',
@@ -301,9 +301,9 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Nutrition preview
               Text(
                 'Пищевая ценность',
@@ -320,4 +320,4 @@ class _AddFoodEntryScreenState extends State<AddFoodEntryScreen> {
       ),
     );
   }
-} 
+}

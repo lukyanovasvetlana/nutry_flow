@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:nutry_flow/shared/theme/app_colors.dart';
+import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 import '../../../../app.dart';
 
 class MealDetailsScreen extends StatefulWidget {
   final String? mealId;
   final String? mealName;
-  
+
   const MealDetailsScreen({
     super.key,
     this.mealId,
@@ -29,7 +29,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
   Future<void> _loadMealDetails() async {
     // Симуляция загрузки данных
     await Future.delayed(const Duration(seconds: 1));
-    
+
     setState(() {
       // Мок-данные для демонстрации
       mealData = {
@@ -74,12 +74,12 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4F2),
+      backgroundColor: context.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF9F4F2),
+        backgroundColor: context.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: context.onSurface),
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
@@ -88,10 +88,10 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             );
           },
         ),
-        title: const Text(
+        title: Text(
           'Детали блюда',
           style: TextStyle(
-            color: Colors.black,
+            color: context.onSurface,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -99,13 +99,13 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite_border, color: Colors.black),
+            icon: Icon(Icons.favorite_border, color: context.onSurface),
             onPressed: () {
               // TODO: Добавить в избранное
             },
           ),
           IconButton(
-            icon: const Icon(Icons.share, color: Colors.black),
+            icon: Icon(Icons.share, color: context.onSurface),
             onPressed: () {
               // TODO: Поделиться рецептом
             },
@@ -122,31 +122,31 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   // Изображение блюда
                   _buildMealImage(),
                   const SizedBox(height: 16),
-                  
+
                   // Название и основная информация
                   _buildMealHeader(),
                   const SizedBox(height: 16),
-                  
+
                   // Быстрая информация
                   _buildQuickInfo(),
                   const SizedBox(height: 24),
-                  
+
                   // Пищевая ценность
                   _buildNutritionInfo(),
                   const SizedBox(height: 24),
-                  
+
                   // Ингредиенты
                   _buildIngredients(),
                   const SizedBox(height: 24),
-                  
+
                   // Инструкции по приготовлению
                   _buildInstructions(),
                   const SizedBox(height: 24),
-                  
+
                   // Советы по питанию
                   _buildNutritionTips(),
                   const SizedBox(height: 24),
-                  
+
                   // Кнопки действий
                   _buildActionButtons(),
                 ],
@@ -161,7 +161,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
       height: 200,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.grey[200],
+        color: context.surfaceVariant,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -169,14 +169,14 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
           fit: StackFit.expand,
           children: [
             // Placeholder для изображения
-            Container(
+            DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.green.withValues(alpha: 0.3),
-                    AppColors.yellow.withValues(alpha: 0.3),
+                    context.primary.withValues(alpha: 0.3),
+                    context.warning.withValues(alpha: 0.3),
                   ],
                 ),
               ),
@@ -199,7 +199,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
+                      context.shadowScrim,
                     ],
                   ),
                 ),
@@ -246,7 +246,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
       children: List.generate(5, (index) {
         return Icon(
           index < 4 ? Icons.star : Icons.star_border,
-          color: AppColors.yellow,
+          color: context.tertiary,
           size: 16,
         );
       }),
@@ -257,7 +257,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -293,21 +293,21 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
   Widget _buildInfoItem(IconData icon, String value, String label) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.green, size: 24),
+        Icon(icon, color: context.primary, size: 24),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: context.onSurface,
           ),
         ),
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: context.onSurfaceVariant,
           ),
         ),
       ],
@@ -318,23 +318,23 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Пищевая ценность',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: context.onSurface,
           ),
         ),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: context.shadow.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -342,12 +342,18 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
           ),
           child: Column(
             children: [
-              _buildNutritionRow('Калории', '${mealData!['calories']}', 'ккал', AppColors.orange),
-              _buildNutritionRow('Белки', '${mealData!['protein']}', 'г', AppColors.green),
-              _buildNutritionRow('Углеводы', '${mealData!['carbs']}', 'г', AppColors.yellow),
-              _buildNutritionRow('Жиры', '${mealData!['fat']}', 'г', AppColors.orange),
-              _buildNutritionRow('Клетчатка', '${mealData!['fiber']}', 'г', AppColors.green),
-              _buildNutritionRow('Сахар', '${mealData!['sugar']}', 'г', Colors.red),
+              _buildNutritionRow('Калории', '${mealData!['calories']}', 'ккал',
+                  context.tertiary),
+              _buildNutritionRow('Белки', '${mealData!['protein']}', 'г',
+                  context.nutritionProtein),
+              _buildNutritionRow('Углеводы', '${mealData!['carbs']}', 'г',
+                  context.nutritionCarbs),
+              _buildNutritionRow(
+                  'Жиры', '${mealData!['fat']}', 'г', context.nutritionFats),
+              _buildNutritionRow('Клетчатка', '${mealData!['fiber']}', 'г',
+                  context.nutritionFiber),
+              _buildNutritionRow(
+                  'Сахар', '${mealData!['sugar']}', 'г', context.error),
             ],
           ),
         ),
@@ -355,7 +361,8 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     );
   }
 
-  Widget _buildNutritionRow(String label, String value, String unit, Color color) {
+  Widget _buildNutritionRow(
+      String label, String value, String unit, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -397,35 +404,36 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Ингредиенты',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: context.onSurface,
           ),
         ),
         const SizedBox(height: 12),
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: context.shadow.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Column(
-            children: (mealData!['ingredients'] as List).map<Widget>((ingredient) {
+            children:
+                (mealData!['ingredients'] as List).map<Widget>((ingredient) {
               return ListTile(
                 leading: Container(
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: AppColors.green,
+                    color: context.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -434,7 +442,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   ingredient['amount'],
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: context.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -450,37 +458,40 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Инструкции по приготовлению',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: context.onSurface,
           ),
         ),
         const SizedBox(height: 12),
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: context.shadow.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Column(
-            children: (mealData!['instructions'] as List).asMap().entries.map<Widget>((entry) {
-              int index = entry.key;
-              String instruction = entry.value;
+            children: (mealData!['instructions'] as List)
+                .asMap()
+                .entries
+                .map<Widget>((entry) {
+              final int index = entry.key;
+              final String instruction = entry.value;
               return ListTile(
                 leading: Container(
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: AppColors.green,
+                    color: context.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -496,7 +507,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                 ),
                 title: Text(
                   instruction,
-                  style: const TextStyle(fontSize: 14),
+                  style: TextStyle(fontSize: 14, color: context.onSurface),
                 ),
               );
             }).toList(),
@@ -510,19 +521,19 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Полезные советы',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: context.onSurface,
           ),
         ),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.green.withValues(alpha: 0.1),
+            color: context.success.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -534,16 +545,16 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   children: [
                     Icon(
                       Icons.lightbulb_outline,
-                      color: AppColors.green,
+                      color: context.success,
                       size: 16,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         tip,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          color: Colors.black87,
+                          color: context.onSurface,
                         ),
                       ),
                     ),
@@ -571,8 +582,8 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.button,
-              foregroundColor: Colors.white,
+              backgroundColor: context.primary,
+              foregroundColor: context.onPrimary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -595,12 +606,13 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             onPressed: () {
               // TODO: Добавить в список покупок
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Ингредиенты добавлены в список покупок!')),
+                const SnackBar(
+                    content: Text('Ингредиенты добавлены в список покупок!')),
               );
             },
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.button,
-              side: BorderSide(color: AppColors.button),
+              foregroundColor: context.primary,
+              side: BorderSide(color: context.primary),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -617,4 +629,4 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
       ],
     );
   }
-} 
+}

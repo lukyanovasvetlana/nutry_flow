@@ -157,8 +157,8 @@ class FoodEntry {
       sodium: (json['sodium'] as num).toDouble(),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      consumedAt: json['consumed_at'] != null 
-          ? DateTime.parse(json['consumed_at'] as String) 
+      consumedAt: json['consumed_at'] != null
+          ? DateTime.parse(json['consumed_at'] as String)
           : null,
       notes: json['notes'] as String?,
       grams: json['grams'] != null ? (json['grams'] as num).toDouble() : null,
@@ -178,4 +178,4 @@ class FoodEntry {
   String toString() {
     return 'FoodEntry(id: $id, foodName: $foodName, quantity: $quantity $unit)';
   }
-} 
+}

@@ -4,11 +4,10 @@ import 'package:get_it/get_it.dart';
 import '../bloc/workout_bloc.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/exercise.dart';
-import '../widgets/exercise_card.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
 
 class WorkoutCreationScreen extends StatefulWidget {
-  const WorkoutCreationScreen({Key? key}) : super(key: key);
+  const WorkoutCreationScreen({super.key});
 
   @override
   State<WorkoutCreationScreen> createState() => _WorkoutCreationScreenState();
@@ -20,10 +19,9 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _durationController = TextEditingController();
-  
+
   WorkoutDifficulty _selectedDifficulty = WorkoutDifficulty.beginner;
-  List<Exercise> _selectedExercises = [];
-  List<WorkoutExercise> _workoutExercises = [];
+  final List<WorkoutExercise> _workoutExercises = [];
 
   @override
   void initState() {
@@ -134,7 +132,7 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Название тренировки
             TextFormField(
               controller: _nameController,
@@ -156,7 +154,7 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Описание
             TextFormField(
               controller: _descriptionController,
@@ -173,7 +171,7 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
               maxLines: 3,
             ),
             const SizedBox(height: 16),
-            
+
             // Длительность
             TextFormField(
               controller: _durationController,
@@ -190,7 +188,7 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 16),
-            
+
             // Сложность
             Text(
               'Сложность',
@@ -261,7 +259,6 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            
             if (_workoutExercises.isEmpty)
               Center(
                 child: Column(
@@ -359,7 +356,6 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
             Row(
               children: [
                 _buildPreviewItem(
@@ -471,8 +467,8 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
       id: '',
       userId: 'current_user_id', // TODO: Get from auth
       name: _nameController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty 
-          ? null 
+      description: _descriptionController.text.trim().isEmpty
+          ? null
           : _descriptionController.text.trim(),
       estimatedDurationMinutes: int.tryParse(_durationController.text),
       difficulty: _selectedDifficulty,
@@ -494,4 +490,4 @@ class _WorkoutCreationScreenState extends State<WorkoutCreationScreen> {
         return 'Продвинутый';
     }
   }
-} 
+}

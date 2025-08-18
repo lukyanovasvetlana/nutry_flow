@@ -6,10 +6,10 @@ class ProfileHeader extends StatelessWidget {
   final VoidCallback? onAvatarTap;
 
   const ProfileHeader({
-    Key? key,
+    super.key,
     required this.profile,
     this.onAvatarTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +100,9 @@ class ProfileHeader extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               SizedBox(height: 16),
-              
+
               // Name
               Text(
                 profile.fullName,
@@ -113,7 +113,7 @@ class ProfileHeader extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               if (profile.email.isNotEmpty) ...[
                 SizedBox(height: 4),
                 Text(
@@ -125,9 +125,9 @@ class ProfileHeader extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ],
-              
+
               SizedBox(height: 16),
-              
+
               // Basic Stats Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -140,18 +140,22 @@ class ProfileHeader extends StatelessWidget {
                   _buildStatItem(
                     icon: Icons.monitor_weight,
                     label: 'Вес',
-                    value: profile.weight != null ? '${profile.weight} кг' : 'Не указан',
+                    value: profile.weight != null
+                        ? '${profile.weight} кг'
+                        : 'Не указан',
                   ),
                   _buildStatItem(
                     icon: Icons.height,
                     label: 'Рост',
-                    value: profile.height != null ? '${profile.height} см' : 'Не указан',
+                    value: profile.height != null
+                        ? '${profile.height} см'
+                        : 'Не указан',
                   ),
                 ],
               ),
-              
+
               SizedBox(height: 16),
-              
+
               // Profile Completeness
               _buildCompletenessIndicator(),
             ],
@@ -196,7 +200,7 @@ class ProfileHeader extends StatelessWidget {
 
   Widget _buildCompletenessIndicator() {
     final completeness = profile.profileCompleteness;
-    
+
     return Column(
       children: [
         Row(
@@ -238,4 +242,4 @@ class ProfileHeader extends StatelessWidget {
       ],
     );
   }
-} 
+}

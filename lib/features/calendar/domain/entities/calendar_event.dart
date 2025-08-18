@@ -77,7 +77,9 @@ class CalendarEvent {
       title: json['title'] as String,
       description: json['description'] as String?,
       dateTime: DateTime.parse(json['date_time'] as String),
-      endDateTime: json['end_date_time'] != null ? DateTime.parse(json['end_date_time']) : null,
+      endDateTime: json['end_date_time'] != null
+          ? DateTime.parse(json['end_date_time'])
+          : null,
       location: json['location'] as String?,
       note: json['note'] as String?,
       isCompleted: json['is_completed'] as bool? ?? false,
@@ -115,8 +117,8 @@ class CalendarEvent {
   bool get isToday {
     final now = DateTime.now();
     return dateTime.year == now.year &&
-           dateTime.month == now.month &&
-           dateTime.day == now.day;
+        dateTime.month == now.month &&
+        dateTime.day == now.day;
   }
 
   /// Проверяет, является ли событие просроченным
@@ -132,7 +134,7 @@ class CalendarEvent {
 
   /// Проверяет, является ли событие целодневным
   bool get isAllDay {
-    return endDateTime != null && 
-           endDateTime!.difference(dateTime).inHours >= 24;
+    return endDateTime != null &&
+        endDateTime!.difference(dateTime).inHours >= 24;
   }
-} 
+}

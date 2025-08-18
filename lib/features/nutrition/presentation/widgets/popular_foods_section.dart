@@ -8,9 +8,9 @@ class PopularFoodsSection extends StatefulWidget {
   final Function(FoodItem) onFoodItemSelected;
 
   const PopularFoodsSection({
-    Key? key,
+    super.key,
     required this.onFoodItemSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<PopularFoodsSection> createState() => _PopularFoodsSectionState();
@@ -44,7 +44,7 @@ class _PopularFoodsSectionState extends State<PopularFoodsSection> {
               itemCount: state.foodItems.length,
               itemBuilder: (context, index) {
                 final foodItem = state.foodItems[index];
-                
+
                 return Container(
                   width: 300,
                   margin: EdgeInsets.only(
@@ -114,4 +114,4 @@ class _PopularFoodsSectionState extends State<PopularFoodsSection> {
       },
     );
   }
-} 
+}

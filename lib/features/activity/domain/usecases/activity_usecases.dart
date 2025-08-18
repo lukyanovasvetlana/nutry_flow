@@ -12,7 +12,7 @@ class StartActivitySessionUseCase {
   StartActivitySessionUseCase(this.repository);
 
   Future<Either<String, ActivitySession>> call(ActivitySession session) async {
-    return await repository.startActivitySession(session);
+    return repository.startActivitySession(session);
   }
 }
 
@@ -23,7 +23,7 @@ class UpdateActivitySessionUseCase {
   UpdateActivitySessionUseCase(this.repository);
 
   Future<Either<String, ActivitySession>> call(ActivitySession session) async {
-    return await repository.updateActivitySession(session);
+    return repository.updateActivitySession(session);
   }
 }
 
@@ -34,7 +34,7 @@ class CompleteActivitySessionUseCase {
   CompleteActivitySessionUseCase(this.repository);
 
   Future<Either<String, ActivitySession>> call(String sessionId) async {
-    return await repository.completeActivitySession(sessionId);
+    return repository.completeActivitySession(sessionId);
   }
 }
 
@@ -45,7 +45,7 @@ class GetCurrentSessionUseCase {
   GetCurrentSessionUseCase(this.repository);
 
   Future<Either<String, ActivitySession?>> call(String userId) async {
-    return await repository.getCurrentSession(userId);
+    return repository.getCurrentSession(userId);
   }
 }
 
@@ -55,8 +55,9 @@ class GetUserSessionsUseCase {
 
   GetUserSessionsUseCase(this.repository);
 
-  Future<Either<String, List<ActivitySession>>> call(String userId, {DateTime? from, DateTime? to}) async {
-    return await repository.getUserSessions(userId, from: from, to: to);
+  Future<Either<String, List<ActivitySession>>> call(String userId,
+      {DateTime? from, DateTime? to}) async {
+    return repository.getUserSessions(userId, from: from, to: to);
   }
 }
 
@@ -67,7 +68,7 @@ class GetSessionByIdUseCase {
   GetSessionByIdUseCase(this.repository);
 
   Future<Either<String, ActivitySession?>> call(String id) async {
-    return await repository.getSessionById(id);
+    return repository.getSessionById(id);
   }
 }
 
@@ -78,8 +79,9 @@ class GetDailyStatsUseCase {
 
   GetDailyStatsUseCase(this.repository);
 
-  Future<Either<String, ActivityStats>> call(String userId, DateTime date) async {
-    return await repository.getDailyStats(userId, date);
+  Future<Either<String, ActivityStats>> call(
+      String userId, DateTime date) async {
+    return repository.getDailyStats(userId, date);
   }
 }
 
@@ -89,8 +91,9 @@ class GetWeeklyStatsUseCase {
 
   GetWeeklyStatsUseCase(this.repository);
 
-  Future<Either<String, List<ActivityStats>>> call(String userId, DateTime weekStart) async {
-    return await repository.getWeeklyStats(userId, weekStart);
+  Future<Either<String, List<ActivityStats>>> call(
+      String userId, DateTime weekStart) async {
+    return repository.getWeeklyStats(userId, weekStart);
   }
 }
 
@@ -100,8 +103,9 @@ class GetMonthlyStatsUseCase {
 
   GetMonthlyStatsUseCase(this.repository);
 
-  Future<Either<String, List<ActivityStats>>> call(String userId, DateTime monthStart) async {
-    return await repository.getMonthlyStats(userId, monthStart);
+  Future<Either<String, List<ActivityStats>>> call(
+      String userId, DateTime monthStart) async {
+    return repository.getMonthlyStats(userId, monthStart);
   }
 }
 
@@ -112,7 +116,7 @@ class UpdateDailyStatsUseCase {
   UpdateDailyStatsUseCase(this.repository);
 
   Future<Either<String, ActivityStats>> call(ActivityStats stats) async {
-    return await repository.updateDailyStats(stats);
+    return repository.updateDailyStats(stats);
   }
 }
 
@@ -123,8 +127,9 @@ class GetActivityAnalyticsUseCase {
 
   GetActivityAnalyticsUseCase(this.repository);
 
-  Future<Either<String, Map<String, dynamic>>> call(String userId, {DateTime? from, DateTime? to}) async {
-    return await repository.getActivityAnalytics(userId, from: from, to: to);
+  Future<Either<String, Map<String, dynamic>>> call(String userId,
+      {DateTime? from, DateTime? to}) async {
+    return repository.getActivityAnalytics(userId, from: from, to: to);
   }
 }
 
@@ -135,7 +140,7 @@ class GetTotalWorkoutsUseCase {
   GetTotalWorkoutsUseCase(this.repository);
 
   Future<Either<String, int>> call(String userId) async {
-    return await repository.getTotalWorkouts(userId);
+    return repository.getTotalWorkouts(userId);
   }
 }
 
@@ -145,8 +150,9 @@ class GetTotalDurationUseCase {
 
   GetTotalDurationUseCase(this.repository);
 
-  Future<Either<String, int>> call(String userId, {DateTime? from, DateTime? to}) async {
-    return await repository.getTotalDuration(userId, from: from, to: to);
+  Future<Either<String, int>> call(String userId,
+      {DateTime? from, DateTime? to}) async {
+    return repository.getTotalDuration(userId, from: from, to: to);
   }
 }
 
@@ -156,7 +162,8 @@ class GetTotalCaloriesBurnedUseCase {
 
   GetTotalCaloriesBurnedUseCase(this.repository);
 
-  Future<Either<String, int>> call(String userId, {DateTime? from, DateTime? to}) async {
-    return await repository.getTotalCaloriesBurned(userId, from: from, to: to);
+  Future<Either<String, int>> call(String userId,
+      {DateTime? from, DateTime? to}) async {
+    return repository.getTotalCaloriesBurned(userId, from: from, to: to);
   }
-} 
+}

@@ -10,7 +10,8 @@ class NutritionApiService {
   NutritionApiService(this._supabase);
 
   // Food Items API methods
-  Future<List<FoodItemModel>> searchFoodItems(String query, {int limit = 20}) async {
+  Future<List<FoodItemModel>> searchFoodItems(String query,
+      {int limit = 20}) async {
     try {
       final response = await _supabase
           .from('food_items')
@@ -75,7 +76,8 @@ class NutritionApiService {
     }
   }
 
-  Future<List<FoodItemModel>> getFoodItemsByCategory(String category, {int limit = 20}) async {
+  Future<List<FoodItemModel>> getFoodItemsByCategory(String category,
+      {int limit = 20}) async {
     try {
       final response = await _supabase
           .from('food_items')
@@ -145,10 +147,7 @@ class NutritionApiService {
 
   Future<void> deleteFoodItem(String id) async {
     try {
-      await _supabase
-          .from('food_items')
-          .delete()
-          .eq('id', id);
+      await _supabase.from('food_items').delete().eq('id', id);
     } catch (e) {
       throw Exception('Failed to delete food item: $e');
     }
@@ -186,19 +185,14 @@ class NutritionApiService {
 
   Future<void> deleteFoodEntry(String id) async {
     try {
-      await _supabase
-          .from('food_entries')
-          .delete()
-          .eq('id', id);
+      await _supabase.from('food_entries').delete().eq('id', id);
     } catch (e) {
       throw Exception('Failed to delete food entry: $e');
     }
   }
 
   Future<List<FoodEntryModel>> getFoodEntriesByDate(
-    String userId, 
-    DateTime date
-  ) async {
+      String userId, DateTime date) async {
     try {
       final startOfDay = DateTime(date.year, date.month, date.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
@@ -219,7 +213,8 @@ class NutritionApiService {
     }
   }
 
-  Future<List<FoodEntryModel>> getRecentFoodEntries(String userId, {int limit = 10}) async {
+  Future<List<FoodEntryModel>> getRecentFoodEntries(String userId,
+      {int limit = 10}) async {
     try {
       final response = await _supabase
           .from('food_entries')
@@ -237,10 +232,7 @@ class NutritionApiService {
   }
 
   Future<List<FoodEntryModel>> getFoodEntriesByDateRange(
-    String userId, 
-    DateTime startDate, 
-    DateTime endDate
-  ) async {
+      String userId, DateTime startDate, DateTime endDate) async {
     try {
       final response = await _supabase
           .from('food_entries')
@@ -259,10 +251,7 @@ class NutritionApiService {
   }
 
   Future<List<FoodEntryModel>> getFoodEntriesByMealType(
-    String userId, 
-    DateTime date, 
-    MealType mealType
-  ) async {
+      String userId, DateTime date, MealType mealType) async {
     try {
       final startOfDay = DateTime(date.year, date.month, date.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
@@ -286,12 +275,10 @@ class NutritionApiService {
 
   // Nutrition Summary API methods
   Future<NutritionSummaryModel?> getNutritionSummary(
-    String userId, 
-    DateTime date
-  ) async {
+      String userId, DateTime date) async {
     try {
       final dateString = date.toIso8601String().split('T')[0];
-      
+
       final response = await _supabase
           .from('nutrition_summaries')
           .select('*')
@@ -307,10 +294,7 @@ class NutritionApiService {
   }
 
   Future<List<NutritionSummaryModel>> getNutritionSummariesByDateRange(
-    String userId, 
-    DateTime startDate, 
-    DateTime endDate
-  ) async {
+      String userId, DateTime startDate, DateTime endDate) async {
     try {
       final startDateString = startDate.toIso8601String().split('T')[0];
       final endDateString = endDate.toIso8601String().split('T')[0];
@@ -332,9 +316,7 @@ class NutritionApiService {
   }
 
   Future<NutritionSummaryModel> createOrUpdateNutritionSummary(
-    String userId,
-    NutritionSummaryModel summary
-  ) async {
+      String userId, NutritionSummaryModel summary) async {
     try {
       final summaryData = summary.toJson();
       summaryData['user_id'] = userId;
@@ -369,18 +351,17 @@ class NutritionApiService {
 
   Future<void> addFoodItemToFavorites(String userId, String foodItemId) async {
     try {
-      await _supabase
-          .from('user_favorite_foods')
-          .insert({
-            'user_id': userId,
-            'food_item_id': foodItemId,
-          });
+      await _supabase.from('user_favorite_foods').insert({
+        'user_id': userId,
+        'food_item_id': foodItemId,
+      });
     } catch (e) {
       throw Exception('Failed to add food item to favorites: $e');
     }
   }
 
-  Future<void> removeFoodItemFromFavorites(String userId, String foodItemId) async {
+  Future<void> removeFoodItemFromFavorites(
+      String userId, String foodItemId) async {
     try {
       await _supabase
           .from('user_favorite_foods')
@@ -406,4 +387,4 @@ class NutritionApiService {
       return getPopularFoodItems(limit: 10);
     }
   }
-} 
+}

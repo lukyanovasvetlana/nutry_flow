@@ -238,7 +238,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     on<LoadActivityAnalytics>(_onLoadActivityAnalytics);
   }
 
-  Future<void> _onStartActivitySession(StartActivitySession event, Emitter<ActivityState> emit) async {
+  Future<void> _onStartActivitySession(
+      StartActivitySession event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
     final result = await _startActivitySessionUseCase(event.session);
@@ -249,7 +250,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onUpdateActivitySession(UpdateActivitySession event, Emitter<ActivityState> emit) async {
+  Future<void> _onUpdateActivitySession(
+      UpdateActivitySession event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
     final result = await _updateActivitySessionUseCase(event.session);
@@ -260,7 +262,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onCompleteActivitySession(CompleteActivitySession event, Emitter<ActivityState> emit) async {
+  Future<void> _onCompleteActivitySession(
+      CompleteActivitySession event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
     final result = await _completeActivitySessionUseCase(event.sessionId);
@@ -271,7 +274,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onLoadCurrentSession(LoadCurrentSession event, Emitter<ActivityState> emit) async {
+  Future<void> _onLoadCurrentSession(
+      LoadCurrentSession event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
     final result = await _getCurrentSessionUseCase(event.userId);
@@ -282,10 +286,12 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onLoadUserSessions(LoadUserSessions event, Emitter<ActivityState> emit) async {
+  Future<void> _onLoadUserSessions(
+      LoadUserSessions event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
-    final result = await _getUserSessionsUseCase(event.userId, from: event.from, to: event.to);
+    final result = await _getUserSessionsUseCase(event.userId,
+        from: event.from, to: event.to);
 
     result.fold(
       (error) => emit(ActivityError(error)),
@@ -293,7 +299,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onLoadDailyStats(LoadDailyStats event, Emitter<ActivityState> emit) async {
+  Future<void> _onLoadDailyStats(
+      LoadDailyStats event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
     final result = await _getDailyStatsUseCase(event.userId, event.date);
@@ -304,7 +311,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onLoadWeeklyStats(LoadWeeklyStats event, Emitter<ActivityState> emit) async {
+  Future<void> _onLoadWeeklyStats(
+      LoadWeeklyStats event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
     final result = await _getWeeklyStatsUseCase(event.userId, event.weekStart);
@@ -315,10 +323,12 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onLoadMonthlyStats(LoadMonthlyStats event, Emitter<ActivityState> emit) async {
+  Future<void> _onLoadMonthlyStats(
+      LoadMonthlyStats event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
-    final result = await _getMonthlyStatsUseCase(event.userId, event.monthStart);
+    final result =
+        await _getMonthlyStatsUseCase(event.userId, event.monthStart);
 
     result.fold(
       (error) => emit(ActivityError(error)),
@@ -326,14 +336,16 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     );
   }
 
-  Future<void> _onLoadActivityAnalytics(LoadActivityAnalytics event, Emitter<ActivityState> emit) async {
+  Future<void> _onLoadActivityAnalytics(
+      LoadActivityAnalytics event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
 
-    final result = await _getActivityAnalyticsUseCase(event.userId, from: event.from, to: event.to);
+    final result = await _getActivityAnalyticsUseCase(event.userId,
+        from: event.from, to: event.to);
 
     result.fold(
       (error) => emit(ActivityError(error)),
       (analytics) => emit(ActivityAnalyticsLoaded(analytics)),
     );
   }
-} 
+}

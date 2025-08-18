@@ -8,7 +8,8 @@ class DeveloperAnalyticsScreen extends StatefulWidget {
   const DeveloperAnalyticsScreen({super.key});
 
   @override
-  State<DeveloperAnalyticsScreen> createState() => _DeveloperAnalyticsScreenState();
+  State<DeveloperAnalyticsScreen> createState() =>
+      _DeveloperAnalyticsScreenState();
 }
 
 class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
@@ -31,7 +32,7 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
     try {
       // Имитируем загрузку данных аналитики
       await Future.delayed(const Duration(seconds: 1));
-      
+
       setState(() {
         _analyticsData = {
           'total_events': 1250,
@@ -59,7 +60,8 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
         };
       });
     } catch (e) {
-      developer.log('Failed to load analytics data: $e', name: 'DeveloperAnalyticsScreen');
+      developer.log('Failed to load analytics data: $e',
+          name: 'DeveloperAnalyticsScreen');
     } finally {
       setState(() {
         _isLoading = false;
@@ -257,7 +259,8 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
     );
   }
 
-  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+  Widget _buildMetricCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -299,48 +302,49 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
           'Отследить тестовое событие',
           Icons.send,
           Colors.blue,
-          () => _trackTestEvent(),
+          _trackTestEvent,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить ошибку',
           Icons.error_outline,
           Colors.red,
-          () => _trackTestError(),
+          _trackTestError,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить производительность',
           Icons.speed,
           Colors.green,
-          () => _trackTestPerformance(),
+          _trackTestPerformance,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить достижение цели',
           Icons.emoji_events,
           Colors.orange,
-          () => _trackTestGoalAchievement(),
+          _trackTestGoalAchievement,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить тренировку',
           Icons.fitness_center,
           Colors.purple,
-          () => _trackTestWorkout(),
+          _trackTestWorkout,
         ),
         const SizedBox(height: 12),
         _buildActionButton(
           'Отследить прием пищи',
           Icons.restaurant,
           Colors.teal,
-          () => _trackTestMeal(),
+          _trackTestMeal,
         ),
       ],
     );
   }
 
-  Widget _buildActionButton(String title, IconData icon, Color color, VoidCallback onPressed) {
+  Widget _buildActionButton(
+      String title, IconData icon, Color color, VoidCallback onPressed) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
@@ -401,7 +405,8 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
 
       _showSnackBar('Производительность отслежена успешно', Colors.green);
     } catch (e) {
-      _showSnackBar('Ошибка при отслеживании производительности: $e', Colors.red);
+      _showSnackBar(
+          'Ошибка при отслеживании производительности: $e', Colors.red);
     }
   }
 
@@ -472,4 +477,4 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
       ),
     );
   }
-} 
+}

@@ -118,8 +118,11 @@ class MockGoalsRepository implements GoalsRepository {
           value: 78.0 - (i * 0.2), // Постепенное снижение веса
           unit: 'кг',
           date: now.subtract(Duration(days: 30 - (i * 2))),
-          notes: i == 0 ? 'Начальное взвешивание' : 
-                 i == 14 ? 'Отличный прогресс!' : null,
+          notes: i == 0
+              ? 'Начальное взвешивание'
+              : i == 14
+                  ? 'Отличный прогресс!'
+                  : null,
           createdAt: now.subtract(Duration(days: 30 - (i * 2))),
         ),
 
@@ -165,26 +168,26 @@ class MockGoalsRepository implements GoalsRepository {
         type: AchievementType.goalCompleted,
         category: AchievementCategory.activity,
         title: 'Цель достигнута!',
-        description: 'Поздравляем! Вы выполнили цель "Ходить 10000 шагов в день"',
+        description:
+            'Поздравляем! Вы выполнили цель "Ходить 10000 шагов в день"',
         iconName: 'trophy',
         points: 100,
         earnedDate: now.subtract(const Duration(days: 10)),
         metadata: {'goalType': 'activity'},
       ),
-
       Achievement(
         id: 'achievement-2',
         userId: userId,
         type: AchievementType.milestone,
         category: AchievementCategory.weight,
         title: 'Первый шаг!',
-        description: 'Отличное начало! Вы сделали первую запись прогресса по весу',
+        description:
+            'Отличное начало! Вы сделали первую запись прогресса по весу',
         iconName: 'star',
         points: 10,
         earnedDate: now.subtract(const Duration(days: 30)),
         metadata: {'entryType': 'weight'},
       ),
-
       Achievement(
         id: 'achievement-3',
         userId: userId,
@@ -197,7 +200,6 @@ class MockGoalsRepository implements GoalsRepository {
         earnedDate: now.subtract(const Duration(days: 5)),
         metadata: {'streakDays': 7, 'type': 'workout'},
       ),
-
       Achievement(
         id: 'achievement-4',
         userId: userId,
@@ -263,25 +265,28 @@ class MockGoalsRepository implements GoalsRepository {
     DateTime? endDate,
   }) async {
     await _simulateNetworkDelay();
-    
+
     var filtered = _progressEntries.where((entry) => entry.userId == userId);
-    
+
     if (goalId != null) {
       filtered = filtered.where((entry) => entry.goalId == goalId);
     }
-    
+
     if (type != null) {
       filtered = filtered.where((entry) => entry.type == type);
     }
-    
+
     if (startDate != null) {
-      filtered = filtered.where((entry) => entry.date.isAfter(startDate) || entry.date.isAtSameMomentAs(startDate));
+      filtered = filtered.where((entry) =>
+          entry.date.isAfter(startDate) ||
+          entry.date.isAtSameMomentAs(startDate));
     }
-    
+
     if (endDate != null) {
-      filtered = filtered.where((entry) => entry.date.isBefore(endDate) || entry.date.isAtSameMomentAs(endDate));
+      filtered = filtered.where((entry) =>
+          entry.date.isBefore(endDate) || entry.date.isAtSameMomentAs(endDate));
     }
-    
+
     final result = filtered.toList();
     result.sort((a, b) => b.date.compareTo(a.date)); // Новые записи первыми
     return result;
@@ -303,8 +308,11 @@ class MockGoalsRepository implements GoalsRepository {
   @override
   Future<List<Achievement>> getUserAchievements(String userId) async {
     await _simulateNetworkDelay();
-    final result = _achievements.where((achievement) => achievement.userId == userId).toList();
-    result.sort((a, b) => b.earnedDate.compareTo(a.earnedDate)); // Новые достижения первыми
+    final result = _achievements
+        .where((achievement) => achievement.userId == userId)
+        .toList();
+    result.sort((a, b) =>
+        b.earnedDate.compareTo(a.earnedDate)); // Новые достижения первыми
     return result;
   }
 
@@ -324,20 +332,22 @@ class MockGoalsRepository implements GoalsRepository {
   @override
   Future<Map<String, dynamic>> getGoalStatistics(String goalId) async {
     await _simulateNetworkDelay();
-    
+
     final goal = await getGoalById(goalId);
     if (goal == null) return {};
 
     final entries = await getProgressEntries(goal.userId, goalId: goalId);
-    
+
     return {
       'totalEntries': entries.length,
-      'firstEntryDate': entries.isNotEmpty ? entries.last.date.toIso8601String() : null,
-      'lastEntryDate': entries.isNotEmpty ? entries.first.date.toIso8601String() : null,
-      'averageValue': entries.isNotEmpty 
-          ? entries.map((e) => e.value).reduce((a, b) => a + b) / entries.length 
+      'firstEntryDate':
+          entries.isNotEmpty ? entries.last.date.toIso8601String() : null,
+      'lastEntryDate':
+          entries.isNotEmpty ? entries.first.date.toIso8601String() : null,
+      'averageValue': entries.isNotEmpty
+          ? entries.map((e) => e.value).reduce((a, b) => a + b) / entries.length
           : 0.0,
-      'bestValue': entries.isNotEmpty 
+      'bestValue': entries.isNotEmpty
           ? entries.map((e) => e.value).reduce((a, b) => a > b ? a : b)
           : 0.0,
       'progressPercentage': goal.progressPercentage,
@@ -349,25 +359,31 @@ class MockGoalsRepository implements GoalsRepository {
   @override
   Future<Map<String, dynamic>> getUserStatistics(String userId) async {
     await _simulateNetworkDelay();
-    
+
     final goals = await getUserGoals(userId);
     final achievements = await getUserAchievements(userId);
     final allEntries = await getProgressEntries(userId);
-    
-    final activeGoals = goals.where((g) => g.status == GoalStatus.active).length;
-    final completedGoals = goals.where((g) => g.status == GoalStatus.completed).length;
-    final totalPoints = achievements.fold<int>(0, (sum, achievement) => sum + achievement.points);
-    
+
+    final activeGoals =
+        goals.where((g) => g.status == GoalStatus.active).length;
+    final completedGoals =
+        goals.where((g) => g.status == GoalStatus.completed).length;
+    final totalPoints = achievements.fold<int>(
+        0, (sum, achievement) => sum + achievement.points);
+
     return {
       'totalGoals': goals.length,
       'activeGoals': activeGoals,
       'completedGoals': completedGoals,
-      'completionRate': goals.isNotEmpty ? (completedGoals / goals.length * 100).round() : 0,
+      'completionRate':
+          goals.isNotEmpty ? (completedGoals / goals.length * 100).round() : 0,
       'totalAchievements': achievements.length,
       'totalPoints': totalPoints,
       'totalProgressEntries': allEntries.length,
-      'averageProgressPerWeek': allEntries.length > 0 && goals.isNotEmpty 
-          ? (allEntries.length / (DateTime.now().difference(goals.first.startDate).inDays / 7)).round()
+      'averageProgressPerWeek': allEntries.isNotEmpty && goals.isNotEmpty
+          ? (allEntries.length /
+                  (DateTime.now().difference(goals.first.startDate).inDays / 7))
+              .round()
           : 0,
     };
   }
@@ -375,7 +391,7 @@ class MockGoalsRepository implements GoalsRepository {
   @override
   Future<void> updateGoalProgress(String goalId, double newValue) async {
     await _simulateNetworkDelay();
-    
+
     final index = _goals.indexWhere((goal) => goal.id == goalId);
     if (index != -1) {
       _goals[index] = _goals[index].copyWith(
@@ -400,4 +416,4 @@ class MockGoalsRepository implements GoalsRepository {
   Future<void> _simulateNetworkDelay() async {
     await Future.delayed(const Duration(milliseconds: 300));
   }
-} 
+}

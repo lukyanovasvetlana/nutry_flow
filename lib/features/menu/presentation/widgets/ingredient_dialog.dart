@@ -4,7 +4,7 @@ import '../../data/models/nutrition_info.dart';
 
 class IngredientDialog extends StatefulWidget {
   final void Function(Ingredient) onSave;
-  const IngredientDialog({Key? key, required this.onSave}) : super(key: key);
+  const IngredientDialog({super.key, required this.onSave});
 
   @override
   State<IngredientDialog> createState() => _IngredientDialogState();
@@ -63,21 +63,26 @@ class _IngredientDialogState extends State<IngredientDialog> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Название'),
-                validator: (v) => v == null || v.isEmpty ? 'Введите название' : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Введите название' : null,
               ),
               TextFormField(
                 controller: _amountController,
                 decoration: const InputDecoration(labelText: 'Количество'),
                 keyboardType: TextInputType.number,
-                validator: (v) => v == null || v.isEmpty ? 'Введите количество' : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Введите количество' : null,
               ),
               TextFormField(
                 controller: _unitController,
-                decoration: const InputDecoration(labelText: 'Ед. изм. (г, мл, шт...)'),
-                validator: (v) => v == null || v.isEmpty ? 'Введите единицу измерения' : null,
+                decoration:
+                    const InputDecoration(labelText: 'Ед. изм. (г, мл, шт...)'),
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Введите единицу измерения' : null,
               ),
               const SizedBox(height: 12),
-              Text('Нутриенты на 100г:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Нутриенты на 100г:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               TextFormField(
                 controller: _caloriesController,
                 decoration: const InputDecoration(labelText: 'Калории (ккал)'),
@@ -114,4 +119,4 @@ class _IngredientDialogState extends State<IngredientDialog> {
       ],
     );
   }
-} 
+}

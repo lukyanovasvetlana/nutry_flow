@@ -4,7 +4,7 @@ import '../../../../shared/theme/app_colors.dart';
 
 class CaloriesIntakeCard extends StatelessWidget {
   final UserProfile? userProfile;
-  
+
   const CaloriesIntakeCard({super.key, this.userProfile});
 
   @override
@@ -47,19 +47,19 @@ class CaloriesIntakeCard extends StatelessWidget {
                 Text(
                   'Калории\nсегодня',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                  ),
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                      ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Основная статистика
             _buildCaloriesStats(context),
-            
+
             const SizedBox(height: 12),
-            
+
             // Прогресс бар или дополнительная информация
             _buildProgressSection(context),
           ],
@@ -72,7 +72,7 @@ class CaloriesIntakeCard extends StatelessWidget {
     // Пока используем моковые данные, так как нет интеграции с дневником питания
     final todayCalories = 1250; // Моковые данные
     final targetCalories = _calculateTargetCalories();
-    
+
     return Column(
       children: [
         // Главные цифры
@@ -82,9 +82,9 @@ class CaloriesIntakeCard extends StatelessWidget {
             Text(
               todayCalories.toString(),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.orange,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.orange,
+                  ),
             ),
             const SizedBox(width: 4),
             Padding(
@@ -92,15 +92,15 @@ class CaloriesIntakeCard extends StatelessWidget {
               child: Text(
                 'ккал',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
+                      color: Colors.grey.shade600,
+                    ),
               ),
             ),
           ],
         ),
-        
+
         const SizedBox(height: 4),
-        
+
         // Цель
         if (targetCalories != null)
           Row(
@@ -114,8 +114,8 @@ class CaloriesIntakeCard extends StatelessWidget {
               Text(
                 'Цель: ${targetCalories.toStringAsFixed(0)} ккал',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
+                      color: Colors.grey.shade600,
+                    ),
               ),
             ],
           )
@@ -123,9 +123,9 @@ class CaloriesIntakeCard extends StatelessWidget {
           Text(
             'Цель не установлена',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey.shade500,
-              fontStyle: FontStyle.italic,
-            ),
+                  color: Colors.grey.shade500,
+                  fontStyle: FontStyle.italic,
+                ),
           ),
       ],
     );
@@ -134,14 +134,14 @@ class CaloriesIntakeCard extends StatelessWidget {
   Widget _buildProgressSection(BuildContext context) {
     final todayCalories = 1250; // Моковые данные
     final targetCalories = _calculateTargetCalories();
-    
+
     if (targetCalories == null) {
       return _buildNoTargetSection(context);
     }
-    
+
     final progress = todayCalories / targetCalories;
     final progressColor = _getProgressColor(progress);
-    
+
     return Column(
       children: [
         // Прогресс бар
@@ -162,9 +162,9 @@ class CaloriesIntakeCard extends StatelessWidget {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Статус
         Row(
           children: [
@@ -221,25 +221,31 @@ class CaloriesIntakeCard extends StatelessWidget {
   }
 
   double? _calculateTargetCalories() {
-    if (userProfile == null || 
-        userProfile!.weight == null || 
-        userProfile!.height == null || 
+    if (userProfile == null ||
+        userProfile!.weight == null ||
+        userProfile!.height == null ||
         userProfile!.age == null ||
         userProfile!.gender == null) {
       return null;
     }
-    
+
     // Базовый метаболизм по формуле Миффлина-Сан Жеора
     double bmr;
     if (userProfile!.gender == Gender.male) {
-      bmr = 10 * userProfile!.weight! + 6.25 * userProfile!.height! - 5 * userProfile!.age! + 5;
+      bmr = 10 * userProfile!.weight! +
+          6.25 * userProfile!.height! -
+          5 * userProfile!.age! +
+          5;
     } else {
-      bmr = 10 * userProfile!.weight! + 6.25 * userProfile!.height! - 5 * userProfile!.age! - 161;
+      bmr = 10 * userProfile!.weight! +
+          6.25 * userProfile!.height! -
+          5 * userProfile!.age! -
+          161;
     }
-    
+
     // Коэффициент активности
-    double activityFactor = _getActivityFactor();
-    
+    final double activityFactor = _getActivityFactor();
+
     return bmr * activityFactor;
   }
 
@@ -247,7 +253,7 @@ class CaloriesIntakeCard extends StatelessWidget {
     if (userProfile?.activityLevel == null) {
       return 1.375; // По умолчанию умеренная активность
     }
-    
+
     return userProfile!.activityLevel!.multiplier;
   }
 
@@ -263,9 +269,10 @@ class CaloriesIntakeCard extends StatelessWidget {
     return Icons.trending_up;
   }
 
-  String _getProgressText(double progress, int todayCalories, double targetCalories) {
+  String _getProgressText(
+      double progress, int todayCalories, double targetCalories) {
     final remaining = targetCalories - todayCalories;
-    
+
     if (progress < 0.7) {
       return 'Осталось ${remaining.toStringAsFixed(0)} ккал';
     } else if (progress <= 1.1) {
@@ -274,4 +281,4 @@ class CaloriesIntakeCard extends StatelessWidget {
       return 'Превышение на ${(-remaining).toStringAsFixed(0)} ккал';
     }
   }
-} 
+}

@@ -7,7 +7,6 @@ import '../../domain/entities/insight_video.dart';
 import '../widgets/article_card.dart';
 import '../widgets/video_card.dart';
 
-
 class ArticleDetailScreen extends StatefulWidget {
   final InsightArticle article;
 
@@ -22,7 +21,7 @@ class ArticleDetailScreen extends StatefulWidget {
 
 class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   final ScrollController _scrollController = ScrollController();
-  
+
   List<InsightArticle> _relatedArticles = [];
   List<InsightVideo> _relatedVideos = [];
   bool _isLoading = true;
@@ -47,7 +46,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
     try {
       // Имитируем загрузку данных
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       setState(() {
         _relatedArticles = _getMockRelatedArticles()
             .where((article) => article.id != widget.article.id)
@@ -80,7 +79,8 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
       const InsightArticle(
         id: 'related2',
         title: 'Восстановление после тренировок',
-        description: 'Как правильно восстанавливаться после интенсивных тренировок.',
+        description:
+            'Как правильно восстанавливаться после интенсивных тренировок.',
         author: 'Тренер Алексей Петров',
         authorAvatar: 'https://via.placeholder.com/40',
         category: 'Тренировки',
@@ -158,11 +158,12 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.share, color: AppColors.textPrimary),
-            onPressed: () => _shareArticle(),
+            onPressed: _shareArticle,
           ),
           IconButton(
-            icon: const Icon(Icons.bookmark_border, color: AppColors.textPrimary),
-            onPressed: () => _bookmarkArticle(),
+            icon:
+                const Icon(Icons.bookmark_border, color: AppColors.textPrimary),
+            onPressed: _bookmarkArticle,
           ),
         ],
       ),
@@ -173,25 +174,25 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
           children: [
             // Article Header
             _buildArticleHeader(),
-            
+
             // Article Content
             _buildArticleContent(),
-            
+
             // Tags
             _buildTags(),
-            
+
             // Related Articles
             if (!_isLoading && _relatedArticles.isNotEmpty) ...[
               const SizedBox(height: 32),
               _buildRelatedArticles(),
             ],
-            
+
             // Related Videos
             if (!_isLoading && _relatedVideos.isNotEmpty) ...[
               const SizedBox(height: 32),
               _buildRelatedVideos(),
             ],
-            
+
             const SizedBox(height: 32),
           ],
         ),
@@ -232,7 +233,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Title
           Text(
             widget.article.title,
@@ -242,7 +243,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Author and read time
           Row(
             children: [
@@ -298,7 +299,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Article content
           Text(
             _getArticleContent(),
@@ -328,20 +329,23 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: widget.article.tags.map((tag) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                  color: AppColors.button.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              child: Text(
-                tag,
-                style: AppStyles.bodyMedium.copyWith(
-                  color: AppColors.button,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            )).toList(),
+            children: widget.article.tags
+                .map((tag) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.button.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        tag,
+                        style: AppStyles.bodyMedium.copyWith(
+                          color: AppColors.button,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -362,14 +366,14 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
           ),
           const SizedBox(height: 16),
           ..._relatedArticles.map((article) => ArticleCard(
-            article: article,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ArticleDetailScreen(article: article),
-              ),
-            ),
-          )),
+                article: article,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ArticleDetailScreen(article: article),
+                  ),
+                ),
+              )),
         ],
       ),
     );
@@ -389,9 +393,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
           ),
           const SizedBox(height: 16),
           ..._relatedVideos.map((video) => VideoCard(
-            video: video,
-            onTap: () => _playVideo(video),
-          )),
+                video: video,
+                onTap: () => _playVideo(video),
+              )),
         ],
       ),
     );
@@ -457,4 +461,4 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
       ),
     );
   }
-} 
+}

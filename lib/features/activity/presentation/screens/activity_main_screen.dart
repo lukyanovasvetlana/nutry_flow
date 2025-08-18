@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../bloc/exercise_bloc.dart';
 import '../bloc/workout_bloc.dart';
-import '../bloc/activity_bloc.dart';
 import 'exercise_catalog_screen.dart';
 import 'workout_creation_screen.dart';
 import 'activity_stats_screen.dart';
@@ -19,15 +18,13 @@ class ActivityMainScreen extends StatefulWidget {
 class _ActivityMainScreenState extends State<ActivityMainScreen> {
   late ExerciseBloc _exerciseBloc;
   late WorkoutBloc _workoutBloc;
-  late ActivityBloc _activityBloc;
 
   @override
   void initState() {
     super.initState();
     _exerciseBloc = GetIt.instance.get<ExerciseBloc>();
     _workoutBloc = GetIt.instance.get<WorkoutBloc>();
-    _activityBloc = GetIt.instance.get<ActivityBloc>();
-    
+
     // Загружаем данные при открытии экрана
     _loadInitialData();
   }
@@ -128,7 +125,8 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
                       Text(
                         'Выберите упражнение или создайте тренировку',
                         style: context.typography.bodyMediumStyle.copyWith(
-                          color: context.colors.onPrimary.withValues(alpha: 0.9),
+                          color:
+                              context.colors.onPrimary.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -154,7 +152,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        
         Row(
           children: [
             Expanded(
@@ -224,7 +221,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              
               Text(
                 title,
                 style: context.typography.titleMediumStyle.copyWith(
@@ -234,7 +230,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
-              
               Text(
                 subtitle,
                 style: context.typography.bodySmallStyle.copyWith(
@@ -279,7 +274,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
           ],
         ),
         const SizedBox(height: 16),
-        
         BlocBuilder<WorkoutBloc, WorkoutState>(
           bloc: _workoutBloc,
           builder: (context, state) {
@@ -289,7 +283,7 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
               );
             } else if (state is WorkoutLoaded) {
               final recentWorkouts = state.workouts.take(3).toList();
-              
+
               if (recentWorkouts.isEmpty) {
                 return _buildEmptyState(
                   icon: Icons.fitness_center_outlined,
@@ -304,7 +298,7 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
                   ),
                 );
               }
-              
+
               return Column(
                 children: recentWorkouts.map((workout) {
                   return Card(
@@ -372,7 +366,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -443,7 +436,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              
               Text(
                 title,
                 style: context.typography.titleMediumStyle.copyWith(
@@ -481,7 +473,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
               color: context.colors.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
-            
             Text(
               title,
               style: context.typography.titleMediumStyle.copyWith(
@@ -490,7 +481,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            
             Text(
               subtitle,
               style: context.typography.bodyMediumStyle.copyWith(
@@ -499,7 +489,6 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            
             ElevatedButton(
               onPressed: onAction,
               style: ElevatedButton.styleFrom(
@@ -524,4 +513,4 @@ class _ActivityMainScreenState extends State<ActivityMainScreen> {
       ),
     );
   }
-} 
+}

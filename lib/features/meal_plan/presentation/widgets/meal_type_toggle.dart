@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nutry_flow/shared/theme/app_colors.dart';
+import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 
 class MealTypeToggle extends StatefulWidget {
   final String selectedMealType;
   final Function(String) onMealTypeChanged;
-  const MealTypeToggle({required this.selectedMealType, required this.onMealTypeChanged, Key? key}) : super(key: key);
+  const MealTypeToggle(
+      {required this.selectedMealType,
+      required this.onMealTypeChanged,
+      super.key});
 
   @override
   State<MealTypeToggle> createState() => _MealTypeToggleState();
@@ -12,10 +15,10 @@ class MealTypeToggle extends StatefulWidget {
 
 class _MealTypeToggleState extends State<MealTypeToggle> {
   static const mealTypes = [
-    {'name': 'Завтрак', 'color': AppColors.green},
-    {'name': 'Обед', 'color': AppColors.yellow},
-    {'name': 'Перекус', 'color': AppColors.gray},
-    {'name': 'Ужин', 'color': AppColors.orange},
+    {'name': 'Завтрак', 'key': 'primary'},
+    {'name': 'Обед', 'key': 'warning'},
+    {'name': 'Перекус', 'key': 'neutral'},
+    {'name': 'Ужин', 'key': 'tertiary'},
   ];
 
   @override
@@ -24,7 +27,7 @@ class _MealTypeToggleState extends State<MealTypeToggle> {
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Color(0xFFF1F3F4),
+        color: context.surfaceVariant,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -36,7 +39,14 @@ class _MealTypeToggleState extends State<MealTypeToggle> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isSelected ? type['color'] as Color : Colors.transparent,
+                  color: isSelected
+                      ? {
+                          'primary': context.primary,
+                          'warning': context.warning,
+                          'neutral': context.onSurfaceVariant,
+                          'tertiary': context.tertiary,
+                        }[type['key']]!
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -45,7 +55,9 @@ class _MealTypeToggleState extends State<MealTypeToggle> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: isSelected ? Color(0xFF2D3748) : Color(0xFF718096),
+                    color: isSelected
+                        ? context.onPrimary
+                        : context.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -55,4 +67,4 @@ class _MealTypeToggleState extends State<MealTypeToggle> {
       ),
     );
   }
-} 
+}

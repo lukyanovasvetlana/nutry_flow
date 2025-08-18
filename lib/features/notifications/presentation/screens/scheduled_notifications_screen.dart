@@ -9,10 +9,12 @@ class ScheduledNotificationsScreen extends StatefulWidget {
   const ScheduledNotificationsScreen({super.key});
 
   @override
-  State<ScheduledNotificationsScreen> createState() => _ScheduledNotificationsScreenState();
+  State<ScheduledNotificationsScreen> createState() =>
+      _ScheduledNotificationsScreenState();
 }
 
-class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScreen> {
+class _ScheduledNotificationsScreenState
+    extends State<ScheduledNotificationsScreen> {
   @override
   void initState() {
     super.initState();
@@ -79,8 +81,10 @@ class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScr
     }
 
     // Группируем уведомления по статусу
-    final activeNotifications = notifications.where((n) => n.isActiveAndNotExpired).toList();
-    final expiredNotifications = notifications.where((n) => n.isExpired).toList();
+    final activeNotifications =
+        notifications.where((n) => n.isActiveAndNotExpired).toList();
+    final expiredNotifications =
+        notifications.where((n) => n.isExpired).toList();
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -91,12 +95,12 @@ class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScr
         children: [
           if (activeNotifications.isNotEmpty) ...[
             _buildSectionHeader('Активные уведомления'),
-            ...activeNotifications.map((notification) => _buildNotificationCard(notification)),
+            ...activeNotifications.map(_buildNotificationCard),
             const SizedBox(height: 24),
           ],
           if (expiredNotifications.isNotEmpty) ...[
             _buildSectionHeader('Просроченные уведомления'),
-            ...expiredNotifications.map((notification) => _buildNotificationCard(notification)),
+            ...expiredNotifications.map(_buildNotificationCard),
           ],
         ],
       ),
@@ -122,10 +126,10 @@ class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScr
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: notification.isExpired 
-              ? Colors.grey 
-              : notification.isUrgent 
-                  ? Colors.orange 
+          backgroundColor: notification.isExpired
+              ? Colors.grey
+              : notification.isUrgent
+                  ? Colors.orange
                   : AppColors.primary,
           child: Text(
             notification.typeIcon,
@@ -154,23 +158,27 @@ class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScr
                 Icon(
                   Icons.access_time,
                   size: 14,
-                  color: notification.isExpired ? Colors.grey : AppColors.primary,
+                  color:
+                      notification.isExpired ? Colors.grey : AppColors.primary,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   notification.relativeTime,
                   style: AppStyles.caption.copyWith(
-                    color: notification.isExpired ? Colors.grey : AppColors.primary,
+                    color: notification.isExpired
+                        ? Colors.grey
+                        : AppColors.primary,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: notification.isExpired 
-                        ? Colors.grey 
-                        : notification.isUrgent 
-                            ? Colors.orange 
+                    color: notification.isExpired
+                        ? Colors.grey
+                        : notification.isUrgent
+                            ? Colors.orange
                             : AppColors.primary,
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -286,7 +294,9 @@ class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScr
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<NotificationBloc>().add(CancelNotification(notificationId));
+              context
+                  .read<NotificationBloc>()
+                  .add(CancelNotification(notificationId));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -298,4 +308,4 @@ class _ScheduledNotificationsScreenState extends State<ScheduledNotificationsScr
       ),
     );
   }
-} 
+}

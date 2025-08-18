@@ -9,9 +9,10 @@ abstract class GoalsRepository {
   Future<Goal> createGoal(Goal goal);
   Future<Goal> updateGoal(Goal goal);
   Future<void> deleteGoal(String goalId);
-  
+
   // Progress tracking
-  Future<List<ProgressEntry>> getProgressEntries(String userId, {
+  Future<List<ProgressEntry>> getProgressEntries(
+    String userId, {
     String? goalId,
     ProgressEntryType? type,
     DateTime? startDate,
@@ -19,18 +20,18 @@ abstract class GoalsRepository {
   });
   Future<ProgressEntry> addProgressEntry(ProgressEntry entry);
   Future<void> deleteProgressEntry(String entryId);
-  
+
   // Achievements
   Future<List<Achievement>> getUserAchievements(String userId);
   Future<Achievement> addAchievement(Achievement achievement);
   Future<void> markAchievementAsViewed(String achievementId);
-  
+
   // Statistics and analytics
   Future<Map<String, dynamic>> getGoalStatistics(String goalId);
   Future<Map<String, dynamic>> getUserStatistics(String userId);
-  
+
   // Goal progress updates
   Future<void> updateGoalProgress(String goalId, double newValue);
   Future<List<Goal>> getActiveGoals(String userId);
   Future<List<Goal>> getCompletedGoals(String userId);
-} 
+}

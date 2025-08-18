@@ -57,4 +57,4 @@ class AuthService {
       rethrow;
     }
   }
-} 
+}

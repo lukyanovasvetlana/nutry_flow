@@ -19,22 +19,27 @@ class NutritionSummaryModel extends NutritionSummary {
   factory NutritionSummaryModel.fromJson(Map<String, dynamic> json) {
     final caloriesByMeal = <MealType, double>{};
     final entriesByMeal = <MealType, int>{};
-    
+
     // Parse meal-specific data
     if (json['breakfast_calories'] != null) {
-      caloriesByMeal[MealType.breakfast] = (json['breakfast_calories'] as num).toDouble();
-      entriesByMeal[MealType.breakfast] = json['breakfast_entries'] as int? ?? 0;
+      caloriesByMeal[MealType.breakfast] =
+          (json['breakfast_calories'] as num).toDouble();
+      entriesByMeal[MealType.breakfast] =
+          json['breakfast_entries'] as int? ?? 0;
     }
     if (json['lunch_calories'] != null) {
-      caloriesByMeal[MealType.lunch] = (json['lunch_calories'] as num).toDouble();
+      caloriesByMeal[MealType.lunch] =
+          (json['lunch_calories'] as num).toDouble();
       entriesByMeal[MealType.lunch] = json['lunch_entries'] as int? ?? 0;
     }
     if (json['dinner_calories'] != null) {
-      caloriesByMeal[MealType.dinner] = (json['dinner_calories'] as num).toDouble();
+      caloriesByMeal[MealType.dinner] =
+          (json['dinner_calories'] as num).toDouble();
       entriesByMeal[MealType.dinner] = json['dinner_entries'] as int? ?? 0;
     }
     if (json['snack_calories'] != null) {
-      caloriesByMeal[MealType.snack] = (json['snack_calories'] as num).toDouble();
+      caloriesByMeal[MealType.snack] =
+          (json['snack_calories'] as num).toDouble();
       entriesByMeal[MealType.snack] = json['snack_entries'] as int? ?? 0;
     }
 
@@ -107,8 +112,9 @@ class NutritionSummaryModel extends NutritionSummary {
     );
   }
 
-  factory NutritionSummaryModel.fromEntries(DateTime date, List<FoodEntry> entries) {
+  factory NutritionSummaryModel.fromEntries(
+      DateTime date, List<FoodEntry> entries) {
     final summary = NutritionSummary.fromEntries(date, entries);
     return NutritionSummaryModel.fromEntity(summary);
   }
-} 
+}

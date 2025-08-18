@@ -112,4 +112,4 @@ class GetAnalyticsForPeriodUseCase {
       return Left(AnalyticsFailure(e.toString()));
     }
   }
-} 
+}

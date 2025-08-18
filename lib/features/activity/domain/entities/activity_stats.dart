@@ -37,17 +37,17 @@ class ActivityStats extends Equatable {
 
   String get mostActiveCategory {
     if (categoryBreakdown.isEmpty) return 'Нет данных';
-    
+
     String mostActive = '';
     int maxCount = 0;
-    
+
     categoryBreakdown.forEach((category, count) {
       if (count > maxCount) {
         maxCount = count;
         mostActive = category;
       }
     });
-    
+
     return mostActive;
   }
 
@@ -90,4 +90,4 @@ class ActivityStats extends Equatable {
         createdAt,
         updatedAt,
       ];
-} 
+}

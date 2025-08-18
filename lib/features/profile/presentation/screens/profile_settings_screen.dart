@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:nutry_flow/shared/theme/app_colors.dart';
+import '../../../../shared/design/tokens/design_tokens.dart';
+import '../../../../shared/design/tokens/theme_tokens.dart';
+import '../../../../shared/design/components/cards/nutry_card.dart';
+import '../../../../shared/theme/theme_manager.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
-  const ProfileSettingsScreen({Key? key}) : super(key: key);
+  const ProfileSettingsScreen({super.key});
 
   @override
   State<ProfileSettingsScreen> createState() => _ProfileSettingsScreenState();
@@ -12,24 +15,29 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   bool _pushNotifications = true;
   bool _emailNotifications = true;
   bool _weeklyReports = false;
-  bool _darkMode = false;
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = ThemeManager().isDarkMode;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4F2),
+      backgroundColor: context.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF9F4F2),
+        backgroundColor: context.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Настройки профиля',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
+          style: DesignTokens.typography.titleLargeStyle.copyWith(
+            color: context.onSurface,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back, color: context.onSurface),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -51,7 +59,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   onTap: () {
                     // TODO: Переход на экран редактирования профиля
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Редактирование профиля в разработке')),
+                      const SnackBar(
+                          content: Text('Редактирование профиля в разработке')),
                     );
                   },
                 ),
@@ -62,7 +71,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   onTap: () {
                     // TODO: Переход на экран смены пароля
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Смена пароля в разработке')),
+                      const SnackBar(
+                          content: Text('Смена пароля в разработке')),
                     );
                   },
                 ),
@@ -114,15 +124,31 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               _buildSectionHeader('Внешний вид'),
               _buildSettingsCard([
                 _buildSwitchTile(
-                  icon: Icons.dark_mode,
+                  icon: _isDarkMode ? Icons.light_mode : Icons.dark_mode,
                   title: 'Тёмная тема',
-                  subtitle: 'Использовать тёмную тему приложения',
-                  value: _darkMode,
-                  onChanged: (value) {
+                  subtitle: _isDarkMode
+                      ? 'Используется тёмная тема приложения'
+                      : 'Использовать тёмную тему приложения',
+                  value: _isDarkMode,
+                  onChanged: (value) async {
                     setState(() {
-                      _darkMode = value;
+                      _isDarkMode = value;
                     });
-                    // TODO: Применить тёмную тему
+
+                    // Переключение темы через ThemeManager
+                    await ThemeManager().toggleTheme();
+
+                    // Показать уведомление
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Тема изменена на ${_isDarkMode ? 'темную' : 'светлую'}',
+                          style: TextStyle(color: context.onPrimary),
+                        ),
+                        backgroundColor: context.primary,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
                   },
                 ),
               ]),
@@ -136,18 +162,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   icon: Icons.logout,
                   title: 'Выйти из аккаунта',
                   subtitle: 'Завершить текущую сессию',
-                  onTap: () {
-                    _showLogoutDialog();
-                  },
+                  onTap: _showLogoutDialog,
                   isDestructive: true,
                 ),
                 _buildSettingsTile(
                   icon: Icons.delete_forever,
                   title: 'Удалить аккаунт',
                   subtitle: 'Безвозвратно удалить аккаунт и все данные',
-                  onTap: () {
-                    _showDeleteAccountDialog();
-                  },
+                  onTap: _showDeleteAccountDialog,
                   isDestructive: true,
                 ),
               ]),
@@ -170,7 +192,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   onTap: () {
                     // TODO: Открыть политику конфиденциальности
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Политика конфиденциальности в разработке')),
+                      const SnackBar(
+                          content:
+                              Text('Политика конфиденциальности в разработке')),
                     );
                   },
                 ),
@@ -181,7 +205,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   onTap: () {
                     // TODO: Открыть условия использования
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Условия использования в разработке')),
+                      const SnackBar(
+                          content: Text('Условия использования в разработке')),
                     );
                   },
                 ),
@@ -197,24 +222,19 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
+        style: DesignTokens.typography.titleMediumStyle.copyWith(
+          color: context.onSurface,
+          fontWeight: DesignTokens.typography.semiBold,
         ),
       ),
     );
   }
 
   Widget _buildSettingsCard(List<Widget> children) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return NutryCard(
       child: Column(
         children: children,
       ),
@@ -231,23 +251,25 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : AppColors.green,
+        color: isDestructive ? context.error : context.primary,
       ),
       title: Text(
         title,
-        style: TextStyle(
-          color: isDestructive ? Colors.red : Colors.black87,
-          fontWeight: FontWeight.w500,
+        style: DesignTokens.typography.bodyLargeStyle.copyWith(
+          color: isDestructive ? context.error : context.onSurface,
+          fontWeight: DesignTokens.typography.medium,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: isDestructive ? Colors.red.withValues(alpha: 0.7) : Colors.grey[600],
+        style: DesignTokens.typography.bodyMediumStyle.copyWith(
+          color: isDestructive
+              ? context.error.withOpacity(0.7)
+              : context.onSurfaceVariant,
         ),
       ),
       trailing: onTap != null
-          ? const Icon(Icons.chevron_right, color: Colors.grey)
+          ? Icon(Icons.chevron_right, color: context.onSurfaceVariant)
           : null,
       onTap: onTap,
     );
@@ -263,25 +285,28 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     return ListTile(
       leading: Icon(
         icon,
-        color: AppColors.green,
+        color: context.primary,
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          color: Colors.black87,
-          fontWeight: FontWeight.w500,
+        style: DesignTokens.typography.bodyLargeStyle.copyWith(
+          color: context.onSurface,
+          fontWeight: DesignTokens.typography.medium,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: Colors.grey[600],
+        style: DesignTokens.typography.bodyMediumStyle.copyWith(
+          color: context.onSurfaceVariant,
         ),
       ),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.green,
+        activeColor: context.primary,
+        activeTrackColor: context.primaryContainer,
+        inactiveThumbColor: context.outline,
+        inactiveTrackColor: context.surfaceVariant,
       ),
     );
   }
@@ -291,27 +316,52 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Выйти из аккаунта'),
-          content: const Text('Вы уверены, что хотите выйти из аккаунта?'),
+          backgroundColor: context.surface,
+          title: Text(
+            'Выйти из аккаунта',
+            style: DesignTokens.typography.titleLargeStyle.copyWith(
+              color: context.onSurface,
+            ),
+          ),
+          content: Text(
+            'Вы уверены, что хотите выйти из аккаунта?',
+            style: DesignTokens.typography.bodyMediumStyle.copyWith(
+              color: context.onSurfaceVariant,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Отмена'),
+              child: Text(
+                'Отмена',
+                style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                  color: context.primary,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 // TODO: Реализовать выход из аккаунта
-                Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/welcome', (route) => false);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Вы вышли из аккаунта')),
+                  SnackBar(
+                    content: Text(
+                      'Вы вышли из аккаунта',
+                      style: TextStyle(color: context.onPrimary),
+                    ),
+                    backgroundColor: context.primary,
+                  ),
                 );
               },
-              child: const Text(
+              child: Text(
                 'Выйти',
-                style: TextStyle(color: Colors.red),
+                style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                  color: context.error,
+                ),
               ),
             ),
           ],
@@ -325,29 +375,52 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Удалить аккаунт'),
-          content: const Text(
+          backgroundColor: context.surface,
+          title: Text(
+            'Удалить аккаунт',
+            style: DesignTokens.typography.titleLargeStyle.copyWith(
+              color: context.onSurface,
+            ),
+          ),
+          content: Text(
             'Это действие нельзя отменить. Все ваши данные будут безвозвратно удалены.',
+            style: DesignTokens.typography.bodyMediumStyle.copyWith(
+              color: context.onSurfaceVariant,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Отмена'),
+              child: Text(
+                'Отмена',
+                style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                  color: context.primary,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 // TODO: Реализовать удаление аккаунта
-                Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/welcome', (route) => false);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Аккаунт удалён')),
+                  SnackBar(
+                    content: Text(
+                      'Аккаунт удалён',
+                      style: TextStyle(color: context.onPrimary),
+                    ),
+                    backgroundColor: context.primary,
+                  ),
                 );
               },
-              child: const Text(
+              child: Text(
                 'Удалить',
-                style: TextStyle(color: Colors.red),
+                style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                  color: context.error,
+                ),
               ),
             ),
           ],
@@ -355,4 +428,4 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       },
     );
   }
-} 
+}
