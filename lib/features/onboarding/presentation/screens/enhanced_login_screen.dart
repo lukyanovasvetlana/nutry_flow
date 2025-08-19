@@ -46,7 +46,8 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushReplacementNamed(context, '/welcome'),
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+              context, '/welcome', (route) => false),
         ),
       ),
       body: SafeArea(

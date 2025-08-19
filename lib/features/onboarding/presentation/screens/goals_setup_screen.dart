@@ -28,7 +28,8 @@ class GoalsSetupView extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+              context, '/welcome', (route) => false),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0), // Уменьшил с 60 до 0

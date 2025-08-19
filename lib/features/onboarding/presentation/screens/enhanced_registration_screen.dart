@@ -77,7 +77,8 @@ class _EnhancedRegistrationScreenState
           if (state is AuthAuthenticated) {
             print(
                 '🟢 Registration: User authenticated, navigating to profile setup');
-            Navigator.pushReplacementNamed(context, '/profile-info');
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/profile-info', (route) => false);
           } else if (state is AuthLoading) {
             print('🟡 Registration: AuthLoading received');
           } else if (state is AuthError) {
@@ -125,8 +126,8 @@ class _EnhancedRegistrationScreenState
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () =>
-                  Navigator.pushReplacementNamed(context, '/welcome'),
+              onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                  context, '/welcome', (route) => false),
             ),
           ),
           body: SafeArea(
