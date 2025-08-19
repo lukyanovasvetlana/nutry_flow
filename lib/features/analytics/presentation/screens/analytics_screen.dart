@@ -220,66 +220,80 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     size: 20,
                   ),
                 ),
-                const Spacer(),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isPositive
-                        ? AppColors.dynamicSuccess.withOpacity(0.1)
-                        : AppColors.dynamicError.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isPositive ? Icons.trending_up : Icons.trending_down,
-                        size: 12,
-                        color: isPositive
-                            ? AppColors.dynamicSuccess
-                            : AppColors.dynamicError,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        trend,
-                        style: DesignTokens.typography.bodySmallStyle.copyWith(
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isPositive
+                          ? AppColors.dynamicSuccess.withOpacity(0.1)
+                          : AppColors.dynamicError.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isPositive ? Icons.trending_up : Icons.trending_down,
+                          size: 12,
                           color: isPositive
                               ? AppColors.dynamicSuccess
                               : AppColors.dynamicError,
-                          fontWeight: FontWeight.w600,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            trend,
+                            style: DesignTokens.typography.bodySmallStyle.copyWith(
+                              color: isPositive
+                                  ? AppColors.dynamicSuccess
+                                  : AppColors.dynamicError,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              title,
-              style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                color: AppColors.dynamicOnSurfaceVariant,
+            Flexible(
+              child: Text(
+                title,
+                style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                  color: AppColors.dynamicOnSurfaceVariant,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(height: 4),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  value,
-                  style: DesignTokens.typography.headlineLargeStyle.copyWith(
-                    color: AppColors.dynamicOnSurface,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    value,
+                    style: DesignTokens.typography.headlineLargeStyle.copyWith(
+                      color: AppColors.dynamicOnSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 4),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    unit,
-                    style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                      color: AppColors.dynamicOnSurfaceVariant,
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      unit,
+                      style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                        color: AppColors.dynamicOnSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),

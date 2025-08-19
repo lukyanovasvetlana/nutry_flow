@@ -144,18 +144,26 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: AppStyles.body2.copyWith(
-              color: Colors.grey[600],
+          Flexible(
+            flex: 2,
+            child: Text(
+              label,
+              style: AppStyles.body2.copyWith(
+                color: Colors.grey[600],
+              ),
             ),
           ),
-          Text(
-            value,
-            style: AppStyles.body2.copyWith(
-              fontWeight: FontWeight.w600,
+          const SizedBox(width: 16),
+          Flexible(
+            flex: 1,
+            child: Text(
+              value,
+              style: AppStyles.body2.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -197,16 +205,22 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
           Icons.science,
           color: _getVariantColor(variant),
         ),
-        title: Text(
-          _getExperimentDisplayName(experimentName),
-          style: AppStyles.body1.copyWith(
-            fontWeight: FontWeight.w600,
+        title: Flexible(
+          child: Text(
+            _getExperimentDisplayName(experimentName),
+            style: AppStyles.body1.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        subtitle: Text(
-          'Вариант: $variant',
-          style: AppStyles.caption.copyWith(
-            color: Colors.grey[600],
+        subtitle: Flexible(
+          child: Text(
+            'Вариант: $variant',
+            style: AppStyles.caption.copyWith(
+              color: Colors.grey[600],
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         trailing: IconButton(
@@ -259,16 +273,22 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
           value == true ? Icons.check_circle : Icons.cancel,
           color: value == true ? Colors.green : Colors.red,
         ),
-        title: Text(
-          _getFeatureFlagDisplayName(flagName),
-          style: AppStyles.body1.copyWith(
-            fontWeight: FontWeight.w600,
+        title: Flexible(
+          child: Text(
+            _getFeatureFlagDisplayName(flagName),
+            style: AppStyles.body1.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        subtitle: Text(
-          'Статус: ${value == true ? 'Включено' : 'Отключено'}',
-          style: AppStyles.caption.copyWith(
-            color: Colors.grey[600],
+        subtitle: Flexible(
+          child: Text(
+            'Статус: ${value == true ? 'Включено' : 'Отключено'}',
+            style: AppStyles.caption.copyWith(
+              color: Colors.grey[600],
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
