@@ -308,7 +308,7 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                 const SizedBox(height: 16),
                 // Категория
                 DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   items: ['Завтрак', 'Обед', 'Перекус', 'Ужин']
                       .map((cat) =>
                           DropdownMenuItem(value: cat, child: Text(cat)))
@@ -321,7 +321,7 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                 const SizedBox(height: 16),
                 // Сложность
                 DropdownButtonFormField<String>(
-                  value: _selectedDifficulty,
+                  initialValue: _selectedDifficulty,
                   items: ['Легко', 'Средне', 'Сложно']
                       .map((dif) =>
                           DropdownMenuItem(value: dif, child: Text(dif)))

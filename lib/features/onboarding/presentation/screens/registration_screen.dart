@@ -27,15 +27,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _register(BuildContext context) {
+    print('🔵 Registration: _register called');
+    print('🔵 Registration: Form validation started');
+
     if (_formKey.currentState!.validate()) {
+      print('🔵 Registration: Form is valid, sending SignUpRequested');
+      print('🔵 Registration: Email: ${_emailController.text.trim()}');
+      print(
+          '🔵 Registration: Password length: ${_passwordController.text.length}');
+
       context.read<AuthBloc>().add(SignUpRequested(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           ));
-    } else {}
+
+      print('🔵 Registration: SignUpRequested event sent');
+    } else {
+      print('🔴 Registration: Form validation failed');
+    }
   }
 
   void _onRegistrationSuccess(BuildContext context) {
+    print(
+        '🟢 Registration: _onRegistrationSuccess called, navigating to /profile-info');
     Navigator.pushReplacementNamed(context, '/profile-info');
   }
 
@@ -48,7 +62,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          print(
+              '🔵 Registration: BlocListener received state: ${state.runtimeType}');
+
           if (state is AuthError) {
+            print('🔴 Registration: AuthError received: ${state.message}');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -56,7 +74,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             );
           } else if (state is AuthAuthenticated) {
+            print(
+                '🟢 Registration: AuthAuthenticated received for user: ${state.user.email}');
             _onRegistrationSuccess(context);
+          } else if (state is AuthLoading) {
+            print('🟡 Registration: AuthLoading received');
+          } else {
+            print(
+                '🔵 Registration: Other state received: ${state.runtimeType}');
           }
         },
         child: Scaffold(
@@ -79,7 +104,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 0),
-                    Image.asset('assets/images/Logo.png', height: 80),
+                    Image.asset('assets/images/logo.png', height: 80),
                     const SizedBox(height: 20),
                     Text(
                       'Регистрация',

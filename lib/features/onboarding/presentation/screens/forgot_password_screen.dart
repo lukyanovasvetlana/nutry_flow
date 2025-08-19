@@ -68,7 +68,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 60),
-              Image.asset('assets/images/Logo.png', height: 80),
+              Image.asset('assets/images/logo.png', height: 80),
               const SizedBox(height: 30),
               Text(
                 'Восстановление пароля',

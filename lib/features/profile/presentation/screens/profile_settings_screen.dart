@@ -303,7 +303,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: context.primary,
+        activeThumbColor: context.primary,
         activeTrackColor: context.primaryContainer,
         inactiveThumbColor: context.outline,
         inactiveTrackColor: context.surfaceVariant,

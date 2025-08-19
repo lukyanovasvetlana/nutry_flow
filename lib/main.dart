@@ -119,87 +119,83 @@ class NutryFlowApp extends StatelessWidget {
         final lightTheme = ThemeManager().lightTheme;
         final darkTheme = ThemeManager().darkTheme;
 
-        // Используем AnimatedSwitcher для плавного перехода между темами
-        return AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: MaterialApp(
-            key: ValueKey('app-${currentTheme.name}'),
-            title: 'NutryFlow',
-            theme: lightTheme,
-            darkTheme: darkTheme,
-            themeMode: currentTheme,
-            routes: {
-              '/': (context) => const SplashScreen(),
-              '/welcome': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: const WelcomeScreenRedesigned(),
+        // Убираем AnimatedSwitcher, который может вызывать перезагрузку
+        return MaterialApp(
+          title: 'NutryFlow',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: currentTheme,
+          routes: {
+            '/': (context) => const SplashScreen(),
+            '/welcome': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: const WelcomeScreenRedesigned(),
+                ),
+            '/registration': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: const EnhancedRegistrationScreen(),
+                ),
+            '/login': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: const EnhancedLoginScreen(),
+                ),
+            '/profile-info': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: const ProfileInfoScreen(),
+                ),
+            '/goals-setup': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: BlocProvider<GoalsSetupBloc>(
+                    create: (context) {
+                      final bloc = OnboardingDependencies.instance
+                          .createGoalsSetupBloc();
+                      // Автоматически инициализируем цели при создании BLoC
+                      bloc.add(InitializeGoals());
+                      return bloc;
+                    },
+                    child: const GoalsSetupView(),
                   ),
-              '/registration': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: const EnhancedRegistrationScreen(),
+                ),
+            '/dashboard': (context) => const AppContainer(),
+            '/onboarding': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: BlocProvider<GoalsSetupBloc>(
+                    create: (context) {
+                      final bloc = OnboardingDependencies.instance
+                          .createGoalsSetupBloc();
+                      // Автоматически инициализируем цели при создании BLoC
+                      bloc.add(InitializeGoals());
+                      return bloc;
+                    },
+                    child: const GoalsSetupView(),
                   ),
-              '/login': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: const EnhancedLoginScreen(),
+                ),
+            '/app': (context) => const AppContainer(),
+            '/analytics': (context) => Scaffold(
+                  body: const AnalyticsScreen(),
+                ),
+            '/health-articles': (context) => Scaffold(
+                  body: const HealthArticlesScreen(),
+                ),
+            '/developer-analytics': (context) => Scaffold(
+                  body: const DeveloperAnalyticsScreen(),
+                ),
+            '/ab-testing': (context) => Scaffold(
+                  body: const ABTestingScreen(),
+                ),
+            '/profile-settings': (context) => Scaffold(
+                  body: const ProfileSettingsScreen(),
+                ),
+            '/forgot-password': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: Scaffold(
+                    body: const ForgotPasswordScreen(),
                   ),
-              '/profile-info': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: const ProfileInfoScreen(),
-                  ),
-              '/goals-setup': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: BlocProvider<GoalsSetupBloc>(
-                      create: (context) {
-                        final bloc = OnboardingDependencies.instance
-                            .createGoalsSetupBloc();
-                        // Автоматически инициализируем цели при создании BLoC
-                        bloc.add(InitializeGoals());
-                        return bloc;
-                      },
-                      child: const GoalsSetupView(),
-                    ),
-                  ),
-              '/dashboard': (context) => const AppContainer(),
-              '/onboarding': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: BlocProvider<GoalsSetupBloc>(
-                      create: (context) {
-                        final bloc = OnboardingDependencies.instance
-                            .createGoalsSetupBloc();
-                        // Автоматически инициализируем цели при создании BLoC
-                        bloc.add(InitializeGoals());
-                        return bloc;
-                      },
-                      child: const GoalsSetupView(),
-                    ),
-                  ),
-              '/app': (context) => const AppContainer(),
-              '/analytics': (context) => Scaffold(
-                    body: const AnalyticsScreen(),
-                  ),
-              '/health-articles': (context) => Scaffold(
-                    body: const HealthArticlesScreen(),
-                  ),
-              '/developer-analytics': (context) => Scaffold(
-                    body: const DeveloperAnalyticsScreen(),
-                  ),
-              '/ab-testing': (context) => Scaffold(
-                    body: const ABTestingScreen(),
-                  ),
-              '/profile-settings': (context) => Scaffold(
-                    body: const ProfileSettingsScreen(),
-                  ),
-              '/forgot-password': (context) => Theme(
-                    data: ThemeData.light(),
-                    child: Scaffold(
-                      body: const ForgotPasswordScreen(),
-                    ),
-                  ),
-              '/theme-demo': (context) => const ThemeDemoScreen(),
-            },
-            initialRoute: '/',
-            debugShowCheckedModeBanner: false,
-          ),
+                ),
+            '/theme-demo': (context) => const ThemeDemoScreen(),
+          },
+          initialRoute: '/',
+          debugShowCheckedModeBanner: false,
         );
       },
     );

@@ -29,30 +29,30 @@ class ThemeManager extends ChangeNotifier {
     final newTheme =
         _currentTheme == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
 
-    await setTheme(newTheme);
+    // Обновляем тему напрямую без вызова setTheme
+    _currentTheme = newTheme;
+    ThemeTokens.currentTheme = _currentTheme;
+
+    // Сохраняем в SharedPreferences
+    await _saveThemeToStorage();
+
+    // Уведомляем о изменении темы
+    notifyListeners();
   }
 
   /// Установить конкретную тему
   Future<void> setTheme(ThemeMode theme) async {
-    if (_currentTheme != theme) {
-      // Обновляем тему
-      _currentTheme = theme;
+    // Обновляем тему
+    _currentTheme = theme;
 
-      // Обновляем ThemeTokens
-      ThemeTokens.currentTheme = _currentTheme;
+    // Обновляем ThemeTokens
+    ThemeTokens.currentTheme = _currentTheme;
 
-      // Сохраняем в SharedPreferences
-      await _saveThemeToStorage();
+    // Сохраняем в SharedPreferences
+    await _saveThemeToStorage();
 
-      // Уведомляем о изменении темы
-      // Добавляем небольшую задержку для корректного обновления всех экранов
-      await Future.delayed(const Duration(milliseconds: 10));
-      notifyListeners();
-
-      // Дополнительное уведомление для гарантии обновления всех экранов
-      await Future.delayed(const Duration(milliseconds: 50));
-      notifyListeners();
-    }
+    // Уведомляем о изменении темы
+    notifyListeners();
   }
 
   /// Загрузить тему из SharedPreferences

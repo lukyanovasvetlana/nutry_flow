@@ -374,7 +374,7 @@ class FullScreenLoading extends StatelessWidget {
                   borderRadius:
                       BorderRadius.circular(DesignTokens.borders.xl.toDouble()),
                   child: Image.asset(
-                    'assets/images/Logo.png',
+                    'assets/images/logo.png',
                     fit: BoxFit.cover,
                   ),
                 ),

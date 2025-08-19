@@ -46,12 +46,10 @@ class PreviewRecipeModal extends StatelessWidget {
                           height: 180,
                           width: double.infinity,
                           fit: BoxFit.cover)
-                      : (photos.first.url != null
-                          ? Image.network(photos.first.url,
-                              height: 180,
-                              width: double.infinity,
-                              fit: BoxFit.cover)
-                          : const SizedBox(height: 180)),
+                      : (Image.network(photos.first.url,
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.cover)),
                 ),
               const SizedBox(height: 16),
               // Название и категория

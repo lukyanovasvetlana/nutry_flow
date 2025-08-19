@@ -136,7 +136,7 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
               onChanged: (value) async {
                 await ThemeManager().toggleTheme();
               },
-              activeColor: Theme.of(context).primaryColor,
+              activeThumbColor: Theme.of(context).primaryColor,
               activeTrackColor: Theme.of(context).colorScheme.primaryContainer,
               inactiveThumbColor: Theme.of(context).colorScheme.outline,
               inactiveTrackColor:

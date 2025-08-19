@@ -156,8 +156,8 @@ class ProfileHeader extends StatelessWidget {
 
               SizedBox(height: 16),
 
-              // Profile Completeness
-              _buildCompletenessIndicator(),
+              // Profile Completeness убран
+              // _buildCompletenessIndicator(),
             ],
           ),
         ),
@@ -192,51 +192,6 @@ class ProfileHeader extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCompletenessIndicator() {
-    final completeness = profile.profileCompleteness;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Заполненность профиля',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.9),
-              ),
-            ),
-            Text(
-              '${(completeness * 100).toInt()}%',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 8),
-        Container(
-          height: 6,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(3),
-            color: Colors.white.withValues(alpha: 0.3),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(
-              value: completeness,
-              backgroundColor: Colors.transparent,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
           ),
         ),
       ],

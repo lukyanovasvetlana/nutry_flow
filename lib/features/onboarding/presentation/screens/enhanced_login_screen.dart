@@ -46,7 +46,7 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/welcome'),
         ),
       ),
       body: SafeArea(
@@ -57,7 +57,7 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 0),
-                Image.asset('assets/images/Logo.png', height: 80),
+                Image.asset('assets/images/logo.png', height: 80),
                 const SizedBox(height: 20),
                 Text(
                   'Вход в аккаунт',

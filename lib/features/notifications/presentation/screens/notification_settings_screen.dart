@@ -123,7 +123,7 @@ class _NotificationSettingsScreenState
                   );
                 });
               },
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
           ],
         ),
@@ -150,7 +150,7 @@ class _NotificationSettingsScreenState
                   );
                 });
               },
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             if (_preferences.mealRemindersEnabled) ...[
               const Divider(),
@@ -190,7 +190,7 @@ class _NotificationSettingsScreenState
                   );
                 });
               },
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             if (_preferences.workoutRemindersEnabled) ...[
               const Divider(),
@@ -229,7 +229,7 @@ class _NotificationSettingsScreenState
                   );
                 });
               },
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             if (_preferences.goalRemindersEnabled) ...[
               const Divider(),

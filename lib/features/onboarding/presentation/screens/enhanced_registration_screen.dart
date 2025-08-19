@@ -33,11 +33,27 @@ class _EnhancedRegistrationScreenState
   }
 
   Future<void> _register(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) return;
+    print('🔵 Registration: _register called');
+    print('🔵 Registration: Form validation started');
+
+    if (!_formKey.currentState!.validate()) {
+      print('🔴 Registration: Form validation failed');
+      return;
+    }
+
+    print('🔵 Registration: Form is valid, sending SignUpRequested');
+    print('🔵 Registration: Email: ${_emailController.text.trim()}');
+    print(
+        '🔵 Registration: Password length: ${_passwordController.text.length}');
 
     try {
-      // Здесь будет логика регистрации
-      print('🔵 Registration: Attempting registration...');
+      // Отправляем событие регистрации
+      context.read<AuthBloc>().add(SignUpRequested(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          ));
+
+      print('🔵 Registration: SignUpRequested event sent');
     } catch (e) {
       print('🔴 Registration: Error during registration: $e');
     }
@@ -57,11 +73,15 @@ class _EnhancedRegistrationScreenState
         listener: (context, state) {
           print(
               '🔵 Registration: BlocListener received state: ${state.runtimeType}');
+
           if (state is AuthAuthenticated) {
             print(
-                '🔵 Registration: User authenticated, navigating to profile setup');
+                '🟢 Registration: User authenticated, navigating to profile setup');
             Navigator.pushReplacementNamed(context, '/profile-info');
+          } else if (state is AuthLoading) {
+            print('🟡 Registration: AuthLoading received');
           } else if (state is AuthError) {
+            print('🔴 Registration: AuthError received: ${state.message}');
             // Улучшенная обработка ошибок
             String errorMessage = state.message;
 
@@ -93,6 +113,9 @@ class _EnhancedRegistrationScreenState
                 ),
               ),
             );
+          } else {
+            print(
+                '🔵 Registration: Other state received: ${state.runtimeType}');
           }
         },
         child: Scaffold(
@@ -102,7 +125,8 @@ class _EnhancedRegistrationScreenState
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+              onPressed: () =>
+                  Navigator.pushReplacementNamed(context, '/welcome'),
             ),
           ),
           body: SafeArea(
@@ -113,7 +137,7 @@ class _EnhancedRegistrationScreenState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 0),
-                    Image.asset('assets/images/Logo.png', height: 80),
+                    Image.asset('assets/images/logo.png', height: 80),
                     const SizedBox(height: 20),
                     Text(
                       'Регистрация',

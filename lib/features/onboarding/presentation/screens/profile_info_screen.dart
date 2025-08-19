@@ -149,49 +149,11 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () =>
-              Navigator.pushReplacementNamed(context, '/registration'),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/welcome'),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Шаг 1 из 2',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    Text(
-                      '50%',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.button,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: LinearProgressIndicator(
-                  value: 0.5,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.button),
-                  minHeight: 4,
-                ),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
+          preferredSize: const Size.fromHeight(0), // Уменьшил с 60 до 0
+          child: Container(), // Пустой контейнер вместо индикатора прогресса
         ),
       ),
       body: SafeArea(
@@ -346,7 +308,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: _selectedGender,
+          initialValue: _selectedGender,
           items: _genders.map((String gender) {
             return DropdownMenuItem<String>(
               value: gender,

@@ -50,7 +50,7 @@ class _AppContainerState extends State<AppContainer> {
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               elevation: 0,
               title: Text(
-                'Nutrigo',
+                'NutryFlow',
                 style: AppStyles.headlineMedium.copyWith(
                   color: Theme.of(context).appBarTheme.foregroundColor,
                 ),
@@ -63,18 +63,6 @@ class _AppContainerState extends State<AppContainer> {
                     color: Theme.of(context).appBarTheme.foregroundColor,
                   ),
                   onPressed: () async {
-                    // Добавляем индикатор загрузки при переключении темы
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          ThemeManager().currentTheme == ThemeMode.light
-                              ? 'Переключение на темную тему...'
-                              : 'Переключение на светлую тему...',
-                        ),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-
                     await ThemeManager().toggleTheme();
                   },
                 ),

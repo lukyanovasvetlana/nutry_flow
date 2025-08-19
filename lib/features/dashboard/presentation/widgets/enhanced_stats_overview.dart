@@ -377,7 +377,7 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                   borderRadius:
                       BorderRadius.circular(DesignTokens.borders.full),
                   child: Image.asset(
-                    'assets/images/Logo.png',
+                    'assets/images/logo.png',
                     fit: BoxFit.cover,
                   ),
                 ),

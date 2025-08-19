@@ -31,45 +31,8 @@ class GoalsSetupView extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Шаг 2 из 2',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    Text(
-                      '100%',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.button,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: LinearProgressIndicator(
-                  value: 1.0,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.button),
-                  minHeight: 4,
-                ),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
+          preferredSize: const Size.fromHeight(0), // Уменьшил с 60 до 0
+          child: Container(), // Пустой контейнер вместо индикатора прогресса
         ),
       ),
       body: BlocListener<GoalsSetupBloc, GoalsSetupState>(
@@ -106,9 +69,9 @@ class GoalsSetupView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Индикатор прогресса
-                  _buildProgressIndicator(),
-                  const SizedBox(height: 24),
+                  // Индикатор прогресса убран
+                  // _buildProgressIndicator(),
+                  // const SizedBox(height: 24),
 
                   // Выбор основной цели
                   _buildGoalSelection(context),
@@ -144,37 +107,7 @@ class GoalsSetupView extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressIndicator() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              'Шаг 4 из 4',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const Spacer(),
-            Text(
-              '100%',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        LinearProgressIndicator(
-          value: 1.0,
-          backgroundColor: Colors.grey[200],
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-        ),
-      ],
-    );
-  }
+  // Метод _buildProgressIndicator убран, так как индикатор прогресса больше не используется
 
   Widget _buildGoalSelection(BuildContext context) {
     final goals = [
@@ -353,7 +286,7 @@ class GoalsSetupView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<int>(
-          value: 3,
+          initialValue: 3,
           decoration: const InputDecoration(
             border: UnderlineInputBorder(),
           ),
@@ -414,7 +347,7 @@ class GoalsSetupView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: state.goals.dietaryPreferences.isNotEmpty
+          initialValue: state.goals.dietaryPreferences.isNotEmpty
               ? state.goals.dietaryPreferences.first
               : null,
           decoration: const InputDecoration(

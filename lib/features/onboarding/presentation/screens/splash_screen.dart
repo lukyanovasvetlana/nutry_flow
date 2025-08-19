@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                     // App Name
                     const Text(
-                      'Nutrigo',
+                      'NutryFlow',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,

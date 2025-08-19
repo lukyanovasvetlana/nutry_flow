@@ -167,7 +167,7 @@ class _ThemeSwitchDemoScreenState extends State<ThemeSwitchDemoScreen> {
                   ),
                 );
               },
-              activeColor: context.primary,
+              activeThumbColor: context.primary,
               activeTrackColor: context.primaryContainer,
               inactiveThumbColor: context.outline,
               inactiveTrackColor: context.surfaceVariant,
