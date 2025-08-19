@@ -205,23 +205,19 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
           Icons.science,
           color: _getVariantColor(variant),
         ),
-        title: Flexible(
-          child: Text(
-            _getExperimentDisplayName(experimentName),
-            style: AppStyles.body1.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            overflow: TextOverflow.ellipsis,
+        title: Text(
+          _getExperimentDisplayName(experimentName),
+          style: AppStyles.body1.copyWith(
+            fontWeight: FontWeight.w600,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Flexible(
-          child: Text(
-            'Вариант: $variant',
-            style: AppStyles.caption.copyWith(
-              color: Colors.grey[600],
-            ),
-            overflow: TextOverflow.ellipsis,
+        subtitle: Text(
+          'Вариант: $variant',
+          style: AppStyles.caption.copyWith(
+            color: Colors.grey[600],
           ),
+          overflow: TextOverflow.ellipsis,
         ),
         trailing: IconButton(
           icon: const Icon(Icons.visibility),
@@ -273,23 +269,19 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
           value == true ? Icons.check_circle : Icons.cancel,
           color: value == true ? Colors.green : Colors.red,
         ),
-        title: Flexible(
-          child: Text(
-            _getFeatureFlagDisplayName(flagName),
-            style: AppStyles.body1.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            overflow: TextOverflow.ellipsis,
+        title: Text(
+          _getFeatureFlagDisplayName(flagName),
+          style: AppStyles.body1.copyWith(
+            fontWeight: FontWeight.w600,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Flexible(
-          child: Text(
-            'Статус: ${value == true ? 'Включено' : 'Отключено'}',
-            style: AppStyles.caption.copyWith(
-              color: Colors.grey[600],
-            ),
-            overflow: TextOverflow.ellipsis,
+        subtitle: Text(
+          'Статус: ${value == true ? 'Включено' : 'Отключено'}',
+          style: AppStyles.caption.copyWith(
+            color: Colors.grey[600],
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

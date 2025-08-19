@@ -261,13 +261,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            Flexible(
-              child: Text(
-                title,
-                style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                  color: AppColors.dynamicOnSurfaceVariant,
-                ),
-                overflow: TextOverflow.ellipsis,
+            Text(
+              title,
+              style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                color: AppColors.dynamicOnSurfaceVariant,
               ),
             ),
             const SizedBox(height: 4),
