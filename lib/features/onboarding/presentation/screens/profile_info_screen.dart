@@ -149,8 +149,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pushNamedAndRemoveUntil(
-              context, '/welcome', (route) => false),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/registration'),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0), // Уменьшил с 60 до 0
