@@ -36,19 +36,23 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
       final lastFetch = ABTestingService.instance.getLastFetchTime();
       final status = ABTestingService.instance.getFetchStatus();
 
-      setState(() {
-        _activeExperiments = experiments;
-        _featureFlags = flags;
-        _lastFetchTime = lastFetch;
-        _fetchStatus = _getFetchStatusString(status);
-      });
+      if (mounted) {
+        setState(() {
+          _activeExperiments = experiments;
+          _featureFlags = flags;
+          _lastFetchTime = lastFetch;
+          _fetchStatus = _getFetchStatusString(status);
+        });
+      }
     } catch (e) {
       developer.log('Failed to load A/B testing data: $e',
           name: 'ABTestingScreen');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -71,7 +75,13 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('A/B Тестирование'),
+        title: Text(
+          'A/B Тестирование',
+          style: AppStyles.headline6.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -150,7 +160,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
             child: Text(
               label,
               style: AppStyles.body2.copyWith(
-                color: Colors.grey[600],
+                color: Colors.grey.shade600,
               ),
             ),
           ),
@@ -215,7 +225,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
         subtitle: Text(
           'Вариант: $variant',
           style: AppStyles.caption.copyWith(
-            color: Colors.grey[600],
+            color: Colors.grey.shade600,
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -247,7 +257,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
               Text(
                 'Нет активных флагов функций',
                 style: AppStyles.body2.copyWith(
-                  color: Colors.grey[600],
+                  color: Colors.grey.shade600,
                 ),
               )
             else
@@ -279,7 +289,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
         subtitle: Text(
           'Статус: ${value == true ? 'Включено' : 'Отключено'}',
           style: AppStyles.caption.copyWith(
-            color: Colors.grey[600],
+            color: Colors.grey.shade600,
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -360,7 +370,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
   Color _getVariantColor(String variant) {
     switch (variant) {
       case 'control':
-        return Colors.grey;
+        return Colors.grey.shade400;
       case 'variant_a':
         return Colors.blue;
       case 'variant_b':
@@ -413,15 +423,21 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
       });
 
       await ABTestingService.instance.forceUpdate();
-      await _loadABTestingData();
-
-      _showSnackBar('Конфигурация обновлена успешно', Colors.green);
+      
+      if (mounted) {
+        await _loadABTestingData();
+        _showSnackBar('Конфигурация обновлена успешно', Colors.green);
+      }
     } catch (e) {
-      _showSnackBar('Ошибка при обновлении: $e', Colors.red);
+      if (mounted) {
+        _showSnackBar('Ошибка при обновлении: $e', Colors.red);
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -437,9 +453,13 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
         },
       );
 
-      _showSnackBar('Показ эксперимента отслежен', Colors.green);
+      if (mounted) {
+        _showSnackBar('Показ эксперимента отслежен', Colors.green);
+      }
     } catch (e) {
-      _showSnackBar('Ошибка при отслеживании: $e', Colors.red);
+      if (mounted) {
+        _showSnackBar('Ошибка при отслеживании: $e', Colors.red);
+      }
     }
   }
 

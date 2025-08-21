@@ -352,7 +352,7 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
                 'Ничего не найдено',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey,
+                  color: Colors.grey.shade400,
                 ),
               ),
             ),

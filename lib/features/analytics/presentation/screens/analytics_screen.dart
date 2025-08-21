@@ -94,7 +94,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: AppColors.dynamicSurfaceVariant.withOpacity(0.3),
+            color: AppColors.dynamicSurfaceVariant.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -118,7 +118,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppColors.dynamicPrimary.withOpacity(0.3),
+                              color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -218,7 +218,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -228,7 +228,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -287,13 +287,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: isPositive
-                    ? AppColors.dynamicSuccess.withOpacity(0.15)
-                    : AppColors.dynamicError.withOpacity(0.15),
+                    ? AppColors.dynamicSuccess.withValues(alpha: 0.15)
+                    : AppColors.dynamicError.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isPositive
-                      ? AppColors.dynamicSuccess.withOpacity(0.3)
-                      : AppColors.dynamicError.withOpacity(0.3),
+                      ? AppColors.dynamicSuccess.withValues(alpha: 0.3)
+                      : AppColors.dynamicError.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -400,7 +400,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -411,7 +411,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Container(
               padding: const EdgeInsets.all(16), // Уменьшил с 18 до 16
               decoration: BoxDecoration(
-                color: color.withOpacity(0.05),
+                color: color.withValues(alpha: 0.05),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
@@ -422,7 +422,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.15),
+                      color: color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -525,7 +525,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -535,7 +535,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
@@ -581,7 +581,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             // Стрелка
             Icon(
               Icons.arrow_forward_ios,
-              color: AppColors.dynamicOnSurfaceVariant.withOpacity(0.5),
+              color: AppColors.dynamicOnSurfaceVariant.withValues(alpha: 0.5),
               size: 16,
             ),
           ],

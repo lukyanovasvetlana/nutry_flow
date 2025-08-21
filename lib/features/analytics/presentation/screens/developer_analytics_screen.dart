@@ -284,8 +284,8 @@ class _DeveloperAnalyticsScreenState extends State<DeveloperAnalyticsScreen> {
             const SizedBox(height: 4),
             Text(
               title,
-              style: AppStyles.caption.copyWith(
-                color: Colors.grey[600],
+              style: AppStyles.body2.copyWith(
+                color: Colors.grey.shade600,
               ),
               textAlign: TextAlign.center,
             ),

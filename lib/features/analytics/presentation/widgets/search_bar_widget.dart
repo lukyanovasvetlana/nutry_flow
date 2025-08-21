@@ -44,18 +44,18 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: TextField(
         controller: _controller,
         decoration: InputDecoration(
           hintText: 'Поиск рекомендаций...',
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+          prefixIcon: const Icon(Icons.search, color: Colors.grey.shade600),
           suffixIcon: _hasText
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: Colors.grey),
+                  icon: const Icon(Icons.clear, color: Colors.grey.shade600),
                   onPressed: () {
                     _controller.clear();
                     widget.onClear();
