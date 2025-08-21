@@ -29,10 +29,8 @@ class _AppContainerState extends State<AppContainer> {
     return ListenableBuilder(
       listenable: ThemeManager(),
       builder: (context, child) {
-        // Получаем текущую тему для принудительного обновления
         final currentTheme = ThemeManager().currentTheme;
 
-        // Добавляем AnimatedSwitcher для плавного переключения тем
         return AnimatedSwitcher(
           key: ValueKey('app-container-${currentTheme.name}'),
           duration: const Duration(milliseconds: 300),
@@ -44,7 +42,6 @@ class _AppContainerState extends State<AppContainer> {
 
   Widget _buildMainScreen() {
     return Scaffold(
-      key: ValueKey('scaffold-${ThemeManager().currentTheme.name}'),
       appBar: _selectedIndex == 0
           ? AppBar(
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,

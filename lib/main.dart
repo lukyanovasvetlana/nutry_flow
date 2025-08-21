@@ -57,7 +57,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final ThemeManager _themeManager;
-  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -68,27 +67,10 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initializeTheme() async {
     await _themeManager.initialize();
-    if (mounted) {
-      setState(() {
-        _isInitialized = true;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized) {
-      return MaterialApp(
-        title: 'NutryFlow',
-        theme: ThemeData.light(),
-        home: const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
     return ListenableBuilder(
       listenable: _themeManager,
       builder: (context, child) {
