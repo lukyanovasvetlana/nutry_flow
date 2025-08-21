@@ -32,19 +32,19 @@ class _AppContainerState extends State<AppContainer> {
         // Получаем текущую тему для принудительного обновления
         final currentTheme = ThemeManager().currentTheme;
 
-        // Используем AnimatedSwitcher для плавного перехода между темами
+        // Добавляем AnimatedSwitcher для плавного переключения тем
         return AnimatedSwitcher(
+          key: ValueKey('app-container-${currentTheme.name}'),
           duration: const Duration(milliseconds: 300),
-          child: _buildMainScreen(
-              key: ValueKey('app-container-${currentTheme.name}')),
+          child: _buildMainScreen(),
         );
       },
     );
   }
 
-  Widget _buildMainScreen({Key? key}) {
+  Widget _buildMainScreen() {
     return Scaffold(
-      key: key, // Добавляем key для принудительного обновления
+      key: ValueKey('scaffold-${ThemeManager().currentTheme.name}'),
       appBar: _selectedIndex == 0
           ? AppBar(
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -64,6 +64,16 @@ class _AppContainerState extends State<AppContainer> {
                   ),
                   onPressed: () async {
                     await ThemeManager().toggleTheme();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Переключено на ${ThemeManager().themeDescription}',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
                   },
                 ),
               ],

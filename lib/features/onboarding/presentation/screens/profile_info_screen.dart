@@ -126,7 +126,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Профиль сохранен!')),
       );
-      Navigator.pushReplacementNamed(context, '/onboarding');
+      Navigator.pushReplacementNamed(context, '/goals-setup');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -420,7 +420,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       height: 50,
       child: TextButton(
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/onboarding');
+          Navigator.pushReplacementNamed(context, '/goals-setup');
         },
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(

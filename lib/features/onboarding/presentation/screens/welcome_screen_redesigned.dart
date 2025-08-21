@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class WelcomeScreenRedesigned extends StatefulWidget {
@@ -47,7 +46,7 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.go('/registration');
+                    Navigator.pushReplacementNamed(context, '/registration');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.button,
@@ -65,7 +64,7 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    context.go('/login');
+                    Navigator.pushReplacementNamed(context, '/login');
                   },
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: AppColors.button),

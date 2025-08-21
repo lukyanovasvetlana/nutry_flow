@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/goals_setup_bloc.dart';
 import '../../domain/entities/user_goals.dart';
+import '../../di/onboarding_dependencies.dart';
 
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
@@ -10,7 +11,10 @@ class GoalsSetupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GoalsSetupView();
+    return BlocProvider<GoalsSetupBloc>(
+      create: (context) => OnboardingDependencies.instance.createGoalsSetupBloc(),
+      child: const GoalsSetupView(),
+    );
   }
 }
 
