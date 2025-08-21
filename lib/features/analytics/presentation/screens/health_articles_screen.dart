@@ -345,9 +345,9 @@ class _HealthArticlesScreenState extends State<HealthArticlesScreen> {
         ),
         const SizedBox(height: 12),
         if (articles.isEmpty)
-          const Center(
+          Center(
             child: Padding(
-              padding: EdgeInsets.all(32),
+              padding: const EdgeInsets.all(32),
               child: Text(
                 'Ничего не найдено',
                 style: TextStyle(

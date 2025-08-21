@@ -52,10 +52,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         controller: _controller,
         decoration: InputDecoration(
           hintText: 'Поиск рекомендаций...',
-          prefixIcon: const Icon(Icons.search, color: Colors.grey.shade600),
+          prefixIcon: Icon(Icons.search, color: Colors.grey.shade600),
           suffixIcon: _hasText
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: Colors.grey.shade600),
+                  icon: Icon(Icons.clear, color: Colors.grey.shade600),
                   onPressed: () {
                     _controller.clear();
                     widget.onClear();

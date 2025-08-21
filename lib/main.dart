@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:nutry_flow/core/architecture/architecture.dart';
 import 'package:nutry_flow/config/supabase_config.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/splash_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/welcome_screen_redesigned.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_registration_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_login_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/profile_info_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/goals_setup_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/forgot_password_screen.dart';
+import 'package:nutry_flow/app.dart';
+import 'package:nutry_flow/shared/theme/theme_manager.dart';
+import 'package:nutry_flow/features/onboarding/di/onboarding_dependencies.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,71 +34,84 @@ void main() async {
     print('🔵 Main: ❌ Demo mode is NOT active');
   }
 
+  // Инициализация OnboardingDependencies
+  print('🔵 Main: Initializing OnboardingDependencies...');
   try {
-    // Инициализация архитектуры приложения
-    print('🏗️ Main: Initializing AppArchitecture...');
-    await AppArchitecture().initialize();
-    print('✅ Main: AppArchitecture initialized successfully');
-
-    // Запуск приложения
-    runApp(AppArchitecture().createApp());
-    
-  } catch (e, stackTrace) {
-    print('❌ Main: Failed to initialize AppArchitecture: $e');
-    print('❌ Stack trace: $stackTrace');
-    
-    // Fallback: показываем экран ошибки
-    runApp(const _ErrorApp());
+    await OnboardingDependencies.instance.initialize();
+    print('🔵 Main: OnboardingDependencies initialized');
+    print('🔵 Main: OnboardingDependencies.isDemo = ${OnboardingDependencies.instance.isDemo}');
+    print('🔵 Main: ✅ OnboardingDependencies is in demo mode');
+  } catch (e) {
+    print('🔴 Main: Failed to initialize OnboardingDependencies: $e');
   }
+
+  runApp(const MyApp());
 }
 
-/// Fallback приложение для случаев ошибки инициализации
-class _ErrorApp extends StatelessWidget {
-  const _ErrorApp();
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final ThemeManager _themeManager;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeManager = ThemeManager();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NutryFlow - Error',
-      theme: ThemeData.light(),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Ошибка инициализации'),
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-        ),
-        body: const Center(
-          child: Padding(
-            padding: EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 80,
-                  color: Colors.red,
-                ),
-                SizedBox(height: 24),
-                Text(
-                  'Не удалось инициализировать приложение',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Попробуйте перезапустить приложение или обратитесь в службу поддержки.',
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+    return ListenableBuilder(
+      listenable: _themeManager,
+      builder: (context, child) {
+        final currentTheme = _themeManager.currentTheme;
+        
+        return AnimatedSwitcher(
+          key: ValueKey('app-${currentTheme.name}'),
+          duration: const Duration(milliseconds: 300),
+          child: MaterialApp(
+            title: 'NutryFlow',
+            theme: currentTheme.lightTheme,
+            darkTheme: currentTheme.darkTheme,
+            themeMode: currentTheme.themeMode,
+            debugShowCheckedModeBanner: false,
+            initialRoute: '/',
+            routes: {
+              '/': (context) => const SplashScreen(),
+              '/welcome': (context) => Theme(
+                data: ThemeData.light(),
+                child: const WelcomeScreenRedesigned(),
+              ),
+              '/registration': (context) => Theme(
+                data: ThemeData.light(),
+                child: const EnhancedRegistrationScreen(),
+              ),
+              '/login': (context) => Theme(
+                data: ThemeData.light(),
+                child: const EnhancedLoginScreen(),
+              ),
+              '/profile-info': (context) => Theme(
+                data: ThemeData.light(),
+                child: const ProfileInfoScreen(),
+              ),
+              '/goals-setup': (context) => Theme(
+                data: ThemeData.light(),
+                child: const GoalsSetupScreen(),
+              ),
+              '/forgot-password': (context) => Theme(
+                data: ThemeData.light(),
+                child: const ForgotPasswordScreen(),
+              ),
+              '/app': (context) => const AppContainer(),
+            },
           ),
-        ),
-      ),
-      debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
