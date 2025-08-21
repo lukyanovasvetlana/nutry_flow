@@ -42,8 +42,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
 
         // Возвращаемся на экран входа
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/login', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       });
     }
   }

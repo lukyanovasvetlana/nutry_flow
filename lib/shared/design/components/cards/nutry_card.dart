@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../tokens/design_tokens.dart';
+import '../../tokens/theme_tokens.dart';
 
 /// Карточка NutryFlow - основной контейнер для контента
 class NutryCard extends StatelessWidget {
@@ -98,7 +99,7 @@ class NutryCard extends StatelessWidget {
   })  : backgroundColor = null,
         borderColor = null,
         borderWidth = null,
-        borderRadius = null,
+        borderRadius = 16.0,
         shadow = null;
 
   /// Карточка с акцентным стилем
@@ -117,9 +118,9 @@ class NutryCard extends StatelessWidget {
     this.loadingWidget,
     this.emptyWidget,
     this.isEmpty = false,
-  })  : backgroundColor = const Color(0xFFFFF3C4),
-        borderColor = const Color(0xFFFFCB65),
-        borderWidth = 1.0,
+  })  : backgroundColor = null,
+        borderColor = null,
+        borderWidth = null,
         borderRadius = 16.0,
         shadow = null;
 
@@ -139,9 +140,9 @@ class NutryCard extends StatelessWidget {
     this.loadingWidget,
     this.emptyWidget,
     this.isEmpty = false,
-  })  : backgroundColor = const Color(0x1A4CAF50),
-        borderColor = const Color(0xFF4CAF50),
-        borderWidth = 1.0,
+  })  : backgroundColor = null,
+        borderColor = null,
+        borderWidth = null,
         borderRadius = 16.0,
         shadow = null;
 
@@ -196,7 +197,7 @@ class NutryCard extends StatelessWidget {
       width: width,
       margin: margin ?? EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
-        color: backgroundColor ?? DesignTokens.colors.surface,
+        color: backgroundColor ?? context.surface,
         borderRadius: BorderRadius.circular(
           borderRadius ?? 16.0,
         ),
@@ -227,11 +228,11 @@ class NutryCard extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     if (isLoading) {
-      return loadingWidget ?? _buildLoadingState();
+      return loadingWidget ?? _buildLoadingState(context);
     }
 
     if (isEmpty) {
-      return emptyWidget ?? _buildEmptyState();
+      return emptyWidget ?? _buildEmptyState(context);
     }
 
     return Column(
@@ -252,7 +253,7 @@ class NutryCard extends StatelessWidget {
           if (icon != null) ...[
             Icon(
               icon,
-              color: DesignTokens.colors.primary,
+              color: context.primary,
               size: DesignTokens.spacing.iconMedium,
             ),
             SizedBox(width: DesignTokens.spacing.sm),
@@ -265,7 +266,7 @@ class NutryCard extends StatelessWidget {
                   Text(
                     title!,
                     style: DesignTokens.typography.titleMediumStyle.copyWith(
-                      color: DesignTokens.colors.onSurface,
+                      color: context.onSurface,
                       fontWeight: DesignTokens.typography.semiBold,
                     ),
                   ),
@@ -274,7 +275,7 @@ class NutryCard extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                      color: DesignTokens.colors.onSurfaceVariant,
+                      color: context.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -286,13 +287,13 @@ class NutryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
     return Column(
       children: [
         Container(
           height: 20,
           decoration: BoxDecoration(
-            color: DesignTokens.colors.outline,
+            color: context.outline,
             borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
           ),
         ),
@@ -300,16 +301,15 @@ class NutryCard extends StatelessWidget {
         Container(
           height: 16,
           decoration: BoxDecoration(
-            color: DesignTokens.colors.outline,
+            color: context.outline,
             borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
           ),
         ),
         SizedBox(height: DesignTokens.spacing.sm),
         Container(
-          height: 16,
-          width: 100,
+          height: 12,
           decoration: BoxDecoration(
-            color: DesignTokens.colors.outline,
+            color: context.outline,
             borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
           ),
         ),
@@ -317,27 +317,19 @@ class NutryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           Icons.inbox_outlined,
-          size: DesignTokens.spacing.iconXLarge,
-          color: DesignTokens.colors.onSurfaceVariant,
+          size: 48,
+          color: context.outline,
         ),
         SizedBox(height: DesignTokens.spacing.md),
         Text(
           'Нет данных',
-          style: DesignTokens.typography.titleMediumStyle.copyWith(
-            color: DesignTokens.colors.onSurfaceVariant,
-          ),
-        ),
-        SizedBox(height: DesignTokens.spacing.xs),
-        Text(
-          'Здесь пока ничего нет',
-          style: DesignTokens.typography.bodyMediumStyle.copyWith(
-            color: DesignTokens.colors.onSurfaceVariant,
+          style: DesignTokens.typography.bodyLargeStyle.copyWith(
+            color: context.onSurfaceVariant,
           ),
         ),
       ],
