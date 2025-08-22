@@ -26,10 +26,18 @@ class _AppContainerState extends State<AppContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: ThemeManager(),
+    return ListenableBuilder(
+      listenable: ThemeManager(),
       builder: (context, child) {
-        return _buildMainScreen();
+        final currentTheme = ThemeManager().currentTheme;
+        
+        return AnimatedTheme(
+          duration: const Duration(milliseconds: 300),
+          data: currentTheme == ThemeMode.light 
+              ? ThemeManager().lightTheme 
+              : ThemeManager().darkTheme,
+          child: _buildMainScreen(),
+        );
       },
     );
   }
