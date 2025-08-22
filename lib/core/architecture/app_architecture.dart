@@ -84,7 +84,7 @@ class AppArchitecture {
     await MonitoringService.instance.initialize();
     await ABTestingService.instance.initialize();
     await PersonaAnalyticsTracker.instance.initialize();
-    await ThemeManager().initialize();
+    // ThemeManager теперь инициализируется синхронно при создании
     
     print('🏗️ AppArchitecture: Core services initialized successfully');
   }
