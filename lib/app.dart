@@ -29,13 +29,7 @@ class _AppContainerState extends State<AppContainer> {
     return ListenableBuilder(
       listenable: ThemeManager(),
       builder: (context, child) {
-        final currentTheme = ThemeManager().currentTheme;
-
-        return AnimatedSwitcher(
-          key: ValueKey('app-container-${currentTheme.name}'),
-          duration: const Duration(milliseconds: 300),
-          child: _buildMainScreen(),
-        );
+        return _buildMainScreen();
       },
     );
   }
@@ -61,16 +55,6 @@ class _AppContainerState extends State<AppContainer> {
                   ),
                   onPressed: () async {
                     await ThemeManager().toggleTheme();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Переключено на ${ThemeManager().themeDescription}',
-                          ),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    }
                   },
                 ),
               ],
