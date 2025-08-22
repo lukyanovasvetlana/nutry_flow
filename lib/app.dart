@@ -26,29 +26,16 @@ class _AppContainerState extends State<AppContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: ThemeManager(),
+    return AnimatedBuilder(
+      animation: ThemeManager(),
       builder: (context, child) {
-        final currentTheme = ThemeManager().currentTheme;
-        
-        return AnimatedSwitcher(
-          key: ValueKey('app-container-${currentTheme.name}'),
-          duration: const Duration(milliseconds: 200),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          child: _buildMainScreen(),
-        );
+        return _buildMainScreen();
       },
     );
   }
 
   Widget _buildMainScreen() {
     return Scaffold(
-      key: ValueKey('scaffold-${ThemeManager().currentTheme.name}'),
       appBar: _selectedIndex == 0
           ? AppBar(
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
