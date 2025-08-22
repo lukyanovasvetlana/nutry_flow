@@ -62,11 +62,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _themeManager = ThemeManager();
-    _initializeTheme();
-  }
-
-  Future<void> _initializeTheme() async {
-    await _themeManager.initialize();
   }
 
   @override

@@ -8,7 +8,10 @@ import '../design/tokens/design_tokens.dart';
 class ThemeManager extends ChangeNotifier {
   static final ThemeManager _instance = ThemeManager._internal();
   factory ThemeManager() => _instance;
-  ThemeManager._internal();
+  ThemeManager._internal() {
+    // Синхронная инициализация при создании
+    _initializeSync();
+  }
 
   /// Текущая тема приложения
   ThemeMode _currentTheme = ThemeMode.light;
@@ -19,9 +22,31 @@ class ThemeManager extends ChangeNotifier {
   /// Получить текущую тему
   ThemeMode get currentTheme => _currentTheme;
 
-  /// Инициализация менеджера тем
-  Future<void> initialize() async {
-    await _loadThemeFromStorage();
+  /// Синхронная инициализация
+  void _initializeSync() {
+    // Используем светлую тему по умолчанию
+    _currentTheme = ThemeMode.light;
+    ThemeTokens.currentTheme = _currentTheme;
+    
+    // Асинхронно загружаем сохраненную тему
+    _loadThemeFromStorageAsync();
+  }
+
+  /// Асинхронная загрузка темы из SharedPreferences
+  Future<void> _loadThemeFromStorageAsync() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final themeIndex = prefs.getInt(_themeKey) ?? 0;
+      final savedTheme = ThemeMode.values[themeIndex];
+      
+      if (savedTheme != _currentTheme) {
+        _currentTheme = savedTheme;
+        ThemeTokens.currentTheme = _currentTheme;
+        notifyListeners();
+      }
+    } catch (e) {
+      // В случае ошибки оставляем текущую тему
+    }
   }
 
   /// Переключение темы
@@ -29,7 +54,7 @@ class ThemeManager extends ChangeNotifier {
     final newTheme =
         _currentTheme == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
 
-    // Обновляем тему напрямую без вызова setTheme
+    // Обновляем тему напрямую
     _currentTheme = newTheme;
     ThemeTokens.currentTheme = _currentTheme;
 
@@ -53,22 +78,6 @@ class ThemeManager extends ChangeNotifier {
 
     // Уведомляем о изменении темы
     notifyListeners();
-  }
-
-  /// Загрузить тему из SharedPreferences
-  Future<void> _loadThemeFromStorage() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final themeIndex = prefs.getInt(_themeKey) ?? 0;
-      _currentTheme = ThemeMode.values[themeIndex];
-
-      // Обновить ThemeTokens
-      ThemeTokens.currentTheme = _currentTheme;
-    } catch (e) {
-      // В случае ошибки используем светлую тему по умолчанию
-      _currentTheme = ThemeMode.light;
-      ThemeTokens.currentTheme = _currentTheme;
-    }
   }
 
   /// Сохранить тему в SharedPreferences
