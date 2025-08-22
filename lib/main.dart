@@ -71,47 +71,41 @@ class _MyAppState extends State<MyApp> {
       builder: (context, child) {
         final currentTheme = _themeManager.currentTheme;
         
-        return AnimatedTheme(
-          duration: const Duration(milliseconds: 300),
-          data: currentTheme == ThemeMode.light 
-              ? _themeManager.lightTheme 
-              : _themeManager.darkTheme,
-          child: MaterialApp(
-            title: 'NutryFlow',
-            theme: _themeManager.lightTheme,
-            darkTheme: _themeManager.darkTheme,
-            themeMode: currentTheme,
-            debugShowCheckedModeBanner: false,
-            initialRoute: '/',
-            routes: {
-              '/': (context) => const SplashScreen(),
-              '/welcome': (context) => Theme(
-                data: ThemeData.light(),
-                child: const WelcomeScreenRedesigned(),
-              ),
-              '/registration': (context) => Theme(
-                data: ThemeData.light(),
-                child: const EnhancedRegistrationScreen(),
-              ),
-              '/login': (context) => Theme(
-                data: ThemeData.light(),
-                child: const EnhancedLoginScreen(),
-              ),
-              '/profile-info': (context) => Theme(
-                data: ThemeData.light(),
-                child: const ProfileInfoScreen(),
-              ),
-              '/goals-setup': (context) => Theme(
-                data: ThemeData.light(),
-                child: const GoalsSetupScreen(),
-              ),
-              '/forgot-password': (context) => Theme(
-                data: ThemeData.light(),
-                child: const ForgotPasswordScreen(),
-              ),
-              '/app': (context) => const AppContainer(),
-            },
-          ),
+        return MaterialApp(
+          title: 'NutryFlow',
+          theme: _themeManager.lightTheme,
+          darkTheme: _themeManager.darkTheme,
+          themeMode: currentTheme,
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const SplashScreen(),
+            '/welcome': (context) => Theme(
+              data: ThemeData.light(),
+              child: const WelcomeScreenRedesigned(),
+            ),
+            '/registration': (context) => Theme(
+              data: ThemeData.light(),
+              child: const EnhancedRegistrationScreen(),
+            ),
+            '/login': (context) => Theme(
+              data: ThemeData.light(),
+              child: const EnhancedLoginScreen(),
+            ),
+            '/profile-info': (context) => Theme(
+              data: ThemeData.light(),
+              child: const ProfileInfoScreen(),
+            ),
+            '/goals-setup': (context) => Theme(
+              data: ThemeData.light(),
+              child: const GoalsSetupScreen(),
+            ),
+            '/forgot-password': (context) => Theme(
+              data: ThemeData.light(),
+              child: const ForgotPasswordScreen(),
+            ),
+            '/app': (context) => const AppContainer(),
+          },
         );
       },
     );

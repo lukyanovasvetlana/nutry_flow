@@ -31,11 +31,15 @@ class _AppContainerState extends State<AppContainer> {
       builder: (context, child) {
         final currentTheme = ThemeManager().currentTheme;
         
-        return AnimatedTheme(
-          duration: const Duration(milliseconds: 300),
-          data: currentTheme == ThemeMode.light 
-              ? ThemeManager().lightTheme 
-              : ThemeManager().darkTheme,
+        return AnimatedSwitcher(
+          key: ValueKey('app-content-${currentTheme.name}'),
+          duration: const Duration(milliseconds: 150),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
           child: _buildMainScreen(),
         );
       },
