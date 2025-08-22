@@ -8,6 +8,7 @@ import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_log
 import 'package:nutry_flow/features/onboarding/presentation/screens/profile_info_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/goals_setup_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/forgot_password_screen.dart';
+import 'package:nutry_flow/features/profile/presentation/screens/profile_settings_screen.dart';
 import 'package:nutry_flow/app.dart';
 import 'package:nutry_flow/shared/theme/theme_manager.dart';
 import 'package:nutry_flow/features/onboarding/di/onboarding_dependencies.dart';
@@ -103,6 +104,10 @@ class _MyAppState extends State<MyApp> {
             '/forgot-password': (context) => Theme(
               data: ThemeData.light(),
               child: const ForgotPasswordScreen(),
+            ),
+            '/profile-settings': (context) => Theme(
+              data: ThemeData.light(),
+              child: const ProfileSettingsScreen(),
             ),
             '/app': (context) => const AppContainer(),
           },

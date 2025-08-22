@@ -17,6 +17,7 @@ import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/design/components/cards/nutry_card.dart';
 import '../../../profile/domain/entities/user_profile.dart';
 import '../../../profile/data/services/profile_service.dart';
+import '../../../../shared/theme/theme_manager.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -108,16 +109,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final firstName = _userProfile!.firstName;
     if (firstName.isNotEmpty) {
       final hour = DateTime.now().hour;
+      final isDarkTheme = ThemeManager().isDarkMode;
+      
       String timeGreeting;
 
       if (hour >= 5 && hour < 12) {
-        timeGreeting = 'Доброе утро';
+        timeGreeting = isDarkTheme ? 'Доброе утро' : 'Доброе утро';
       } else if (hour >= 12 && hour < 17) {
-        timeGreeting = 'Добрый день';
+        timeGreeting = isDarkTheme ? 'Добрый вечер' : 'Добрый день';
       } else if (hour >= 17 && hour < 22) {
-        timeGreeting = 'Добрый вечер';
+        timeGreeting = isDarkTheme ? 'Добрый вечер' : 'Добрый день';
       } else {
-        timeGreeting = 'Доброй ночи';
+        timeGreeting = isDarkTheme ? 'Доброй ночи' : 'Добрый день';
       }
 
       return '$timeGreeting, $firstName!';
