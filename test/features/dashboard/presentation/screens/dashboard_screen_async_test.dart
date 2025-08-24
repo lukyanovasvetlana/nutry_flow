@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutry_flow/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:nutry_flow/features/profile/data/services/sync_mock_profile_service.dart';
-import 'package:nutry_flow/features/profile/data/models/user_profile_model.dart';
+import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
+import 'package:nutry_flow/features/profile/data/services/profile_service.dart';
 
-/// Тесты для асинхронных операций DashboardScreen
-/// 
-/// Проверяют корректную работу с асинхронными операциями,
-/// включая загрузку профиля, обработку ошибок и состояний загрузки.
 void main() {
-  group('DashboardScreen Async Operations Tests', () {
-    late SyncMockProfileService profileService;
+  group('DashboardScreen Async Tests', () {
+    late MockProfileService profileService;
 
     setUp(() {
-      SharedPreferences.setMockInitialValues({});
-      profileService = SyncMockProfileService();
-      SyncMockProfileService.initialize();
+      profileService = MockProfileService();
+      MockProfileService.initialize();
     });
 
     tearDown(() {
-      SyncMockProfileService.clearAll();
+      MockProfileService.clearAll();
     });
 
     group('Асинхронная загрузка профиля', () {
       testWidgets('корректно обрабатывает состояние загрузки', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({});
+        profileService.clearAll();
 
         // Act
         await tester.pumpWidget(
@@ -48,11 +42,11 @@ void main() {
 
       testWidgets('загружает профиль из SharedPreferences асинхронно', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Асинк',
-          'userLastName': 'Тест',
-          'userEmail': 'async@test.com',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Асинк',
+          userLastName: 'Тест',
+          userEmail: 'async@test.com',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -73,7 +67,7 @@ void main() {
 
       testWidgets('корректно переключается между состояниями загрузки', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({});
+        profileService.clearAll();
 
         // Act
         await tester.pumpWidget(
@@ -103,12 +97,12 @@ void main() {
     group('Обработка ошибок асинхронных операций', () {
       testWidgets('обрабатывает ошибки загрузки профиля gracefully', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Test',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Test',
+        ));
 
         // Очищаем все профили, чтобы симулировать ошибку
-        SyncMockProfileService.clearAll();
+        MockProfileService.clearAll();
 
         // Act
         await tester.pumpWidget(
@@ -126,10 +120,10 @@ void main() {
 
       testWidgets('обрабатывает поврежденные данные SharedPreferences', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': '', // Пустое имя
-          'userEmail': 'invalid-email', // Невалидный email
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: '', // Пустое имя
+          userEmail: 'invalid-email', // Невалидный email
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -148,9 +142,9 @@ void main() {
     group('Конкурентные асинхронные операции', () {
       testWidgets('корректно обрабатывает быструю смену состояний', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Быстрый',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Быстрый',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -174,9 +168,9 @@ void main() {
 
       testWidgets('обрабатывает множественные rebuild\'ы во время загрузки', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Мульти',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Мульти',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -201,9 +195,9 @@ void main() {
     group('Жизненный цикл асинхронных операций', () {
       testWidgets('корректно инициализирует асинхронные операции в initState', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'InitState',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'InitState',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -224,9 +218,9 @@ void main() {
 
       testWidgets('корректно обрабатывает dispose во время асинхронных операций', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Dispose',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Dispose',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -254,9 +248,9 @@ void main() {
     group('Обработка состояний профиля', () {
       testWidgets('обрабатывает переход от загрузки к успешному состоянию', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Успех',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Успех',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -277,8 +271,7 @@ void main() {
 
       testWidgets('обрабатывает отсутствие данных профиля', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({});
-        SyncMockProfileService.clearAll(); // Убираем демо-профиль
+        profileService.clearAll(); // Убираем демо-профиль
 
         // Act
         await tester.pumpWidget(
@@ -299,10 +292,10 @@ void main() {
     group('Интеграция с аналитикой (асинхронно)', () {
       testWidgets('отслеживает события загрузки профиля', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({
-          'userName': 'Аналитика',
-          'userEmail': 'analytics@test.com',
-        });
+        profileService.setMockProfile(UserProfile(
+          userName: 'Аналитика',
+          userEmail: 'analytics@test.com',
+        ));
 
         // Act
         await tester.pumpWidget(
@@ -321,8 +314,7 @@ void main() {
 
       testWidgets('отслеживает ошибки загрузки профиля', (WidgetTester tester) async {
         // Arrange
-        SharedPreferences.setMockInitialValues({});
-        SyncMockProfileService.clearAll();
+        profileService.clearAll();
 
         // Act
         await tester.pumpWidget(

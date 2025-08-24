@@ -1,11 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
 import 'package:nutry_flow/features/auth/data/services/auth_service.dart';
-import 'package:nutry_flow/config/supabase_config.dart';
 
-// Генерируем mock классы
-@GenerateMocks([SupabaseClient])
 void main() {
   group('AuthService Tests', () {
     late AuthService authService;
@@ -169,7 +164,7 @@ void main() {
 
     group('Edge Cases Tests', () {
       test('should handle very long email', () async {
-        const longEmail = 'a' * 100 + '@example.com';
+        final longEmail = 'a' * 100 + '@example.com';
         const password = 'password123';
 
         expect(() async {
@@ -179,7 +174,7 @@ void main() {
 
       test('should handle very long password', () async {
         const email = 'test@example.com';
-        const longPassword = 'a' * 1000;
+        final longPassword = 'a' * 1000;
 
         expect(() async {
           await authService.signUp(email: email, password: longPassword);
