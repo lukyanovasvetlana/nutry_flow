@@ -1,30 +1,129 @@
+/// Сущность профиля пользователя
+/// 
+/// Содержит всю информацию о пользователе, включая персональные данные,
+/// физические параметры, цели, предпочтения и настройки уведомлений.
+/// 
+/// Пример использования:
+/// ```dart
+/// final profile = UserProfile(
+///   id: 'user123',
+///   firstName: 'Иван',
+///   lastName: 'Петров',
+///   email: 'ivan.petrov@example.com',
+///   height: 180.0,
+///   weight: 75.0,
+///   fitnessGoals: ['Похудение', 'Набор мышечной массы'],
+/// );
+/// 
+/// // Получение вычисляемых свойств
+/// print(profile.fullName); // "Иван Петров"
+/// print(profile.bmi); // 23.15
+/// print(profile.bmiCategory); // BMICategory.normal
+/// print(profile.profileCompleteness); // 0.75
+/// ```
 class UserProfile {
+  /// Уникальный идентификатор пользователя
   final String id;
+  
+  /// Имя пользователя
   final String firstName;
+  
+  /// Фамилия пользователя
   final String lastName;
+  
+  /// Email адрес пользователя
   final String email;
+  
+  /// Номер телефона (опционально)
   final String? phone;
+  
+  /// Дата рождения (опционально)
   final DateTime? dateOfBirth;
+  
+  /// Пол пользователя (опционально)
   final Gender? gender;
-  final double? height; // в сантиметрах
-  final double? weight; // в килограммах
+  
+  /// Рост в сантиметрах (опционально)
+  final double? height;
+  
+  /// Вес в килограммах (опционально)
+  final double? weight;
+  
+  /// Уровень физической активности (опционально)
   final ActivityLevel? activityLevel;
+  
+  /// URL аватара пользователя (опционально)
   final String? avatarUrl;
+  
+  /// Диетические предпочтения
   final List<DietaryPreference> dietaryPreferences;
+  
+  /// Аллергии и непереносимости
   final List<String> allergies;
+  
+  /// Состояния здоровья
   final List<String> healthConditions;
+  
+  /// Фитнес цели
   final List<String> fitnessGoals;
+  
+  /// Целевой вес в килограммах (опционально)
   final double? targetWeight;
+  
+  /// Целевые калории в день (опционально)
   final int? targetCalories;
+  
+  /// Целевой белок в граммах (опционально)
   final double? targetProtein;
+  
+  /// Целевые углеводы в граммах (опционально)
   final double? targetCarbs;
+  
+  /// Целевые жиры в граммах (опционально)
   final double? targetFat;
+  
+  /// Ограничения в питании (опционально)
   final String? foodRestrictions;
+  
+  /// Включены ли push-уведомления
   final bool pushNotificationsEnabled;
+  
+  /// Включены ли email-уведомления
   final bool emailNotificationsEnabled;
+  
+  /// Дата создания профиля
   final DateTime? createdAt;
+  
+  /// Дата последнего обновления профиля
   final DateTime? updatedAt;
 
+  /// Создает экземпляр профиля пользователя
+  /// 
+  /// [id] - уникальный идентификатор (обязательный)
+  /// [firstName] - имя (обязательное)
+  /// [lastName] - фамилия (обязательная)
+  /// [email] - email адрес (обязательный)
+  /// [phone] - номер телефона (опционально)
+  /// [dateOfBirth] - дата рождения (опционально)
+  /// [gender] - пол (опционально)
+  /// [height] - рост в см (опционально)
+  /// [weight] - вес в кг (опционально)
+  /// [activityLevel] - уровень активности (опционально)
+  /// [avatarUrl] - URL аватара (опционально)
+  /// [dietaryPreferences] - диетические предпочтения
+  /// [allergies] - аллергии
+  /// [healthConditions] - состояния здоровья
+  /// [fitnessGoals] - фитнес цели
+  /// [targetWeight] - целевой вес (опционально)
+  /// [targetCalories] - целевые калории (опционально)
+  /// [targetProtein] - целевой белок (опционально)
+  /// [targetCarbs] - целевые углеводы (опционально)
+  /// [targetFat] - целевые жиры (опционально)
+  /// [foodRestrictions] - ограничения в питании (опционально)
+  /// [pushNotificationsEnabled] - включены ли push-уведомления
+  /// [emailNotificationsEnabled] - включены ли email-уведомления
+  /// [createdAt] - дата создания (опционально)
+  /// [updatedAt] - дата обновления (опционально)
   const UserProfile({
     required this.id,
     required this.firstName,
@@ -54,12 +153,33 @@ class UserProfile {
   });
 
   // Вычисляемые свойства
+  
+  /// Полное имя пользователя
+  /// 
+  /// Возвращает полное имя в формате "Имя Фамилия".
+  /// Если имя и фамилия не указаны, возвращает "Не указано".
+  /// 
+  /// Example:
+  /// ```dart
+  /// final profile = UserProfile(firstName: 'Иван', lastName: 'Петров');
+  /// print(profile.fullName); // "Иван Петров"
+  /// ```
   String get fullName {
     if (firstName.isEmpty && lastName.isEmpty) return 'Не указано';
     return '${firstName.isEmpty ? '' : firstName} ${lastName.isEmpty ? '' : lastName}'
         .trim();
   }
 
+  /// Инициалы пользователя
+  /// 
+  /// Возвращает инициалы в верхнем регистре.
+  /// Если имя или фамилия не указаны, возвращает пустую строку.
+  /// 
+  /// Example:
+  /// ```dart
+  /// final profile = UserProfile(firstName: 'Иван', lastName: 'Петров');
+  /// print(profile.initials); // "ИП"
+  /// ```
   String get initials {
     if (firstName.isEmpty && lastName.isEmpty) return '';
     final first = firstName.isNotEmpty ? firstName[0] : '';
@@ -67,6 +187,18 @@ class UserProfile {
     return '$first$last'.toUpperCase();
   }
 
+  /// Возраст пользователя
+  /// 
+  /// Вычисляет возраст на основе даты рождения.
+  /// Учитывает месяц и день для точного расчета.
+  /// 
+  /// Returns возраст в годах или null если дата рождения не указана
+  /// 
+  /// Example:
+  /// ```dart
+  /// final profile = UserProfile(dateOfBirth: DateTime(1990, 5, 15));
+  /// print(profile.age); // 33 (в 2023 году)
+  /// ```
   int? get age {
     if (dateOfBirth == null) return null;
     final now = DateTime.now();
@@ -78,12 +210,39 @@ class UserProfile {
     return age;
   }
 
+  /// Индекс массы тела (BMI)
+  /// 
+  /// Вычисляет BMI по формуле: вес (кг) / рост (м)²
+  /// 
+  /// Returns значение BMI или null если рост или вес не указаны
+  /// 
+  /// Example:
+  /// ```dart
+  /// final profile = UserProfile(height: 180.0, weight: 75.0);
+  /// print(profile.bmi); // 23.15
+  /// ```
   double? get bmi {
     if (height == null || weight == null) return null;
+    if (height! <= 0 || weight! <= 0) return null; // Проверяем на нулевые и отрицательные значения
     final heightInMeters = height! / 100;
     return weight! / (heightInMeters * heightInMeters);
   }
 
+  /// Категория BMI
+  /// 
+  /// Определяет категорию BMI на основе вычисленного значения:
+  /// - underweight: < 18.5
+  /// - normal: 18.5 - 24.9
+  /// - overweight: 25.0 - 29.9
+  /// - obese: ≥ 30.0
+  /// 
+  /// Returns категорию BMI или null если BMI не может быть вычислен
+  /// 
+  /// Example:
+  /// ```dart
+  /// final profile = UserProfile(height: 180.0, weight: 75.0);
+  /// print(profile.bmiCategory); // BMICategory.normal
+  /// ```
   BMICategory? get bmiCategory {
     final bmiValue = bmi;
     if (bmiValue == null) return null;
@@ -94,6 +253,23 @@ class UserProfile {
     return BMICategory.obese;
   }
 
+  /// Полнота профиля
+  /// 
+  /// Вычисляет процент заполненности профиля на основе 12 ключевых полей.
+  /// Возвращает значение от 0.0 до 1.0, где 1.0 = 100% заполненности.
+  /// 
+  /// Учитываемые поля:
+  /// - firstName, lastName, phone, dateOfBirth, gender
+  /// - height, weight, activityLevel, avatarUrl
+  /// - dietaryPreferences, allergies, foodRestrictions
+  /// 
+  /// Returns значение от 0.0 до 1.0
+  /// 
+  /// Example:
+  /// ```dart
+  /// final profile = UserProfile(firstName: 'Иван', lastName: 'Петров');
+  /// print(profile.profileCompleteness); // 0.17 (2 из 12 полей)
+  /// ```
   double get profileCompleteness {
     final int totalFields = 12;
     int filledFields = 0;

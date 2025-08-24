@@ -1,6 +1,6 @@
-// import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'package:nutry_flow/core/services/firebase_interfaces.dart';
+import 'package:nutry_flow/core/services/firebase_analytics_impl.dart';
 import 'dart:developer' as developer;
 
 class AnalyticsService {
@@ -20,7 +20,9 @@ class AnalyticsService {
       developer.log('📊 AnalyticsService: Initializing analytics service',
           name: 'AnalyticsService');
 
-      _analytics = MockFirebaseAnalytics.instance;
+      // Используем реальную реализацию Firebase Analytics
+      _analytics = FirebaseAnalyticsImpl.instance;
+      await _analytics.initialize();
 
       // Включаем сбор аналитики
       await _analytics.setAnalyticsCollectionEnabled(true);
@@ -213,7 +215,7 @@ class AnalyticsService {
 
       await _analytics.logAddToCart(
         items: [
-          AnalyticsEventItem(
+          CustomAnalyticsEventItem(
             itemId: itemId,
             itemName: itemName,
             itemCategory: itemCategory,
@@ -238,7 +240,7 @@ class AnalyticsService {
     required String transactionId,
     required double value,
     required String currency,
-    required List<AnalyticsEventItem> items,
+    required List<CustomAnalyticsEventItem> items,
   }) async {
     try {
       if (!_isInitialized) return;

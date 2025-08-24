@@ -16,34 +16,54 @@ import '../../../../shared/design/tokens/design_tokens.dart';
 import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/design/components/cards/nutry_card.dart';
 import '../../../profile/domain/entities/user_profile.dart';
-import '../../../profile/data/services/profile_service.dart';
+import '../../../profile/domain/repositories/profile_repository.dart';
+import '../../../profile/data/repositories/sync_mock_profile_repository.dart';
+import '../../../profile/data/services/sync_mock_profile_service.dart';
 import '../../../../shared/theme/theme_manager.dart';
 import '../../../analytics/presentation/mixins/analytics_mixin.dart';
 import '../../../analytics/presentation/utils/analytics_utils.dart';
 
-/// Экран дашборда NutryFlow
+/// Главный экран дашборда приложения Nutry Flow
 /// 
-/// Отображает:
-/// - Приветствие пользователя
-/// - Статистику питания
-/// - Диаграммы аналитики
-/// - Быстрое меню для навигации
+/// Предоставляет пользователю обзор ключевых метрик, быстрый доступ к основным функциям
+/// и персонализированную информацию на основе профиля пользователя.
 /// 
-/// Использование:
+/// Основные компоненты:
+/// - Приветствие и информация о пользователе
+/// - Обзор статистики (графики, диаграммы)
+/// - Быстрое меню навигации
+/// - Интеграция с аналитикой для отслеживания действий
+/// 
+/// Пример использования:
 /// ```dart
-/// // Базовое использование
-/// const DashboardScreen()
-/// 
-/// // С репозиторием по умолчанию (MockProfileService)
-/// const DashboardScreen()
+/// // С репозиторием по умолчанию (SyncMockProfileRepository)
+/// Navigator.push(
+///   context,
+///   MaterialPageRoute(builder: (context) => const DashboardScreen()),
+/// );
 /// 
 /// // С кастомным репозиторием
-/// DashboardScreen(
-///   profileRepository: CustomProfileRepository(),
-/// )
+/// Navigator.push(
+///   context,
+///   MaterialPageRoute(
+///     builder: (context) => DashboardScreen(
+///       profileRepository: CustomProfileRepository(),
+///     ),
+///   ),
+/// );
 /// ```
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  /// Репозиторий для работы с профилями пользователей
+  final ProfileRepository profileRepository;
+
+  /// Создает экран дашборда
+  /// 
+  /// [profileRepository] - репозиторий для работы с профилями (по умолчанию SyncMockProfileRepository)
+  /// [key] - ключ виджета для управления состоянием
+  DashboardScreen({
+    super.key,
+    this.profileRepository = const SyncMockProfileRepository(SyncMockProfileService()),
+  });
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -74,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   /// Загружает профиль пользователя
   /// 
   /// Сначала пытается загрузить профиль из локального хранилища (SharedPreferences),
-  /// если не найден - использует переданный репозиторий для демо-режима.
+  /// если не найден - использует MockProfileService для демо-режима.
   /// 
   /// Отслеживает успешность загрузки профиля для аналитики.
   Future<void> _loadUserProfile() async {
@@ -130,9 +150,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
         return;
       }
 
-      // Если нет локального профиля, используем MockProfileService для демо-режима
-      final profileService = MockProfileService();
-      final profile = await profileService.getCurrentUserProfile();
+                   // Если нет локального профиля, используем переданный репозиторий для демо-режима
+             final profile = await widget.profileRepository.getCurrentUserProfile();
 
       if (mounted) {
         setState(() {
@@ -335,6 +354,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
+        final isMediumScreen = constraints.maxWidth < 900;
         
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -410,6 +430,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
+        final isMediumScreen = constraints.maxWidth < 900;
         
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,7 +469,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     );
   }
 
-  /// Возвращает заголовок для основного графика на основе выбранного индекса
+    /// Возвращает заголовок для основного графика на основе выбранного индекса
   /// 
   /// [selectedChartIndex] определяет тип отображаемого графика:
   /// - 0: "Стоимость" - график расходов на питание
@@ -466,8 +487,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
         return 'Калории';
       default:
         return 'Аналитика';
+      }
     }
-  }
 
   /// Возвращает тип графика для аналитики на основе индекса
   /// 
@@ -493,7 +514,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   IconData _getChartIcon() {
     switch (selectedChartIndex) {
       case 0:
-        return Icons.attach_money;
+        return Icons.account_balance_wallet;
       case 1:
         return Icons.shopping_basket;
       case 2:
@@ -506,11 +527,11 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   Color _getChartColor() {
     switch (selectedChartIndex) {
       case 0:
-        return AppColors.dynamicSuccess;
+        return AppColors.dynamicGreen;
       case 1:
-        return AppColors.dynamicWarning;
+        return AppColors.dynamicYellow;
       case 2:
-        return AppColors.dynamicError;
+        return AppColors.dynamicOrange;
       default:
         return AppColors.dynamicPrimary;
     }
@@ -647,7 +668,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                   Container(
                     padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
+                      color: color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(isSmallScreen ? 6 : 8),
                     ),
                     child: Icon(
@@ -710,7 +731,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
             borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
             boxShadow: [
               BoxShadow(
-                color: AppColors.dynamicShadow.withValues(alpha: 0.2),
+                color: AppColors.dynamicShadow.withOpacity(0.2),
                 blurRadius: isSmallScreen ? 12 : 16,
                 offset: Offset(0, isSmallScreen ? 6 : 8),
               ),
@@ -729,99 +750,141 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                 size: isSmallScreen ? 20 : 24,
               ),
             ),
-            onSelected: (String value) {
-              // Отслеживаем нажатие на элемент меню
-              trackUIInteraction(
-                elementType: AnalyticsUtils.elementTypeList,
-                elementName: 'dashboard_menu_item',
-                action: AnalyticsUtils.actionSelect,
-                additionalData: {'menu_item': value},
-              );
+        onSelected: (String value) {
+          // Отслеживаем нажатие на элемент меню
+          trackUIInteraction(
+            elementType: AnalyticsUtils.elementTypeList,
+            elementName: 'dashboard_menu_item',
+            action: AnalyticsUtils.actionSelect,
+            additionalData: {'menu_item': value},
+          );
 
-              switch (value) {
-                case 'menu':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: 'healthy_menu_screen',
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const HealthyMenuScreen()),
-                  );
-                  break;
-                case 'exercises':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: 'exercise_screen',
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ExerciseScreenRedesigned()),
-                  );
-                  break;
-                case 'health_articles':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: AnalyticsUtils.screenHealthArticles,
-                    navigationMethod: 'push_named',
-                  );
-                  Navigator.pushNamed(context, '/health-articles');
-                  break;
-                case 'analytics':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: AnalyticsUtils.screenAnalytics,
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AnalyticsScreen()),
-                  );
-                  break;
-                case 'grocery_list':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: AnalyticsUtils.screenGroceryList,
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const GroceryListScreen()),
-                  );
-                  break;
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'menu',
-                child: Text('Здоровое меню'),
-              ),
-              PopupMenuItem<String>(
-                value: 'exercises',
-                child: Text('Упражнения'),
-              ),
-              PopupMenuItem<String>(
-                value: 'health_articles',
-                child: Text('Статьи о здоровье'),
-              ),
-              PopupMenuItem<String>(
-                value: 'analytics',
-                child: Text('Аналитика'),
-              ),
-              PopupMenuItem<String>(
-                value: 'grocery_list',
-                child: Text('Список покупок'),
-              ),
-            ],
+          switch (value) {
+            case 'menu':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: 'healthy_menu_screen',
+                navigationMethod: 'push',
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const HealthyMenuScreen()),
+              );
+              break;
+            case 'exercises':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: 'exercise_screen',
+                navigationMethod: 'push',
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ExerciseScreenRedesigned()),
+              );
+              break;
+            case 'health_articles':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: AnalyticsUtils.screenHealthArticles,
+                navigationMethod: 'push_named',
+              );
+              Navigator.pushNamed(context, '/health-articles');
+              break;
+            case 'analytics':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: AnalyticsUtils.screenAnalytics,
+                navigationMethod: 'push',
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AnalyticsScreen()),
+              );
+              break;
+            case 'developer_analytics':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: 'developer_analytics_screen',
+                navigationMethod: 'push_named',
+              );
+              Navigator.pushNamed(context, '/developer-analytics');
+              break;
+            case 'ab_testing':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: AnalyticsUtils.screenABTesting,
+                navigationMethod: 'push_named',
+              );
+              Navigator.pushNamed(context, '/ab-testing');
+              break;
+            case 'profile':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: AnalyticsUtils.screenProfileSettings,
+                navigationMethod: 'push_named',
+              );
+              Navigator.pushNamed(context, '/profile-settings');
+              break;
+            case 'grocery':
+              trackNavigation(
+                fromScreen: AnalyticsUtils.screenDashboard,
+                toScreen: 'grocery_list_screen',
+                navigationMethod: 'push',
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const GroceryListScreen()),
+              );
+              break;
+          }
+        },
+        itemBuilder: (context) => [
+          _buildMenuItem(
+              'menu', 'Меню', Icons.restaurant, AppColors.dynamicPrimary),
+          _buildMenuItem('exercises', 'Упражнения', Icons.fitness_center,
+              AppColors.dynamicSecondary),
+          _buildMenuItem('health_articles', 'Статьи о здоровье', Icons.article,
+              AppColors.dynamicTertiary),
+          _buildMenuItem(
+              'analytics', 'Аналитика', Icons.analytics, AppColors.dynamicInfo),
+          _buildMenuItem('developer_analytics', 'Аналитика разработчика',
+              Icons.developer_mode, AppColors.dynamicWarning),
+          _buildMenuItem('ab_testing', 'A/B Тестирование', Icons.science,
+              AppColors.dynamicSuccess),
+          _buildMenuItem('grocery', 'Список покупок', Icons.shopping_cart,
+              AppColors.dynamicNutritionWater),
+          _buildMenuItem('profile', 'Профиль', Icons.person,
+              AppColors.dynamicNutritionFiber),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+      String value, String title, IconData icon, Color color) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
           ),
-        );
-      },
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: DesignTokens.typography.bodyLargeStyle.copyWith(
+            color: AppColors.dynamicTextPrimary,
+          ),
+        ),
+        contentPadding: EdgeInsets.zero,
+      ),
     );
   }
 }

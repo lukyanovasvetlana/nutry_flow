@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nutry_flow/config/supabase_config.dart';
+import 'package:nutry_flow/core/services/firebase_service.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/welcome_screen_redesigned.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_registration_screen.dart';
@@ -33,6 +34,15 @@ void main() async {
     print('🔵 Main: ✅ Demo mode is ACTIVE');
   } else {
     print('🔵 Main: ❌ Demo mode is NOT active');
+  }
+
+  // Инициализация Firebase
+  print('🔥 Main: Initializing Firebase...');
+  try {
+    await FirebaseService.instance.initialize();
+    print('🔥 Main: Firebase initialized successfully');
+  } catch (e) {
+    print('🔴 Main: Failed to initialize Firebase: $e');
   }
 
   // Инициализация OnboardingDependencies

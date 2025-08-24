@@ -19,6 +19,7 @@ abstract class FirebaseRemoteConfigInterface {
 abstract class FirebaseAnalyticsInterface {
   static FirebaseAnalyticsInterface get instance => throw UnimplementedError();
 
+  Future<void> initialize();
   Future<void> setAnalyticsCollectionEnabled(bool enabled);
   Future<void> logEvent(
       {required String name, Map<String, dynamic>? parameters});
@@ -29,7 +30,7 @@ abstract class FirebaseAnalyticsInterface {
   Future<void> logLogin({required String loginMethod});
   Future<void> logSignUp({required String signUpMethod});
   Future<void> logAddToCart({
-    required List<AnalyticsEventItem> items,
+    required List<CustomAnalyticsEventItem> items,
     required String currency,
     required double value,
   });
@@ -37,7 +38,7 @@ abstract class FirebaseAnalyticsInterface {
     required String transactionId,
     required double value,
     required String currency,
-    required List<AnalyticsEventItem> items,
+    required List<CustomAnalyticsEventItem> items,
   });
   Future<void> logSearch({required String searchTerm});
   Future<void> logSelectContent({
@@ -47,14 +48,14 @@ abstract class FirebaseAnalyticsInterface {
 }
 
 // Класс для элементов аналитики
-class AnalyticsEventItem {
+class CustomAnalyticsEventItem {
   final String itemId;
   final String itemName;
   final String itemCategory;
   final double price;
   final int quantity;
 
-  const AnalyticsEventItem({
+  const CustomAnalyticsEventItem({
     required this.itemId,
     required this.itemName,
     required this.itemCategory,
@@ -125,6 +126,9 @@ class MockFirebaseAnalytics implements FirebaseAnalyticsInterface {
   MockFirebaseAnalytics._();
 
   @override
+  Future<void> initialize() async {}
+
+  @override
   Future<void> setAnalyticsCollectionEnabled(bool enabled) async {}
 
   @override
@@ -147,7 +151,7 @@ class MockFirebaseAnalytics implements FirebaseAnalyticsInterface {
 
   @override
   Future<void> logAddToCart({
-    required List<AnalyticsEventItem> items,
+    required List<CustomAnalyticsEventItem> items,
     required String currency,
     required double value,
   }) async {}
@@ -157,7 +161,7 @@ class MockFirebaseAnalytics implements FirebaseAnalyticsInterface {
     required String transactionId,
     required double value,
     required String currency,
-    required List<AnalyticsEventItem> items,
+    required List<CustomAnalyticsEventItem> items,
   }) async {}
 
   @override

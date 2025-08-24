@@ -1,9 +1,42 @@
+/// Сущность пользователя в системе аутентификации
+/// 
+/// Представляет основную информацию о пользователе, включая идентификатор,
+/// email и временные метки создания/обновления.
+/// 
+/// Пример использования:
+/// ```dart
+/// // Создание пользователя
+/// final user = User(
+///   id: 'user123',
+///   email: 'user@example.com',
+///   createdAt: DateTime.now(),
+/// );
+/// 
+/// // Сериализация в JSON
+/// final json = user.toJson();
+/// 
+/// // Десериализация из JSON
+/// final userFromJson = User.fromJson(json);
+/// ```
 class User {
+  /// Уникальный идентификатор пользователя
   final String id;
+  
+  /// Email адрес пользователя
   final String email;
+  
+  /// Дата и время создания пользователя
   final DateTime? createdAt;
+  
+  /// Дата и время последнего обновления пользователя
   final DateTime? updatedAt;
 
+  /// Создает экземпляр пользователя
+  /// 
+  /// [id] - уникальный идентификатор (обязательный)
+  /// [email] - email адрес (обязательный)
+  /// [createdAt] - дата создания (опционально)
+  /// [updatedAt] - дата обновления (опционально)
   User({
     required this.id,
     required this.email,
@@ -11,6 +44,11 @@ class User {
     this.updatedAt,
   });
 
+  /// Создает пользователя из JSON данных
+  /// 
+  /// [json] - Map с данными пользователя
+  /// 
+  /// Throws [FormatException] если JSON имеет неверный формат
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
