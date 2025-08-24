@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutry_flow/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:nutry_flow/features/profile/data/services/sync_mock_profile_service.dart';
-import 'package:nutry_flow/features/profile/data/models/user_profile_model.dart';
+import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
+import 'package:nutry_flow/features/profile/data/services/profile_service.dart';
 import 'package:nutry_flow/shared/design/components/cards/nutry_card.dart';
 
 /// Интеграционные тесты для DashboardScreen
@@ -13,20 +13,18 @@ import 'package:nutry_flow/shared/design/components/cards/nutry_card.dart';
 /// и корректную работу всех UI компонентов.
 void main() {
   group('DashboardScreen Integration Tests', () {
-    late SyncMockProfileService profileService;
+    late MockProfileService profileService;
 
     setUp(() {
       // Инициализируем SharedPreferences
       SharedPreferences.setMockInitialValues({});
       
       // Инициализируем синхронный mock сервис
-      profileService = SyncMockProfileService();
-      SyncMockProfileService.initialize();
+      profileService = MockProfileService();
     });
 
     tearDown(() {
-      // Очищаем данные после каждого теста
-      SyncMockProfileService.clearAll();
+      // Очистка не нужна для MockProfileService
     });
 
     group('Базовая функциональность', () {

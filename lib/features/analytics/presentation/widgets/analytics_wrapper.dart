@@ -85,7 +85,6 @@ class AnalyticsNavigator extends StatelessWidget {
           settings: settings,
         );
       },
-      child: child,
     );
   }
 }

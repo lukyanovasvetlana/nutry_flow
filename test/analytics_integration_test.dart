@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutry_flow/core/services/analytics_service.dart';
-import 'package:nutry_flow/core/services/firebase_service.dart';
 import 'package:nutry_flow/features/analytics/presentation/utils/analytics_utils.dart';
 
 void main() {
