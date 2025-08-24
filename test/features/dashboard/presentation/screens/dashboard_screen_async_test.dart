@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutry_flow/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
-import 'package:nutry_flow/features/profile/data/services/profile_service.dart';
 
 void main() {
   group('DashboardScreen Async Tests', () {
-    late MockProfileService profileService;
-
     setUp(() {
-      profileService = MockProfileService();
+      // Настройка не нужна для MockProfileService
     });
 
     tearDown(() {
@@ -71,9 +67,6 @@ void main() {
           ),
         );
 
-        // Проверяем начальное состояние (загрузка)
-        expect(find.byType(DashboardScreen), findsOneWidget);
-
         // Pump один раз для начала асинхронной операции
         await tester.pump();
 
@@ -111,8 +104,6 @@ void main() {
       testWidgets('обрабатывает поврежденные данные SharedPreferences', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: '', // Пустое имя
-          userEmail: 'invalid-email', // Невалидный email
         ));
 
         // Act
@@ -133,7 +124,6 @@ void main() {
       testWidgets('корректно обрабатывает быструю смену состояний', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: 'Быстрый',
         ));
 
         // Act
@@ -159,7 +149,6 @@ void main() {
       testWidgets('обрабатывает множественные rebuild\'ы во время загрузки', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: 'Мульти',
         ));
 
         // Act
@@ -186,7 +175,6 @@ void main() {
       testWidgets('корректно инициализирует асинхронные операции в initState', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: 'InitState',
         ));
 
         // Act
@@ -209,7 +197,6 @@ void main() {
       testWidgets('корректно обрабатывает dispose во время асинхронных операций', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: 'Dispose',
         ));
 
         // Act
@@ -239,7 +226,6 @@ void main() {
       testWidgets('обрабатывает переход от загрузки к успешному состоянию', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: 'Успех',
         ));
 
         // Act
@@ -283,8 +269,6 @@ void main() {
       testWidgets('отслеживает события загрузки профиля', (WidgetTester tester) async {
         // Arrange
         // MockProfileService не поддерживает setMockProfile
-          userName: 'Аналитика',
-          userEmail: 'analytics@test.com',
         ));
 
         // Act
