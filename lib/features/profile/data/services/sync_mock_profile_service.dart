@@ -2,10 +2,10 @@ import '../models/user_profile_model.dart';
 import '../../domain/entities/user_profile.dart';
 
 /// Синхронная версия MockProfileService для тестирования
-/// 
+///
 /// Этот сервис не использует Future.delayed, что позволяет избежать
 /// проблем с pending timers в тестах Flutter.
-/// 
+///
 /// Использование:
 /// ```dart
 /// final profileService = SyncMockProfileService();
@@ -14,7 +14,7 @@ import '../../domain/entities/user_profile.dart';
 class SyncMockProfileService {
   static final Map<String, UserProfileModel> _profiles = {};
   static final Map<String, String> _avatars = {};
-  
+
   static final UserProfileModel _demoProfile = UserProfileModel(
     id: 'demo-user-id',
     firstName: 'Демо',
@@ -27,7 +27,10 @@ class SyncMockProfileService {
     weight: 60.0,
     activityLevel: ActivityLevel.moderatelyActive,
     avatarUrl: 'https://example.com/avatars/demo.jpg',
-    dietaryPreferences: [DietaryPreference.vegetarian, DietaryPreference.glutenFree],
+    dietaryPreferences: [
+      DietaryPreference.vegetarian,
+      DietaryPreference.glutenFree
+    ],
     allergies: ['nuts'],
     healthConditions: [],
     fitnessGoals: ['weight_loss', 'muscle_gain'],
@@ -50,27 +53,27 @@ class SyncMockProfileService {
   }
 
   /// Получает профиль текущего пользователя (синхронно)
-  /// 
+  ///
   /// Returns профиль демо-пользователя или null
   Future<UserProfileModel?> getCurrentUserProfile() async {
     return _demoProfile;
   }
 
   /// Получает профиль пользователя по ID (синхронно)
-  /// 
+  ///
   /// [userId] - уникальный идентификатор пользователя
-  /// 
+  ///
   /// Returns профиль пользователя или null если не найден
   Future<UserProfileModel?> getUserProfile(String userId) async {
     return _profiles[userId];
   }
 
   /// Создает новый профиль пользователя (синхронно)
-  /// 
+  ///
   /// [profile] - данные профиля для создания
-  /// 
+  ///
   /// Returns созданный профиль с обновленными датами
-  /// 
+  ///
   /// Throws [Exception] если профиль уже существует
   Future<UserProfileModel> createUserProfile(UserProfileModel profile) async {
     if (_profiles.containsKey(profile.id)) {
@@ -87,11 +90,11 @@ class SyncMockProfileService {
   }
 
   /// Обновляет существующий профиль пользователя (синхронно)
-  /// 
+  ///
   /// [profile] - обновленные данные профиля
-  /// 
+  ///
   /// Returns обновленный профиль
-  /// 
+  ///
   /// Throws [Exception] если профиль не найден
   Future<UserProfileModel> updateUserProfile(UserProfileModel profile) async {
     if (!_profiles.containsKey(profile.id)) {
@@ -107,9 +110,9 @@ class SyncMockProfileService {
   }
 
   /// Удаляет профиль пользователя (синхронно)
-  /// 
+  ///
   /// [userId] - уникальный идентификатор пользователя
-  /// 
+  ///
   /// Throws [Exception] если профиль не найден
   Future<void> deleteUserProfile(String userId) async {
     if (!_profiles.containsKey(userId)) {
@@ -121,18 +124,18 @@ class SyncMockProfileService {
   }
 
   /// Проверяет доступность email (синхронно)
-  /// 
+  ///
   /// [email] - email для проверки
-  /// 
+  ///
   /// Returns true если email доступен для регистрации
   Future<bool> isEmailAvailable(String email) async {
     return !_profiles.values.any((profile) => profile.email == email);
   }
 
   /// Получает статистику профилей (синхронно)
-  /// 
+  ///
   /// [userId] - идентификатор пользователя
-  /// 
+  ///
   /// Returns карта со статистикой профиля
   Future<Map<String, dynamic>> getProfileStatistics(String userId) async {
     final profile = _profiles[userId];
@@ -142,7 +145,8 @@ class SyncMockProfileService {
 
     return {
       'profile_completeness': profile.profileCompleteness,
-      'days_since_created': DateTime.now().difference(profile.createdAt!).inDays,
+      'days_since_created':
+          DateTime.now().difference(profile.createdAt!).inDays,
       'last_updated': profile.updatedAt,
       'has_avatar': profile.avatarUrl != null,
       'goals_count': profile.fitnessGoals.length,
@@ -153,9 +157,9 @@ class SyncMockProfileService {
   }
 
   /// Экспортирует данные профиля (синхронно)
-  /// 
+  ///
   /// [userId] - идентификатор пользователя
-  /// 
+  ///
   /// Returns карта с данными профиля для экспорта
   Future<Map<String, dynamic>> exportProfileData(String userId) async {
     final profile = _profiles[userId];

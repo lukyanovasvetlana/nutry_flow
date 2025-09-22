@@ -1,0 +1,187 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:nutry_flow/core/services/supabase_service.dart';
+import 'package:nutry_flow/test/test_helpers/supabase_test_mock.dart';
+import 'package:nutry_flow/test/mocks/mock_shared_preferences.dart';
+
+void main() {
+  group('SupabaseService Tests', () {
+    late SupabaseService supabaseService;
+
+    setUpAll(() async {
+      // Инициализируем моки
+      await SupabaseTestMock.initialize();
+      MockSharedPreferences.setMockInitialValues({});
+    });
+
+    setUp(() {
+      supabaseService = SupabaseService.instance;
+    });
+
+    tearDownAll(() {
+      // Очищаем моки
+      SupabaseTestMock.reset();
+    });
+
+    group('Initialization', () {
+      test('should initialize successfully', () async {
+        // Act & Assert
+        expect(() async {
+          await supabaseService.initialize();
+        }, returnsNormally);
+      });
+
+      test('should not initialize twice', () async {
+        // Arrange
+        await supabaseService.initialize();
+        final firstInitTime = DateTime.now();
+
+        // Act
+        await supabaseService.initialize();
+        final secondInitTime = DateTime.now();
+
+        // Assert
+        expect(secondInitTime.difference(firstInitTime).inMilliseconds, lessThan(100));
+      });
+    });
+
+    group('Client Access', () {
+      test('should return client after initialization', () async {
+        // Arrange
+        await supabaseService.initialize();
+
+        // Assert
+        expect(supabaseService.client, isNotNull);
+      });
+
+      test('should check availability', () async {
+        // Arrange
+        await supabaseService.initialize();
+
+        // Act
+        final isAvailable = supabaseService.isAvailable;
+
+        // Assert
+        expect(isAvailable, isA<bool>());
+      });
+    });
+
+    group('Authentication', () {
+      setUp(() async {
+        await supabaseService.initialize();
+      });
+
+      test('should handle sign up gracefully', () async {
+        // Arrange
+        const email = 'test@example.com';
+        const password = 'password123';
+        const userData = {'name': 'Test User'};
+
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signUp(
+            email: email,
+            password: password,
+            userData: userData,
+          );
+        }, returnsNormally);
+      });
+
+      test('should handle sign in gracefully', () async {
+        // Arrange
+        const email = 'test@example.com';
+        const password = 'password123';
+
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signIn(
+            email: email,
+            password: password,
+          );
+        }, returnsNormally);
+      });
+
+      test('should handle sign out gracefully', () async {
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signOut();
+        }, returnsNormally);
+      });
+
+      test('should handle reset password gracefully', () async {
+        // Arrange
+        const email = 'test@example.com';
+
+        // Act & Assert
+        expect(() async {
+          await supabaseService.resetPassword(email);
+        }, returnsNormally);
+      });
+    });
+
+    group('Edge Cases', () {
+      setUp(() async {
+        await supabaseService.initialize();
+      });
+
+      test('should handle empty email gracefully', () async {
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signUp(
+            email: '',
+            password: 'password123',
+          );
+        }, returnsNormally);
+      });
+
+      test('should handle empty password gracefully', () async {
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signUp(
+            email: 'test@example.com',
+            password: '',
+          );
+        }, returnsNormally);
+      });
+
+      test('should handle null user data gracefully', () async {
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signUp(
+            email: 'test@example.com',
+            password: 'password123',
+            userData: null,
+          );
+        }, returnsNormally);
+      });
+    });
+
+    group('Error Handling', () {
+      setUp(() async {
+        await supabaseService.initialize();
+      });
+
+      test('should handle invalid email format gracefully', () async {
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signUp(
+            email: 'invalid-email',
+            password: 'password123',
+          );
+        }, returnsNormally);
+      });
+
+      test('should handle very long strings gracefully', () async {
+        // Arrange
+        final longString = 'a' * 10000;
+
+        // Act & Assert
+        expect(() async {
+          await supabaseService.signUp(
+            email: 'test@example.com',
+            password: longString,
+          );
+        }, returnsNormally);
+      });
+    });
+  });
+}

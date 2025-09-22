@@ -9,6 +9,7 @@ class ExpenseBreakdownChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Заголовок
         Row(
@@ -50,7 +51,7 @@ class ExpenseBreakdownChart extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 1),
 
         // Диаграмма и легенда
         Row(
@@ -59,7 +60,7 @@ class ExpenseBreakdownChart extends StatelessWidget {
             Expanded(
               flex: 4,
               child: SizedBox(
-                height: 220, // Увеличил с 140 до 220
+                height: 40, // Уменьшил с 60 до 40
                 child: PieChart(
                   PieChartData(
                     pieTouchData: PieTouchData(
@@ -69,8 +70,8 @@ class ExpenseBreakdownChart extends StatelessWidget {
                       enabled: true,
                     ),
                     borderData: FlBorderData(show: false),
-                    sectionsSpace: 2, // Увеличил с 1 до 2
-                    centerSpaceRadius: 35, // Увеличил с 25 до 35
+                    sectionsSpace: 0, // Уменьшил с 1 до 0
+                    centerSpaceRadius: 10, // Уменьшил с 15 до 10
                     sections: _getPieChartSections(),
                   ),
                 ),

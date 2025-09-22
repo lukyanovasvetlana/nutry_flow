@@ -105,7 +105,8 @@ class AnalyticsLifecycleWrapper extends StatefulWidget {
   });
 
   @override
-  State<AnalyticsLifecycleWrapper> createState() => _AnalyticsLifecycleWrapperState();
+  State<AnalyticsLifecycleWrapper> createState() =>
+      _AnalyticsLifecycleWrapperState();
 }
 
 class _AnalyticsLifecycleWrapperState extends State<AnalyticsLifecycleWrapper>
@@ -127,7 +128,7 @@ class _AnalyticsLifecycleWrapperState extends State<AnalyticsLifecycleWrapper>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    
+
     switch (state) {
       case AppLifecycleState.resumed:
         _trackScreenAppear();

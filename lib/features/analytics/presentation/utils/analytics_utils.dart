@@ -53,7 +53,8 @@ class AnalyticsUtils {
   static const String actionDeselect = 'deselect';
 
   /// Отслеживание нажатия на кнопку
-  static void trackButtonTap(String buttonName, {Map<String, dynamic>? parameters}) {
+  static void trackButtonTap(String buttonName,
+      {Map<String, dynamic>? parameters}) {
     AnalyticsService.instance.logEvent(
       name: eventButtonTap,
       parameters: {
@@ -223,7 +224,8 @@ class AnalyticsUtils {
   }
 
   /// Отслеживание поиска
-  static void trackSearch(String searchTerm, {Map<String, dynamic>? additionalData}) {
+  static void trackSearch(String searchTerm,
+      {Map<String, dynamic>? additionalData}) {
     AnalyticsService.instance.logSearch(searchTerm: searchTerm);
 
     // Дополнительное событие с расширенными данными

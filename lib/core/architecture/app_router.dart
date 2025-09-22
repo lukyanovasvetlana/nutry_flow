@@ -35,18 +35,17 @@ class AppRouter {
 
     try {
       print('🗺️ AppRouter: Initializing router...');
-      
+
       _router = GoRouter(
         initialLocation: '/',
         debugLogDiagnostics: true,
         routes: _buildRoutes(),
-        errorBuilder: (context, state) => _buildErrorPage(context, state),
+        errorBuilder: _buildErrorPage,
         redirect: _handleRedirect,
       );
-      
+
       _isInitialized = true;
       print('✅ AppRouter: Router initialized successfully');
-      
     } catch (e, stackTrace) {
       print('❌ AppRouter: Initialization failed: $e');
       print('❌ Stack trace: $stackTrace');
@@ -63,7 +62,7 @@ class AppRouter {
         name: 'splash',
         builder: (context, state) => const SplashScreen(),
       ),
-      
+
       // Onboarding маршруты
       GoRoute(
         path: '/welcome',
@@ -73,7 +72,7 @@ class AppRouter {
           child: const WelcomeScreenRedesigned(),
         ),
       ),
-      
+
       GoRoute(
         path: '/registration',
         name: 'registration',
@@ -82,7 +81,7 @@ class AppRouter {
           child: const EnhancedRegistrationScreen(),
         ),
       ),
-      
+
       GoRoute(
         path: '/login',
         name: 'login',
@@ -91,7 +90,7 @@ class AppRouter {
           child: const EnhancedLoginScreen(),
         ),
       ),
-      
+
       GoRoute(
         path: '/profile-info',
         name: 'profile-info',
@@ -100,7 +99,7 @@ class AppRouter {
           child: const ProfileInfoScreen(),
         ),
       ),
-      
+
       GoRoute(
         path: '/goals-setup',
         name: 'goals-setup',
@@ -113,7 +112,7 @@ class AppRouter {
           ),
         ),
       ),
-      
+
       GoRoute(
         path: '/forgot-password',
         name: 'forgot-password',
@@ -122,20 +121,20 @@ class AppRouter {
           child: const ForgotPasswordScreen(),
         ),
       ),
-      
+
       // Основные маршруты приложения
       GoRoute(
         path: '/dashboard',
         name: 'dashboard',
         builder: (context, state) => const AppContainer(),
       ),
-      
+
       GoRoute(
         path: '/app',
         name: 'app',
         builder: (context, state) => const AppContainer(),
       ),
-      
+
       // Analytics маршруты
       GoRoute(
         path: '/analytics',
@@ -144,7 +143,7 @@ class AppRouter {
           body: AnalyticsScreen(),
         ),
       ),
-      
+
       GoRoute(
         path: '/health-articles',
         name: 'health-articles',
@@ -152,7 +151,7 @@ class AppRouter {
           body: HealthArticlesScreen(),
         ),
       ),
-      
+
       GoRoute(
         path: '/developer-analytics',
         name: 'developer-analytics',
@@ -160,7 +159,7 @@ class AppRouter {
           body: DeveloperAnalyticsScreen(),
         ),
       ),
-      
+
       GoRoute(
         path: '/ab-testing',
         name: 'ab-testing',
@@ -168,7 +167,7 @@ class AppRouter {
           body: ABTestingScreen(),
         ),
       ),
-      
+
       // Profile маршруты
       GoRoute(
         path: '/profile-settings',
@@ -177,7 +176,7 @@ class AppRouter {
           body: ProfileSettingsScreen(),
         ),
       ),
-      
+
       // Theme demo маршрут
       GoRoute(
         path: '/theme-demo',
@@ -191,20 +190,20 @@ class AppRouter {
   String? _handleRedirect(BuildContext context, GoRouterState state) {
     // Здесь можно добавить логику для проверки аутентификации
     // и других условий для редиректов
-    
+
     final isAuthenticated = _checkAuthentication();
     final isOnboarding = _isOnboardingRoute(state.uri.path);
-    
+
     // Если пользователь не аутентифицирован и пытается попасть в защищенные маршруты
     if (!isAuthenticated && !isOnboarding) {
       return '/welcome';
     }
-    
+
     // Если пользователь аутентифицирован и пытается попасть в onboarding
     if (isAuthenticated && isOnboarding) {
       return '/dashboard';
     }
-    
+
     return null; // Нет редиректа
   }
 
@@ -217,8 +216,12 @@ class AppRouter {
   /// Проверка, является ли маршрут частью onboarding
   bool _isOnboardingRoute(String location) {
     final onboardingRoutes = [
-      '/welcome', '/registration', '/login', '/profile-info', 
-      '/goals-setup', '/forgot-password'
+      '/welcome',
+      '/registration',
+      '/login',
+      '/profile-info',
+      '/goals-setup',
+      '/forgot-password'
     ];
     return onboardingRoutes.contains(location);
   }
@@ -262,9 +265,10 @@ class AppRouter {
   /// Создание главного приложения с роутером
   Widget createApp() {
     if (!_isInitialized) {
-      throw StateError('AppRouter is not initialized. Call initialize() first.');
+      throw StateError(
+          'AppRouter is not initialized. Call initialize() first.');
     }
-    
+
     return MaterialApp.router(
       title: 'NutryFlow',
       routerConfig: _router,
@@ -278,7 +282,7 @@ class AppRouter {
       print('⚠️ AppRouter: Router not initialized');
       return;
     }
-    
+
     _router.push(route, extra: extra);
   }
 
@@ -288,7 +292,7 @@ class AppRouter {
       print('⚠️ AppRouter: Router not initialized');
       return;
     }
-    
+
     _router.replace(route, extra: extra);
   }
 
@@ -298,7 +302,7 @@ class AppRouter {
       print('⚠️ AppRouter: Router not initialized');
       return;
     }
-    
+
     if (_router.canPop()) {
       _router.pop();
     }
@@ -307,7 +311,7 @@ class AppRouter {
   /// Очистка ресурсов
   Future<void> dispose() async {
     if (!_isInitialized) return;
-    
+
     print('🧹 AppRouter: Disposing...');
     // GoRouter не требует явной очистки
     _isInitialized = false;

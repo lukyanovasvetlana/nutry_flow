@@ -4,14 +4,14 @@ import '../models/user_profile_model.dart';
 import '../services/sync_mock_profile_service.dart';
 
 /// Адаптер для SyncMockProfileService, реализующий ProfileRepository
-/// 
+///
 /// Этот класс обеспечивает совместимость между SyncMockProfileService
 /// и интерфейсом ProfileRepository для dependency injection.
 class SyncMockProfileRepository implements ProfileRepository {
   final SyncMockProfileService _service;
 
   /// Создает репозиторий с указанным сервисом
-  /// 
+  ///
   /// [service] - экземпляр SyncMockProfileService
   const SyncMockProfileRepository(this._service);
 

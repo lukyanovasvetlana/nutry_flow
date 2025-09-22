@@ -12,7 +12,8 @@ class GoalsSetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GoalsSetupBloc>(
-      create: (context) => OnboardingDependencies.instance.createGoalsSetupBloc(),
+      create: (context) =>
+          OnboardingDependencies.instance.createGoalsSetupBloc(),
       child: const GoalsSetupView(),
     );
   }

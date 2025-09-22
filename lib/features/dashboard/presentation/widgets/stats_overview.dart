@@ -95,6 +95,7 @@ class StatsOverview extends StatelessWidget {
           children: [
             // Иконка и изменение
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   padding: const EdgeInsets.all(4), // Уменьшил с 6 до 4

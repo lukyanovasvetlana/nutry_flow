@@ -27,7 +27,7 @@ class ThemeManager extends ChangeNotifier {
     // Используем светлую тему по умолчанию
     _currentTheme = ThemeMode.light;
     ThemeTokens.currentTheme = _currentTheme;
-    
+
     // Асинхронно загружаем сохраненную тему
     _loadThemeFromStorageAsync();
   }
@@ -38,7 +38,7 @@ class ThemeManager extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final themeIndex = prefs.getInt(_themeKey) ?? 0;
       final savedTheme = ThemeMode.values[themeIndex];
-      
+
       if (savedTheme != _currentTheme) {
         _currentTheme = savedTheme;
         ThemeTokens.currentTheme = _currentTheme;

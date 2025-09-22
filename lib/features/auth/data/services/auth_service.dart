@@ -3,21 +3,21 @@ import 'dart:developer' as developer;
 import '../../../../config/supabase_config.dart';
 
 /// Сервис аутентификации пользователей
-/// 
+///
 /// Предоставляет методы для регистрации, входа и управления сессиями пользователей.
 /// Поддерживает как реальную аутентификацию через Supabase, так и демо-режим
 /// для разработки и тестирования.
-/// 
+///
 /// Пример использования:
 /// ```dart
 /// final authService = AuthService();
-/// 
+///
 /// // Регистрация нового пользователя
 /// final response = await authService.signUp(
 ///   email: 'user@example.com',
 ///   password: 'secure_password',
 /// );
-/// 
+///
 /// // Вход существующего пользователя
 /// final loginResponse = await authService.signIn(
 ///   email: 'user@example.com',
@@ -28,15 +28,15 @@ class AuthService {
   final SupabaseClient _client = Supabase.instance.client;
 
   /// Регистрирует нового пользователя в системе
-  /// 
+  ///
   /// [email] - email адрес пользователя (должен быть валидным)
   /// [password] - пароль пользователя (минимум 6 символов)
-  /// 
+  ///
   /// Returns [AuthResponse] с данными пользователя и сессии
-  /// 
+  ///
   /// Throws [AuthException] при ошибках валидации или сети
   /// Throws [NetworkException] при проблемах с подключением
-  /// 
+  ///
   /// В демо-режиме симулирует успешную регистрацию без реального API вызова.
   Future<AuthResponse> signUp({
     required String email,
@@ -98,15 +98,15 @@ class AuthService {
   }
 
   /// Выполняет вход пользователя в систему
-  /// 
+  ///
   /// [email] - email адрес пользователя
   /// [password] - пароль пользователя
-  /// 
+  ///
   /// Returns [AuthResponse] с данными пользователя и сессии
-  /// 
+  ///
   /// Throws [AuthException] при ошибках валидации или сети
   /// Throws [NetworkException] при проблемах с подключением
-  /// 
+  ///
   /// В демо-режиме симулирует успешный вход без реального API вызова.
   Future<AuthResponse> signIn({
     required String email,
@@ -160,7 +160,7 @@ class AuthService {
   }
 
   /// Выполняет выход пользователя из системы
-  /// 
+  ///
   /// Throws [NetworkException] при проблемах с подключением
   Future<void> signOut() async {
     try {
@@ -174,9 +174,9 @@ class AuthService {
   }
 
   /// Отправляет ссылку для сброса пароля на указанный email
-  /// 
+  ///
   /// [email] - email адрес пользователя, для которого нужно сбросить пароль
-  /// 
+  ///
   /// Throws [NetworkException] при проблемах с подключением
   Future<void> resetPassword(String email) async {
     try {

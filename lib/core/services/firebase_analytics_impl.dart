@@ -1,23 +1,26 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+// import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:nutry_flow/core/services/firebase_interfaces.dart';
 
-/// Реальная реализация Firebase Analytics
+/// Заглушка для Firebase Analytics (Firebase временно отключен)
 class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
   static final FirebaseAnalyticsImpl _instance = FirebaseAnalyticsImpl._();
   static FirebaseAnalyticsImpl get instance => _instance;
 
   FirebaseAnalyticsImpl._();
 
-  late FirebaseAnalytics _analytics;
+  // late FirebaseAnalytics _analytics;
 
   /// Инициализация Firebase Analytics
+  @override
   Future<void> initialize() async {
-    _analytics = FirebaseAnalytics.instance;
+    // _analytics = FirebaseAnalytics.instance;
+    print('Firebase Analytics temporarily disabled');
   }
 
   @override
   Future<void> setAnalyticsCollectionEnabled(bool enabled) async {
-    await _analytics.setAnalyticsCollectionEnabled(enabled);
+    // await _analytics.setAnalyticsCollectionEnabled(enabled);
+    print('Firebase Analytics temporarily disabled');
   }
 
   @override
@@ -25,10 +28,11 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required String name,
     Map<String, dynamic>? parameters,
   }) async {
-    await _analytics.logEvent(
-      name: name,
-      parameters: parameters,
-    );
+    // await _analytics.logEvent(
+    //   name: name,
+    //   parameters: parameters,
+    // );
+    print('Firebase Analytics temporarily disabled: $name');
   }
 
   @override
@@ -36,10 +40,11 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required String screenName,
     String? screenClass,
   }) async {
-    await _analytics.logScreenView(
-      screenName: screenName,
-      screenClass: screenClass,
-    );
+    // await _analytics.logScreenView(
+    //   screenName: screenName,
+    //   screenClass: screenClass,
+    // );
+    print('Firebase Analytics temporarily disabled: screen_view');
   }
 
   @override
@@ -47,17 +52,20 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required String name,
     required String value,
   }) async {
-    await _analytics.setUserProperty(name: name, value: value);
+    // await _analytics.setUserProperty(name: name, value: value);
+    print('Firebase Analytics temporarily disabled: set_user_property');
   }
 
   @override
   Future<void> logLogin({required String loginMethod}) async {
-    await _analytics.logLogin(loginMethod: loginMethod);
+    // await _analytics.logLogin(loginMethod: loginMethod);
+    print('Firebase Analytics temporarily disabled: log_login');
   }
 
   @override
   Future<void> logSignUp({required String signUpMethod}) async {
-    await _analytics.logSignUp(signUpMethod: signUpMethod);
+    // await _analytics.logSignUp(signUpMethod: signUpMethod);
+    print('Firebase Analytics temporarily disabled: log_sign_up');
   }
 
   @override
@@ -66,19 +74,20 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required String currency,
     required double value,
   }) async {
-    final analyticsItems = items.map((item) => AnalyticsEventItem(
-      itemId: item.itemId,
-      itemName: item.itemName,
-      itemCategory: item.itemCategory,
-      price: item.price,
-      quantity: item.quantity,
-    )).toList();
+    // final analyticsItems = items.map((item) => AnalyticsEventItem(
+    //   itemId: item.itemId,
+    //   itemName: item.itemName,
+    //   itemCategory: item.itemCategory,
+    //   price: item.price,
+    //   quantity: item.quantity,
+    // )).toList();
 
-    await _analytics.logAddToCart(
-      items: analyticsItems,
-      currency: currency,
-      value: value,
-    );
+    // await _analytics.logAddToCart(
+    //   items: analyticsItems,
+    //   currency: currency,
+    //   value: value,
+    // );
+    print('Firebase Analytics temporarily disabled: log_add_to_cart');
   }
 
   @override
@@ -88,25 +97,49 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required String currency,
     required List<CustomAnalyticsEventItem> items,
   }) async {
-    final analyticsItems = items.map((item) => AnalyticsEventItem(
-      itemId: item.itemId,
-      itemName: item.itemName,
-      itemCategory: item.itemCategory,
-      price: item.price,
-      quantity: item.quantity,
-    )).toList();
+    // final analyticsItems = items.map((item) => AnalyticsEventItem(
+    //   itemId: item.itemId,
+    //   itemName: item.itemName,
+    //   itemCategory: item.itemCategory,
+    //   price: item.price,
+    //   quantity: item.quantity,
+    // )).toList();
 
-    await _analytics.logPurchase(
-      transactionId: transactionId,
-      value: value,
-      currency: currency,
-      items: analyticsItems,
-    );
+    // await _analytics.logPurchase(
+    //   transactionId: transactionId,
+    //   value: value,
+    //   currency: currency,
+    //   items: analyticsItems,
+    // );
+    print('Firebase Analytics temporarily disabled: log_purchase');
   }
 
   @override
-  Future<void> logSearch({required String searchTerm}) async {
-    await _analytics.logSearch(searchTerm: searchTerm);
+  Future<void> logSearch({
+    required String searchTerm,
+    String? contentType,
+    int? itemCount,
+  }) async {
+    // await _analytics.logSearch(
+    //   searchTerm: searchTerm,
+    //   contentType: contentType,
+    //   itemCount: itemCount,
+    // );
+    print('Firebase Analytics temporarily disabled: log_search');
+  }
+
+  @override
+  Future<void> logShare({
+    required String contentType,
+    required String itemId,
+    String? method,
+  }) async {
+    // await _analytics.logShare(
+    //   contentType: contentType,
+    //   itemId: itemId,
+    //   method: method,
+    // );
+    print('Firebase Analytics temporarily disabled: log_share');
   }
 
   @override
@@ -114,51 +147,116 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required String contentType,
     required String itemId,
   }) async {
-    await _analytics.logSelectContent(
-      contentType: contentType,
-      itemId: itemId,
-    );
+    // await _analytics.logSelectContent(
+    //   contentType: contentType,
+    //   itemId: itemId,
+    // );
+    print('Firebase Analytics temporarily disabled: log_select_content');
   }
 
-  /// Дополнительные методы для специфичной аналитики приложения
+  @override
+  Future<void> logTutorialBegin() async {
+    // await _analytics.logTutorialBegin();
+    print('Firebase Analytics temporarily disabled: log_tutorial_begin');
+  }
 
-  /// Отслеживание достижения цели
-  Future<void> logGoalAchievement({
-    required String goalName,
-    required String goalType,
-    double? progress,
+  @override
+  Future<void> logTutorialComplete() async {
+    // await _analytics.logTutorialComplete();
+    print('Firebase Analytics temporarily disabled: log_tutorial_complete');
+  }
+
+  @override
+  Future<void> logAppOpen() async {
+    // await _analytics.logAppOpen();
+    print('Firebase Analytics temporarily disabled: log_app_open');
+  }
+
+  @override
+  Future<void> logFirstOpen() async {
+    // await _analytics.logFirstOpen();
+    print('Firebase Analytics temporarily disabled: log_first_open');
+  }
+
+  @override
+  Future<void> logInAppPurchase({
+    required String productId,
+    required double price,
+    required String currency,
+    required bool success,
   }) async {
-    await logEvent(
-      name: 'goal_achievement',
-      parameters: {
-        'goal_name': goalName,
-        'goal_type': goalType,
-        if (progress != null) 'progress': progress,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await _analytics.logInAppPurchase(
+    //   productId: productId,
+    //   price: price,
+    //   currency: currency,
+    //   success: success,
+    // );
+    print('Firebase Analytics temporarily disabled: log_in_app_purchase');
   }
 
-  /// Отслеживание тренировки
+  @override
+  Future<void> logCustomEvent({
+    required String name,
+    Map<String, dynamic>? parameters,
+  }) async {
+    // await _analytics.logEvent(
+    //   name: name,
+    //   parameters: parameters,
+    // );
+    print('Firebase Analytics temporarily disabled: custom_event_$name');
+  }
+
+  @override
+  Future<void> logUserEngagement({
+    required int engagementTimeMs,
+  }) async {
+    // await _analytics.logEvent(
+    //   name: 'user_engagement',
+    //   parameters: {
+    //     'engagement_time_msec': engagementTimeMs,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_user_engagement');
+  }
+
+  @override
+  Future<void> logGoalCompletion({
+    required String goalId,
+    required String goalName,
+    double? value,
+  }) async {
+    // await _analytics.logEvent(
+    //   name: 'goal_completion',
+    //   parameters: {
+    //     'goal_id': goalId,
+    //     'goal_name': goalName,
+    //     if (value != null) 'value': value,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_goal_completion');
+  }
+
+  @override
   Future<void> logWorkout({
     required String workoutType,
-    required int durationMinutes,
-    required int caloriesBurned,
-    String? workoutName,
+    required int duration,
+    required int calories,
+    String? equipment,
   }) async {
-    await logEvent(
-      name: 'workout_completed',
-      parameters: {
-        'workout_type': workoutType,
-        'duration_minutes': durationMinutes,
-        'calories_burned': caloriesBurned,
-        if (workoutName != null) 'workout_name': workoutName,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await logEvent(
+    //   name: 'workout_logged',
+    //   parameters: {
+    //     'workout_type': workoutType,
+    //     'duration': duration,
+    //     'calories': calories,
+    //     if (equipment != null) 'equipment': equipment,
+    //     'timestamp': DateTime.now().millisecondsSinceEpoch,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_workout');
   }
 
-  /// Отслеживание приема пищи
+  @override
   Future<void> logMeal({
     required String mealType,
     required int calories,
@@ -167,92 +265,97 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
     required double carbs,
     String? mealName,
   }) async {
-    await logEvent(
-      name: 'meal_logged',
-      parameters: {
-        'meal_type': mealType,
-        'calories': calories,
-        'protein': protein,
-        'fat': fat,
-        'carbs': carbs,
-        if (mealName != null) 'meal_name': mealName,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await logEvent(
+    //   name: 'meal_logged',
+    //   parameters: {
+    //     'meal_type': mealType,
+    //     'calories': calories,
+    //     'protein': protein,
+    //     'fat': fat,
+    //     'carbs': carbs,
+    //     if (mealName != null) 'meal_name': mealName,
+    //     'timestamp': DateTime.now().millisecondsSinceEpoch,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_meal');
   }
 
-  /// Отслеживание ошибки
+  @override
   Future<void> logError({
     required String errorType,
     required String errorMessage,
     String? screenName,
     Map<String, dynamic>? additionalData,
   }) async {
-    await logEvent(
-      name: 'app_error',
-      parameters: {
-        'error_type': errorType,
-        'error_message': errorMessage,
-        if (screenName != null) 'screen_name': screenName,
-        if (additionalData != null) ...additionalData,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await logEvent(
+    //   name: 'app_error',
+    //   parameters: {
+    //     'error_type': errorType,
+    //     'error_message': errorMessage,
+    //     if (screenName != null) 'screen_name': screenName,
+    //     if (additionalData != null) ...additionalData,
+    //     'timestamp': DateTime.now().millisecondsSinceEpoch,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_error');
   }
 
-  /// Отслеживание производительности
+  @override
   Future<void> logPerformance({
     required String metricName,
     required double value,
     String? unit,
   }) async {
-    await logEvent(
-      name: 'performance_metric',
-      parameters: {
-        'metric_name': metricName,
-        'value': value,
-        if (unit != null) 'unit': unit,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await logEvent(
+    //   name: 'performance_metric',
+    //   parameters: {
+    //     'metric_name': metricName,
+    //     'value': value,
+    //     if (unit != null) 'unit': unit,
+    //     'timestamp': DateTime.now().millisecondsSinceEpoch,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_performance');
   }
 
-  /// Отслеживание навигации
+  @override
   Future<void> logNavigation({
     required String fromScreen,
     required String toScreen,
     String? navigationMethod,
   }) async {
-    await logEvent(
-      name: 'navigation',
-      parameters: {
-        'from_screen': fromScreen,
-        'to_screen': toScreen,
-        if (navigationMethod != null) 'navigation_method': navigationMethod,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await logEvent(
+    //   name: 'navigation',
+    //   parameters: {
+    //     'from_screen': fromScreen,
+    //     'to_screen': toScreen,
+    //     if (navigationMethod != null) 'navigation_method': navigationMethod,
+    //     'timestamp': DateTime.now().millisecondsSinceEpoch,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_navigation');
   }
 
-  /// Отслеживание взаимодействия с UI
+  @override
   Future<void> logUIInteraction({
     required String elementType,
     required String elementName,
     String? action,
     Map<String, dynamic>? additionalData,
   }) async {
-    await logEvent(
-      name: 'ui_interaction',
-      parameters: {
-        'element_type': elementType,
-        'element_name': elementName,
-        if (action != null) 'action': action,
-        if (additionalData != null) ...additionalData,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
+    // await logEvent(
+    //   name: 'ui_interaction',
+    //   parameters: {
+    //     'element_type': elementType,
+    //     'element_name': elementName,
+    //     if (action != null) 'action': action,
+    //     if (additionalData != null) ...additionalData,
+    //     'timestamp': DateTime.now().millisecondsSinceEpoch,
+    //   },
+    // );
+    print('Firebase Analytics temporarily disabled: log_ui_interaction');
   }
 
   /// Получение экземпляра FirebaseAnalytics
-  FirebaseAnalytics get analytics => _analytics;
+  // FirebaseAnalytics get analytics => _analytics;
 }

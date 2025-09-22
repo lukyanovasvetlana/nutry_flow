@@ -1,8 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_performance/firebase_performance.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_analytics/firebase_analytics.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:firebase_performance/firebase_performance.dart';
+// import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:nutry_flow/core/services/analytics_service.dart';
 import 'package:nutry_flow/core/services/crashlytics_service.dart';
 import 'package:nutry_flow/core/services/performance_service.dart';
@@ -27,7 +27,7 @@ class FirebaseService {
           name: 'FirebaseService');
 
       // Инициализация Firebase Core
-      await Firebase.initializeApp();
+      // await Firebase.initializeApp();
 
       developer.log('🔥 FirebaseService: Firebase Core initialized',
           name: 'FirebaseService');
@@ -118,7 +118,8 @@ class FirebaseService {
       developer.log('🔥 FirebaseService: Remote Config initialized',
           name: 'FirebaseService');
     } catch (e) {
-      developer.log('🔥 FirebaseService: Failed to initialize Remote Config: $e',
+      developer.log(
+          '🔥 FirebaseService: Failed to initialize Remote Config: $e',
           name: 'FirebaseService');
     }
   }
@@ -127,14 +128,14 @@ class FirebaseService {
   bool get isInitialized => _isInitialized;
 
   /// Получение экземпляра Firebase Analytics
-  FirebaseAnalytics get analytics => FirebaseAnalytics.instance;
+  // FirebaseAnalytics get analytics => FirebaseAnalytics.instance;
 
   /// Получение экземпляра Firebase Crashlytics
-  FirebaseCrashlytics get crashlytics => FirebaseCrashlytics.instance;
+  // FirebaseCrashlytics get crashlytics => FirebaseCrashlytics.instance;
 
   /// Получение экземпляра Firebase Performance
-  FirebasePerformance get performance => FirebasePerformance.instance;
+  // FirebasePerformance get performance => FirebasePerformance.instance;
 
   /// Получение экземпляра Firebase Remote Config
-  FirebaseRemoteConfig get remoteConfig => FirebaseRemoteConfig.instance;
+  // FirebaseRemoteConfig get remoteConfig => FirebaseRemoteConfig.instance;
 }

@@ -173,7 +173,8 @@ mixin AnalyticsMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Отслеживание нажатия на элемент списка
-  void trackListItemTap(String listName, String itemName, {Map<String, dynamic>? parameters}) {
+  void trackListItemTap(String listName, String itemName,
+      {Map<String, dynamic>? parameters}) {
     trackUIInteraction(
       elementType: 'list_item',
       elementName: '$listName:$itemName',

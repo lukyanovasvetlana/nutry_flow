@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nutry_flow/config/supabase_config.dart';
-import 'package:nutry_flow/core/services/firebase_service.dart';
+// import 'package:nutry_flow/core/services/firebase_service.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/welcome_screen_redesigned.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_registration_screen.dart';
@@ -36,21 +36,22 @@ void main() async {
     print('🔵 Main: ❌ Demo mode is NOT active');
   }
 
-  // Инициализация Firebase
-  print('🔥 Main: Initializing Firebase...');
-  try {
-    await FirebaseService.instance.initialize();
-    print('🔥 Main: Firebase initialized successfully');
-  } catch (e) {
-    print('🔴 Main: Failed to initialize Firebase: $e');
-  }
+  // Инициализация Firebase временно отключена
+  // print('🔥 Main: Initializing Firebase...');
+  // try {
+  //   await FirebaseService.instance.initialize();
+  //   print('🔥 Main: Firebase initialized successfully');
+  // } catch (e) {
+  //   print('🔴 Main: Failed to initialize Firebase: $e');
+  // }
 
   // Инициализация OnboardingDependencies
   print('🔵 Main: Initializing OnboardingDependencies...');
   try {
     await OnboardingDependencies.instance.initialize();
     print('🔵 Main: OnboardingDependencies initialized');
-    print('🔵 Main: OnboardingDependencies.isDemo = ${OnboardingDependencies.instance.isDemo}');
+    print(
+        '🔵 Main: OnboardingDependencies.isDemo = ${OnboardingDependencies.instance.isDemo}');
     print('🔵 Main: ✅ OnboardingDependencies is in demo mode');
   } catch (e) {
     print('🔴 Main: Failed to initialize OnboardingDependencies: $e');
@@ -81,7 +82,7 @@ class _MyAppState extends State<MyApp> {
       listenable: _themeManager,
       builder: (context, child) {
         final currentTheme = _themeManager.currentTheme;
-        
+
         return MaterialApp(
           title: 'NutryFlow',
           theme: _themeManager.lightTheme,
@@ -92,33 +93,33 @@ class _MyAppState extends State<MyApp> {
           routes: {
             '/': (context) => const SplashScreen(),
             '/welcome': (context) => Theme(
-              data: ThemeData.light(),
-              child: const WelcomeScreenRedesigned(),
-            ),
+                  data: ThemeData.light(),
+                  child: const WelcomeScreenRedesigned(),
+                ),
             '/registration': (context) => Theme(
-              data: ThemeData.light(),
-              child: const EnhancedRegistrationScreen(),
-            ),
+                  data: ThemeData.light(),
+                  child: const EnhancedRegistrationScreen(),
+                ),
             '/login': (context) => Theme(
-              data: ThemeData.light(),
-              child: const EnhancedLoginScreen(),
-            ),
+                  data: ThemeData.light(),
+                  child: const EnhancedLoginScreen(),
+                ),
             '/profile-info': (context) => Theme(
-              data: ThemeData.light(),
-              child: const ProfileInfoScreen(),
-            ),
+                  data: ThemeData.light(),
+                  child: const ProfileInfoScreen(),
+                ),
             '/goals-setup': (context) => Theme(
-              data: ThemeData.light(),
-              child: const GoalsSetupScreen(),
-            ),
+                  data: ThemeData.light(),
+                  child: const GoalsSetupScreen(),
+                ),
             '/forgot-password': (context) => Theme(
-              data: ThemeData.light(),
-              child: const ForgotPasswordScreen(),
-            ),
+                  data: ThemeData.light(),
+                  child: const ForgotPasswordScreen(),
+                ),
             '/profile-settings': (context) => Theme(
-              data: ThemeData.light(),
-              child: const ProfileSettingsScreen(),
-            ),
+                  data: ThemeData.light(),
+                  child: const ProfileSettingsScreen(),
+                ),
             '/app': (context) => const AppContainer(),
           },
         );

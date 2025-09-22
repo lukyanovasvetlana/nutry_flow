@@ -423,7 +423,7 @@ class _ABTestingScreenState extends State<ABTestingScreen> {
       });
 
       await ABTestingService.instance.forceUpdate();
-      
+
       if (mounted) {
         await _loadABTestingData();
         _showSnackBar('Конфигурация обновлена успешно', Colors.green);

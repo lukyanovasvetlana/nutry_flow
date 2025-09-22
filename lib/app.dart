@@ -30,7 +30,7 @@ class _AppContainerState extends State<AppContainer> {
       listenable: ThemeManager(),
       builder: (context, child) {
         final currentTheme = ThemeManager().currentTheme;
-        
+
         return AnimatedSwitcher(
           key: ValueKey('app-content-${currentTheme.name}'),
           duration: const Duration(milliseconds: 150),

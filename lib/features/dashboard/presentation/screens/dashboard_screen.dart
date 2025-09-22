@@ -22,21 +22,21 @@ import '../../../analytics/presentation/mixins/analytics_mixin.dart';
 import '../../../analytics/presentation/utils/analytics_utils.dart';
 
 /// Экран дашборда NutryFlow
-/// 
+///
 /// Отображает:
 /// - Приветствие пользователя
 /// - Статистику питания
 /// - Диаграммы аналитики
 /// - Быстрое меню для навигации
-/// 
+///
 /// Использование:
 /// ```dart
 /// // Базовое использование
 /// const DashboardScreen()
-/// 
+///
 /// // С репозиторием по умолчанию (MockProfileService)
 /// const DashboardScreen()
-/// 
+///
 /// // С кастомным репозиторием
 /// DashboardScreen(
 ///   profileRepository: CustomProfileRepository(),
@@ -50,16 +50,16 @@ class DashboardScreen extends StatefulWidget {
 }
 
 /// Состояние экрана дашборда
-/// 
+///
 /// Управляет загрузкой профиля пользователя, отображением статистики
 /// и интеграцией с аналитикой для отслеживания пользовательских действий.
 class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   /// Индекс выбранного графика в статистике
   int selectedChartIndex = 0;
-  
+
   /// Профиль текущего пользователя
   UserProfile? _userProfile;
-  
+
   /// Флаг загрузки профиля пользователя
   bool _isLoadingProfile = true;
 
@@ -72,10 +72,10 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Загружает профиль пользователя
-  /// 
+  ///
   /// Сначала пытается загрузить профиль из локального хранилища (SharedPreferences),
   /// если не найден - использует переданный репозиторий для демо-режима.
-  /// 
+  ///
   /// Отслеживает успешность загрузки профиля для аналитики.
   Future<void> _loadUserProfile() async {
     try {
@@ -119,7 +119,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
             _userProfile = localProfile;
             _isLoadingProfile = false;
           });
-          
+
           // Отслеживаем успешную загрузку профиля
           trackEvent('profile_loaded', parameters: {
             'profile_source': 'local_storage',
@@ -139,12 +139,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
           _userProfile = profile;
           _isLoadingProfile = false;
         });
-        
+
         // Отслеживаем загрузку демо-профиля
         trackEvent('profile_loaded', parameters: {
           'profile_source': 'mock_service',
-          'has_name': profile?.firstName?.isNotEmpty ?? false,
-          'has_email': profile?.email?.isNotEmpty ?? false,
+          'has_name': profile?.firstName.isNotEmpty ?? false,
+          'has_email': profile?.email.isNotEmpty ?? false,
         });
       }
     } catch (e) {
@@ -152,7 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
         setState(() {
           _isLoadingProfile = false;
         });
-        
+
         // Отслеживаем ошибку загрузки профиля
         trackError(
           errorType: 'profile_load_failed',
@@ -164,18 +164,18 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Формирует персонализированное приветствие на основе времени суток и профиля пользователя
-  /// 
+  ///
   /// Возвращает приветствие в зависимости от:
   /// - Времени суток (утро, день, вечер, ночь)
   /// - Наличия профиля пользователя
   /// - Имени пользователя
-  /// 
+  ///
   /// Временные интервалы:
   /// - 5:00 - 11:59: "Доброе утро"
   /// - 12:00 - 16:59: "Добрый день"
   /// - 17:00 - 21:59: "Добрый вечер"
   /// - 22:00 - 4:59: "Добрый день" (или "Доброй ночи" в темной теме)
-  /// 
+  ///
   /// Returns персонализированное приветствие
   String _getGreeting() {
     if (_isLoadingProfile) return 'Добро пожаловать!';
@@ -185,7 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     if (firstName.isNotEmpty) {
       final hour = DateTime.now().hour;
       final isDarkTheme = ThemeManager().isDarkMode;
-      
+
       String timeGreeting;
 
       if (hour >= 5 && hour < 12) {
@@ -226,10 +226,14 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: _getResponsiveSpacing(constraints.maxWidth)),
+                          SizedBox(
+                              height:
+                                  _getResponsiveSpacing(constraints.maxWidth)),
                           // Логотип и приветствие
                           _buildHeader(),
-                          SizedBox(height: _getResponsiveSpacing(constraints.maxWidth)),
+                          SizedBox(
+                              height:
+                                  _getResponsiveSpacing(constraints.maxWidth)),
 
                           // Статистика сверху
                           NutryCard(
@@ -248,18 +252,22 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                                     'chart_type': _getChartType(index),
                                   },
                                 );
-                                
+
                                 setState(() {
                                   selectedChartIndex = index;
                                 });
                               },
                             ),
                           ),
-                          SizedBox(height: _getResponsiveSpacing(constraints.maxWidth)),
+                          SizedBox(
+                              height:
+                                  _getResponsiveSpacing(constraints.maxWidth)),
 
                           // Диаграммы
                           _buildChartsSection(),
-                          SizedBox(height: _getResponsiveSpacing(constraints.maxWidth)),
+                          SizedBox(
+                              height:
+                                  _getResponsiveSpacing(constraints.maxWidth)),
                         ],
                       ),
                     ),
@@ -280,62 +288,62 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает отступы в зависимости от размера экрана
-  /// 
+  ///
   /// [screenWidth] - ширина экрана в пикселях
-  /// 
+  ///
   /// Returns горизонтальные отступы для контента
   double _getResponsivePadding(double screenWidth) {
-    if (screenWidth < 600) return 16.0;      // Мобильные устройства
-    if (screenWidth < 900) return 24.0;      // Планшеты
-    if (screenWidth < 1200) return 32.0;     // Маленькие десктопы
-    return 48.0;                             // Большие экраны
+    if (screenWidth < 600) return 16.0; // Мобильные устройства
+    if (screenWidth < 900) return 24.0; // Планшеты
+    if (screenWidth < 1200) return 32.0; // Маленькие десктопы
+    return 48.0; // Большие экраны
   }
 
   /// Возвращает вертикальные отступы в зависимости от размера экрана
-  /// 
+  ///
   /// [screenWidth] - ширина экрана в пикселях
-  /// 
+  ///
   /// Returns вертикальные отступы между элементами
   double _getResponsiveSpacing(double screenWidth) {
-    if (screenWidth < 600) return 16.0;      // Мобильные устройства
-    if (screenWidth < 900) return 20.0;      // Планшеты
-    if (screenWidth < 1200) return 24.0;     // Маленькие десктопы
-    return 32.0;                             // Большие экраны
+    if (screenWidth < 600) return 16.0; // Мобильные устройства
+    if (screenWidth < 900) return 20.0; // Планшеты
+    if (screenWidth < 1200) return 24.0; // Маленькие десктопы
+    return 32.0; // Большие экраны
   }
 
   /// Возвращает позицию плавающего меню снизу в зависимости от размера экрана
-  /// 
+  ///
   /// Returns позиция снизу для плавающего меню
   double _getResponsiveBottomPosition() {
     final screenHeight = MediaQuery.of(context).size.height;
-    if (screenHeight < 600) return 16.0;     // Маленькие экраны
-    if (screenHeight < 900) return 20.0;     // Средние экраны
-    return 24.0;                             // Большие экраны
+    if (screenHeight < 600) return 16.0; // Маленькие экраны
+    if (screenHeight < 900) return 20.0; // Средние экраны
+    return 24.0; // Большие экраны
   }
 
   /// Возвращает позицию плавающего меню справа в зависимости от размера экрана
-  /// 
+  ///
   /// Returns позиция справа для плавающего меню
   double _getResponsiveRightPosition() {
     final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth < 600) return 16.0;      // Мобильные устройства
-    if (screenWidth < 900) return 20.0;      // Планшеты
-    return 24.0;                             // Десктопы
+    if (screenWidth < 600) return 16.0; // Мобильные устройства
+    if (screenWidth < 900) return 20.0; // Планшеты
+    return 24.0; // Десктопы
   }
 
   /// Строит заголовок экрана с логотипом и приветствием
-  /// 
+  ///
   /// Включает:
   /// - Иконку ресторана с цветовым оформлением
   /// - Персонализированное приветствие
   /// - Подзаголовок с описанием функционала
-  /// 
+  ///
   /// Returns виджет заголовка с приветствием
   Widget _buildHeader() {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -345,7 +353,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                   padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
                   decoration: BoxDecoration(
                     color: AppColors.dynamicPrimary,
-                    borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+                    borderRadius:
+                        BorderRadius.circular(isSmallScreen ? 10 : 12),
                   ),
                   child: Icon(
                     Icons.restaurant_menu,
@@ -360,10 +369,10 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                     children: [
                       Text(
                         _getGreeting(), // Приветствие по имени
-                        style: (isSmallScreen 
-                          ? DesignTokens.typography.headlineMediumStyle 
-                          : DesignTokens.typography.headlineLargeStyle
-                        ).copyWith(
+                        style: (isSmallScreen
+                                ? DesignTokens.typography.headlineMediumStyle
+                                : DesignTokens.typography.headlineLargeStyle)
+                            .copyWith(
                           color: AppColors.dynamicTextPrimary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -372,7 +381,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                         const SizedBox(height: 4),
                         Text(
                           'Ваш персональный помощник по питанию',
-                          style: DesignTokens.typography.bodyMediumStyle.copyWith(
+                          style:
+                              DesignTokens.typography.bodyMediumStyle.copyWith(
                             color: AppColors.dynamicTextSecondary,
                           ),
                         ),
@@ -399,27 +409,27 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Строит секцию с графиками и диаграммами
-  /// 
+  ///
   /// Включает:
   /// - Заголовок "Аналитика питания"
   /// - Основную диаграмму (стоимость/продукты/калории)
   /// - Круговую диаграмму для детализации
-  /// 
+  ///
   /// Returns виджет секции с графиками
   Widget _buildChartsSection() {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Аналитика питания',
-              style: (isSmallScreen 
-                ? DesignTokens.typography.titleMediumStyle 
-                : DesignTokens.typography.titleLargeStyle
-              ).copyWith(
+              style: (isSmallScreen
+                      ? DesignTokens.typography.titleMediumStyle
+                      : DesignTokens.typography.titleLargeStyle)
+                  .copyWith(
                 color: AppColors.dynamicTextPrimary,
                 fontWeight: FontWeight.bold,
               ),
@@ -449,12 +459,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает заголовок для основного графика на основе выбранного индекса
-  /// 
+  ///
   /// [selectedChartIndex] определяет тип отображаемого графика:
   /// - 0: "Стоимость" - график расходов на питание
   /// - 1: "Продукты" - график потребления продуктов
   /// - 2: "Калории" - график калорийности
-  /// 
+  ///
   /// Returns заголовок графика
   String _getChartTitle() {
     switch (selectedChartIndex) {
@@ -470,12 +480,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает тип графика для аналитики на основе индекса
-  /// 
+  ///
   /// [index] определяет тип графика:
   /// - 0: "expenses" - расходы на питание
   /// - 1: "products" - потребление продуктов
   /// - 2: "calories" - калорийность
-  /// 
+  ///
   /// Returns строковый идентификатор типа графика
   String _getChartType(int index) {
     switch (index) {
@@ -530,12 +540,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает заголовок для круговой диаграммы детализации
-  /// 
+  ///
   /// [selectedChartIndex] определяет тип детализации:
   /// - 0: "Детализация расходов" - разбивка по категориям трат
   /// - 1: "Категории продуктов" - распределение по типам продуктов
   /// - 2: "Распределение калорий" - разбивка по макронутриентам
-  /// 
+  ///
   /// Returns заголовок для диаграммы детализации
   String _getBreakdownChartTitle() {
     switch (selectedChartIndex) {
@@ -551,12 +561,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает иконку для круговой диаграммы детализации
-  /// 
+  ///
   /// [selectedChartIndex] определяет тип иконки:
   /// - 0: Icons.pie_chart - для детализации расходов
   /// - 1: Icons.category - для категорий продуктов
   /// - 2: Icons.donut_large - для распределения калорий
-  /// 
+  ///
   /// Returns иконка для диаграммы детализации
   IconData _getBreakdownChartIcon() {
     switch (selectedChartIndex) {
@@ -572,12 +582,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает цвет для круговой диаграммы детализации
-  /// 
+  ///
   /// [selectedChartIndex] определяет цветовую схему:
   /// - 0: AppColors.dynamicInfo - синий для расходов
   /// - 1: AppColors.dynamicGray - серый для продуктов
   /// - 2: AppColors.dynamicError - красный для калорий
-  /// 
+  ///
   /// Returns цвет для диаграммы детализации
   Color _getBreakdownChartColor() {
     switch (selectedChartIndex) {
@@ -593,12 +603,12 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Возвращает виджет круговой диаграммы детализации
-  /// 
+  ///
   /// [selectedChartIndex] определяет тип диаграммы:
   /// - 0: ExpenseBreakdownChart - детализация расходов
   /// - 1: ProductsBreakdownChart - категории продуктов
   /// - 2: CaloriesBreakdownChart - распределение калорий
-  /// 
+  ///
   /// Returns виджет диаграммы детализации
   Widget _getBreakdownChartWidget() {
     switch (selectedChartIndex) {
@@ -614,17 +624,17 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Строит карточку с графиком или диаграммой
-  /// 
+  ///
   /// [title] - заголовок карточки
   /// [icon] - иконка для карточки
   /// [color] - основной цвет карточки
   /// [child] - виджет графика/диаграммы
-  /// 
+  ///
   /// Включает:
   /// - Заголовок с иконкой
   /// - Контейнер для графика (адаптивная высота)
   /// - Стилизацию в соответствии с дизайн-системой
-  /// 
+  ///
   /// Returns карточку с графиком
   Widget _buildChartCard({
     required String title,
@@ -636,7 +646,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
         final isMediumScreen = constraints.maxWidth < 900;
-        
+
         return NutryCard(
           backgroundColor: AppColors.dynamicCard,
           child: Column(
@@ -648,7 +658,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                     padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(isSmallScreen ? 6 : 8),
+                      borderRadius:
+                          BorderRadius.circular(isSmallScreen ? 6 : 8),
                     ),
                     child: Icon(
                       icon,
@@ -660,10 +671,10 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                   Expanded(
                     child: Text(
                       title,
-                      style: (isSmallScreen 
-                        ? DesignTokens.typography.titleSmallStyle 
-                        : DesignTokens.typography.titleMediumStyle
-                      ).copyWith(
+                      style: (isSmallScreen
+                              ? DesignTokens.typography.titleSmallStyle
+                              : DesignTokens.typography.titleMediumStyle)
+                          .copyWith(
                         color: AppColors.dynamicTextPrimary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -684,144 +695,313 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
   }
 
   /// Строит плавающее меню быстрого доступа
-  /// 
+  ///
   /// Включает:
   /// - Кнопку меню с иконкой и тенью
   /// - PopupMenuButton с основными разделами приложения
   /// - Отслеживание аналитики для всех действий
   /// - Навигацию к соответствующим экранам
-  /// 
+  ///
   /// Пункты меню:
   /// - menu: Здоровое меню
   /// - exercises: Упражнения
   /// - health_articles: Статьи о здоровье
   /// - analytics: Аналитика
   /// - grocery_list: Список покупок
-  /// 
+  ///
   /// Returns плавающее меню с навигацией
   Widget _buildFloatingMenu() {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
-        
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.dynamicSurface,
-            borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.dynamicShadow.withValues(alpha: 0.2),
-                blurRadius: isSmallScreen ? 12 : 16,
-                offset: Offset(0, isSmallScreen ? 6 : 8),
-              ),
-            ],
-          ),
-          child: PopupMenuButton<String>(
-            icon: Container(
-              padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-              decoration: BoxDecoration(
-                color: AppColors.dynamicPrimary,
-                borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
-              ),
-              child: Icon(
-                Icons.menu,
-                color: AppColors.dynamicOnPrimary,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ),
-            onSelected: (String value) {
-              // Отслеживаем нажатие на элемент меню
-              trackUIInteraction(
-                elementType: AnalyticsUtils.elementTypeList,
-                elementName: 'dashboard_menu_item',
-                action: AnalyticsUtils.actionSelect,
-                additionalData: {'menu_item': value},
-              );
 
-              switch (value) {
-                case 'menu':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: 'healthy_menu_screen',
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const HealthyMenuScreen()),
-                  );
-                  break;
-                case 'exercises':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: 'exercise_screen',
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ExerciseScreenRedesigned()),
-                  );
-                  break;
-                case 'health_articles':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: AnalyticsUtils.screenHealthArticles,
-                    navigationMethod: 'push_named',
-                  );
-                  Navigator.pushNamed(context, '/health-articles');
-                  break;
-                case 'analytics':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: AnalyticsUtils.screenAnalytics,
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AnalyticsScreen()),
-                  );
-                  break;
-                case 'grocery_list':
-                  trackNavigation(
-                    fromScreen: AnalyticsUtils.screenDashboard,
-                    toScreen: AnalyticsUtils.screenGroceryList,
-                    navigationMethod: 'push',
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const GroceryListScreen()),
-                  );
-                  break;
-              }
+        return TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 500),
+          tween: Tween(begin: 0.0, end: 1.0),
+          curve: Curves.elasticOut,
+          builder: (context, value, child) {
+            return Transform.scale(
+              scale: (0.7 + (0.3 * value.clamp(0.0, 1.0))).clamp(0.1, 2.0),
+              child: Transform.translate(
+                offset: Offset(0, 20 * (1 - value.clamp(0.0, 1.0))),
+                child: Opacity(
+                  opacity: value.clamp(0.0, 1.0),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.dynamicSurface,
+                      borderRadius:
+                          BorderRadius.circular(isSmallScreen ? 20 : 24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.dynamicShadow.withValues(alpha: 0.2),
+                          blurRadius: isSmallScreen ? 24 : 32,
+                          offset: const Offset(0, 12),
+                          spreadRadius: 4,
+                        ),
+                        BoxShadow(
+                          color:
+                              AppColors.dynamicShadow.withValues(alpha: 0.15),
+                          blurRadius: isSmallScreen ? 12 : 16,
+                          offset: const Offset(0, 6),
+                          spreadRadius: 2,
+                        ),
+                        BoxShadow(
+                          color:
+                              AppColors.dynamicPrimary.withValues(alpha: 0.1),
+                          blurRadius: isSmallScreen ? 8 : 12,
+                          offset: const Offset(0, 4),
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: PopupMenuButton<String>(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(isSmallScreen ? 16 : 20),
+                      ),
+                      color: AppColors.dynamicSurface,
+                      icon: _buildAnimatedMenuIcon(isSmallScreen),
+                      // Добавляем красивые стили для меню
+                      constraints: BoxConstraints(
+                        minWidth: isSmallScreen ? 200 : 250,
+                        maxWidth: isSmallScreen ? 280 : 320,
+                      ),
+                      position: PopupMenuPosition.under,
+                      offset: const Offset(0, 8),
+                      // Добавляем анимацию появления
+                      child: null,
+                      onSelected: (String value) {
+                        // Отслеживаем нажатие на элемент меню (временно отключено)
+                        // trackUIInteraction(
+                        //   elementType: AnalyticsUtils.elementTypeList,
+                        //   elementName: 'dashboard_menu_item',
+                        //   action: AnalyticsUtils.actionSelect,
+                        //   additionalData: {'menu_item': value},
+                        // );
+
+                        switch (value) {
+                          case 'menu':
+                            // trackNavigation(
+                            //   fromScreen: AnalyticsUtils.screenDashboard,
+                            //   toScreen: 'healthy_menu_screen',
+                            //   navigationMethod: 'push',
+                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HealthyMenuScreen()),
+                            );
+                            break;
+                          case 'exercises':
+                            // trackNavigation(
+                            //   fromScreen: AnalyticsUtils.screenDashboard,
+                            //   toScreen: 'exercise_screen',
+                            //   navigationMethod: 'push',
+                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ExerciseScreenRedesigned()),
+                            );
+                            break;
+                          case 'health_articles':
+                            // trackNavigation(
+                            //   fromScreen: AnalyticsUtils.screenDashboard,
+                            //   toScreen: AnalyticsUtils.screenHealthArticles,
+                            //   navigationMethod: 'push_named',
+                            // );
+                            Navigator.pushNamed(context, '/health-articles');
+                            break;
+                          case 'analytics':
+                            trackNavigation(
+                              fromScreen: AnalyticsUtils.screenDashboard,
+                              toScreen: AnalyticsUtils.screenAnalytics,
+                              navigationMethod: 'push',
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AnalyticsScreen()),
+                            );
+                            break;
+                          case 'grocery_list':
+                            trackNavigation(
+                              fromScreen: AnalyticsUtils.screenDashboard,
+                              toScreen: AnalyticsUtils.screenGroceryList,
+                              navigationMethod: 'push',
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const GroceryListScreen()),
+                            );
+                            break;
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        _buildMenuItem(
+                          value: 'menu',
+                          icon: Icons.restaurant_menu,
+                          label: 'Здоровое меню',
+                          color: AppColors.dynamicPrimary,
+                          isSmallScreen: isSmallScreen,
+                        ),
+                        _buildMenuItem(
+                          value: 'exercises',
+                          icon: Icons.fitness_center,
+                          label: 'Упражнения',
+                          color: AppColors.dynamicSuccess,
+                          isSmallScreen: isSmallScreen,
+                        ),
+                        _buildMenuItem(
+                          value: 'health_articles',
+                          icon: Icons.article,
+                          label: 'Статьи о здоровье',
+                          color: AppColors.dynamicInfo,
+                          isSmallScreen: isSmallScreen,
+                        ),
+                        _buildMenuItem(
+                          value: 'analytics',
+                          icon: Icons.analytics,
+                          label: 'Аналитика',
+                          color: AppColors.dynamicWarning,
+                          isSmallScreen: isSmallScreen,
+                        ),
+                        _buildMenuItem(
+                          value: 'grocery_list',
+                          icon: Icons.shopping_cart,
+                          label: 'Список покупок',
+                          color: AppColors.dynamicError,
+                          isSmallScreen: isSmallScreen,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Строит анимированную иконку меню с hover эффектами
+  Widget _buildAnimatedMenuIcon(bool isSmallScreen) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isHovered = false;
+
+        return MouseRegion(
+          onEnter: (_) => setState(() => isHovered = true),
+          onExit: (_) => setState(() => isHovered = false),
+          child: TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 300),
+            tween: Tween(begin: 0.0, end: isHovered ? 1.0 : 0.0),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: (1.0 + (0.1 * value.clamp(0.0, 1.0))).clamp(0.5, 2.0),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.dynamicPrimary,
+                    borderRadius:
+                        BorderRadius.circular(isSmallScreen ? 14 : 18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
+                        blurRadius:
+                            (12 + (8 * value.clamp(0.0, 1.0))).clamp(4.0, 20.0),
+                        offset: Offset(0,
+                            (6 + (4 * value.clamp(0.0, 1.0))).clamp(2.0, 10.0)),
+                        spreadRadius:
+                            (2 + (2 * value.clamp(0.0, 1.0))).clamp(0.0, 4.0),
+                      ),
+                      BoxShadow(
+                        color: AppColors.dynamicPrimary.withValues(alpha: 0.2),
+                        blurRadius:
+                            (6 + (4 * value.clamp(0.0, 1.0))).clamp(2.0, 10.0),
+                        offset: Offset(0,
+                            (3 + (2 * value.clamp(0.0, 1.0))).clamp(1.0, 5.0)),
+                        spreadRadius:
+                            (1 + (1 * value.clamp(0.0, 1.0))).clamp(0.0, 2.0),
+                      ),
+                      BoxShadow(
+                        color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
+                        blurRadius:
+                            (4 + (2 * value.clamp(0.0, 1.0))).clamp(2.0, 6.0),
+                        offset: Offset(0,
+                            (2 + (1 * value.clamp(0.0, 1.0))).clamp(1.0, 3.0)),
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: AnimatedRotation(
+                    duration: const Duration(milliseconds: 200),
+                    turns: (value.clamp(0.0, 1.0) * 0.05).clamp(-0.1, 0.1),
+                    child: Icon(
+                      Icons.menu,
+                      color: AppColors.dynamicOnPrimary,
+                      size: isSmallScreen ? 22 : 26,
+                    ),
+                  ),
+                ),
+              );
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'menu',
-                child: Text('Здоровое меню'),
-              ),
-              PopupMenuItem<String>(
-                value: 'exercises',
-                child: Text('Упражнения'),
-              ),
-              PopupMenuItem<String>(
-                value: 'health_articles',
-                child: Text('Статьи о здоровье'),
-              ),
-              PopupMenuItem<String>(
-                value: 'analytics',
-                child: Text('Аналитика'),
-              ),
-              PopupMenuItem<String>(
-                value: 'grocery_list',
-                child: Text('Список покупок'),
-              ),
-            ],
           ),
         );
       },
+    );
+  }
+
+  /// Строит красивый пункт меню с иконкой и текстом
+  PopupMenuEntry<String> _buildMenuItem({
+    required String value,
+    required IconData icon,
+    required String label,
+    required Color color,
+    required bool isSmallScreen,
+  }) {
+    return PopupMenuItem<String>(
+      value: value,
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 16 : 20,
+        vertical: isSmallScreen ? 8 : 12,
+      ),
+      // Добавляем кастомные стили для пункта меню
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: isSmallScreen ? 18 : 20,
+          ),
+          SizedBox(width: isSmallScreen ? 12 : 16),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 14 : 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.dynamicTextPrimary,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios,
+            color: AppColors.dynamicTextSecondary,
+            size: isSmallScreen ? 14 : 16,
+          ),
+        ],
+      ),
     );
   }
 }

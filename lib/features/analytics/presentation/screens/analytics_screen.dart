@@ -118,7 +118,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
+                              color: AppColors.dynamicPrimary
+                                  .withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
