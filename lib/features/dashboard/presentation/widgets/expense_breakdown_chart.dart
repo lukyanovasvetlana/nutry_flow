@@ -7,100 +7,79 @@ class ExpenseBreakdownChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Заголовок
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Структура расходов',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.dynamicTextPrimary,
-                  ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.dynamicSurfaceVariant,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.dynamicBorder, width: 0.5),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Месяц',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.dynamicTextSecondary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 14,
-                    color: AppColors.dynamicTextSecondary,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 1),
-
-        // Диаграмма и легенда
-        Row(
-          children: [
-            // Круговая диаграмма
-            Expanded(
-              flex: 4,
-              child: SizedBox(
-                height: 40, // Уменьшил с 60 до 40
-                child: PieChart(
-                  PieChartData(
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        // Обработка касаний
-                      },
-                      enabled: true,
-                    ),
-                    borderData: FlBorderData(show: false),
-                    sectionsSpace: 0, // Уменьшил с 1 до 0
-                    centerSpaceRadius: 10, // Уменьшил с 15 до 10
-                    sections: _getPieChartSections(),
-                  ),
+    return Container(
+      height: 400,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Заголовок с иконкой
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.dynamicInfo.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.account_balance_wallet,
+                  color: AppColors.dynamicInfo,
+                  size: 20,
                 ),
               ),
-            ),
-
-            const SizedBox(width: 20), // Увеличил с 12 до 20
-
-            // Легенда
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLegendItem('Белки', 30, AppColors.dynamicGreen),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Злаки', 25, AppColors.dynamicYellow),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Фрукты', 18, AppColors.dynamicOrange),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Овощи', 15, AppColors.dynamicSuccess),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Молочные', 7, AppColors.dynamicGray),
-                ],
+              const SizedBox(width: 12),
+              Text(
+                'Структура расходов',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.dynamicTextPrimary,
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: Row(
+              children: [
+                // Круговая диаграмма
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: PieChart(
+                      PieChartData(
+                        pieTouchData: PieTouchData(enabled: true),
+                        borderData: FlBorderData(show: false),
+                        sectionsSpace: 3,
+                        centerSpaceRadius: 50,
+                        sections: _getPieChartSections(),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // Легенда
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLegendItem('Продукты', 45, AppColors.dynamicGreen),
+                      const SizedBox(height: 16),
+                      _buildLegendItem('Рестораны', 25, AppColors.dynamicYellow),
+                      const SizedBox(height: 16),
+                      _buildLegendItem('Доставка', 20, AppColors.dynamicOrange),
+                      const SizedBox(height: 16),
+                      _buildLegendItem('Прочее', 10, AppColors.dynamicGray),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -108,57 +87,74 @@ class ExpenseBreakdownChart extends StatelessWidget {
     return [
       PieChartSectionData(
         color: AppColors.dynamicGreen,
-        value: 30,
-        title: '30%',
-        radius: 35, // Увеличил с 25 до 35
+        value: 45,
+        title: '45%',
+        radius: 40,
         titleStyle: const TextStyle(
-          fontSize: 12, // Увеличил с 10 до 12
+          fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
       PieChartSectionData(
         color: AppColors.dynamicYellow,
         value: 25,
         title: '25%',
-        radius: 35,
+        radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
       PieChartSectionData(
         color: AppColors.dynamicOrange,
-        value: 18,
-        title: '18%',
-        radius: 35,
+        value: 20,
+        title: '20%',
+        radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
-        ),
-      ),
-      PieChartSectionData(
-        color: AppColors.dynamicSuccess,
-        value: 15,
-        title: '15%',
-        radius: 35,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
       PieChartSectionData(
         color: AppColors.dynamicGray,
-        value: 7,
-        title: '7%',
-        radius: 35,
+        value: 10,
+        title: '10%',
+        radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
     ];
@@ -168,42 +164,29 @@ class ExpenseBreakdownChart extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 16,
-          height: 16,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.3),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.dynamicTextPrimary,
-                ),
-              ),
-              Text(
-                '$percentage%',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.dynamicTextSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.dynamicTextPrimary,
+            ),
+          ),
+        ),
+        Text(
+          '$percentage%',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.dynamicTextSecondary,
           ),
         ),
       ],

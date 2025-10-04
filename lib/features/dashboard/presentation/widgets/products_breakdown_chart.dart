@@ -7,100 +7,79 @@ class ProductsBreakdownChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Заголовок
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Категории продуктов',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.dynamicTextPrimary,
-                  ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.dynamicSurfaceVariant,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.dynamicBorder, width: 0.5),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Месяц',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.dynamicTextSecondary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 14,
-                    color: AppColors.dynamicTextSecondary,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        // Диаграмма и легенда
-        Row(
-          children: [
-            // Круговая диаграмма
-            Expanded(
-              flex: 4,
-              child: SizedBox(
-                height: 220, // Увеличил с 140 до 220
-                child: PieChart(
-                  PieChartData(
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        // Обработка касаний
-                      },
-                      enabled: true,
-                    ),
-                    borderData: FlBorderData(show: false),
-                    sectionsSpace: 2, // Увеличил с 1 до 2
-                    centerSpaceRadius: 35, // Увеличил с 25 до 35
-                    sections: _getPieChartSections(),
-                  ),
+    return Container(
+      height: 400,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Заголовок с иконкой
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.dynamicWarning.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.shopping_basket,
+                  color: AppColors.dynamicWarning,
+                  size: 20,
                 ),
               ),
-            ),
-
-            const SizedBox(width: 20), // Увеличил с 12 до 20
-
-            // Легенда
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLegendItem('Злаки', 28, AppColors.dynamicGreen),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Белки', 22, AppColors.dynamicYellow),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Фрукты', 20, AppColors.dynamicOrange),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Овощи', 15, AppColors.dynamicSuccess),
-                  const SizedBox(height: 12),
-                  _buildLegendItem('Молочные', 10, AppColors.dynamicGray),
-                ],
+              const SizedBox(width: 12),
+              Text(
+                'Категории продуктов',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.dynamicTextPrimary,
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: Row(
+              children: [
+                // Круговая диаграмма
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: PieChart(
+                      PieChartData(
+                        pieTouchData: PieTouchData(enabled: true),
+                        borderData: FlBorderData(show: false),
+                        sectionsSpace: 3,
+                        centerSpaceRadius: 50,
+                        sections: _getPieChartSections(),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // Легенда
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLegendItem('Овощи', 35, AppColors.dynamicGreen),
+                      const SizedBox(height: 16),
+                      _buildLegendItem('Фрукты', 25, AppColors.dynamicYellow),
+                      const SizedBox(height: 16),
+                      _buildLegendItem('Белки', 20, AppColors.dynamicOrange),
+                      const SizedBox(height: 16),
+                      _buildLegendItem('Зерновые', 20, AppColors.dynamicGray),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -108,57 +87,74 @@ class ProductsBreakdownChart extends StatelessWidget {
     return [
       PieChartSectionData(
         color: AppColors.dynamicGreen,
-        value: 28,
-        title: '28%',
-        radius: 35, // Увеличил с 25 до 35
-        titleStyle: const TextStyle(
-          fontSize: 12, // Увеличил с 10 до 12
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      PieChartSectionData(
-        color: AppColors.dynamicYellow,
-        value: 22,
-        title: '22%',
-        radius: 35,
+        value: 35,
+        title: '35%',
+        radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
+        ),
+      ),
+      PieChartSectionData(
+        color: AppColors.dynamicYellow,
+        value: 25,
+        title: '25%',
+        radius: 40,
+        titleStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
       PieChartSectionData(
         color: AppColors.dynamicOrange,
         value: 20,
         title: '20%',
-        radius: 35,
+        radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
-        ),
-      ),
-      PieChartSectionData(
-        color: AppColors.dynamicSuccess,
-        value: 15,
-        title: '15%',
-        radius: 35,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
       PieChartSectionData(
         color: AppColors.dynamicGray,
-        value: 10,
-        title: '10%',
-        radius: 35,
+        value: 20,
+        title: '20%',
+        radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
         ),
       ),
     ];
@@ -168,42 +164,29 @@ class ProductsBreakdownChart extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 16,
-          height: 16,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.3),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.dynamicTextPrimary,
-                ),
-              ),
-              Text(
-                '$percentage%',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.dynamicTextSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.dynamicTextPrimary,
+            ),
+          ),
+        ),
+        Text(
+          '$percentage%',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.dynamicTextSecondary,
           ),
         ),
       ],

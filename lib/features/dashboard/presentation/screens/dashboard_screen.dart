@@ -263,8 +263,32 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                               height:
                                   _getResponsiveSpacing(constraints.maxWidth)),
 
-                          // Диаграммы
-                          _buildChartsSection(),
+                          // Секция с диаграммами в стиле карточек
+                          Container(
+                            height: 400,
+                            decoration: BoxDecoration(
+                              color: AppColors.dynamicCard,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.dynamicShadow.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                  spreadRadius: 1,
+                                ),
+                                BoxShadow(
+                                  color: AppColors.dynamicSurface.withOpacity(0.5),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, -2),
+                                  spreadRadius: -1,
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: _getBreakdownChartWidget(),
+                            ),
+                          ),
                           SizedBox(
                               height:
                                   _getResponsiveSpacing(constraints.maxWidth)),
@@ -645,49 +669,161 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 600;
-        final isMediumScreen = constraints.maxWidth < 900;
 
-        return NutryCard(
-          backgroundColor: AppColors.dynamicCard,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius:
-                          BorderRadius.circular(isSmallScreen ? 6 : 8),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: isSmallScreen ? 16 : 20,
-                    ),
-                  ),
-                  SizedBox(width: isSmallScreen ? 8 : 12),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: (isSmallScreen
-                              ? DesignTokens.typography.titleSmallStyle
-                              : DesignTokens.typography.titleMediumStyle)
-                          .copyWith(
-                        color: AppColors.dynamicTextPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.dynamicCard,
+                AppColors.dynamicCard.withOpacity(0.8),
+              ],
+            ),
+            boxShadow: [
+              // Основная тень
+              BoxShadow(
+                color: AppColors.dynamicShadow.withOpacity(0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+                spreadRadius: 2,
               ),
-              SizedBox(height: isSmallScreen ? 12 : 16),
-              SizedBox(
-                height: isSmallScreen ? 200 : (isMediumScreen ? 250 : 300),
-                child: child,
+              // Цветная тень
+              BoxShadow(
+                color: color.withOpacity(0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 6),
+                spreadRadius: 1,
+              ),
+              // Внутренняя тень для объема
+              BoxShadow(
+                color: AppColors.dynamicSurface.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+                spreadRadius: -2,
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.dynamicCard.withOpacity(0.1),
+                    AppColors.dynamicCard,
+                  ],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Заголовок с иконкой
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                color.withOpacity(0.2),
+                                color.withOpacity(0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                                spreadRadius: 1,
+                              ),
+                              BoxShadow(
+                                color: AppColors.dynamicSurface.withOpacity(0.5),
+                                blurRadius: 4,
+                                offset: const Offset(0, -2),
+                                spreadRadius: -1,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            icon,
+                            color: color,
+                            size: isSmallScreen ? 20 : 24,
+                          ),
+                        ),
+                        SizedBox(width: isSmallScreen ? 12 : 16),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: (isSmallScreen
+                                    ? DesignTokens.typography.titleSmallStyle
+                                    : DesignTokens.typography.titleMediumStyle)
+                                .copyWith(
+                              color: AppColors.dynamicTextPrimary,
+                              fontWeight: FontWeight.w700,
+                              shadows: [
+                                Shadow(
+                                  color: AppColors.dynamicShadow.withOpacity(0.1),
+                                  blurRadius: 2,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: isSmallScreen ? 16 : 20),
+                    // Контейнер для графика с объемным эффектом
+                    SizedBox(
+                      height: 300, // Фиксированная высота вместо Expanded
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.dynamicSurface.withOpacity(0.3),
+                              AppColors.dynamicCard.withOpacity(0.5),
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.dynamicShadow.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                              spreadRadius: 1,
+                            ),
+                            BoxShadow(
+                              color: AppColors.dynamicSurface.withOpacity(0.8),
+                              blurRadius: 4,
+                              offset: const Offset(0, -2),
+                              spreadRadius: -1,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                          child: Padding(
+                            padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                            child: child,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -733,21 +869,21 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                           BorderRadius.circular(isSmallScreen ? 20 : 24),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.dynamicShadow.withValues(alpha: 0.2),
+                          color: AppColors.dynamicShadow.withOpacity(0.2),
                           blurRadius: isSmallScreen ? 24 : 32,
                           offset: const Offset(0, 12),
                           spreadRadius: 4,
                         ),
                         BoxShadow(
                           color:
-                              AppColors.dynamicShadow.withValues(alpha: 0.15),
+                              AppColors.dynamicShadow.withOpacity(0.15),
                           blurRadius: isSmallScreen ? 12 : 16,
                           offset: const Offset(0, 6),
                           spreadRadius: 2,
                         ),
                         BoxShadow(
                           color:
-                              AppColors.dynamicPrimary.withValues(alpha: 0.1),
+                              AppColors.dynamicPrimary.withOpacity(0.1),
                           blurRadius: isSmallScreen ? 8 : 12,
                           offset: const Offset(0, 4),
                           spreadRadius: 1,
@@ -816,11 +952,11 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                             Navigator.pushNamed(context, '/health-articles');
                             break;
                           case 'analytics':
-                            trackNavigation(
-                              fromScreen: AnalyticsUtils.screenDashboard,
-                              toScreen: AnalyticsUtils.screenAnalytics,
-                              navigationMethod: 'push',
-                            );
+                            // trackNavigation(
+                            //   fromScreen: AnalyticsUtils.screenDashboard,
+                            //   toScreen: AnalyticsUtils.screenAnalytics,
+                            //   navigationMethod: 'push',
+                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -829,11 +965,11 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                             );
                             break;
                           case 'grocery_list':
-                            trackNavigation(
-                              fromScreen: AnalyticsUtils.screenDashboard,
-                              toScreen: AnalyticsUtils.screenGroceryList,
-                              navigationMethod: 'push',
-                            );
+                            // trackNavigation(
+                            //   fromScreen: AnalyticsUtils.screenDashboard,
+                            //   toScreen: AnalyticsUtils.screenGroceryList,
+                            //   navigationMethod: 'push',
+                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -907,7 +1043,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
             curve: Curves.elasticOut,
             builder: (context, value, child) {
               return Transform.scale(
-                scale: (1.0 + (0.1 * value.clamp(0.0, 1.0))).clamp(0.5, 2.0),
+                scale: 1.0 + (0.1 * value),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
@@ -917,7 +1053,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                         BorderRadius.circular(isSmallScreen ? 14 : 18),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
+                        color: AppColors.dynamicPrimary.withOpacity(0.3),
                         blurRadius:
                             (12 + (8 * value.clamp(0.0, 1.0))).clamp(4.0, 20.0),
                         offset: Offset(0,
@@ -926,7 +1062,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                             (2 + (2 * value.clamp(0.0, 1.0))).clamp(0.0, 4.0),
                       ),
                       BoxShadow(
-                        color: AppColors.dynamicPrimary.withValues(alpha: 0.2),
+                        color: AppColors.dynamicPrimary.withOpacity(0.2),
                         blurRadius:
                             (6 + (4 * value.clamp(0.0, 1.0))).clamp(2.0, 10.0),
                         offset: Offset(0,
@@ -935,7 +1071,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                             (1 + (1 * value.clamp(0.0, 1.0))).clamp(0.0, 2.0),
                       ),
                       BoxShadow(
-                        color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
+                        color: AppColors.dynamicPrimary.withOpacity(0.1),
                         blurRadius:
                             (4 + (2 * value.clamp(0.0, 1.0))).clamp(2.0, 6.0),
                         offset: Offset(0,

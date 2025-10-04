@@ -58,7 +58,7 @@ class HeaderCard extends StatelessWidget {
         border: Border.all(color: AppColors.green, width: 2),
         boxShadow: [
           BoxShadow(
-            color: AppColors.green.withValues(alpha: 0.2),
+            color: AppColors.green.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -138,7 +138,7 @@ class HeaderCard extends StatelessWidget {
   Widget _buildEditButton(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.green.withValues(alpha: 0.1),
+        color: AppColors.green.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: IconButton(
@@ -198,9 +198,9 @@ class HeaderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -217,7 +217,7 @@ class HeaderCard extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 10,
-              color: color.withValues(alpha: 0.8),
+              color: color.withOpacity(0.8),
             ),
           ),
         ],
