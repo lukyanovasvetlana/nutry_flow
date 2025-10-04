@@ -156,8 +156,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                   border: isSelected
                       ? null
                       : Border.all(
-                          color: DesignTokens.colors.outline
-                              .withOpacity(0.1),
+                          color: DesignTokens.colors.outline.withOpacity(0.1),
                           width: DesignTokens.borders.thin,
                         ),
                 ),
@@ -216,8 +215,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                           fontSize: DesignTokens.typography.bodySmall,
                           fontWeight: DesignTokens.typography.medium,
                           color: isSelected
-                              ? DesignTokens.colors.onPrimary
-                                  .withOpacity(0.8)
+                              ? DesignTokens.colors.onPrimary.withOpacity(0.8)
                               : DesignTokens.colors.onSurfaceVariant,
                         ),
                       ),
@@ -395,16 +393,15 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                         Icon(
                           greetingIcon,
                           size: DesignTokens.spacing.iconSmall,
-                          color: DesignTokens.colors.onPrimary
-                              .withOpacity(0.8),
+                          color: DesignTokens.colors.onPrimary.withOpacity(0.8),
                         ),
                         SizedBox(width: DesignTokens.spacing.xs),
                         Text(
                           greeting,
                           style: TextStyle(
                             fontSize: DesignTokens.typography.bodyMedium,
-                            color: DesignTokens.colors.onPrimary
-                                .withOpacity(0.8),
+                            color:
+                                DesignTokens.colors.onPrimary.withOpacity(0.8),
                             fontWeight: DesignTokens.typography.medium,
                           ),
                         ),
@@ -424,8 +421,7 @@ class _EnhancedWelcomeCardState extends State<EnhancedWelcomeCard>
                       'Готовы к новому дню здорового питания?',
                       style: TextStyle(
                         fontSize: DesignTokens.typography.bodySmall,
-                        color: DesignTokens.colors.onPrimary
-                            .withOpacity(0.7),
+                        color: DesignTokens.colors.onPrimary.withOpacity(0.7),
                         fontWeight: DesignTokens.typography.regular,
                       ),
                     ),

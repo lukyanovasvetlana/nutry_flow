@@ -271,13 +271,15 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.dynamicShadow.withOpacity(0.1),
+                                  color:
+                                      AppColors.dynamicShadow.withOpacity(0.1),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                   spreadRadius: 1,
                                 ),
                                 BoxShadow(
-                                  color: AppColors.dynamicSurface.withOpacity(0.5),
+                                  color:
+                                      AppColors.dynamicSurface.withOpacity(0.5),
                                   blurRadius: 4,
                                   offset: const Offset(0, -2),
                                   spreadRadius: -1,
@@ -432,55 +434,6 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     );
   }
 
-  /// Строит секцию с графиками и диаграммами
-  ///
-  /// Включает:
-  /// - Заголовок "Аналитика питания"
-  /// - Основную диаграмму (стоимость/продукты/калории)
-  /// - Круговую диаграмму для детализации
-  ///
-  /// Returns виджет секции с графиками
-  Widget _buildChartsSection() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isSmallScreen = constraints.maxWidth < 600;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Аналитика питания',
-              style: (isSmallScreen
-                      ? DesignTokens.typography.titleMediumStyle
-                      : DesignTokens.typography.titleLargeStyle)
-                  .copyWith(
-                color: AppColors.dynamicTextPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: isSmallScreen ? 12 : 16),
-
-            // Основная диаграмма в зависимости от выбранной карточки
-            _buildChartCard(
-              title: _getChartTitle(),
-              icon: _getChartIcon(),
-              color: _getChartColor(),
-              child: _getChartWidget(),
-            ),
-            SizedBox(height: isSmallScreen ? 12 : 16),
-
-            // Круговая диаграмма для детализации
-            _buildChartCard(
-              title: _getBreakdownChartTitle(),
-              icon: _getBreakdownChartIcon(),
-              color: _getBreakdownChartColor(),
-              child: _getBreakdownChartWidget(),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   /// Возвращает заголовок для основного графика на основе выбранного индекса
   ///
@@ -737,7 +690,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                                 color.withOpacity(0.1),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+                            borderRadius:
+                                BorderRadius.circular(isSmallScreen ? 10 : 12),
                             boxShadow: [
                               BoxShadow(
                                 color: color.withOpacity(0.3),
@@ -746,7 +700,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                                 spreadRadius: 1,
                               ),
                               BoxShadow(
-                                color: AppColors.dynamicSurface.withOpacity(0.5),
+                                color:
+                                    AppColors.dynamicSurface.withOpacity(0.5),
                                 blurRadius: 4,
                                 offset: const Offset(0, -2),
                                 spreadRadius: -1,
@@ -771,7 +726,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                               fontWeight: FontWeight.w700,
                               shadows: [
                                 Shadow(
-                                  color: AppColors.dynamicShadow.withOpacity(0.1),
+                                  color:
+                                      AppColors.dynamicShadow.withOpacity(0.1),
                                   blurRadius: 2,
                                   offset: const Offset(0, 1),
                                 ),
@@ -787,7 +743,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                       height: 300, // Фиксированная высота вместо Expanded
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                          borderRadius:
+                              BorderRadius.circular(isSmallScreen ? 12 : 16),
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -812,7 +769,8 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                           ],
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                          borderRadius:
+                              BorderRadius.circular(isSmallScreen ? 12 : 16),
                           child: Padding(
                             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                             child: child,
@@ -875,15 +833,13 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                           spreadRadius: 4,
                         ),
                         BoxShadow(
-                          color:
-                              AppColors.dynamicShadow.withOpacity(0.15),
+                          color: AppColors.dynamicShadow.withOpacity(0.15),
                           blurRadius: isSmallScreen ? 12 : 16,
                           offset: const Offset(0, 6),
                           spreadRadius: 2,
                         ),
                         BoxShadow(
-                          color:
-                              AppColors.dynamicPrimary.withOpacity(0.1),
+                          color: AppColors.dynamicPrimary.withOpacity(0.1),
                           blurRadius: isSmallScreen ? 8 : 12,
                           offset: const Offset(0, 4),
                           spreadRadius: 1,
@@ -1082,7 +1038,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
                   ),
                   child: AnimatedRotation(
                     duration: const Duration(milliseconds: 200),
-                    turns: (value.clamp(0.0, 1.0) * 0.05).clamp(-0.1, 0.1),
+                    turns: value * 0.05,
                     child: Icon(
                       Icons.menu,
                       color: AppColors.dynamicOnPrimary,

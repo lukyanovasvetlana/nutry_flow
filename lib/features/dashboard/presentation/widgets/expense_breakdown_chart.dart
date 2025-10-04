@@ -32,9 +32,9 @@ class ExpenseBreakdownChart extends StatelessWidget {
               Text(
                 'Структура расходов',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.dynamicTextPrimary,
-                ),
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.dynamicTextPrimary,
+                    ),
               ),
             ],
           ),
@@ -67,7 +67,8 @@ class ExpenseBreakdownChart extends StatelessWidget {
                     children: [
                       _buildLegendItem('Продукты', 45, AppColors.dynamicGreen),
                       const SizedBox(height: 16),
-                      _buildLegendItem('Рестораны', 25, AppColors.dynamicYellow),
+                      _buildLegendItem(
+                          'Рестораны', 25, AppColors.dynamicYellow),
                       const SizedBox(height: 16),
                       _buildLegendItem('Доставка', 20, AppColors.dynamicOrange),
                       const SizedBox(height: 16),

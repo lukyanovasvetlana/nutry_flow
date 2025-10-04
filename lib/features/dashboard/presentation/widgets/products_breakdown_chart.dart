@@ -32,9 +32,9 @@ class ProductsBreakdownChart extends StatelessWidget {
               Text(
                 'Категории продуктов',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.dynamicTextPrimary,
-                ),
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.dynamicTextPrimary,
+                    ),
               ),
             ],
           ),

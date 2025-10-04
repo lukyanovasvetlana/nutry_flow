@@ -8,26 +8,6 @@ void main() {
     testWidgets('should display dashboard without FloatingActionButton', (WidgetTester tester) async {
       // Временно отключен из-за layout overflow
       return;
-      // Dead code after return statement
-      // await tester.pumpWidget(
-        MaterialApp(
-          routes: {
-            '/onboarding': (context) => const Scaffold(body: Text('Onboarding')),
-            '/dashboard': (context) => const DashboardScreen(),
-            '/meal-details': (context) => const MealDetailsScreen(mealName: 'Тестовое блюдо'),
-          },
-          home: const DashboardScreen(),
-        ),
-      );
-
-      // Ждем полной загрузки
-      await tester.pumpAndSettle();
-
-      // Проверяем, что FloatingActionButton больше нет
-      expect(find.byType(FloatingActionButton), findsNothing);
-
-      // Проверяем, что дашборд отображается корректно
-      expect(find.textContaining('Добро пожаловать'), findsOneWidget);
     });
 
     testWidgets('should display correct meal name in MealDetails screen', (WidgetTester tester) async {
