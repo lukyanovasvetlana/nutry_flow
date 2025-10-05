@@ -434,7 +434,6 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
     );
   }
 
-
   /// Возвращает заголовок для основного графика на основе выбранного индекса
   ///
   /// [selectedChartIndex] определяет тип отображаемого графика:

@@ -86,78 +86,149 @@ class ProductsBreakdownChart extends StatelessWidget {
   List<PieChartSectionData> _getPieChartSections() {
     return [
       PieChartSectionData(
-        color: AppColors.dynamicGreen,
+        color: _createVolumetricColor(AppColors.dynamicGreen),
         value: 35,
         title: '35%',
-        radius: 40,
+        radius: 45,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: [
             Shadow(
-              color: Colors.black26,
-              blurRadius: 2,
-              offset: Offset(1, 1),
+              color: Colors.black38,
+              blurRadius: 3,
+              offset: Offset(1, 2),
             ),
+            Shadow(
+              color: Colors.black12,
+              blurRadius: 1,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _lightenColor(AppColors.dynamicGreen, 0.3),
+            AppColors.dynamicGreen,
+            _darkenColor(AppColors.dynamicGreen, 0.2),
           ],
         ),
       ),
       PieChartSectionData(
-        color: AppColors.dynamicYellow,
+        color: _createVolumetricColor(AppColors.dynamicYellow),
         value: 25,
         title: '25%',
-        radius: 40,
+        radius: 45,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: [
             Shadow(
-              color: Colors.black26,
-              blurRadius: 2,
-              offset: Offset(1, 1),
+              color: Colors.black38,
+              blurRadius: 3,
+              offset: Offset(1, 2),
             ),
+            Shadow(
+              color: Colors.black12,
+              blurRadius: 1,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _lightenColor(AppColors.dynamicYellow, 0.3),
+            AppColors.dynamicYellow,
+            _darkenColor(AppColors.dynamicYellow, 0.2),
           ],
         ),
       ),
       PieChartSectionData(
-        color: AppColors.dynamicOrange,
+        color: _createVolumetricColor(AppColors.dynamicOrange),
         value: 20,
         title: '20%',
-        radius: 40,
+        radius: 45,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: [
             Shadow(
-              color: Colors.black26,
-              blurRadius: 2,
-              offset: Offset(1, 1),
+              color: Colors.black38,
+              blurRadius: 3,
+              offset: Offset(1, 2),
             ),
+            Shadow(
+              color: Colors.black12,
+              blurRadius: 1,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _lightenColor(AppColors.dynamicOrange, 0.3),
+            AppColors.dynamicOrange,
+            _darkenColor(AppColors.dynamicOrange, 0.2),
           ],
         ),
       ),
       PieChartSectionData(
-        color: AppColors.dynamicGray,
+        color: _createVolumetricColor(AppColors.dynamicGray),
         value: 20,
         title: '20%',
-        radius: 40,
+        radius: 45,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: [
             Shadow(
-              color: Colors.black26,
-              blurRadius: 2,
-              offset: Offset(1, 1),
+              color: Colors.black38,
+              blurRadius: 3,
+              offset: Offset(1, 2),
             ),
+            Shadow(
+              color: Colors.black12,
+              blurRadius: 1,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _lightenColor(AppColors.dynamicGray, 0.3),
+            AppColors.dynamicGray,
+            _darkenColor(AppColors.dynamicGray, 0.2),
           ],
         ),
       ),
     ];
+  }
+
+  /// Создает объемный цвет с эффектом глубины
+  Color _createVolumetricColor(Color baseColor) {
+    return Color.lerp(baseColor, Colors.black, 0.1) ?? baseColor;
+  }
+
+  /// Осветляет цвет для создания градиента
+  Color _lightenColor(Color color, double amount) {
+    return Color.lerp(color, Colors.white, amount) ?? color;
+  }
+
+  /// Затемняет цвет для создания градиента
+  Color _darkenColor(Color color, double amount) {
+    return Color.lerp(color, Colors.black, amount) ?? color;
   }
 
   Widget _buildLegendItem(String label, int percentage, Color color) {

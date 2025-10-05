@@ -9,6 +9,9 @@ class AppColorsDark {
   static const green = Color(0xFF22C55E); // Яркий зеленый
   static const yellow = Color(0xFFFBBF24); // Яркий желтый
   static const orange = Color(0xFFF59E0B); // Яркий оранжевый
+  static const blue = Color(0xFF60A5FA); // Яркий синий
+  static const purple = Color(0xFFA855F7); // Яркий фиолетовый
+  static const teal = Color(0xFF20D9D2); // Яркий бирюзовый
   static const button = Color(0xFF4ADE80); // Цвет кнопок (зеленый)
   static const gray = Color(0xFFA855F7); // Яркий фиолетовый (лавандовый)
 

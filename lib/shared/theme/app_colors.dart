@@ -10,6 +10,9 @@ class AppColors {
   static const green = Color(0xFFC2E66E);
   static const yellow = Color(0xFFFFCB65);
   static const orange = Color(0xFFFFA257);
+  static const blue = Color(0xFF3B82F6); // Синий цвет
+  static const purple = Color(0xFF8B5CF6); // Фиолетовый цвет
+  static const teal = Color(0xFF14B8A6); // Бирюзовый цвет
   static const button = Color(0xFF4CAF50); // Цвет кнопок
   static const gray = Color(0xFFB39DDB); // Лавандовый цвет
 
@@ -44,6 +47,9 @@ class AppColors {
   static Color get dynamicGreen => _isDarkMode ? AppColorsDark.green : green;
   static Color get dynamicYellow => _isDarkMode ? AppColorsDark.yellow : yellow;
   static Color get dynamicOrange => _isDarkMode ? AppColorsDark.orange : orange;
+  static Color get dynamicBlue => _isDarkMode ? AppColorsDark.blue : blue;
+  static Color get dynamicPurple => _isDarkMode ? AppColorsDark.purple : purple;
+  static Color get dynamicTeal => _isDarkMode ? AppColorsDark.teal : teal;
   static Color get dynamicButton => _isDarkMode ? AppColorsDark.button : button;
   static Color get dynamicGray => _isDarkMode ? AppColorsDark.gray : gray;
 
