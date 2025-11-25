@@ -243,9 +243,10 @@ void main() {
     });
 
     group('Edge Cases', () {
-      test('should handle null search query gracefully', () {
+      test('should handle empty search query', () {
         // Act & Assert
-        expect(() => ExerciseService.searchExercises(null), throwsA(isA<TypeError>()));
+        final result = ExerciseService.searchExercises('');
+        expect(result, isA<List<Exercise>>());
       });
 
       test('should handle very long search query', () {

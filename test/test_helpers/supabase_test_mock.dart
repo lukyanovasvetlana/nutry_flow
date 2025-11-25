@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:nutry_flow/test/mocks/mock_shared_preferences.dart';
+import '../../test/mocks/mock_shared_preferences.dart';
 
 /// Мок для Supabase в тестах
 /// 
@@ -12,12 +12,11 @@ class SupabaseTestMock {
   /// Инициализация мока
   static Future<void> initialize() async {
     if (_isInitialized) return;
-      // Dead code after return statement
     // Инициализируем мок SharedPreferences
     MockSharedPreferences.initialize();
 
     // Создаем мок клиента
-    _mockClient = MockSupabaseClient();
+    // _mockClient = MockSupabaseClient(); // Закомментировано из-за проблем с наследованием
 
     _isInitialized = true;
   }
@@ -36,6 +35,9 @@ class SupabaseTestMock {
   }
 }
 
+// Моки для Supabase классов закомментированы из-за проблем с наследованием
+// Используйте MockSupabase из test/mocks/mock_supabase.dart вместо этого
+/*
 /// Мок для SupabaseClient
 class MockSupabaseClient extends SupabaseClient {
   MockSupabaseClient() : super('', '');
@@ -84,7 +86,6 @@ class MockSupabaseAuth extends SupabaseAuth {
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
         expiresIn: 3600,
-        expiresAt: DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch,
         tokenType: 'bearer',
         user: user,
       ),
@@ -111,7 +112,6 @@ class MockSupabaseAuth extends SupabaseAuth {
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
         expiresIn: 3600,
-        expiresAt: DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch,
         tokenType: 'bearer',
         user: user,
       ),
@@ -143,3 +143,4 @@ class MockSupabaseStorageClient extends SupabaseStorageClient {
 class MockSupabasePostgrestClient extends SupabasePostgrestClient {
   MockSupabasePostgrestClient() : super(MockSupabaseClient());
 }
+*/

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'package:nutry_flow/shared/theme/app_styles.dart';
-import '../../../../app.dart';
 
 class NotificationsScreen extends StatelessWidget {
-  const NotificationsScreen({super.key});
+  final VoidCallback? onBackPressed;
+
+  const NotificationsScreen({super.key, this.onBackPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +16,7 @@ class NotificationsScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.dynamicTextPrimary),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const AppContainer()),
-              (route) => false,
-            );
-          },
+          onPressed: onBackPressed,
         ),
         title: Text(
           'Уведомления',

@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:nutry_flow/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:nutry_flow/features/profile/data/services/profile_service.dart';
-import 'package:nutry_flow/shared/design/components/cards/nutry_card.dart';
 
 /// Интеграционные тесты для DashboardScreen
 /// 
@@ -16,8 +11,9 @@ void main() {
     test('should be disabled temporarily', () {
       expect(true, isTrue);
     });
-    return; // Отключаем все тесты
-      // Dead code after return statement    late MockProfileService profileService;
+    // Отключены все тесты ниже
+    /*
+    late MockProfileService profileService;
 
     setUp(() {
       // Инициализируем SharedPreferences
@@ -396,5 +392,6 @@ void main() {
         await tester.binding.setSurfaceSize(null);
       });
     });
+    */
   });
 }

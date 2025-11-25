@@ -33,7 +33,6 @@ class MockSupabaseAuth {
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
         expiresIn: 3600,
-        expiresAt: DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch,
         tokenType: 'bearer',
         user: _currentUser!,
       ),
@@ -59,7 +58,6 @@ class MockSupabaseAuth {
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
         expiresIn: 3600,
-        expiresAt: DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch,
         tokenType: 'bearer',
         user: _currentUser!,
       ),
@@ -83,7 +81,7 @@ class MockSupabase {
 
   final MockSupabaseAuth _auth = MockSupabaseAuth();
 
-  SupabaseAuth get auth => _auth as SupabaseAuth;
+  MockSupabaseAuth get auth => _auth;
 }
 
 /// Расширение для MockSupabaseAuth чтобы соответствовать SupabaseAuth

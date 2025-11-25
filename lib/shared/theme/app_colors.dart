@@ -118,3 +118,26 @@ class AppColors {
     }
   }
 }
+
+/// Extension для получения динамических цветов через BuildContext
+/// Это гарантирует, что виджеты перестраиваются при изменении темы
+extension AppColorsContextExtension on BuildContext {
+  /// Получить динамический цвет через Theme.of(context)
+  /// Это гарантирует автоматическое обновление при изменении темы
+  Color get dynamicTextPrimary => Theme.of(this).colorScheme.onSurface;
+  Color get dynamicTextSecondary => Theme.of(this).colorScheme.onSurfaceVariant;
+  Color get dynamicTextTertiary => Theme.of(this).colorScheme.outline;
+  Color get dynamicPrimary => Theme.of(this).colorScheme.primary;
+  Color get dynamicSecondary => Theme.of(this).colorScheme.secondary;
+  Color get dynamicBackground => Theme.of(this).scaffoldBackgroundColor;
+  Color get dynamicSurface =>
+      Theme.of(this).cardTheme.color ?? Theme.of(this).colorScheme.surface;
+  Color get dynamicError => Theme.of(this).colorScheme.error;
+  Color get dynamicSuccess =>
+      AppColors.dynamicSuccess; // Используем статический геттер
+  Color get dynamicWarning => AppColors.dynamicWarning;
+  Color get dynamicInfo => AppColors.dynamicInfo;
+  Color get dynamicBorder => Theme.of(this).dividerColor;
+  Color get dynamicCard =>
+      Theme.of(this).cardTheme.color ?? Theme.of(this).colorScheme.surface;
+}

@@ -29,7 +29,7 @@ class StatsOverview extends StatelessWidget {
               0,
             ),
           ),
-          const SizedBox(width: 4), // Уменьшил с 8 до 4
+          const SizedBox(width: 8),
           Expanded(
             child: _buildStatCard(
               context,
@@ -41,7 +41,7 @@ class StatsOverview extends StatelessWidget {
               1,
             ),
           ),
-          const SizedBox(width: 4), // Уменьшил с 8 до 4
+          const SizedBox(width: 8),
           Expanded(
             child: _buildStatCard(
               context,
@@ -73,7 +73,7 @@ class StatsOverview extends StatelessWidget {
     return GestureDetector(
       onTap: () => onCardTap(index),
       child: Container(
-        padding: const EdgeInsets.all(8), // Уменьшил с 12 до 8
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.dynamicCard,
           borderRadius: BorderRadius.circular(12),
@@ -95,63 +95,67 @@ class StatsOverview extends StatelessWidget {
           children: [
             // Иконка и изменение
             Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(4), // Уменьшил с 6 до 4
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     color: color.withOpacity(isSelected ? 0.2 : 0.1),
-                    borderRadius: BorderRadius.circular(6), // Уменьшил с 8 до 6
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon,
                     color: color,
-                    size: 16, // Уменьшил с 18 до 16
+                    size: 16,
                   ),
                 ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 4, vertical: 1), // Уменьшил отступы
-                  decoration: BoxDecoration(
-                    color: isPositive
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.red.withOpacity(0.1),
-                    borderRadius:
-                        BorderRadius.circular(8), // Уменьшил с 10 до 8
-                  ),
-                  child: Text(
-                    change,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 9, // Уменьшил с 10 до 9
-                      fontWeight: FontWeight.bold,
-                      color: isPositive ? Colors.green : Colors.red,
+                Flexible(
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isPositive
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      change,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: isPositive ? Colors.green : Colors.red,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 3), // Уменьшил с 4 до 3
+            const SizedBox(height: 4),
 
             // Заголовок и значение
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.dynamicTextSecondary,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10, // Уменьшил с 11 до 10
-                      ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Flexible(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.dynamicTextSecondary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-
-                const SizedBox(height: 2), // Уменьшил с 4 до 2
-
+                const SizedBox(height: 3),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
@@ -160,7 +164,7 @@ class StatsOverview extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.dynamicTextPrimary,
-                          fontSize: 14, // Уменьшил с 16 до 14
+                          fontSize: 15,
                         ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

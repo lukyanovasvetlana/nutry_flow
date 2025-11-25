@@ -35,8 +35,8 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                   ThemeManager().themeIcon,
                   color: Theme.of(context).appBarTheme.foregroundColor,
                 ),
-                onPressed: () async {
-                  await ThemeManager().toggleTheme();
+                onPressed: () {
+                  ThemeManager().toggleTheme();
                 },
               ),
             ],
@@ -84,8 +84,8 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
               Expanded(
                 child: NutryButton.outline(
                   text: 'Светлая тема',
-                  onPressed: () async {
-                    await ThemeManager().setTheme(ThemeMode.light);
+                  onPressed: () {
+                    ThemeManager().setTheme(ThemeMode.light);
                   },
                 ),
               ),
@@ -93,8 +93,8 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
               Expanded(
                 child: NutryButton.outline(
                   text: 'Темная тема',
-                  onPressed: () async {
-                    await ThemeManager().setTheme(ThemeMode.dark);
+                  onPressed: () {
+                    ThemeManager().setTheme(ThemeMode.dark);
                   },
                 ),
               ),
@@ -133,8 +133,8 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
             ),
             trailing: Switch(
               value: ThemeManager().isDarkMode,
-              onChanged: (value) async {
-                await ThemeManager().toggleTheme();
+              onChanged: (value) {
+                ThemeManager().toggleTheme();
               },
               activeThumbColor: Theme.of(context).primaryColor,
               activeTrackColor: Theme.of(context).colorScheme.primaryContainer,

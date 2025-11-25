@@ -87,9 +87,8 @@ void main() {
 
       testWidgets('should handle multiple taps', (WidgetTester tester) async {
         // Arrange
-        var tapCount = 0;
         mockOnBarcodeScanned = (barcode) {
-          tapCount++;
+          // Handle barcode scan
         };
         final widget = createWidgetUnderTest();
 

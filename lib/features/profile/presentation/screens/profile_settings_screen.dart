@@ -130,13 +130,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       ? 'Используется тёмная тема приложения'
                       : 'Использовать тёмную тему приложения',
                   value: _isDarkMode,
-                  onChanged: (value) async {
+                  onChanged: (value) {
                     setState(() {
                       _isDarkMode = value;
                     });
 
                     // Переключение темы через ThemeManager
-                    await ThemeManager().toggleTheme();
+                    ThemeManager().toggleTheme();
 
                     // Показать уведомление
                     ScaffoldMessenger.of(context).showSnackBar(

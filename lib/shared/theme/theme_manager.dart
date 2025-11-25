@@ -58,11 +58,11 @@ class ThemeManager extends ChangeNotifier {
     _currentTheme = newTheme;
     ThemeTokens.currentTheme = _currentTheme;
 
-    // Сохраняем в SharedPreferences
-    await _saveThemeToStorage();
-
-    // Уведомляем о изменении темы
+    // Уведомляем о изменении темы СРАЗУ (синхронно)
     notifyListeners();
+
+    // Сохраняем в SharedPreferences в фоне (не блокируем UI)
+    _saveThemeToStorage();
   }
 
   /// Установить конкретную тему
@@ -73,11 +73,11 @@ class ThemeManager extends ChangeNotifier {
     // Обновляем ThemeTokens
     ThemeTokens.currentTheme = _currentTheme;
 
-    // Сохраняем в SharedPreferences
-    await _saveThemeToStorage();
-
-    // Уведомляем о изменении темы
+    // Уведомляем о изменении темы СРАЗУ (синхронно)
     notifyListeners();
+
+    // Сохраняем в SharedPreferences в фоне (не блокируем UI)
+    _saveThemeToStorage();
   }
 
   /// Сохранить тему в SharedPreferences

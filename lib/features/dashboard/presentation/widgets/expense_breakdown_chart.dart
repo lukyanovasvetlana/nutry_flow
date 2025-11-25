@@ -29,12 +29,16 @@ class ExpenseBreakdownChart extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'Структура расходов',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.dynamicTextPrimary,
-                    ),
+              Flexible(
+                child: Text(
+                  'Питание и калории',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.dynamicTextPrimary,
+                      ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

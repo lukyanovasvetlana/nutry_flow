@@ -87,6 +87,12 @@ class MockSharedPreferencesImpl implements SharedPreferences {
   }
 
   @override
+  List<String>? getStringList(String key) {
+    final value = MockSharedPreferences._storage[key];
+    return value is List<String> ? value : null;
+  }
+
+  @override
   Future<bool> setBool(String key, bool value) async {
     MockSharedPreferences._storage[key] = value;
     return true;
@@ -117,6 +123,12 @@ class MockSharedPreferencesImpl implements SharedPreferences {
   }
 
   @override
+  Future<bool> setStringList(String key, List<String> value) async {
+    MockSharedPreferences._storage[key] = value;
+    return true;
+  }
+
+  @override
   Future<bool> remove(String key) async {
     MockSharedPreferences._storage.remove(key);
     return true;
@@ -134,7 +146,8 @@ class MockSharedPreferencesImpl implements SharedPreferences {
   }
 
   @override
-  Future<void> commit() async {
+  Future<bool> commit() async {
     // Mock implementation - no-op
+    return true;
   }
 }

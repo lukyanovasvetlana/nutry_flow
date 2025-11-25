@@ -3,9 +3,11 @@ import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:nutry_flow/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:nutry_flow/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:nutry_flow/features/meal_plan/presentation/screens/meal_plan_screen.dart';
+import 'package:nutry_flow/features/exercise/presentation/screens/exercise_screen_redesigned.dart';
 
 import 'package:nutry_flow/shared/theme/app_styles.dart';
 import 'package:nutry_flow/shared/theme/theme_manager.dart';
+import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class AppContainer extends StatefulWidget {
   const AppContainer({super.key});
@@ -17,36 +19,55 @@ class AppContainer extends StatefulWidget {
 class _AppContainerState extends State<AppContainer> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _screens = <Widget>[
-    const DashboardScreen(),
-    const CalendarScreen(),
-    const NotificationsScreen(),
-    const MealPlanScreen(),
-  ];
+  List<Widget> _buildScreens() {
+    return <Widget>[
+      const DashboardScreen(),
+      const CalendarScreen(),
+      ExerciseScreenRedesigned(
+        key: const ValueKey('exercise_screen'),
+        onBackPressed: () {
+          if (mounted) {
+            setState(() {
+              _selectedIndex = 0; // Переключаем на дашборд
+            });
+          }
+        },
+      ),
+      NotificationsScreen(
+        key: const ValueKey('notifications_screen'),
+        onBackPressed: () {
+          if (mounted) {
+            setState(() {
+              _selectedIndex = 0; // Переключаем на дашборд
+            });
+          }
+        },
+      ),
+      const MealPlanScreen(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: ThemeManager(),
-      builder: (context, child) {
-        final currentTheme = ThemeManager().currentTheme;
+    final themeManager = ThemeManager();
 
-        return AnimatedSwitcher(
-          key: ValueKey('app-content-${currentTheme.name}'),
+    return ListenableBuilder(
+      listenable: themeManager,
+      builder: (context, child) {
+        return AnimatedTheme(
+          data: themeManager.currentTheme == ThemeMode.dark
+              ? themeManager.darkTheme
+              : themeManager.lightTheme,
           duration: const Duration(milliseconds: 150),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          child: _buildMainScreen(),
+          child: _buildMainScreen(themeManager),
         );
       },
     );
   }
 
-  Widget _buildMainScreen() {
+  Widget _buildMainScreen(ThemeManager themeManager) {
+    final currentTheme = themeManager.currentTheme;
+
     return Scaffold(
       appBar: _selectedIndex == 0
           ? AppBar(
@@ -60,54 +81,180 @@ class _AppContainerState extends State<AppContainer> {
               ),
               centerTitle: false,
               actions: [
-                IconButton(
-                  icon: Icon(
-                    ThemeManager().themeIcon,
-                    color: Theme.of(context).appBarTheme.foregroundColor,
-                  ),
-                  onPressed: () async {
-                    await ThemeManager().toggleTheme();
+                ListenableBuilder(
+                  listenable: themeManager,
+                  builder: (context, child) {
+                    return IconButton(
+                      icon: Icon(
+                        themeManager.themeIcon,
+                        color: Theme.of(context).appBarTheme.foregroundColor,
+                      ),
+                      onPressed: () {
+                        themeManager.toggleTheme();
+                      },
+                    );
                   },
                 ),
               ],
             )
           : null,
       body: IndexedStack(
+        key: ValueKey('indexed_stack_${_selectedIndex}_${currentTheme.name}'),
         index: _selectedIndex,
-        children: _screens,
+        children: _buildScreens(),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Главная',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Календарь',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Уведомления',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'План питания',
+      bottomNavigationBar: _buildCustomBottomNavBar(context),
+    );
+  }
+
+  Widget _buildCustomBottomNavBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final selectedColor =
+        theme.bottomNavigationBarTheme.selectedItemColor ?? AppColors.primary;
+    final unselectedColor =
+        theme.bottomNavigationBarTheme.unselectedItemColor ?? Colors.grey;
+    final backgroundColor = theme.bottomNavigationBarTheme.backgroundColor ??
+        theme.scaffoldBackgroundColor;
+
+    return Container(
+      height: 80,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
           ),
         ],
-        currentIndex: _selectedIndex,
-        backgroundColor:
-            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-        selectedItemColor:
-            Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
-        unselectedItemColor:
-            Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
-        onTap: (index) {
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Индекс 0: Главная
+          _buildNavItem(
+            context: context,
+            icon: Icons.dashboard,
+            label: 'Главная',
+            index: 0,
+            selectedColor: selectedColor,
+            unselectedColor: unselectedColor,
+          ),
+          // Индекс 1: Календарь
+          _buildNavItem(
+            context: context,
+            icon: Icons.calendar_today,
+            label: 'Календарь',
+            index: 1,
+            selectedColor: selectedColor,
+            unselectedColor: unselectedColor,
+          ),
+          // Индекс 2: Упражнения (кнопка +)
+          _buildCenterButton(context, selectedColor),
+          // Индекс 3: Уведомления
+          _buildNavItem(
+            context: context,
+            icon: Icons.notifications,
+            label: 'Уведомления',
+            index: 3,
+            selectedColor: selectedColor,
+            unselectedColor: unselectedColor,
+          ),
+          // Индекс 4: Питание
+          _buildNavItem(
+            context: context,
+            icon: Icons.restaurant_menu,
+            label: 'Питание',
+            index: 4,
+            selectedColor: selectedColor,
+            unselectedColor: unselectedColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required int index,
+    required Color selectedColor,
+    required Color unselectedColor,
+  }) {
+    final isSelected = _selectedIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
           setState(() {
             _selectedIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? selectedColor : unselectedColor,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isSelected ? selectedColor : unselectedColor,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCenterButton(BuildContext context, Color selectedColor) {
+    final isSelected = _selectedIndex == 2;
+    return Expanded(
+      key: const ValueKey('exercise_button'),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedIndex = 2; // Упражнения - ExerciseScreenRedesigned
+          });
+        },
+        child: Center(
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? selectedColor
+                  : selectedColor.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: selectedColor.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Icon(
+              Icons.add,
+              color: isSelected ? Colors.white : selectedColor,
+              size: 28,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -119,9 +266,9 @@ class _PeriodDropdown extends StatefulWidget {
 }
 
 class _PeriodDropdownState extends State<_PeriodDropdown> {
-  String month = 'Сентябрь';
+  String month = 'September';
   String year = '2025';
-  String week = 'Неделя 2';
+  String week = 'Week 2';
 
   @override
   Widget build(BuildContext context) {
@@ -130,18 +277,18 @@ class _PeriodDropdownState extends State<_PeriodDropdown> {
         DropdownButton<String>(
           value: month,
           items: [
-            'Январь',
-            'Февраль',
-            'Март',
-            'Апрель',
-            'Май',
-            'Июнь',
-            'Июль',
-            'Август',
-            'Сентябрь',
-            'Октябрь',
-            'Ноябрь',
-            'Декабрь'
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
           ].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
           onChanged: (v) => setState(() => month = v!),
         ),
@@ -156,7 +303,7 @@ class _PeriodDropdownState extends State<_PeriodDropdown> {
         SizedBox(width: 4),
         DropdownButton<String>(
           value: week,
-          items: List.generate(12, (i) => 'Неделя ${i + 1}')
+          items: List.generate(12, (i) => 'Week ${i + 1}')
               .map((w) => DropdownMenuItem(value: w, child: Text(w)))
               .toList(),
           onChanged: (v) => setState(() => week = v!),

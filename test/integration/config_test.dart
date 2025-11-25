@@ -20,7 +20,7 @@ void main() {
           // Если и .env.real не найден, пропускаем тесты
           print('⚠️ No .env files found, skipping config tests');
           return;
-      // Dead code after return statement        }
+        }
       }
     });
 

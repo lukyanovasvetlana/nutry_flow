@@ -80,7 +80,7 @@ class GroceryListScreen extends StatelessWidget {
                 color: AppColors.dynamicSurface,
                 alignment: Alignment.center,
                 child: Text(
-                  'Структура расходов (диаграмма)',
+                  'Питание и калории (диаграмма)',
                   style: TextStyle(
                     color: AppColors.dynamicTextSecondary,
                   ),

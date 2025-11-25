@@ -4,7 +4,9 @@ import '../../../../shared/design/components/buttons/nutry_button.dart';
 import '../../../../shared/theme/app_colors.dart';
 
 class ExerciseScreenRedesigned extends StatefulWidget {
-  const ExerciseScreenRedesigned({super.key});
+  final VoidCallback? onBackPressed;
+
+  const ExerciseScreenRedesigned({super.key, this.onBackPressed});
 
   @override
   State<ExerciseScreenRedesigned> createState() =>
@@ -92,7 +94,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
             Icons.arrow_back,
             color: AppColors.dynamicTextPrimary,
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: widget.onBackPressed,
         ),
         title: Text(
           'Упражнения',

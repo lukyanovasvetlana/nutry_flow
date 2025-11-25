@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nutry_flow/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:nutry_flow/features/menu/presentation/screens/healthy_menu_screen.dart';
-import 'package:nutry_flow/features/grocery_list/presentation/screens/grocery_list_screen.dart';
-import 'package:nutry_flow/features/exercise/presentation/screens/exercise_screen_redesigned.dart';
 
 void main() {
   group('Dashboard Menu Tests', () {
@@ -11,8 +6,9 @@ void main() {
     test('should be disabled temporarily', () {
       expect(true, isTrue);
     });
-    return; // Отключаем все тесты
-      // Dead code after return statement    testWidgets('should display menu icon in bottom sheet', (WidgetTester tester) async {
+    // Отключены все тесты ниже
+    /*
+    testWidgets('should display menu icon in bottom sheet', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: const DashboardScreen(),
@@ -182,5 +178,6 @@ void main() {
       // Проверяем, что логотип отображается
       expect(find.byType(Image), findsOneWidget);
     });
+    */
   });
 } 

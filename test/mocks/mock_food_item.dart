@@ -4,62 +4,56 @@ class MockFoodItem extends FoodItem {
   const MockFoodItem({
     required super.id,
     required super.name,
-    required double calories,
-    required double protein,
-    required double carbs,
-    required double fat,
-    required double fiber,
-    required double sugar,
-    required double sodium,
+    required super.caloriesPer100g,
+    required super.proteinPer100g,
+    required super.carbsPer100g,
+    required super.fatsPer100g,
+    required super.fiberPer100g,
+    required super.sugarPer100g,
+    required super.sodiumPer100g,
+    required super.createdAt,
+    required super.updatedAt,
     super.brand,
     super.category,
     super.imageUrl,
     super.barcode,
-    Map<String, dynamic>? nutritionFacts,
-  }) : super(
-          calories: calories,
-          protein: protein,
-          carbs: carbs,
-          fat: fat,
-          fiber: fiber,
-          sugar: sugar,
-          sodium: sodium,
-          nutritionFacts: nutritionFacts,
-        );
+  });
 
   static FoodItem createSample() {
+    final now = DateTime.now();
     return MockFoodItem(
       id: '1',
       name: 'Sample Food',
-      calories: 250.0,
-      protein: 15.0,
-      carbs: 30.0,
-      fat: 8.0,
-      fiber: 5.0,
-      sugar: 10.0,
-      sodium: 300.0,
+      caloriesPer100g: 250.0,
+      proteinPer100g: 15.0,
+      carbsPer100g: 30.0,
+      fatsPer100g: 8.0,
+      fiberPer100g: 5.0,
+      sugarPer100g: 10.0,
+      sodiumPer100g: 300.0,
+      createdAt: now,
+      updatedAt: now,
       brand: 'Sample Brand',
       category: 'Dairy',
       imageUrl: 'https://example.com/image.jpg',
       barcode: '123456789',
-      nutritionFacts: {
-        'vitamin_c': 20.0,
-        'calcium': 100.0,
-      },
     );
   }
 
   static FoodItem createMinimal() {
+    final now = DateTime.now();
     return MockFoodItem(
       id: '2',
       name: 'Minimal Food',
-      calories: 100.0,
-      protein: 5.0,
-      carbs: 15.0,
-      fat: 3.0,
-      fiber: 2.0,
-      sugar: 5.0,
-      sodium: 150.0,
+      caloriesPer100g: 100.0,
+      proteinPer100g: 5.0,
+      carbsPer100g: 15.0,
+      fatsPer100g: 3.0,
+      fiberPer100g: 2.0,
+      sugarPer100g: 5.0,
+      sodiumPer100g: 150.0,
+      createdAt: now,
+      updatedAt: now,
     );
   }
 }

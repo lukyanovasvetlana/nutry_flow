@@ -7,7 +7,6 @@ void main() {
   group('FoodItemCard Tests', () {
     late FoodItem mockFoodItem;
     late VoidCallback mockOnTap;
-    late VoidCallback mockOnFavoriteToggle;
 
     setUp(() {
       // Create a simple FoodItem for testing
@@ -31,7 +30,6 @@ void main() {
         updatedAt: DateTime.now(),
       );
       mockOnTap = () {};
-      mockOnFavoriteToggle = () {};
     });
 
     Widget createWidgetUnderTest({
