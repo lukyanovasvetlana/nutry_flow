@@ -89,13 +89,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       appBar: AppBar(
         backgroundColor: AppColors.dynamicSurface,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: AppColors.dynamicTextPrimary,
-          ),
-          onPressed: widget.onBackPressed,
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           'Упражнения',
           style: DesignTokens.typography.titleLargeStyle.copyWith(
@@ -134,16 +128,6 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
             child: _buildExercisesList(),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Add new exercise
-        },
-        backgroundColor: AppColors.dynamicPrimary,
-        child: Icon(
-          Icons.add,
-          color: AppColors.dynamicOnPrimary,
-        ),
       ),
     );
   }

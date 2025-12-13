@@ -1,12 +1,13 @@
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_performance/firebase_performance.dart';
 // import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:nutry_flow/core/services/analytics_service.dart';
-import 'package:nutry_flow/core/services/crashlytics_service.dart';
-import 'package:nutry_flow/core/services/performance_service.dart';
-import 'package:nutry_flow/core/services/ab_testing_service.dart';
+// Временно отключены из-за проблем с модульными заголовками в iOS
+// import 'package:nutry_flow/core/services/crashlytics_service.dart';
+// import 'package:nutry_flow/core/services/performance_service.dart';
+// import 'package:nutry_flow/core/services/ab_testing_service.dart';
 import 'dart:developer' as developer;
 
 /// Сервис для инициализации Firebase
@@ -27,31 +28,40 @@ class FirebaseService {
           name: 'FirebaseService');
 
       // Инициализация Firebase Core
-      // await Firebase.initializeApp();
-
-      developer.log('🔥 FirebaseService: Firebase Core initialized',
-          name: 'FirebaseService');
+      try {
+        await Firebase.initializeApp();
+        developer.log('🔥 FirebaseService: Firebase Core initialized',
+            name: 'FirebaseService');
+      } catch (e) {
+        developer.log(
+            '🔥 FirebaseService: Failed to initialize Firebase Core: $e',
+            name: 'FirebaseService');
+        // Продолжаем работу без Firebase, если инициализация не удалась
+        return;
+      }
 
       // Инициализация Firebase Analytics
       await _initializeAnalytics();
 
+      // Временно отключены из-за проблем с модульными заголовками в iOS
       // Инициализация Firebase Crashlytics
-      await _initializeCrashlytics();
+      // await _initializeCrashlytics();
 
       // Инициализация Firebase Performance
-      await _initializePerformance();
+      // await _initializePerformance();
 
       // Инициализация Firebase Remote Config
-      await _initializeRemoteConfig();
+      // await _initializeRemoteConfig();
 
       _isInitialized = true;
 
       developer.log('🔥 FirebaseService: Firebase initialized successfully',
           name: 'FirebaseService');
-    } catch (e) {
-      developer.log('🔥 FirebaseService: Failed to initialize Firebase: $e',
+    } catch (e, stackTrace) {
+      developer.log(
+          '🔥 FirebaseService: Failed to initialize Firebase: $e\n$stackTrace',
           name: 'FirebaseService');
-      rethrow;
+      // Не выбрасываем исключение, чтобы приложение могло работать без Firebase
     }
   }
 
@@ -68,58 +78,6 @@ class FirebaseService {
           name: 'FirebaseService');
     } catch (e) {
       developer.log('🔥 FirebaseService: Failed to initialize Analytics: $e',
-          name: 'FirebaseService');
-    }
-  }
-
-  /// Инициализация Firebase Crashlytics
-  Future<void> _initializeCrashlytics() async {
-    try {
-      developer.log('🔥 FirebaseService: Initializing Crashlytics...',
-          name: 'FirebaseService');
-
-      // Инициализируем Crashlytics Service
-      await CrashlyticsService.instance.initialize();
-
-      developer.log('🔥 FirebaseService: Crashlytics initialized',
-          name: 'FirebaseService');
-    } catch (e) {
-      developer.log('🔥 FirebaseService: Failed to initialize Crashlytics: $e',
-          name: 'FirebaseService');
-    }
-  }
-
-  /// Инициализация Firebase Performance
-  Future<void> _initializePerformance() async {
-    try {
-      developer.log('🔥 FirebaseService: Initializing Performance...',
-          name: 'FirebaseService');
-
-      // Инициализируем Performance Service
-      await PerformanceService.instance.initialize();
-
-      developer.log('🔥 FirebaseService: Performance initialized',
-          name: 'FirebaseService');
-    } catch (e) {
-      developer.log('🔥 FirebaseService: Failed to initialize Performance: $e',
-          name: 'FirebaseService');
-    }
-  }
-
-  /// Инициализация Firebase Remote Config
-  Future<void> _initializeRemoteConfig() async {
-    try {
-      developer.log('🔥 FirebaseService: Initializing Remote Config...',
-          name: 'FirebaseService');
-
-      // Инициализируем AB Testing Service (который использует Remote Config)
-      await ABTestingService.instance.initialize();
-
-      developer.log('🔥 FirebaseService: Remote Config initialized',
-          name: 'FirebaseService');
-    } catch (e) {
-      developer.log(
-          '🔥 FirebaseService: Failed to initialize Remote Config: $e',
           name: 'FirebaseService');
     }
   }

@@ -3,7 +3,6 @@ import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../../domain/entities/calendar_event.dart';
 import '../../data/services/calendar_service.dart';
-import '../../../../app.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -104,148 +103,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return context.onSurfaceVariant;
   }
 
-  void _showMonthPicker() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.5,
-        minChildSize: 0.3,
-        maxChildSize: 0.7,
-        builder: (context, scrollController) => Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Выберите месяц',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  children: List.generate(12, (index) {
-                    final month = index + 1;
-                    final isSelected = month == selectedMonth.month;
-                    return ListTile(
-                      title: Text(
-                        _monthName(month),
-                        style: TextStyle(
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color:
-                              isSelected ? context.primary : context.onSurface,
-                        ),
-                      ),
-                      trailing: isSelected
-                          ? Icon(Icons.check, color: context.primary)
-                          : null,
-                      onTap: () {
-                        setState(() {
-                          selectedMonth = DateTime(selectedMonth.year, month);
-                        });
-                        Navigator.pop(context);
-                      },
-                    );
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showYearPicker() {
-    final currentYear = DateTime.now().year;
-    final years = List.generate(5, (index) => currentYear - 1 + index);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.4,
-        minChildSize: 0.3,
-        maxChildSize: 0.6,
-        builder: (context, scrollController) => Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Выберите год',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  children: years.map((year) {
-                    final isSelected = year == selectedMonth.year;
-                    return ListTile(
-                      title: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color:
-                              isSelected ? context.primary : context.onSurface,
-                        ),
-                      ),
-                      trailing: isSelected
-                          ? Icon(Icons.check, color: context.primary)
-                          : null,
-                      onTap: () {
-                        setState(() {
-                          selectedMonth = DateTime(year, selectedMonth.month);
-                        });
-                        Navigator.pop(context);
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -253,16 +110,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: AppBar(
         backgroundColor: context.surface,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: context.onSurface),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const AppContainer()),
-              (route) => false,
-            );
-          },
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           'Календарь',
           style: TextStyle(
@@ -336,8 +184,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             // Селектор месяца
                             Flexible(
                               flex: 2,
-                              child: GestureDetector(
-                                onTap: _showMonthPicker,
+                              child: PopupMenuButton<int>(
+                                onSelected: (month) {
+                                  setState(() {
+                                    selectedMonth =
+                                        DateTime(selectedMonth.year, month);
+                                  });
+                                },
+                                itemBuilder: (context) =>
+                                    List.generate(12, (index) {
+                                  final month = index + 1;
+                                  final isSelected =
+                                      month == selectedMonth.month;
+                                  return PopupMenuItem<int>(
+                                    value: month,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            _monthName(month),
+                                            style: TextStyle(
+                                              fontWeight: isSelected
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                              color: isSelected
+                                                  ? context.primary
+                                                  : context.onSurface,
+                                            ),
+                                          ),
+                                        ),
+                                        if (isSelected)
+                                          Icon(Icons.check,
+                                              color: context.primary, size: 18),
+                                      ],
+                                    ),
+                                  );
+                                }),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 8),
@@ -373,8 +255,46 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             // Селектор года
                             Flexible(
                               flex: 1,
-                              child: GestureDetector(
-                                onTap: _showYearPicker,
+                              child: PopupMenuButton<int>(
+                                onSelected: (year) {
+                                  setState(() {
+                                    selectedMonth =
+                                        DateTime(year, selectedMonth.month);
+                                  });
+                                },
+                                itemBuilder: (context) {
+                                  final currentYear = DateTime.now().year;
+                                  final years = List.generate(
+                                      5, (index) => currentYear - 1 + index);
+                                  return years.map((year) {
+                                    final isSelected =
+                                        year == selectedMonth.year;
+                                    return PopupMenuItem<int>(
+                                      value: year,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              year.toString(),
+                                              style: TextStyle(
+                                                fontWeight: isSelected
+                                                    ? FontWeight.w600
+                                                    : FontWeight.normal,
+                                                color: isSelected
+                                                    ? context.primary
+                                                    : context.onSurface,
+                                              ),
+                                            ),
+                                          ),
+                                          if (isSelected)
+                                            Icon(Icons.check,
+                                                color: context.primary,
+                                                size: 18),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList();
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 8),

@@ -323,7 +323,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -358,7 +358,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -611,6 +611,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }) {
     return NutryCard(
       backgroundColor: AppColors.dynamicCard,
+      margin: EdgeInsets.zero,
       child: Container(
         padding: const EdgeInsets.all(14), // Уменьшил с 16 до 14
         decoration: BoxDecoration(
@@ -774,6 +775,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }) {
     return NutryCard(
       backgroundColor: AppColors.dynamicCard,
+      margin: EdgeInsets.zero,
       child: Container(
         padding: const EdgeInsets.all(14), // Уменьшил с 18 до 14
         decoration: BoxDecoration(

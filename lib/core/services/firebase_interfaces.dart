@@ -40,7 +40,11 @@ abstract class FirebaseAnalyticsInterface {
     required String currency,
     required List<CustomAnalyticsEventItem> items,
   });
-  Future<void> logSearch({required String searchTerm});
+  Future<void> logSearch({
+    required String searchTerm,
+    String? contentType,
+    int? itemCount,
+  });
   Future<void> logSelectContent({
     required String contentType,
     required String itemId,
@@ -165,7 +169,11 @@ class MockFirebaseAnalytics implements FirebaseAnalyticsInterface {
   }) async {}
 
   @override
-  Future<void> logSearch({required String searchTerm}) async {}
+  Future<void> logSearch({
+    required String searchTerm,
+    String? contentType,
+    int? itemCount,
+  }) async {}
 
   @override
   Future<void> logSelectContent({

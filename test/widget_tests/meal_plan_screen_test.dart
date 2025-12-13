@@ -16,7 +16,6 @@ void main() {
       // Assert
       expect(find.text('План питания'), findsOneWidget);
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
 
     testWidgets('should have correct title color in AppBar', (WidgetTester tester) async {

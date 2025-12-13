@@ -14,10 +14,7 @@ class NotificationsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.dynamicBackground,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.dynamicTextPrimary),
-          onPressed: onBackPressed,
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           'Уведомления',
           style: AppStyles.headlineMedium.copyWith(

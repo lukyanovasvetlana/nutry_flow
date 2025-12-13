@@ -9,7 +9,6 @@ import 'package:nutry_flow/features/onboarding/presentation/screens/profile_info
 import 'package:nutry_flow/features/onboarding/presentation/screens/forgot_password_screen.dart';
 import 'package:nutry_flow/features/profile/presentation/screens/profile_settings_screen.dart';
 import 'package:nutry_flow/features/analytics/presentation/screens/analytics_screen.dart';
-import 'package:nutry_flow/features/analytics/presentation/screens/health_articles_screen.dart';
 import 'package:nutry_flow/features/analytics/presentation/screens/developer_analytics_screen.dart';
 import 'package:nutry_flow/features/analytics/presentation/screens/ab_testing_screen.dart';
 import 'package:nutry_flow/screens/theme_demo_screen.dart';
@@ -141,14 +140,6 @@ class AppRouter {
         name: 'analytics',
         builder: (context, state) => const Scaffold(
           body: AnalyticsScreen(),
-        ),
-      ),
-
-      GoRoute(
-        path: '/health-articles',
-        name: 'health-articles',
-        builder: (context, state) => const Scaffold(
-          body: HealthArticlesScreen(),
         ),
       ),
 

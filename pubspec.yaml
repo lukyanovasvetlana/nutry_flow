@@ -48,8 +48,9 @@ dependencies:
   dotted_border: ^2.1.0
   fl_chart: ^0.66.0
   flutter_local_notifications: ^16.3.2
-  # firebase_core: ^2.24.2
-  # firebase_analytics: ^10.8.0
+  firebase_core: ^2.24.2
+  firebase_analytics: ^10.8.0
+  # Временно отключены из-за проблем с модульными заголовками в iOS
   # firebase_remote_config: ^4.3.8
   # firebase_crashlytics: ^3.4.8
   # firebase_performance: ^0.9.3+8

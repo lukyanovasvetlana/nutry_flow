@@ -481,7 +481,9 @@ class QuickActions extends StatelessWidget {
                 title: 'Добавить блюдо',
                 icon: Icons.add_circle_outline_rounded,
                 color: DesignTokens.colors.primary,
-                onTap: () => Navigator.pushNamed(context, '/healthy-menu'),
+                onTap: () {
+                  // TODO: Implement add dish functionality
+                },
               ),
               SizedBox(width: DesignTokens.spacing.sm),
               _buildActionCard(

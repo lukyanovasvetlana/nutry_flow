@@ -134,6 +134,7 @@ class _NutritionDiaryScreenState extends State<NutritionDiaryScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Text('Дневник питания'),

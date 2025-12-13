@@ -116,58 +116,95 @@ class _AppContainerState extends State<AppContainer> {
     final backgroundColor = theme.bottomNavigationBarTheme.backgroundColor ??
         theme.scaffoldBackgroundColor;
 
-    return Container(
+    return SizedBox(
       height: 80,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // Индекс 0: Главная
-          _buildNavItem(
-            context: context,
-            icon: Icons.dashboard,
-            label: 'Главная',
-            index: 0,
-            selectedColor: selectedColor,
-            unselectedColor: unselectedColor,
+          // Изогнутая панель навигации с обводкой
+          ClipPath(
+            clipper: _CurvedNavBarClipper(),
+            child: Stack(
+              children: [
+                // Фон NavBar
+                Container(
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                ),
+                // Обводка по всему периметру
+                CustomPaint(
+                  size: Size(MediaQuery.of(context).size.width, 80),
+                  painter: _NavBarBorderPainter(
+                    borderColor:
+                        AppColors.dynamicPrimary.withValues(alpha: 0.2),
+                    borderWidth: 5,
+                  ),
+                ),
+                // Навигационные элементы
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Индекс 0: Главная
+                    _buildNavItem(
+                      context: context,
+                      icon: Icons.dashboard,
+                      label: 'Главная',
+                      index: 0,
+                      selectedColor: selectedColor,
+                      unselectedColor: unselectedColor,
+                    ),
+                    // Индекс 1: Календарь
+                    _buildNavItem(
+                      context: context,
+                      icon: Icons.calendar_today,
+                      label: 'Календарь',
+                      index: 1,
+                      selectedColor: selectedColor,
+                      unselectedColor: unselectedColor,
+                    ),
+                    // Пустое место для центральной кнопки
+                    Expanded(child: Container()),
+                    // Индекс 3: Уведомления
+                    _buildNavItem(
+                      context: context,
+                      icon: Icons.notifications,
+                      label: 'Уведомления',
+                      index: 3,
+                      selectedColor: selectedColor,
+                      unselectedColor: unselectedColor,
+                    ),
+                    // Индекс 4: Питание
+                    _buildNavItem(
+                      context: context,
+                      icon: Icons.restaurant_menu,
+                      label: 'Питание',
+                      index: 4,
+                      selectedColor: selectedColor,
+                      unselectedColor: unselectedColor,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          // Индекс 1: Календарь
-          _buildNavItem(
-            context: context,
-            icon: Icons.calendar_today,
-            label: 'Календарь',
-            index: 1,
-            selectedColor: selectedColor,
-            unselectedColor: unselectedColor,
-          ),
-          // Индекс 2: Упражнения (кнопка +)
-          _buildCenterButton(context, selectedColor),
-          // Индекс 3: Уведомления
-          _buildNavItem(
-            context: context,
-            icon: Icons.notifications,
-            label: 'Уведомления',
-            index: 3,
-            selectedColor: selectedColor,
-            unselectedColor: unselectedColor,
-          ),
-          // Индекс 4: Питание
-          _buildNavItem(
-            context: context,
-            icon: Icons.restaurant_menu,
-            label: 'Питание',
-            index: 4,
-            selectedColor: selectedColor,
-            unselectedColor: unselectedColor,
+          // Центральная кнопка "+" поверх панели
+          Positioned(
+            left: 0,
+            right: 0,
+            top: -30,
+            child: Center(
+              child:
+                  _buildCenterButton(context, selectedColor, backgroundColor),
+            ),
           ),
         ],
       ),
@@ -219,45 +256,200 @@ class _AppContainerState extends State<AppContainer> {
     );
   }
 
-  Widget _buildCenterButton(BuildContext context, Color selectedColor) {
-    final isSelected = _selectedIndex == 2;
-    return Expanded(
+  Widget _buildCenterButton(
+      BuildContext context, Color selectedColor, Color backgroundColor) {
+    // Обводка цветом иконки "+", середина кнопки белая
+    final borderColor = AppColors.dynamicPrimary;
+    final buttonColor = Colors.white;
+
+    // Размеры кнопки одинаковые для обеих тем
+    const double buttonSize = 70.0;
+    const double iconSize = 35.0;
+    const double borderWidth = 10.0;
+
+    return GestureDetector(
       key: const ValueKey('exercise_button'),
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedIndex = 2; // Упражнения - ExerciseScreenRedesigned
-          });
-        },
-        child: Center(
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? selectedColor
-                  : selectedColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: selectedColor.withValues(alpha: 0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Icon(
-              Icons.add,
-              color: isSelected ? Colors.white : selectedColor,
-              size: 28,
-            ),
+      onTap: () {
+        setState(() {
+          _selectedIndex = 2; // Упражнения - ExerciseScreenRedesigned
+        });
+      },
+      child: Container(
+        width: buttonSize,
+        height: buttonSize,
+        decoration: BoxDecoration(
+          color: buttonColor,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: borderColor,
+            width: borderWidth,
           ),
+          boxShadow: [
+            // Подсветка обводки
+            BoxShadow(
+              color: borderColor.withValues(alpha: 0.5),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: borderColor.withValues(alpha: 0.3),
+              blurRadius: 15,
+              spreadRadius: 1,
+            ),
+            // Основная тень кнопки
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Icon(
+          Icons.add,
+          color: AppColors.dynamicPrimary,
+          size: iconSize,
         ),
       ),
     );
   }
+}
+
+/// CustomClipper для создания изогнутой формы NavBar с выемкой для центральной кнопки
+class _CurvedNavBarClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    final centerX = size.width / 2;
+    final notchWidth = 160.0; // Увеличена ширина выемки
+    final notchDepth = 40.0; // Увеличена глубина изгиба
+
+    // Начинаем с левого верхнего угла
+    path.moveTo(0, 0);
+
+    // Линия до начала выемки слева
+    path.lineTo(centerX - notchWidth / 2, 0);
+
+    // Плавная левая часть выемки (кубическая кривая для более плавного перехода)
+    path.cubicTo(
+      centerX - notchWidth / 3, 0, // Первая контрольная точка
+      centerX - notchWidth / 4, notchDepth * 0.5, // Вторая контрольная точка
+      centerX - notchWidth / 6, notchDepth, // Конечная точка
+    );
+
+    // Плавная нижняя часть выемки (кубическая кривая)
+    path.cubicTo(
+      centerX - notchWidth / 12, notchDepth * 1.3, // Первая контрольная точка
+      centerX + notchWidth / 12, notchDepth * 1.3, // Вторая контрольная точка
+      centerX + notchWidth / 6, notchDepth, // Конечная точка
+    );
+
+    // Плавная правая часть выемки (кубическая кривая)
+    path.cubicTo(
+      centerX + notchWidth / 4, notchDepth * 0.5, // Первая контрольная точка
+      centerX + notchWidth / 3, 0, // Вторая контрольная точка
+      centerX + notchWidth / 2, 0, // Конечная точка
+    );
+
+    // Линия до правого верхнего угла
+    path.lineTo(size.width, 0);
+
+    // Правый край
+    path.lineTo(size.width, size.height);
+
+    // Нижний край
+    path.lineTo(0, size.height);
+
+    // Закрываем путь
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+/// CustomPainter для рисования обводки NavBar по изогнутой форме
+class _NavBarBorderPainter extends CustomPainter {
+  final Color borderColor;
+  final double borderWidth;
+
+  _NavBarBorderPainter({
+    required this.borderColor,
+    required this.borderWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth;
+
+    final path = Path();
+    final centerX = size.width / 2;
+    final notchWidth = 160.0;
+    final notchDepth = 40.0;
+
+    // Начинаем с левого верхнего угла
+    path.moveTo(0, borderWidth / 2);
+
+    // Линия до начала выемки слева
+    path.lineTo(centerX - notchWidth / 2, borderWidth / 2);
+
+    // Плавная левая часть выемки
+    path.cubicTo(
+      centerX - notchWidth / 3,
+      borderWidth / 2,
+      centerX - notchWidth / 4,
+      notchDepth * 0.5,
+      centerX - notchWidth / 6,
+      notchDepth,
+    );
+
+    // Плавная нижняя часть выемки
+    path.cubicTo(
+      centerX - notchWidth / 12,
+      notchDepth * 1.3,
+      centerX + notchWidth / 12,
+      notchDepth * 1.3,
+      centerX + notchWidth / 6,
+      notchDepth,
+    );
+
+    // Плавная правая часть выемки
+    path.cubicTo(
+      centerX + notchWidth / 4,
+      notchDepth * 0.5,
+      centerX + notchWidth / 3,
+      borderWidth / 2,
+      centerX + notchWidth / 2,
+      borderWidth / 2,
+    );
+
+    // Линия до правого верхнего угла
+    path.lineTo(size.width, borderWidth / 2);
+
+    // Правый край
+    path.lineTo(size.width - borderWidth / 2, size.height);
+
+    // Нижний край
+    path.lineTo(borderWidth / 2, size.height);
+
+    // Левый край
+    path.lineTo(0, borderWidth / 2);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class _PeriodDropdown extends StatefulWidget {
