@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:nutry_flow/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:nutry_flow/features/notifications/presentation/screens/notifications_screen.dart';
@@ -18,6 +19,15 @@ class AppContainer extends StatefulWidget {
 
 class _AppContainerState extends State<AppContainer> {
   int _selectedIndex = 0;
+
+  // Список иконок для навигации
+  final List<IconData> _iconList = [
+    Icons.dashboard,
+    Icons.calendar_today,
+    Icons.add, // Центральная кнопка (будет заменена на FloatingActionButton)
+    Icons.notifications,
+    Icons.restaurant_menu,
+  ];
 
   List<Widget> _buildScreens() {
     return <Widget>[
@@ -103,11 +113,13 @@ class _AppContainerState extends State<AppContainer> {
         index: _selectedIndex,
         children: _buildScreens(),
       ),
-      bottomNavigationBar: _buildCustomBottomNavBar(context),
+      floatingActionButton: _buildCenterButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: _buildAnimatedBottomNavBar(context),
     );
   }
 
-  Widget _buildCustomBottomNavBar(BuildContext context) {
+  Widget _buildAnimatedBottomNavBar(BuildContext context) {
     final theme = Theme.of(context);
     final selectedColor =
         theme.bottomNavigationBarTheme.selectedItemColor ?? AppColors.primary;
@@ -116,340 +128,146 @@ class _AppContainerState extends State<AppContainer> {
     final backgroundColor = theme.bottomNavigationBarTheme.backgroundColor ??
         theme.scaffoldBackgroundColor;
 
-    return SizedBox(
-      height: 80,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Изогнутая панель навигации с обводкой
-          ClipPath(
-            clipper: _CurvedNavBarClipper(),
-            child: Stack(
+    // Создаем список иконок без центральной (индекс 2)
+    final List<IconData> navIcons = [
+      _iconList[0], // Главная
+      _iconList[1], // Календарь
+      _iconList[3], // Уведомления
+      _iconList[4], // Питание
+    ];
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        AnimatedBottomNavigationBar.builder(
+          itemCount: navIcons.length,
+          tabBuilder: (int index, bool isActive) {
+            // Маппинг индексов: 0->0, 1->1, 2->3, 3->4
+            final actualIndex = index < 2 ? index : index + 1;
+            final icon = navIcons[index];
+            final label = _getLabelForIndex(actualIndex);
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Фон NavBar
-                Container(
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
+                Icon(
+                  icon,
+                  size: 24,
+                  color: isActive ? selectedColor : unselectedColor,
                 ),
-                // Обводка по всему периметру
-                CustomPaint(
-                  size: Size(MediaQuery.of(context).size.width, 80),
-                  painter: _NavBarBorderPainter(
-                    borderColor:
-                        AppColors.dynamicPrimary.withValues(alpha: 0.2),
-                    borderWidth: 5,
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isActive ? selectedColor : unselectedColor,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                   ),
-                ),
-                // Навигационные элементы
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    // Индекс 0: Главная
-                    _buildNavItem(
-                      context: context,
-                      icon: Icons.dashboard,
-                      label: 'Главная',
-                      index: 0,
-                      selectedColor: selectedColor,
-                      unselectedColor: unselectedColor,
-                    ),
-                    // Индекс 1: Календарь
-                    _buildNavItem(
-                      context: context,
-                      icon: Icons.calendar_today,
-                      label: 'Календарь',
-                      index: 1,
-                      selectedColor: selectedColor,
-                      unselectedColor: unselectedColor,
-                    ),
-                    // Пустое место для центральной кнопки
-                    Expanded(child: Container()),
-                    // Индекс 3: Уведомления
-                    _buildNavItem(
-                      context: context,
-                      icon: Icons.notifications,
-                      label: 'Уведомления',
-                      index: 3,
-                      selectedColor: selectedColor,
-                      unselectedColor: unselectedColor,
-                    ),
-                    // Индекс 4: Питание
-                    _buildNavItem(
-                      context: context,
-                      icon: Icons.restaurant_menu,
-                      label: 'Питание',
-                      index: 4,
-                      selectedColor: selectedColor,
-                      unselectedColor: unselectedColor,
-                    ),
-                  ],
                 ),
               ],
-            ),
+            );
+          },
+          activeIndex: _getActiveNavIndex(),
+          gapLocation: GapLocation.center,
+          notchSmoothness: NotchSmoothness.verySmoothEdge,
+          leftCornerRadius: 32,
+          rightCornerRadius:
+              0, // Должно быть 0 при centerDocked и GapLocation.center
+          backgroundColor: backgroundColor,
+          onTap: (index) {
+            // Маппинг индексов обратно: 0->0, 1->1, 2->3, 3->4
+            final actualIndex = index < 2 ? index : index + 1;
+            setState(() {
+              _selectedIndex = actualIndex;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  int _getActiveNavIndex() {
+    // Маппинг: 0->0, 1->1, 3->2, 4->3
+    if (_selectedIndex < 2) {
+      return _selectedIndex;
+    } else if (_selectedIndex == 3) {
+      return 2;
+    } else if (_selectedIndex == 4) {
+      return 3;
+    }
+    return 0;
+  }
+
+  String _getLabelForIndex(int index) {
+    switch (index) {
+      case 0:
+        return 'Главная';
+      case 1:
+        return 'Календарь';
+      case 3:
+        return 'Уведомления';
+      case 4:
+        return 'Питание';
+      default:
+        return '';
+    }
+  }
+
+  Widget _buildCenterButton(BuildContext context) {
+    final borderColor = AppColors.dynamicPrimary;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: borderColor,
+          width: 5,
+        ),
+        boxShadow: [
+          // Подсветка обводки
+          BoxShadow(
+            color: borderColor.withOpacity(0.5),
+            blurRadius: 20,
+            spreadRadius: 2,
           ),
-          // Центральная кнопка "+" поверх панели
-          Positioned(
-            left: 0,
-            right: 0,
-            top: -30,
-            child: Center(
-              child:
-                  _buildCenterButton(context, selectedColor, backgroundColor),
-            ),
+          BoxShadow(
+            color: borderColor.withOpacity(0.3),
+            blurRadius: 15,
+            spreadRadius: 1,
+          ),
+          // Дополнительная подсветка
+          BoxShadow(
+            color: borderColor.withOpacity(0.2),
+            blurRadius: 10,
+            spreadRadius: 0.5,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
-    required int index,
-    required Color selectedColor,
-    required Color unselectedColor,
-  }) {
-    final isSelected = _selectedIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? selectedColor : unselectedColor,
-              size: 24,
+      child: Material(
+        color: Colors.white,
+        shape: const CircleBorder(),
+        child: InkWell(
+          key: const ValueKey('exercise_button'),
+          onTap: () {
+            setState(() {
+              _selectedIndex = 2; // Упражнения - ExerciseScreenRedesigned
+            });
+          },
+          customBorder: const CircleBorder(),
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Icon(
+              Icons.add,
+              color: borderColor,
+              size: 25,
             ),
-            const SizedBox(height: 4),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isSelected ? selectedColor : unselectedColor,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCenterButton(
-      BuildContext context, Color selectedColor, Color backgroundColor) {
-    // Обводка цветом иконки "+", середина кнопки белая
-    final borderColor = AppColors.dynamicPrimary;
-    final buttonColor = Colors.white;
-
-    // Размеры кнопки одинаковые для обеих тем
-    const double buttonSize = 70.0;
-    const double iconSize = 35.0;
-    const double borderWidth = 10.0;
-
-    return GestureDetector(
-      key: const ValueKey('exercise_button'),
-      onTap: () {
-        setState(() {
-          _selectedIndex = 2; // Упражнения - ExerciseScreenRedesigned
-        });
-      },
-      child: Container(
-        width: buttonSize,
-        height: buttonSize,
-        decoration: BoxDecoration(
-          color: buttonColor,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: borderColor,
-            width: borderWidth,
           ),
-          boxShadow: [
-            // Подсветка обводки
-            BoxShadow(
-              color: borderColor.withValues(alpha: 0.5),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
-            BoxShadow(
-              color: borderColor.withValues(alpha: 0.3),
-              blurRadius: 15,
-              spreadRadius: 1,
-            ),
-            // Основная тень кнопки
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-              spreadRadius: 2,
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Icon(
-          Icons.add,
-          color: AppColors.dynamicPrimary,
-          size: iconSize,
         ),
       ),
     );
   }
-}
-
-/// CustomClipper для создания изогнутой формы NavBar с выемкой для центральной кнопки
-class _CurvedNavBarClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    final centerX = size.width / 2;
-    final notchWidth = 160.0; // Увеличена ширина выемки
-    final notchDepth = 40.0; // Увеличена глубина изгиба
-
-    // Начинаем с левого верхнего угла
-    path.moveTo(0, 0);
-
-    // Линия до начала выемки слева
-    path.lineTo(centerX - notchWidth / 2, 0);
-
-    // Плавная левая часть выемки (кубическая кривая для более плавного перехода)
-    path.cubicTo(
-      centerX - notchWidth / 3, 0, // Первая контрольная точка
-      centerX - notchWidth / 4, notchDepth * 0.5, // Вторая контрольная точка
-      centerX - notchWidth / 6, notchDepth, // Конечная точка
-    );
-
-    // Плавная нижняя часть выемки (кубическая кривая)
-    path.cubicTo(
-      centerX - notchWidth / 12, notchDepth * 1.3, // Первая контрольная точка
-      centerX + notchWidth / 12, notchDepth * 1.3, // Вторая контрольная точка
-      centerX + notchWidth / 6, notchDepth, // Конечная точка
-    );
-
-    // Плавная правая часть выемки (кубическая кривая)
-    path.cubicTo(
-      centerX + notchWidth / 4, notchDepth * 0.5, // Первая контрольная точка
-      centerX + notchWidth / 3, 0, // Вторая контрольная точка
-      centerX + notchWidth / 2, 0, // Конечная точка
-    );
-
-    // Линия до правого верхнего угла
-    path.lineTo(size.width, 0);
-
-    // Правый край
-    path.lineTo(size.width, size.height);
-
-    // Нижний край
-    path.lineTo(0, size.height);
-
-    // Закрываем путь
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-/// CustomPainter для рисования обводки NavBar по изогнутой форме
-class _NavBarBorderPainter extends CustomPainter {
-  final Color borderColor;
-  final double borderWidth;
-
-  _NavBarBorderPainter({
-    required this.borderColor,
-    required this.borderWidth,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth;
-
-    final path = Path();
-    final centerX = size.width / 2;
-    final notchWidth = 160.0;
-    final notchDepth = 40.0;
-
-    // Начинаем с левого верхнего угла
-    path.moveTo(0, borderWidth / 2);
-
-    // Линия до начала выемки слева
-    path.lineTo(centerX - notchWidth / 2, borderWidth / 2);
-
-    // Плавная левая часть выемки
-    path.cubicTo(
-      centerX - notchWidth / 3,
-      borderWidth / 2,
-      centerX - notchWidth / 4,
-      notchDepth * 0.5,
-      centerX - notchWidth / 6,
-      notchDepth,
-    );
-
-    // Плавная нижняя часть выемки
-    path.cubicTo(
-      centerX - notchWidth / 12,
-      notchDepth * 1.3,
-      centerX + notchWidth / 12,
-      notchDepth * 1.3,
-      centerX + notchWidth / 6,
-      notchDepth,
-    );
-
-    // Плавная правая часть выемки
-    path.cubicTo(
-      centerX + notchWidth / 4,
-      notchDepth * 0.5,
-      centerX + notchWidth / 3,
-      borderWidth / 2,
-      centerX + notchWidth / 2,
-      borderWidth / 2,
-    );
-
-    // Линия до правого верхнего угла
-    path.lineTo(size.width, borderWidth / 2);
-
-    // Правый край
-    path.lineTo(size.width - borderWidth / 2, size.height);
-
-    // Нижний край
-    path.lineTo(borderWidth / 2, size.height);
-
-    // Левый край
-    path.lineTo(0, borderWidth / 2);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class _PeriodDropdown extends StatefulWidget {

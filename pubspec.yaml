@@ -56,6 +56,9 @@ dependencies:
   # firebase_performance: ^0.9.3+8
   # firebase_messaging: ^14.7.10
   percent_indicator: ^4.2.3
+  animated_bottom_navigation_bar:
+    git:
+      url: https://github.com/LanarsInc/animated-bottom-navigation-bar-flutter.git
   
   # State management
   flutter_bloc: ^8.1.6
