@@ -129,9 +129,9 @@ class NutritionSummaryCard extends StatelessWidget {
               ),
 
               // Additional nutrients (if available)
-              if (summary.totalFiber != null ||
-                  summary.totalSugar != null ||
-                  summary.totalSodium != null) ...[
+              if (summary.totalFiber > 0 ||
+                  summary.totalSugar > 0 ||
+                  summary.totalSodium > 0) ...[
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 8),

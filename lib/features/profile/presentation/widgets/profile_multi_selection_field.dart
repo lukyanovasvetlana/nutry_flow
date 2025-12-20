@@ -28,10 +28,10 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: AppColors.dynamicTextPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -45,8 +45,8 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
               vertical: 12,
             ),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
-              border: Border.all(color: Colors.grey[300]!),
+              color: AppColors.dynamicCard,
+              border: Border.all(color: AppColors.dynamicBorder),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -57,7 +57,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                           hint ?? 'Выберите $label',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[400],
+                            color: AppColors.dynamicTextSecondary,
                           ),
                         )
                       : Wrap(
@@ -70,10 +70,10 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.green.withValues(alpha: 0.1),
+                                color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: AppColors.green.withValues(alpha: 0.3),
+                                  color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Row(
@@ -83,7 +83,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                                     getDisplayText(item),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: AppColors.green,
+                                      color: AppColors.dynamicPrimary,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -93,7 +93,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                                     child: Icon(
                                       Icons.close,
                                       size: 14,
-                                      color: AppColors.green,
+                                      color: AppColors.dynamicPrimary,
                                     ),
                                   ),
                                 ],
@@ -104,7 +104,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                 ),
                 Icon(
                   Icons.arrow_drop_down,
-                  color: Colors.grey[600],
+                  color: AppColors.dynamicTextSecondary,
                 ),
               ],
             ),
@@ -128,7 +128,11 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text('Выберите $label'),
+          backgroundColor: AppColors.dynamicCard,
+          title: Text(
+            'Выберите $label',
+            style: TextStyle(color: AppColors.dynamicTextPrimary),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -137,7 +141,10 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                 ...allItems.map((item) {
                   final isSelected = tempSelected.contains(item);
                   return CheckboxListTile(
-                    title: Text(getDisplayText(item)),
+                    title: Text(
+                      getDisplayText(item),
+                      style: TextStyle(color: AppColors.dynamicTextPrimary),
+                    ),
                     value: isSelected,
                     onChanged: (bool? value) {
                       setState(() {
@@ -148,7 +155,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                         }
                       });
                     },
-                    activeColor: AppColors.green,
+                    activeColor: AppColors.dynamicPrimary,
                   );
                 }),
 
@@ -164,13 +171,37 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                             controller: customController,
                             decoration: InputDecoration(
                               hintText: 'Добавить свой вариант',
+                              hintStyle: TextStyle(
+                                color: AppColors.dynamicTextSecondary,
+                              ),
+                              fillColor: AppColors.dynamicBackground,
+                              filled: true,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: AppColors.dynamicBorder,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: AppColors.dynamicBorder,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: AppColors.dynamicPrimary,
+                                  width: 2,
+                                ),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
                               ),
+                            ),
+                            style: TextStyle(
+                              color: AppColors.dynamicTextPrimary,
                             ),
                           ),
                         ),
@@ -189,8 +220,8 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.green,
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.dynamicPrimary,
+                            foregroundColor: AppColors.dynamicOnPrimary,
                           ),
                           child: const Text('Добавить'),
                         ),
@@ -204,7 +235,10 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Отмена'),
+              child: Text(
+                'Отмена',
+                style: TextStyle(color: AppColors.dynamicTextPrimary),
+              ),
             ),
             ElevatedButton(
               onPressed: () {

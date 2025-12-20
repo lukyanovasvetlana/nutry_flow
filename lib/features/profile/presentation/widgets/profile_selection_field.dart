@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/theme/app_colors.dart';
 
 class ProfileSelectionField<T> extends StatelessWidget {
   final String label;
@@ -25,10 +26,10 @@ class ProfileSelectionField<T> extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: AppColors.dynamicTextPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -48,9 +49,9 @@ class ProfileSelectionField<T> extends StatelessWidget {
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[50],
+                      color: AppColors.dynamicCard,
                       border: Border.all(
-                        color: field.hasError ? Colors.red : Colors.grey[300]!,
+                        color: field.hasError ? AppColors.dynamicError : AppColors.dynamicBorder,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -62,14 +63,14 @@ class ProfileSelectionField<T> extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14,
                               color: displayText != null
-                                  ? Colors.black87
-                                  : Colors.grey[400],
+                                  ? AppColors.dynamicTextPrimary
+                                  : AppColors.dynamicTextSecondary,
                             ),
                           ),
                         ),
                         Icon(
                           Icons.arrow_drop_down,
-                          color: Colors.grey[600],
+                          color: AppColors.dynamicTextSecondary,
                         ),
                       ],
                     ),
@@ -80,8 +81,8 @@ class ProfileSelectionField<T> extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 8, left: 12),
                     child: Text(
                       field.errorText!,
-                      style: const TextStyle(
-                        color: Colors.red,
+                      style: TextStyle(
+                        color: AppColors.dynamicError,
                         fontSize: 12,
                       ),
                     ),

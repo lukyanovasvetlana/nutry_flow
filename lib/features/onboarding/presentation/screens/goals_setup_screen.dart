@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/goals_setup_bloc.dart';
 import '../../domain/entities/user_goals.dart';
 import '../../di/onboarding_dependencies.dart';
+import '../../../../app.dart';
 
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
@@ -33,8 +34,13 @@ class GoalsSetupView extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () =>
-              Navigator.pushReplacementNamed(context, '/profile-info'),
+          onPressed: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, '/profile-info');
+              }
+            });
+          },
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0), // Уменьшил с 60 до 0
@@ -58,8 +64,27 @@ class GoalsSetupView extends StatelessWidget {
               ),
             );
             // Переход к дашборду
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/app', (route) => false);
+            Future.delayed(const Duration(milliseconds: 100), () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) {
+                  try {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/app', (route) => false);
+                  } catch (e) {
+                    // Пробуем альтернативный способ навигации
+                    try {
+                      Navigator.of(context).pushReplacementNamed('/app');
+                    } catch (e2) {
+                      // Если и это не сработало, пробуем через MaterialPageRoute
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const AppContainer()),
+                        (route) => false,
+                      );
+                    }
+                  }
+                }
+              });
+            });
           }
         },
         child: BlocBuilder<GoalsSetupBloc, GoalsSetupState>(
@@ -537,7 +562,11 @@ class GoalsSetupView extends StatelessWidget {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pushReplacementNamed('/profile-info');
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacementNamed('/profile-info');
+                }
+              });
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -578,7 +607,16 @@ class GoalsSetupView extends StatelessWidget {
       height: 50,
       child: TextButton(
         onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(context, '/app', (route) => false);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              try {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/app', (route) => false);
+              } catch (e) {
+                Navigator.of(context).pushReplacementNamed('/app');
+              }
+            }
+          });
         },
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(

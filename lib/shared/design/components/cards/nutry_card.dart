@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../tokens/design_tokens.dart';
 import '../../tokens/theme_tokens.dart';
+import '../../../theme/app_colors.dart';
 
 /// Карточка NutryFlow - основной контейнер для контента
 class NutryCard extends StatelessWidget {
@@ -197,7 +198,7 @@ class NutryCard extends StatelessWidget {
       width: width,
       margin: margin ?? EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
-        color: backgroundColor ?? context.surface,
+        color: backgroundColor ?? AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(
           borderRadius ?? 16.0,
         ),

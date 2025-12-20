@@ -85,9 +85,9 @@ class NutritionPreview extends StatelessWidget {
           ),
 
           // Additional nutrients (if available)
-          if (foodItem.fiberPer100g != null ||
-              foodItem.sugarPer100g != null ||
-              foodItem.sodiumPer100g != null) ...[
+          if (foodItem.fiberPer100g > 0 ||
+              foodItem.sugarPer100g > 0 ||
+              foodItem.sodiumPer100g > 0) ...[
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
@@ -103,8 +103,7 @@ class NutritionPreview extends StatelessWidget {
                 Expanded(
                   child: _buildNutrientRow(
                     'Клетчатка',
-                    foodItem.calculateFiber(portionSize).toStringAsFixed(1) ??
-                        '0',
+                    foodItem.calculateFiber(portionSize).toStringAsFixed(1),
                     Icons.eco,
                     Colors.green,
                   ),
@@ -112,8 +111,7 @@ class NutritionPreview extends StatelessWidget {
                 Expanded(
                   child: _buildNutrientRow(
                     'Сахар',
-                    foodItem.calculateSugar(portionSize).toStringAsFixed(1) ??
-                        '0',
+                    foodItem.calculateSugar(portionSize).toStringAsFixed(1),
                     Icons.cake,
                     Colors.pink,
                   ),
@@ -121,8 +119,7 @@ class NutritionPreview extends StatelessWidget {
                 Expanded(
                   child: _buildNutrientRow(
                     'Натрий',
-                    foodItem.calculateSodium(portionSize).toStringAsFixed(1) ??
-                        '0',
+                    foodItem.calculateSodium(portionSize).toStringAsFixed(1),
                     Icons.water_drop,
                     Colors.cyan,
                   ),

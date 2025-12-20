@@ -13,6 +13,7 @@ import 'package:nutry_flow/features/analytics/presentation/screens/developer_ana
 import 'package:nutry_flow/features/analytics/presentation/screens/ab_testing_screen.dart';
 import 'package:nutry_flow/screens/theme_demo_screen.dart';
 import 'package:nutry_flow/app.dart';
+import 'dart:developer' as developer;
 
 /// Класс для управления навигацией и роутингом приложения
 class AppRouter {
@@ -28,12 +29,12 @@ class AppRouter {
   /// Инициализация роутера
   Future<void> initialize() async {
     if (_isInitialized) {
-      print('⚠️ AppRouter: Already initialized');
+      developer.log('⚠️ AppRouter: Already initialized', name: 'app_router');
       return;
     }
 
     try {
-      print('🗺️ AppRouter: Initializing router...');
+      developer.log('🗺️ AppRouter: Initializing router...', name: 'app_router');
 
       _router = GoRouter(
         initialLocation: '/',
@@ -44,10 +45,10 @@ class AppRouter {
       );
 
       _isInitialized = true;
-      print('✅ AppRouter: Router initialized successfully');
+      developer.log('✅ AppRouter: Router initialized successfully', name: 'app_router');
     } catch (e, stackTrace) {
-      print('❌ AppRouter: Initialization failed: $e');
-      print('❌ Stack trace: $stackTrace');
+      developer.log('❌ AppRouter: Initialization failed: \$e', name: 'app_router');
+      developer.log('❌ Stack trace: \$stackTrace', name: 'app_router');
       rethrow;
     }
   }
@@ -270,7 +271,7 @@ class AppRouter {
   /// Навигация к маршруту
   void navigateTo(String route, {Object? extra}) {
     if (!_isInitialized) {
-      print('⚠️ AppRouter: Router not initialized');
+      developer.log('⚠️ AppRouter: Router not initialized', name: 'app_router');
       return;
     }
 
@@ -280,7 +281,7 @@ class AppRouter {
   /// Замена текущего маршрута
   void replaceRoute(String route, {Object? extra}) {
     if (!_isInitialized) {
-      print('⚠️ AppRouter: Router not initialized');
+      developer.log('⚠️ AppRouter: Router not initialized', name: 'app_router');
       return;
     }
 
@@ -290,7 +291,7 @@ class AppRouter {
   /// Возврат назад
   void goBack() {
     if (!_isInitialized) {
-      print('⚠️ AppRouter: Router not initialized');
+      developer.log('⚠️ AppRouter: Router not initialized', name: 'app_router');
       return;
     }
 
@@ -303,9 +304,9 @@ class AppRouter {
   Future<void> dispose() async {
     if (!_isInitialized) return;
 
-    print('🧹 AppRouter: Disposing...');
+    developer.log('🧹 AppRouter: Disposing...', name: 'app_router');
     // GoRouter не требует явной очистки
     _isInitialized = false;
-    print('✅ AppRouter: Disposed successfully');
+    developer.log('✅ AppRouter: Disposed successfully', name: 'app_router');
   }
 }

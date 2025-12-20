@@ -45,7 +45,11 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           if (state is AuthSuccess) {
             // Навигация на главный экран после успешного входа
-            Navigator.of(context).pushReplacementNamed('/dashboard');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                Navigator.of(context).pushReplacementNamed('/dashboard');
+              }
+            });
           } else if (state is AuthFailure) {
             // Показать ошибку
             ScaffoldMessenger.of(context).showSnackBar(

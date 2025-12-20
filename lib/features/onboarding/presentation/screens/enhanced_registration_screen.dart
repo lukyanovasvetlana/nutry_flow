@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../bloc/auth_bloc.dart';
 import '../../di/onboarding_dependencies.dart';
+import 'dart:developer' as developer;
 
 class EnhancedRegistrationScreen extends StatefulWidget {
   const EnhancedRegistrationScreen({super.key});
@@ -33,18 +34,18 @@ class _EnhancedRegistrationScreenState
   }
 
   Future<void> _register(BuildContext context) async {
-    print('🔵 Registration: _register called');
-    print('🔵 Registration: Form validation started');
+    developer.log('🔵 Registration: _register called', name: 'enhanced_registration_screen');
+    developer.log('🔵 Registration: Form validation started', name: 'enhanced_registration_screen');
 
     if (!_formKey.currentState!.validate()) {
-      print('🔴 Registration: Form validation failed');
+      developer.log('🔴 Registration: Form validation failed', name: 'enhanced_registration_screen');
       return;
     }
 
-    print('🔵 Registration: Form is valid, sending SignUpRequested');
-    print('🔵 Registration: Email: ${_emailController.text.trim()}');
-    print(
-        '🔵 Registration: Password length: ${_passwordController.text.length}');
+    developer.log('🔵 Registration: Form is valid, sending SignUpRequested', name: 'enhanced_registration_screen');
+    developer.log('🔵 Registration: Email: \${_emailController.text.trim()}', name: 'enhanced_registration_screen');
+    developer.log(
+        '🔵 Registration: Password length: ${_passwordController.text.length}', name: 'enhanced_registration_screen');
 
     try {
       // Отправляем событие регистрации
@@ -53,36 +54,40 @@ class _EnhancedRegistrationScreenState
             password: _passwordController.text,
           ));
 
-      print('🔵 Registration: SignUpRequested event sent');
+      developer.log('🔵 Registration: SignUpRequested event sent', name: 'enhanced_registration_screen');
     } catch (e) {
-      print('🔴 Registration: Error during registration: $e');
+      developer.log('🔴 Registration: Error during registration: \$e', name: 'enhanced_registration_screen');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('🔵 Registration: build called');
+    developer.log('🔵 Registration: build called', name: 'enhanced_registration_screen');
     return BlocProvider(
       create: (context) {
-        print('🔵 Registration: Creating AuthBloc via OnboardingDependencies');
+        developer.log('🔵 Registration: Creating AuthBloc via OnboardingDependencies', name: 'enhanced_registration_screen');
         final authBloc = OnboardingDependencies.instance.createAuthBloc();
-        print('🔵 Registration: AuthBloc created: ${authBloc.runtimeType}');
+        developer.log('🔵 Registration: AuthBloc created: \${authBloc.runtimeType}', name: 'enhanced_registration_screen');
         return authBloc;
       },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          print(
-              '🔵 Registration: BlocListener received state: ${state.runtimeType}');
+          developer.log(
+              '🔵 Registration: BlocListener received state: ${state.runtimeType}', name: 'enhanced_registration_screen');
 
           if (state is AuthAuthenticated) {
-            print(
-                '🟢 Registration: User authenticated, navigating to profile setup');
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/profile-info', (route) => false);
+            developer.log(
+                '🟢 Registration: User authenticated, navigating to profile setup', name: 'enhanced_registration_screen');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/profile-info', (route) => false);
+              }
+            });
           } else if (state is AuthLoading) {
-            print('🟡 Registration: AuthLoading received');
+            developer.log('🟡 Registration: AuthLoading received', name: 'enhanced_registration_screen');
           } else if (state is AuthError) {
-            print('🔴 Registration: AuthError received: ${state.message}');
+            developer.log('🔴 Registration: AuthError received: \${state.message}', name: 'enhanced_registration_screen');
             // Улучшенная обработка ошибок
             String errorMessage = state.message;
 
@@ -115,8 +120,8 @@ class _EnhancedRegistrationScreenState
               ),
             );
           } else {
-            print(
-                '🔵 Registration: Other state received: ${state.runtimeType}');
+            developer.log(
+                '🔵 Registration: Other state received: ${state.runtimeType}', name: 'enhanced_registration_screen');
           }
         },
         child: Scaffold(
@@ -126,8 +131,14 @@ class _EnhancedRegistrationScreenState
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                  context, '/welcome', (route) => false),
+              onPressed: () {
+                Future.microtask(() {
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/welcome', (route) => false);
+                  }
+                });
+              },
             ),
           ),
           body: SafeArea(
@@ -307,8 +318,14 @@ class _EnhancedRegistrationScreenState
                                 child: OutlinedButton(
                                   onPressed: isLoading
                                       ? null
-                                      : () => Navigator.pushReplacementNamed(
-                                          context, '/login'),
+                                      : () {
+                                          Future.microtask(() {
+                                            if (context.mounted) {
+                                              Navigator.pushReplacementNamed(
+                                                  context, '/login');
+                                            }
+                                          });
+                                        },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: AppColors.button),
                                     padding: const EdgeInsets.symmetric(
@@ -373,7 +390,11 @@ class _EnhancedRegistrationScreenState
           const SizedBox(height: 4),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/privacy-policy');
+              Future.microtask(() {
+                if (context.mounted) {
+                  Navigator.pushNamed(context, '/privacy-policy');
+                }
+              });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

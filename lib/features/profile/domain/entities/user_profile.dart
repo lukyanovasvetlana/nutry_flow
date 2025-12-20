@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 /// Сущность профиля пользователя
 ///
 /// Содержит всю информацию о пользователе, включая персональные данные,
@@ -16,10 +17,10 @@
 /// );
 ///
 /// // Получение вычисляемых свойств
-/// print(profile.fullName); // "Иван Петров"
-/// print(profile.bmi); // 23.15
-/// print(profile.bmiCategory); // BMICategory.normal
-/// print(profile.profileCompleteness); // 0.75
+/// developer.log(profile.fullName, name: 'user_profile'); // "Иван Петров"
+/// developer.log(profile.bmi, name: 'user_profile'); // 23.15
+/// developer.log(profile.bmiCategory, name: 'user_profile'); // BMICategory.normal
+/// developer.log(profile.profileCompleteness, name: 'user_profile'); // 0.75
 /// ```
 class UserProfile {
   /// Уникальный идентификатор пользователя
@@ -162,7 +163,7 @@ class UserProfile {
   /// Example:
   /// ```dart
   /// final profile = UserProfile(firstName: 'Иван', lastName: 'Петров');
-  /// print(profile.fullName); // "Иван Петров"
+  /// developer.log(profile.fullName, name: 'user_profile'); // "Иван Петров"
   /// ```
   String get fullName {
     if (firstName.isEmpty && lastName.isEmpty) return 'Не указано';
@@ -178,7 +179,7 @@ class UserProfile {
   /// Example:
   /// ```dart
   /// final profile = UserProfile(firstName: 'Иван', lastName: 'Петров');
-  /// print(profile.initials); // "ИП"
+  /// developer.log(profile.initials, name: 'user_profile'); // "ИП"
   /// ```
   String get initials {
     if (firstName.isEmpty && lastName.isEmpty) return '';
@@ -197,7 +198,7 @@ class UserProfile {
   /// Example:
   /// ```dart
   /// final profile = UserProfile(dateOfBirth: DateTime(1990, 5, 15));
-  /// print(profile.age); // 33 (в 2023 году)
+  /// developer.log(profile.age, name: 'user_profile'); // 33 (в 2023 году)
   /// ```
   int? get age {
     if (dateOfBirth == null) return null;
@@ -219,7 +220,7 @@ class UserProfile {
   /// Example:
   /// ```dart
   /// final profile = UserProfile(height: 180.0, weight: 75.0);
-  /// print(profile.bmi); // 23.15
+  /// developer.log(profile.bmi, name: 'user_profile'); // 23.15
   /// ```
   double? get bmi {
     if (height == null || weight == null) return null;
@@ -243,7 +244,7 @@ class UserProfile {
   /// Example:
   /// ```dart
   /// final profile = UserProfile(height: 180.0, weight: 75.0);
-  /// print(profile.bmiCategory); // BMICategory.normal
+  /// developer.log(profile.bmiCategory, name: 'user_profile'); // BMICategory.normal
   /// ```
   BMICategory? get bmiCategory {
     final bmiValue = bmi;
@@ -270,7 +271,7 @@ class UserProfile {
   /// Example:
   /// ```dart
   /// final profile = UserProfile(firstName: 'Иван', lastName: 'Петров');
-  /// print(profile.profileCompleteness); // 0.17 (2 из 12 полей)
+  /// developer.log(profile.profileCompleteness, name: 'user_profile'); // 0.17 (2 из 12 полей)
   /// ```
   double get profileCompleteness {
     final int totalFields = 12;

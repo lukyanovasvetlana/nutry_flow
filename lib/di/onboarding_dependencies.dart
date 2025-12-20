@@ -13,6 +13,7 @@ import 'package:nutry_flow/features/onboarding/domain/usecases/sign_in_usecase.d
 import 'package:nutry_flow/features/onboarding/domain/usecases/sign_up_usecase.dart';
 import 'package:nutry_flow/features/onboarding/presentation/bloc/auth_bloc.dart';
 import 'package:nutry_flow/features/onboarding/presentation/bloc/goals_setup_bloc.dart';
+import 'dart:developer' as developer;
 
 /// Контейнер зависимостей для onboarding фичи
 /// Реализует паттерн Dependency Injection для связывания слоев Clean Architecture
@@ -43,9 +44,9 @@ class OnboardingDependencies {
 
   /// Инициализирует все зависимости
   Future<void> initialize() async {
-    print('🔵 OnboardingDependencies: initialize called');
-    print(
-        '🔵 OnboardingDependencies: SupabaseConfig.isDemo = ${SupabaseConfig.isDemo}');
+    developer.log('🔵 OnboardingDependencies: initialize called', name: 'onboarding_dependencies');
+    developer.log(
+        '🔵 OnboardingDependencies: SupabaseConfig.isDemo = ${SupabaseConfig.isDemo}', name: 'onboarding_dependencies');
 
     // Инициализация сервисов
     _supabaseService = SupabaseService.instance;
@@ -54,15 +55,15 @@ class OnboardingDependencies {
     // Выбираем реализацию репозиториев в зависимости от конфигурации
 
     if (SupabaseConfig.isDemo) {
-      print('🔵 OnboardingDependencies: Using demo mode - MockAuthRepository');
+      developer.log('🔵 OnboardingDependencies: Using demo mode - MockAuthRepository', name: 'onboarding_dependencies');
       _userGoalsRepository = MockUserGoalsRepository();
 
       _authRepository = MockAuthRepository();
       // Создаем тестового пользователя для демонстрации
       MockAuthRepository.createTestUser();
     } else {
-      print(
-          '🔵 OnboardingDependencies: Using production mode - AuthRepositoryImpl');
+      developer.log(
+          '🔵 OnboardingDependencies: Using production mode - AuthRepositoryImpl', name: 'onboarding_dependencies');
       _userGoalsRepository = UserGoalsRepositoryImpl(
         _supabaseService,
         _localStorageService,
@@ -96,11 +97,11 @@ class OnboardingDependencies {
 
   /// Создает новый экземпляр AuthBloc с инжектированными зависимостями
   AuthBloc createAuthBloc() {
-    print('🔵 OnboardingDependencies: createAuthBloc called');
-    print(
-        '🔵 OnboardingDependencies: _authRepository type = ${_authRepository.runtimeType}');
-    print(
-        '🔵 OnboardingDependencies: _signUpUseCase type = ${_signUpUseCase.runtimeType}');
+    developer.log('🔵 OnboardingDependencies: createAuthBloc called', name: 'onboarding_dependencies');
+    developer.log(
+        '🔵 OnboardingDependencies: _authRepository type = ${_authRepository.runtimeType}', name: 'onboarding_dependencies');
+    developer.log(
+        '🔵 OnboardingDependencies: _signUpUseCase type = ${_signUpUseCase.runtimeType}', name: 'onboarding_dependencies');
 
     return AuthBloc(
       authRepository: _authRepository,

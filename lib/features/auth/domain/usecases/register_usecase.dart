@@ -1,5 +1,6 @@
 import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
+import 'dart:developer' as developer;
 
 class RegisterUseCase {
   final AuthRepository _authRepository;
@@ -8,11 +9,11 @@ class RegisterUseCase {
 
   Future<User> call(
       String email, String password, String confirmPassword) async {
-    print('🔐 RegisterUseCase: Starting validation for $email');
+    developer.log('🔐 RegisterUseCase: Starting validation for \$email', name: 'register_usecase');
 
     // Валидация входных данных
     if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      print('🔐 RegisterUseCase: Validation failed - empty fields');
+      developer.log('🔐 RegisterUseCase: Validation failed - empty fields', name: 'register_usecase');
       throw Exception('All fields are required');
     }
 
@@ -34,10 +35,10 @@ class RegisterUseCase {
     // }
 
     try {
-      print('🔐 RegisterUseCase: Validation passed, calling repository');
+      developer.log('🔐 RegisterUseCase: Validation passed, calling repository', name: 'register_usecase');
       return await _authRepository.signUp(email, password);
     } catch (e) {
-      print('🔐 RegisterUseCase: Registration failed: $e');
+      developer.log('🔐 RegisterUseCase: Registration failed: \$e', name: 'register_usecase');
       throw Exception('Registration failed: $e');
     }
   }

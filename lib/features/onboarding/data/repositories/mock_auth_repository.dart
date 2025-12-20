@@ -24,7 +24,7 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<User> signUp(String email, String password) async {
-    print('🔵 MockAuthRepository: signUp called for $email');
+    developer.log('🔵 MockAuthRepository: signUp called for \$email', name: 'mock_auth_repository');
     developer.log('🔵 MockAuthRepository: signUp called for $email',
         name: 'MockAuthRepository');
 
@@ -33,7 +33,7 @@ class MockAuthRepository implements AuthRepository {
 
     // Проверяем, не существует ли уже пользователь
     if (_users.containsKey(email)) {
-      print('🔵 MockAuthRepository: User already exists');
+      developer.log('🔵 MockAuthRepository: User already exists', name: 'mock_auth_repository');
       developer.log('🔵 MockAuthRepository: User already exists',
           name: 'MockAuthRepository');
       throw Exception('Пользователь с таким email уже существует');
@@ -49,7 +49,7 @@ class MockAuthRepository implements AuthRepository {
     );
 
     _currentUser = user;
-    print('🔵 MockAuthRepository: signUp successful for $email');
+    developer.log('🔵 MockAuthRepository: signUp successful for \$email', name: 'mock_auth_repository');
     developer.log('🔵 MockAuthRepository: signUp successful for $email',
         name: 'MockAuthRepository');
     return user;

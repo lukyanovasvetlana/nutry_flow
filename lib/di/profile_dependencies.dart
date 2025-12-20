@@ -21,6 +21,8 @@ class ProfileDependencies {
   // Use Cases
   late final GetUserProfileUseCase _getUserProfileUseCase;
   late final UpdateUserProfileUseCase _updateUserProfileUseCase;
+  
+  bool _isInitialized = false;
 
   ProfileDependencies._();
 
@@ -32,6 +34,10 @@ class ProfileDependencies {
 
   /// Инициализирует все зависимости
   Future<void> initialize() async {
+    if (_isInitialized) {
+      return; // Уже инициализирован
+    }
+    
     // Выбираем реализацию в зависимости от конфигурации
 
     if (SupabaseConfig.isDemo) {
@@ -50,6 +56,8 @@ class ProfileDependencies {
 
     // Инициализация зависимостей целей
     await GoalsDependencies.init();
+    
+    _isInitialized = true;
   }
 
   // Геттеры для доступа к зависимостям
@@ -62,6 +70,9 @@ class ProfileDependencies {
   /// Создает новый экземпляр ProfileBloc
   static ProfileBloc createProfileBloc() {
     final instance = ProfileDependencies.instance;
+    if (!instance._isInitialized) {
+      throw StateError('ProfileDependencies must be initialized before creating ProfileBloc');
+    }
     return ProfileBloc(
       getUserProfileUseCase: instance.getUserProfileUseCase,
       updateUserProfileUseCase: instance.updateUserProfileUseCase,

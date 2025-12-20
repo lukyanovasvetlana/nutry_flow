@@ -101,7 +101,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 
-  @override
   Future<String> uploadAvatar(String userId, String imagePath) async {
     try {
       if (userId.isEmpty) {
@@ -121,7 +120,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 
-  @override
   Future<void> deleteAvatar(String userId) async {
     try {
       if (userId.isEmpty) {

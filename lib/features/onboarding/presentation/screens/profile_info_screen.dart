@@ -123,11 +123,17 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       await prefs.setString('userGender', _selectedGender!);
       await prefs.setString('userBirthDate', _selectedDate!.toIso8601String());
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Профиль сохранен!')),
       );
-      Navigator.pushReplacementNamed(context, '/goals-setup');
+      Future.microtask(() {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/goals-setup');
+        }
+      });
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Пожалуйста, заполните все поля'),
@@ -149,8 +155,13 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () =>
-              Navigator.pushReplacementNamed(context, '/registration'),
+          onPressed: () {
+            Future.microtask(() {
+              if (mounted) {
+                Navigator.pushReplacementNamed(context, '/registration');
+              }
+            });
+          },
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0), // Уменьшил с 60 до 0
@@ -420,7 +431,11 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       height: 50,
       child: TextButton(
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/goals-setup');
+          Future.microtask(() {
+            if (mounted) {
+              Navigator.pushReplacementNamed(context, '/goals-setup');
+            }
+          });
         },
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(

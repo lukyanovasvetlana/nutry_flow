@@ -264,7 +264,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         subtitle,
         style: DesignTokens.typography.bodyMediumStyle.copyWith(
           color: isDestructive
-              ? context.error.withOpacity(0.7)
+              ? context.error.withValues(alpha: 0.7)
               : context.onSurfaceVariant,
         ),
       ),
@@ -345,8 +345,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 // TODO: Реализовать выход из аккаунта
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/welcome', (route) => false);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/welcome', (route) => false);
+                  }
+                });
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -404,8 +408,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 // TODO: Реализовать удаление аккаунта
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/welcome', (route) => false);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/welcome', (route) => false);
+                  }
+                });
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(

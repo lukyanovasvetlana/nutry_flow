@@ -143,7 +143,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.dynamicBackground,
         appBar: _buildAppBar(),
         body: BlocListener<ProfileBloc, ProfileState>(
           listener: (context, state) {
@@ -197,24 +197,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: AppColors.green,
-      foregroundColor: Colors.white,
+      backgroundColor: AppColors.dynamicCard,
       elevation: 0,
-      title: const Text(
+      title: Text(
         'Редактировать профиль',
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 20,
           fontWeight: FontWeight.w600,
+          color: AppColors.dynamicTextPrimary,
         ),
+      ),
+      iconTheme: IconThemeData(
+        color: AppColors.dynamicTextPrimary,
       ),
       actions: [
         if (_isModified && !_isSubmitting)
           TextButton(
             onPressed: _saveProfile,
-            child: const Text(
+            child: Text(
               'Сохранить',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.dynamicPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -600,10 +603,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.dynamicCard,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.dynamicShadow.withValues(alpha: 0.1),
             offset: const Offset(0, -1),
             blurRadius: 10,
           ),
@@ -625,7 +628,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: AppColors.green),
+                  side: BorderSide(color: AppColors.dynamicPrimary),
+                  foregroundColor: AppColors.dynamicTextPrimary,
                 ),
                 child: const Text('Отмена'),
               ),
@@ -635,18 +639,18 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               child: ElevatedButton(
                 onPressed: _isSubmitting ? null : _saveProfile,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.dynamicPrimary,
+                  foregroundColor: AppColors.dynamicOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: _isSubmitting
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                              AlwaysStoppedAnimation<Color>(AppColors.dynamicOnPrimary),
                         ),
                       )
                     : const Text('Сохранить'),
@@ -679,11 +683,18 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     final Gender? selected = await showDialog<Gender>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Выберите пол'),
+        backgroundColor: AppColors.dynamicCard,
+        title: Text(
+          'Выберите пол',
+          style: TextStyle(color: AppColors.dynamicTextPrimary),
+        ),
         children: Gender.values
             .map((gender) => SimpleDialogOption(
                   onPressed: () => Navigator.of(context).pop(gender),
-                  child: Text(gender.displayName),
+                  child: Text(
+                    gender.displayName,
+                    style: TextStyle(color: AppColors.dynamicTextPrimary),
+                  ),
                 ))
             .toList(),
       ),
@@ -700,7 +711,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     final ActivityLevel? selected = await showDialog<ActivityLevel>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Выберите уровень активности'),
+        backgroundColor: AppColors.dynamicCard,
+        title: Text(
+          'Выберите уровень активности',
+          style: TextStyle(color: AppColors.dynamicTextPrimary),
+        ),
         children: ActivityLevel.values
             .map((level) => SimpleDialogOption(
                   onPressed: () => Navigator.of(context).pop(level),
@@ -709,12 +724,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     children: [
                       Text(
                         level.displayName,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.dynamicTextPrimary,
+                        ),
                       ),
                       Text(
                         level.displayName,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.dynamicTextSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -795,20 +815,32 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Несохраненные изменения'),
-        content: const Text(
-            'У вас есть несохраненные изменения. Вы действительно хотите выйти?'),
+        backgroundColor: AppColors.dynamicCard,
+        title: Text(
+          'Несохраненные изменения',
+          style: TextStyle(color: AppColors.dynamicTextPrimary),
+        ),
+        content: Text(
+          'У вас есть несохраненные изменения. Вы действительно хотите выйти?',
+          style: TextStyle(color: AppColors.dynamicTextPrimary),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Отмена'),
+            child: Text(
+              'Отмена',
+              style: TextStyle(color: AppColors.dynamicPrimary),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
-            child: const Text('Выйти'),
+            child: Text(
+              'Выйти',
+              style: TextStyle(color: AppColors.dynamicError),
+            ),
           ),
         ],
       ),

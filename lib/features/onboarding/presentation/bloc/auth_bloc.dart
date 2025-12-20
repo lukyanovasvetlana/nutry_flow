@@ -124,20 +124,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     developer.log(
         '🔵 AuthBloc: SignUpRequested received - email: ${event.email}',
         name: 'AuthBloc');
-    print('🔵 AuthBloc: SignUpRequested received - email: ${event.email}');
+    developer.log('🔵 AuthBloc: SignUpRequested received - email: \${event.email}', name: 'auth_bloc');
     emit(AuthLoading());
 
     try {
       // Проверяем демо-режим
       final isDemo = SupabaseConfig.isDemo;
-      print('🔵 AuthBloc: Demo mode = $isDemo');
-      print('🔵 AuthBloc: SupabaseConfig.url = ${SupabaseConfig.url}');
-      print('🔵 AuthBloc: SupabaseConfig.anonKey = ${SupabaseConfig.anonKey}');
+      developer.log('🔵 AuthBloc: Demo mode = \$isDemo', name: 'auth_bloc');
+      developer.log('🔵 AuthBloc: SupabaseConfig.url = \${SupabaseConfig.url}', name: 'auth_bloc');
+      developer.log('🔵 AuthBloc: SupabaseConfig.anonKey = \${SupabaseConfig.anonKey}', name: 'auth_bloc');
       developer.log('🔵 AuthBloc: Demo mode = $isDemo', name: 'AuthBloc');
 
       if (isDemo) {
-        print(
-            '🔵 AuthBloc: Demo mode detected, simulating successful registration');
+        developer.log(
+            '🔵 AuthBloc: Demo mode detected, simulating successful registration', name: 'auth_bloc');
         developer.log(
             '🔵 AuthBloc: Demo mode detected, simulating successful registration',
             name: 'AuthBloc');
@@ -153,7 +153,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           updatedAt: DateTime.now(),
         );
 
-        print('🔵 AuthBloc: Demo registration successful for ${event.email}');
+        developer.log('🔵 AuthBloc: Demo registration successful for \${event.email}', name: 'auth_bloc');
         developer.log(
             '🔵 AuthBloc: Demo registration successful for ${event.email}',
             name: 'AuthBloc');
@@ -233,7 +233,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(result.error ?? 'Ошибка регистрации'));
       }
     } catch (e) {
-      print('🔵 AuthBloc: SignUp exception: $e');
+      developer.log('🔵 AuthBloc: SignUp exception: \$e', name: 'auth_bloc');
       developer.log('🔵 AuthBloc: SignUp exception: $e', name: 'AuthBloc');
       emit(AuthError('Ошибка регистрации: ${e.toString()}'));
     }
@@ -244,17 +244,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     developer.log(
         '🔵 AuthBloc: SignInRequested received - email: ${event.email}',
         name: 'AuthBloc');
-    print('🔵 AuthBloc: SignInRequested received - email: ${event.email}');
+    developer.log('🔵 AuthBloc: SignInRequested received - email: \${event.email}', name: 'auth_bloc');
     emit(AuthLoading());
 
     try {
       // Проверяем демо-режим
       final isDemo = SupabaseConfig.isDemo;
-      print('🔵 AuthBloc: Demo mode = $isDemo');
+      developer.log('🔵 AuthBloc: Demo mode = \$isDemo', name: 'auth_bloc');
       developer.log('🔵 AuthBloc: Demo mode = $isDemo', name: 'AuthBloc');
 
       if (isDemo) {
-        print('🔵 AuthBloc: Demo mode detected, simulating successful login');
+        developer.log('🔵 AuthBloc: Demo mode detected, simulating successful login', name: 'auth_bloc');
         developer.log(
             '🔵 AuthBloc: Demo mode detected, simulating successful login',
             name: 'AuthBloc');
@@ -270,7 +270,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           updatedAt: DateTime.now(),
         );
 
-        print('🔵 AuthBloc: Demo login successful for ${event.email}');
+        developer.log('🔵 AuthBloc: Demo login successful for \${event.email}', name: 'auth_bloc');
         developer.log('🔵 AuthBloc: Demo login successful for ${event.email}',
             name: 'AuthBloc');
         emit(AuthAuthenticated(user));

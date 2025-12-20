@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/design/tokens/theme_tokens.dart';
+import '../../../../shared/theme/app_colors.dart';
 
 class ProfileFormSection extends StatelessWidget {
   final String title;
@@ -17,7 +18,7 @@ class ProfileFormSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: context.surface,
+        color: AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

@@ -88,7 +88,7 @@ class ExpenseChart extends StatelessWidget {
           drawVerticalLine: false,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: AppColors.dynamicBorder.withOpacity(0.3),
+              color: AppColors.dynamicBorder.withValues(alpha: 0.3),
               strokeWidth: 1,
             );
           },

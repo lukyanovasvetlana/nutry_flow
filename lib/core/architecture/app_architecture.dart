@@ -11,6 +11,7 @@ import 'package:nutry_flow/core/services/monitoring_service.dart';
 import 'package:nutry_flow/core/services/ab_testing_service.dart';
 import 'package:nutry_flow/features/analytics/presentation/utils/persona_analytics_tracker.dart';
 import 'package:nutry_flow/shared/theme/theme_manager.dart';
+import 'dart:developer' as developer;
 
 /// Главный архитектурный класс приложения
 /// Управляет инициализацией, состоянием и жизненным циклом приложения
@@ -27,7 +28,7 @@ class AppArchitecture {
   /// Инициализация архитектуры приложения
   Future<void> initialize() async {
     try {
-      print('🏗️ AppArchitecture: Starting initialization...');
+      developer.log('🏗️ AppArchitecture: Starting initialization...', name: 'app_architecture');
 
       // Инициализация сервис-локатора
       _serviceLocator = GetIt.instance;
@@ -50,17 +51,17 @@ class AppArchitecture {
       // Инициализация состояния
       await _state.initialize();
 
-      print('🏗️ AppArchitecture: Initialization completed successfully');
+      developer.log('🏗️ AppArchitecture: Initialization completed successfully', name: 'app_architecture');
     } catch (e, stackTrace) {
-      print('❌ AppArchitecture: Initialization failed: $e');
-      print('❌ Stack trace: $stackTrace');
+      developer.log('❌ AppArchitecture: Initialization failed: \$e', name: 'app_architecture');
+      developer.log('❌ Stack trace: \$stackTrace', name: 'app_architecture');
       rethrow;
     }
   }
 
   /// Регистрация сервисов в GetIt
   void _registerServices() {
-    print('🏗️ AppArchitecture: Registering services...');
+    developer.log('🏗️ AppArchitecture: Registering services...', name: 'app_architecture');
 
     // Регистрируем основные сервисы как синглтоны
     _serviceLocator
@@ -77,12 +78,12 @@ class AppArchitecture {
         PersonaAnalyticsTracker.instance);
     _serviceLocator.registerSingleton<ThemeManager>(ThemeManager());
 
-    print('🏗️ AppArchitecture: Services registered successfully');
+    developer.log('🏗️ AppArchitecture: Services registered successfully', name: 'app_architecture');
   }
 
   /// Инициализация основных сервисов
   Future<void> _initializeCoreServices() async {
-    print('🏗️ AppArchitecture: Initializing core services...');
+    developer.log('🏗️ AppArchitecture: Initializing core services...', name: 'app_architecture');
 
     await SupabaseService.instance.initialize();
     await LocalCacheService.instance.initialize();
@@ -92,7 +93,7 @@ class AppArchitecture {
     await PersonaAnalyticsTracker.instance.initialize();
     // ThemeManager теперь инициализируется синхронно при создании
 
-    print('🏗️ AppArchitecture: Core services initialized successfully');
+    developer.log('🏗️ AppArchitecture: Core services initialized successfully', name: 'app_architecture');
   }
 
   /// Получение экземпляра инициализатора
@@ -115,13 +116,13 @@ class AppArchitecture {
 
   /// Очистка ресурсов
   Future<void> dispose() async {
-    print('🏗️ AppArchitecture: Disposing...');
+    developer.log('🏗️ AppArchitecture: Disposing...', name: 'app_architecture');
 
     await _state.dispose();
     await _router.dispose();
     await _initializer.dispose();
 
-    print('🏗️ AppArchitecture: Disposed successfully');
+    developer.log('🏗️ AppArchitecture: Disposed successfully', name: 'app_architecture');
   }
 
   /// Создание главного виджета приложения

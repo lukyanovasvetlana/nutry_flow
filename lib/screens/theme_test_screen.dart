@@ -317,6 +317,7 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
 
     // Имитация загрузки
     Future.delayed(Duration(milliseconds: 500), () {
+      if (!mounted) return;
       setState(() {
         _isDarkMode = !_isDarkMode;
         _isLoading = false;

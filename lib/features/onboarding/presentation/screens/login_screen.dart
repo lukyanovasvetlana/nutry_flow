@@ -33,7 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onLoginSuccess(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/app');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/app');
+      }
+    });
   }
 
   @override
@@ -51,7 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/registration');
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/registration');
+                }
+              });
             },
           ),
         ),

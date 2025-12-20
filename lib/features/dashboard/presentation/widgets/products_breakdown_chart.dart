@@ -19,7 +19,7 @@ class ProductsBreakdownChart extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.dynamicWarning.withOpacity(0.1),
+                  color: AppColors.dynamicWarning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

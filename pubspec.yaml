@@ -59,6 +59,9 @@ dependencies:
   animated_bottom_navigation_bar:
     git:
       url: https://github.com/LanarsInc/animated-bottom-navigation-bar-flutter.git
+  pie_chart_sz:
+    git:
+      url: https://github.com/Rezgar01m/pie_chart_sz.git
   
   # State management
   flutter_bloc: ^8.1.6

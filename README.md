@@ -76,6 +76,9 @@ flutter test test/features/auth/auth_bloc_test.dart
 ## 📚 Документация
 
 - **Руководство разработчика**: [docs/developer-onboarding-guide.md](docs/developer-onboarding-guide.md)
+- **Быстрый старт**: [QUICK_START_DEVELOPER.md](QUICK_START_DEVELOPER.md)
+- **Добавление разработчика** (для администраторов): [docs/ADD_DEVELOPER.md](docs/ADD_DEVELOPER.md)
+- **Доступ к репозиторию**: [docs/REPOSITORY_ACCESS.md](docs/REPOSITORY_ACCESS.md)
 - **Стандарты кодирования**: [docs/development-guidelines.md](docs/development-guidelines.md)
 - **Архитектура**: [docs/architecture.md](docs/architecture.md)
 - **Scrum процессы**: [docs/scrum/](docs/scrum/)

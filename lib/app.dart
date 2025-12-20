@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:nutry_flow/features/calendar/presentation/screens/calendar_screen.dart';
-import 'package:nutry_flow/features/notifications/presentation/screens/notifications_screen.dart';
+import 'package:nutry_flow/features/profile/presentation/screens/unified_profile_screen.dart';
 import 'package:nutry_flow/features/meal_plan/presentation/screens/meal_plan_screen.dart';
 import 'package:nutry_flow/features/exercise/presentation/screens/exercise_screen_redesigned.dart';
 
@@ -25,7 +25,7 @@ class _AppContainerState extends State<AppContainer> {
     Icons.dashboard,
     Icons.calendar_today,
     Icons.add, // Центральная кнопка (будет заменена на FloatingActionButton)
-    Icons.notifications,
+    Icons.person,
     Icons.restaurant_menu,
   ];
 
@@ -43,8 +43,8 @@ class _AppContainerState extends State<AppContainer> {
           }
         },
       ),
-      NotificationsScreen(
-        key: const ValueKey('notifications_screen'),
+      UnifiedProfileScreen(
+        key: const ValueKey('profile_screen'),
         onBackPressed: () {
           if (mounted) {
             setState(() {
@@ -132,7 +132,7 @@ class _AppContainerState extends State<AppContainer> {
     final List<IconData> navIcons = [
       _iconList[0], // Главная
       _iconList[1], // Календарь
-      _iconList[3], // Уведомления
+      _iconList[3], // Профиль
       _iconList[4], // Питание
     ];
 
@@ -172,8 +172,7 @@ class _AppContainerState extends State<AppContainer> {
           gapLocation: GapLocation.center,
           notchSmoothness: NotchSmoothness.verySmoothEdge,
           leftCornerRadius: 32,
-          rightCornerRadius:
-              0, // Должно быть 0 при centerDocked и GapLocation.center
+          rightCornerRadius: 32,
           backgroundColor: backgroundColor,
           onTap: (index) {
             // Маппинг индексов обратно: 0->0, 1->1, 2->3, 3->4
@@ -206,7 +205,7 @@ class _AppContainerState extends State<AppContainer> {
       case 1:
         return 'Календарь';
       case 3:
-        return 'Уведомления';
+        return 'Профиль';
       case 4:
         return 'Питание';
       default:
@@ -222,23 +221,23 @@ class _AppContainerState extends State<AppContainer> {
         shape: BoxShape.circle,
         border: Border.all(
           color: borderColor,
-          width: 5,
+          width: 3,
         ),
         boxShadow: [
           // Подсветка обводки
           BoxShadow(
-            color: borderColor.withOpacity(0.5),
+            color: borderColor.withValues(alpha: 0.5),
             blurRadius: 20,
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: borderColor.withOpacity(0.3),
+            color: borderColor.withValues(alpha: 0.3),
             blurRadius: 15,
             spreadRadius: 1,
           ),
           // Дополнительная подсветка
           BoxShadow(
-            color: borderColor.withOpacity(0.2),
+            color: borderColor.withValues(alpha: 0.2),
             blurRadius: 10,
             spreadRadius: 0.5,
           ),
@@ -246,7 +245,12 @@ class _AppContainerState extends State<AppContainer> {
       ),
       child: Material(
         color: Colors.white,
-        shape: const CircleBorder(),
+        shape: CircleBorder(
+          side: BorderSide(
+            color: borderColor,
+            width: 5,
+          ),
+        ),
         child: InkWell(
           key: const ValueKey('exercise_button'),
           onTap: () {
@@ -256,12 +260,12 @@ class _AppContainerState extends State<AppContainer> {
           },
           customBorder: const CircleBorder(),
           child: SizedBox(
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             child: Icon(
               Icons.add,
               color: borderColor,
-              size: 25,
+              size: 30,
             ),
           ),
         ),

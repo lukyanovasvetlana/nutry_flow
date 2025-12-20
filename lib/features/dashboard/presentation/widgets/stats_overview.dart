@@ -83,7 +83,7 @@ class StatsOverview extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.dynamicShadow.withOpacity(0.05),
+              color: AppColors.dynamicShadow.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -100,7 +100,7 @@ class StatsOverview extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(isSelected ? 0.2 : 0.1),
+                    color: color.withValues(alpha: isSelected ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -116,8 +116,8 @@ class StatsOverview extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
                       color: isPositive
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
+                          ? Colors.green.withValues(alpha: 0.1)
+                          : Colors.red.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(

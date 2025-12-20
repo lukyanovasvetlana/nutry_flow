@@ -108,7 +108,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       backgroundColor: context.background,
       appBar: AppBar(
-        backgroundColor: context.surface,
+        backgroundColor: AppColors.dynamicCard,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
@@ -145,7 +145,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             Expanded(
                               child: _StatCard(
                                 icon: Icons.restaurant_menu,
-                                label: 'Планирование\nпитания',
+                                label: 'Планирование питания',
                                 count: events
                                     .where((e) => e.category == 'Meal Planning')
                                     .length,
@@ -156,7 +156,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             Expanded(
                               child: _StatCard(
                                 icon: Icons.directions_run,
-                                label: 'Физическая\nактивность',
+                                label: 'Физическая активность',
                                 count: events
                                     .where((e) =>
                                         e.category == 'Physical Activities')
@@ -168,7 +168,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             Expanded(
                               child: _StatCard(
                                 icon: Icons.event,
-                                label: 'Встречи\nи события',
+                                label: 'Встречи и события',
                                 count: events
                                     .where((e) => e.category == 'Appointments')
                                     .length,
@@ -517,8 +517,10 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color: AppColors.dynamicTextSecondary,
               height: 1.2,
             ),

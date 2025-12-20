@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'dart:developer' as developer;
 import '../../domain/entities/user_profile.dart';
 import '../../domain/usecases/get_user_profile_usecase.dart';
 import '../../domain/usecases/update_user_profile_usecase.dart';
@@ -144,18 +145,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Future<void> _onLoadProfile(
       LoadProfile event, Emitter<ProfileState> emit) async {
+    developer.log('🔵 ProfileBloc: Loading profile for userId: ${event.userId}', name: 'ProfileBloc');
     emit(ProfileLoading());
 
     try {
+      developer.log('🔵 ProfileBloc: Calling getUserProfileUseCase.execute', name: 'ProfileBloc');
       final result = await _getUserProfileUseCase.execute(event.userId);
+      developer.log('🔵 ProfileBloc: UseCase result - isSuccess: ${result.isSuccess}', name: 'ProfileBloc');
 
       if (result.isSuccess) {
+        developer.log('🔵 ProfileBloc: Profile loaded successfully: ${result.profile?.firstName}', name: 'ProfileBloc');
         emit(ProfileLoaded(result.profile!));
       } else {
+        developer.log('🔴 ProfileBloc: Failed to load profile - error: ${result.error}', name: 'ProfileBloc');
         emit(ProfileError(result.error ?? 'Failed to load profile'));
       }
-    } catch (e) {
-      emit(ProfileError('An unexpected error occurred'));
+    } catch (e, stackTrace) {
+      developer.log('🔴 ProfileBloc: Exception in _onLoadProfile: $e', name: 'ProfileBloc');
+      developer.log('🔴 ProfileBloc: Stack trace: $stackTrace', name: 'ProfileBloc');
+      emit(ProfileError('An unexpected error occurred: $e'));
     }
   }
 

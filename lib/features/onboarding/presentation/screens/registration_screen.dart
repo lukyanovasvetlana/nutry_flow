@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../bloc/auth_bloc.dart';
 import '../../di/onboarding_dependencies.dart';
+import 'dart:developer' as developer;
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -27,30 +28,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _register(BuildContext context) {
-    print('🔵 Registration: _register called');
-    print('🔵 Registration: Form validation started');
+    developer.log('🔵 Registration: _register called', name: 'registration_screen');
+    developer.log('🔵 Registration: Form validation started', name: 'registration_screen');
 
     if (_formKey.currentState!.validate()) {
-      print('🔵 Registration: Form is valid, sending SignUpRequested');
-      print('🔵 Registration: Email: ${_emailController.text.trim()}');
-      print(
-          '🔵 Registration: Password length: ${_passwordController.text.length}');
+      developer.log('🔵 Registration: Form is valid, sending SignUpRequested', name: 'registration_screen');
+      developer.log('🔵 Registration: Email: \${_emailController.text.trim()}', name: 'registration_screen');
+      developer.log(
+          '🔵 Registration: Password length: ${_passwordController.text.length}', name: 'registration_screen');
 
       context.read<AuthBloc>().add(SignUpRequested(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           ));
 
-      print('🔵 Registration: SignUpRequested event sent');
+      developer.log('🔵 Registration: SignUpRequested event sent', name: 'registration_screen');
     } else {
-      print('🔴 Registration: Form validation failed');
+      developer.log('🔴 Registration: Form validation failed', name: 'registration_screen');
     }
   }
 
   void _onRegistrationSuccess(BuildContext context) {
-    print(
-        '🟢 Registration: _onRegistrationSuccess called, navigating to /profile-info');
-    Navigator.pushReplacementNamed(context, '/profile-info');
+    developer.log(
+        '🟢 Registration: _onRegistrationSuccess called, navigating to /profile-info', name: 'registration_screen');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/profile-info');
+      }
+    });
   }
 
   @override
@@ -62,11 +67,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          print(
-              '🔵 Registration: BlocListener received state: ${state.runtimeType}');
+          developer.log(
+              '🔵 Registration: BlocListener received state: ${state.runtimeType}', name: 'registration_screen');
 
           if (state is AuthError) {
-            print('🔴 Registration: AuthError received: ${state.message}');
+            developer.log('🔴 Registration: AuthError received: \${state.message}', name: 'registration_screen');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -74,14 +79,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             );
           } else if (state is AuthAuthenticated) {
-            print(
-                '🟢 Registration: AuthAuthenticated received for user: ${state.user.email}');
+            developer.log(
+                '🟢 Registration: AuthAuthenticated received for user: ${state.user.email}', name: 'registration_screen');
             _onRegistrationSuccess(context);
           } else if (state is AuthLoading) {
-            print('🟡 Registration: AuthLoading received');
+            developer.log('🟡 Registration: AuthLoading received', name: 'registration_screen');
           } else {
-            print(
-                '🔵 Registration: Other state received: ${state.runtimeType}');
+            developer.log(
+                '🔵 Registration: Other state received: ${state.runtimeType}', name: 'registration_screen');
           }
         },
         child: Scaffold(
@@ -92,7 +97,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/welcome');
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, '/welcome');
+                  }
+                });
               },
             ),
           ),

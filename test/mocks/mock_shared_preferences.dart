@@ -80,7 +80,6 @@ class MockSharedPreferencesImpl implements SharedPreferences {
     return MockSharedPreferences._storage.containsKey(key);
   }
 
-  @override
   Set<String> getStringSet(String key) {
     final value = MockSharedPreferences._storage[key];
     return value is Set<String> ? value : <String>{};
@@ -116,7 +115,6 @@ class MockSharedPreferencesImpl implements SharedPreferences {
     return true;
   }
 
-  @override
   Future<bool> setStringSet(String key, Set<String> value) async {
     MockSharedPreferences._storage[key] = value;
     return true;

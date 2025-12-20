@@ -66,9 +66,11 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
     if (confirmed == true) {
       try {
         await _recipeService.deleteRecipe(_recipe.id);
+        if (!mounted) return;
         Navigator.pop(
             context, true); // Возвращаемся с флагом для обновления списка
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка удаления: $e')),
         );

@@ -1025,6 +1025,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
+  pie_chart_sz:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "8b79e8b8379fc89a5edd6df377b2968267738486"
+      url: "https://github.com/Rezgar01m/pie_chart_sz.git"
+    source: git
+    version: "1.1.1"
   platform:
     dependency: transitive
     description:

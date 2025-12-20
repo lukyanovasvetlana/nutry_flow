@@ -217,7 +217,7 @@ class _ThemeContrastAnalysisScreenState
             vertical: DesignTokens.spacing.xs,
           ),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
           ),
           child: Text(

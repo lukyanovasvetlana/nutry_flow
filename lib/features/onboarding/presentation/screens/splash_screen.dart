@@ -43,7 +43,11 @@ class _SplashScreenState extends State<SplashScreen>
     // Navigate to welcome screen after animation
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/welcome');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Navigator.of(context).pushReplacementNamed('/welcome');
+          }
+        });
       }
     });
   }

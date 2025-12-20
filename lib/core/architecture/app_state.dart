@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:nutry_flow/features/onboarding/presentation/bloc/goals_setup_bloc.dart';
 import 'package:nutry_flow/features/onboarding/di/onboarding_dependencies.dart';
 import 'package:nutry_flow/shared/theme/theme_manager.dart';
+import 'dart:developer' as developer;
 
 /// Класс для управления глобальным состоянием приложения
 class AppState {
@@ -28,12 +29,12 @@ class AppState {
   /// Инициализация состояния приложения
   Future<void> initialize() async {
     if (_isInitialized) {
-      print('⚠️ AppState: Already initialized');
+      developer.log('⚠️ AppState: Already initialized', name: 'app_state');
       return;
     }
 
     try {
-      print('📊 AppState: Initializing application state...');
+      developer.log('📊 AppState: Initializing application state...', name: 'app_state');
 
       // Инициализация глобальных BLoC провайдеров
       await _initializeGlobalProviders();
@@ -42,17 +43,17 @@ class AppState {
       await _initializeGlobalState();
 
       _isInitialized = true;
-      print('✅ AppState: Application state initialized successfully');
+      developer.log('✅ AppState: Application state initialized successfully', name: 'app_state');
     } catch (e, stackTrace) {
-      print('❌ AppState: Initialization failed: $e');
-      print('❌ Stack trace: $stackTrace');
+      developer.log('❌ AppState: Initialization failed: \$e', name: 'app_state');
+      developer.log('❌ Stack trace: \$stackTrace', name: 'app_state');
       rethrow;
     }
   }
 
   /// Инициализация глобальных провайдеров
   Future<void> _initializeGlobalProviders() async {
-    print('📊 AppState: Initializing global providers...');
+    developer.log('📊 AppState: Initializing global providers...', name: 'app_state');
 
     // Добавляем глобальные провайдеры, которые нужны во всем приложении
 
@@ -75,12 +76,12 @@ class AppState {
       ),
     );
 
-    print('📊 AppState: Global providers initialized successfully');
+    developer.log('📊 AppState: Global providers initialized successfully', name: 'app_state');
   }
 
   /// Инициализация глобального состояния
   Future<void> _initializeGlobalState() async {
-    print('📊 AppState: Initializing global state...');
+    developer.log('📊 AppState: Initializing global state...', name: 'app_state');
 
     // Инициализируем базовые значения состояния
     _globalState['appVersion'] = '1.0.0';
@@ -90,13 +91,13 @@ class AppState {
     _globalState['userPreferences'] = <String, dynamic>{};
     _globalState['appSettings'] = <String, dynamic>{};
 
-    print('📊 AppState: Global state initialized successfully');
+    developer.log('📊 AppState: Global state initialized successfully', name: 'app_state');
   }
 
   /// Получение значения из глобального состояния
   T? getValue<T>(String key) {
     if (!_isInitialized) {
-      print('⚠️ AppState: Not initialized');
+      developer.log('⚠️ AppState: Not initialized', name: 'app_state');
       return null;
     }
 
@@ -110,18 +111,18 @@ class AppState {
   /// Установка значения в глобальное состояние
   void setValue<T>(String key, T value) {
     if (!_isInitialized) {
-      print('⚠️ AppState: Not initialized');
+      developer.log('⚠️ AppState: Not initialized', name: 'app_state');
       return;
     }
 
     _globalState[key] = value;
-    print('📊 AppState: Set value for key "$key": $value');
+    developer.log('📊 AppState: Set value for key "$key": $value', name: 'app_state');
   }
 
   /// Обновление значения в глобальном состоянии
   void updateValue<T>(String key, T Function(T current) updater) {
     if (!_isInitialized) {
-      print('⚠️ AppState: Not initialized');
+      developer.log('⚠️ AppState: Not initialized', name: 'app_state');
       return;
     }
 
@@ -129,20 +130,20 @@ class AppState {
     if (currentValue != null) {
       final newValue = updater(currentValue as T);
       _globalState[key] = newValue;
-      print('📊 AppState: Updated value for key "$key": $newValue');
+      developer.log('📊 AppState: Updated value for key "$key": $newValue', name: 'app_state');
     }
   }
 
   /// Удаление значения из глобального состояния
   void removeValue(String key) {
     if (!_isInitialized) {
-      print('⚠️ AppState: Not initialized');
+      developer.log('⚠️ AppState: Not initialized', name: 'app_state');
       return;
     }
 
     if (_globalState.containsKey(key)) {
       final removedValue = _globalState.remove(key);
-      print('📊 AppState: Removed value for key "$key": $removedValue');
+      developer.log('📊 AppState: Removed value for key "$key": $removedValue', name: 'app_state');
     }
   }
 
@@ -171,7 +172,7 @@ class AppState {
     }
 
     _globalState.clear();
-    print('📊 AppState: Global state cleared');
+    developer.log('📊 AppState: Global state cleared', name: 'app_state');
   }
 
   /// Сброс состояния к начальным значениям
@@ -180,9 +181,9 @@ class AppState {
       return;
     }
 
-    print('📊 AppState: Resetting state to initial values...');
+    developer.log('📊 AppState: Resetting state to initial values...', name: 'app_state');
     await _initializeGlobalState();
-    print('📊 AppState: State reset successfully');
+    developer.log('📊 AppState: State reset successfully', name: 'app_state');
   }
 
   /// Экспорт состояния в JSON
@@ -197,13 +198,13 @@ class AppState {
   /// Импорт состояния из JSON
   void importState(Map<String, dynamic> state) {
     if (!_isInitialized) {
-      print('⚠️ AppState: Not initialized');
+      developer.log('⚠️ AppState: Not initialized', name: 'app_state');
       return;
     }
 
     _globalState.clear();
     _globalState.addAll(state);
-    print('📊 AppState: State imported successfully');
+    developer.log('📊 AppState: State imported successfully', name: 'app_state');
   }
 
   /// Получение статистики состояния
@@ -225,7 +226,7 @@ class AppState {
   Future<void> dispose() async {
     if (!_isInitialized) return;
 
-    print('🧹 AppState: Disposing...');
+    developer.log('🧹 AppState: Disposing...', name: 'app_state');
 
     // Очищаем глобальное состояние
     _globalState.clear();
@@ -235,12 +236,12 @@ class AppState {
 
     _isInitialized = false;
 
-    print('✅ AppState: Disposed successfully');
+    developer.log('✅ AppState: Disposed successfully', name: 'app_state');
   }
 
   /// Переинициализация состояния
   Future<void> reinitialize() async {
-    print('🔄 AppState: Reinitializing...');
+    developer.log('🔄 AppState: Reinitializing...', name: 'app_state');
     await dispose();
     await initialize();
   }

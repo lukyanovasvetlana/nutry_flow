@@ -43,17 +43,17 @@ class AuthService {
     required String password,
   }) async {
     try {
-      print('🔐 AuthService: Attempting signup for $email');
+      developer.log('🔐 AuthService: Attempting signup for \$email', name: 'auth_service');
       developer.log('🔐 AuthService: Attempting signup for $email',
           name: 'AuthService');
 
       // Проверяем, находимся ли мы в демо-режиме
       final isDemo = SupabaseConfig.isDemo;
-      print('🔐 AuthService: Demo mode = $isDemo');
+      developer.log('🔐 AuthService: Demo mode = \$isDemo', name: 'auth_service');
       developer.log('🔐 AuthService: Demo mode = $isDemo', name: 'AuthService');
 
-      print('🔐 AuthService: Supabase URL = ${SupabaseConfig.url}');
-      print('🔐 AuthService: Supabase Anon Key = ${SupabaseConfig.anonKey}');
+      developer.log('🔐 AuthService: Supabase URL = \${SupabaseConfig.url}', name: 'auth_service');
+      developer.log('🔐 AuthService: Supabase Anon Key = \${SupabaseConfig.anonKey}', name: 'auth_service');
 
       if (isDemo) {
         developer.log(

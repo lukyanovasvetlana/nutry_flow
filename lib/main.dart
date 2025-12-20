@@ -13,6 +13,7 @@ import 'package:nutry_flow/features/profile/presentation/screens/profile_setting
 import 'package:nutry_flow/app.dart';
 import 'package:nutry_flow/shared/theme/theme_manager.dart';
 import 'package:nutry_flow/features/onboarding/di/onboarding_dependencies.dart';
+import 'dart:developer' as developer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,41 +22,49 @@ void main() async {
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    print('⚠️ .env file not found, using demo mode');
+    developer.log('⚠️ .env file not found, using demo mode', name: 'Main');
   }
 
   // Проверяем демо-режим
-  print('🔵 Main: SupabaseConfig.isDemo = ${SupabaseConfig.isDemo}');
-  print('🔵 Main: SupabaseConfig.url = ${SupabaseConfig.url}');
-  print('🔵 Main: SupabaseConfig.anonKey = ${SupabaseConfig.anonKey}');
+  developer.log('🔵 Main: SupabaseConfig.isDemo = ${SupabaseConfig.isDemo}',
+      name: 'Main');
+  developer.log('🔵 Main: SupabaseConfig.url = ${SupabaseConfig.url}',
+      name: 'Main');
+  developer.log(
+      '🔵 Main: SupabaseConfig.anonKey = ${SupabaseConfig.anonKey}',
+      name: 'Main');
 
   // Проверяем, что демо-режим действительно работает
   if (SupabaseConfig.isDemo) {
-    print('🔵 Main: ✅ Demo mode is ACTIVE');
+    developer.log('🔵 Main: ✅ Demo mode is ACTIVE', name: 'Main');
   } else {
-    print('🔵 Main: ❌ Demo mode is NOT active');
+    developer.log('🔵 Main: ❌ Demo mode is NOT active', name: 'Main');
   }
 
   // Инициализация Firebase
-  print('🔥 Main: Initializing Firebase...');
+  developer.log('🔥 Main: Initializing Firebase...', name: 'Main');
   try {
     await FirebaseService.instance.initialize();
-    print('🔥 Main: Firebase initialized successfully');
+    developer.log('🔥 Main: Firebase initialized successfully', name: 'Main');
   } catch (e) {
-    print('🔴 Main: Failed to initialize Firebase: $e');
+    developer.log('🔴 Main: Failed to initialize Firebase: $e', name: 'Main');
     // Продолжаем работу приложения даже если Firebase не инициализировался
   }
 
   // Инициализация OnboardingDependencies
-  print('🔵 Main: Initializing OnboardingDependencies...');
+  developer.log('🔵 Main: Initializing OnboardingDependencies...',
+      name: 'Main');
   try {
     await OnboardingDependencies.instance.initialize();
-    print('🔵 Main: OnboardingDependencies initialized');
-    print(
-        '🔵 Main: OnboardingDependencies.isDemo = ${OnboardingDependencies.instance.isDemo}');
-    print('🔵 Main: ✅ OnboardingDependencies is in demo mode');
+    developer.log('🔵 Main: OnboardingDependencies initialized', name: 'Main');
+    developer.log(
+        '🔵 Main: OnboardingDependencies.isDemo = ${OnboardingDependencies.instance.isDemo}',
+        name: 'Main');
+    developer.log('🔵 Main: ✅ OnboardingDependencies is in demo mode',
+        name: 'Main');
   } catch (e) {
-    print('🔴 Main: Failed to initialize OnboardingDependencies: $e');
+    developer.log('🔴 Main: Failed to initialize OnboardingDependencies: $e',
+        name: 'Main');
   }
 
   runApp(const MyApp());

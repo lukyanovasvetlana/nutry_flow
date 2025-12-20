@@ -37,10 +37,10 @@ class ProfileFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: AppColors.dynamicTextPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -56,32 +56,32 @@ class ProfileFormField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint ?? 'Введите $label',
             hintStyle: TextStyle(
-              color: Colors.grey[400],
+              color: AppColors.dynamicTextSecondary,
               fontSize: 14,
             ),
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: AppColors.dynamicBorder),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: AppColors.dynamicBorder),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.green, width: 2),
+              borderSide: BorderSide(color: AppColors.dynamicPrimary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red),
+              borderSide: BorderSide(color: AppColors.dynamicError),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red, width: 2),
+              borderSide: BorderSide(color: AppColors.dynamicError, width: 2),
             ),
             filled: true,
-            fillColor: enabled ? Colors.grey[50] : Colors.grey[100],
+            fillColor: AppColors.dynamicCard,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16,
@@ -89,7 +89,7 @@ class ProfileFormField extends StatelessWidget {
           ),
           style: TextStyle(
             fontSize: 14,
-            color: enabled ? Colors.black87 : Colors.grey[600],
+            color: enabled ? AppColors.dynamicTextPrimary : AppColors.dynamicTextSecondary,
           ),
         ),
       ],

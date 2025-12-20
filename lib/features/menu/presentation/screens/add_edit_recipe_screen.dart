@@ -122,6 +122,7 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка при выборе фото: $e')),
       );
@@ -236,6 +237,7 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
               newPhotos: newPhotoFiles, photosToDelete: _photosToDelete);
         }
 
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
@@ -243,6 +245,7 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
         );
         Navigator.pop(context, true); // Возвращаем true для обновления списка
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка сохранения: $e')),
         );

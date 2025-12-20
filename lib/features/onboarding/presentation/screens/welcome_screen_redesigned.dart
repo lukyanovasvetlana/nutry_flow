@@ -46,7 +46,11 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/registration');
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (context.mounted) {
+                        Navigator.pushReplacementNamed(context, '/registration');
+                      }
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.button,
@@ -64,7 +68,11 @@ class _WelcomeScreenRedesignedState extends State<WelcomeScreenRedesigned> {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/login');
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (context.mounted) {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      }
+                    });
                   },
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: AppColors.button),

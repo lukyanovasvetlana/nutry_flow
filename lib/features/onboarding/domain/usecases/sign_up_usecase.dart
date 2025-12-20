@@ -37,40 +37,42 @@ class SignUpUseCase {
 
   /// Выполняет регистрацию пользователя
   Future<SignUpResult> execute(String email, String password) async {
-    print('🔵 SignUpUseCase: execute called for $email');
     developer.log('🔵 SignUpUseCase: execute called for $email',
         name: 'SignUpUseCase');
 
     try {
       // Валидация входных данных
       if (email.isEmpty || password.isEmpty) {
-        print('🔵 SignUpUseCase: validation failed - empty fields');
+        developer.log('🔵 SignUpUseCase: validation failed - empty fields',
+            name: 'SignUpUseCase');
         return SignUpResult.failure('Email and password are required');
       }
 
       // Валидация формата email
       if (!_isValidEmail(email)) {
-        print('🔵 SignUpUseCase: validation failed - invalid email format');
+        developer.log(
+            '🔵 SignUpUseCase: validation failed - invalid email format',
+            name: 'SignUpUseCase');
         return SignUpResult.failure('Invalid email format');
       }
 
       // Валидация пароля
       if (password.length < 6) {
-        print('🔵 SignUpUseCase: validation failed - password too short');
+        developer.log('🔵 SignUpUseCase: validation failed - password too short',
+            name: 'SignUpUseCase');
         return SignUpResult.failure('Password must be at least 6 characters');
       }
 
-      print(
-          '🔵 SignUpUseCase: validation passed, calling authRepository.signUp');
+      developer.log(
+          '🔵 SignUpUseCase: validation passed, calling authRepository.signUp',
+          name: 'SignUpUseCase');
       // Выполняем регистрацию
       final user = await _authRepository.signUp(email, password);
 
-      print('🔵 SignUpUseCase: signUp successful');
       developer.log('🔵 SignUpUseCase: signUp successful',
           name: 'SignUpUseCase');
       return SignUpResult.success(user);
     } catch (e) {
-      print('🔵 SignUpUseCase: signUp failed: $e');
       developer.log('🔵 SignUpUseCase: signUp failed: $e',
           name: 'SignUpUseCase');
       return SignUpResult.failure('Sign up failed: $e');
