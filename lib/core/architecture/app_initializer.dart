@@ -141,6 +141,8 @@ class AppInitializer {
     for (final feature in _initializedFeatures.reversed) {
       developer.log('🧹 AppInitializer: Disposing \$feature...', name: 'app_initializer');
       // Здесь можно добавить логику очистки для каждой фичи
+      // ignore: unused_local_variable
+      feature;
     }
 
     _initializedFeatures.clear();

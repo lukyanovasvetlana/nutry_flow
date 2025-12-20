@@ -11,10 +11,6 @@ import 'package:nutry_flow/config/supabase_config.dart';
 import '../blocs/profile_bloc.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../di/profile_dependencies.dart';
-import '../widgets/profile_header.dart';
-import '../widgets/profile_info_card.dart';
-import '../widgets/profile_stats_card.dart';
-import '../widgets/profile_goals_card.dart';
 import 'profile_edit_screen.dart';
 import 'dart:developer' as developer;
 
@@ -683,110 +679,6 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
         activeTrackColor: AppColors.dynamicPrimary.withValues(alpha: 0.5),
         inactiveThumbColor: AppColors.dynamicBorder,
         inactiveTrackColor: AppColors.dynamicSurfaceVariant,
-      ),
-    );
-  }
-
-  Widget _buildQuickActions(BuildContext context, UserProfile profile) {
-    return NutryCard(
-      child: Padding(
-        padding: EdgeInsets.all(DesignTokens.spacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: DesignTokens.colors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
-                  ),
-                  child: Icon(
-                    Icons.flash_on,
-                    color: DesignTokens.colors.primary,
-                    size: 18,
-                  ),
-                ),
-                SizedBox(width: DesignTokens.spacing.sm),
-                Text(
-                  'Быстрые действия',
-                  style: DesignTokens.typography.titleMediumStyle.copyWith(
-                    color: DesignTokens.colors.onSurface,
-                    fontWeight: DesignTokens.typography.semiBold,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: DesignTokens.spacing.md),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionButton(
-                    context,
-                    icon: Icons.edit,
-                    label: 'Редактировать',
-                    color: DesignTokens.colors.primary,
-                    onTap: () => _navigateToEditProfile(context, profile),
-                  ),
-                ),
-                SizedBox(width: DesignTokens.spacing.sm),
-                Expanded(
-                  child: _buildActionButton(
-                    context,
-                    icon: Icons.camera_alt,
-                    label: 'Фото',
-                    color: DesignTokens.colors.secondary,
-                    onTap: () => _showAvatarOptions(context, profile),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(DesignTokens.borders.md),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: DesignTokens.spacing.md),
-          decoration: BoxDecoration(
-            gradient: color == DesignTokens.colors.primary
-                ? DesignTokens.colors.primaryGradient
-                : DesignTokens.colors.secondaryGradient,
-            borderRadius: BorderRadius.circular(DesignTokens.borders.md),
-            boxShadow: DesignTokens.shadows.sm,
-          ),
-          child: Column(
-            children: [
-              Icon(
-                icon,
-                color: DesignTokens.colors.onPrimary,
-                size: DesignTokens.spacing.iconMedium,
-              ),
-              SizedBox(height: DesignTokens.spacing.xs),
-              Text(
-                label,
-                style: DesignTokens.typography.bodySmallStyle.copyWith(
-                  fontWeight: DesignTokens.typography.semiBold,
-                  color: DesignTokens.colors.onPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
