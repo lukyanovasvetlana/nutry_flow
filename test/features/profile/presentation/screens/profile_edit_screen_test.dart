@@ -9,7 +9,7 @@ import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
 void main() {
   group('ProfileEditScreen Tests', () {
     // Reserved for future use when BLoC is properly mocked
-    // ignore: unused_field
+    // ignore: unused_local_variable
     late UserProfile _testProfile;
 
     setUp(() {
