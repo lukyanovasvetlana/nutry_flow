@@ -1,15 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
+import '../../data/services/meal_image_service.dart';
+import 'dart:developer' as developer;
 
-class MealCard extends StatelessWidget {
+class MealCard extends StatefulWidget {
   final String type;
   final Color color;
   final String title;
-  const MealCard(
-      {required this.type,
-      required this.color,
-      required this.title,
-      super.key});
+  const MealCard({
+    required this.type,
+    required this.color,
+    required this.title,
+    super.key,
+  });
+
+  @override
+  State<MealCard> createState() => _MealCardState();
+}
+
+class _MealCardState extends State<MealCard> {
+  String? _imageUrl;
+  bool _isLoadingImage = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMealImage();
+  }
+
+  Future<void> _loadMealImage() async {
+    try {
+      // Получаем URL изображения для блюда
+      final imageUrl = await MealImageService.instance.getMealImageUrl(
+        mealName: widget.title,
+        mealType: widget.type,
+      );
+
+      if (mounted) {
+        setState(() {
+          _imageUrl = imageUrl;
+          _isLoadingImage = false;
+        });
+      }
+    } catch (e) {
+      developer.log(
+        'Error loading meal image: $e',
+        name: 'MealCard',
+      );
+      if (mounted) {
+        setState(() {
+          _isLoadingImage = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +65,7 @@ class MealCard extends StatelessWidget {
         width: double.infinity,
         height: 100,
         decoration: BoxDecoration(
-          color: color,
+          color: widget.color,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -39,8 +83,48 @@ class MealCard extends StatelessWidget {
                 borderRadius:
                     BorderRadius.horizontal(left: Radius.circular(12)),
               ),
-              child: Icon(Icons.image,
-                  color: context.onSurfaceContainer, size: 32),
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.horizontal(left: Radius.circular(12)),
+                child: _isLoadingImage
+                    ? Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              context.primary,
+                            ),
+                          ),
+                        ),
+                      )
+                    : _imageUrl != null
+                        ? Image.network(
+                            _imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildPlaceholderIcon();
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    context.primary,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : _buildPlaceholderIcon(),
+              ),
             ),
             // Контент
             Expanded(
@@ -51,7 +135,7 @@ class MealCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      type,
+                      widget.type,
                       style: TextStyle(
                         fontSize: 12,
                         color: context.onSurfaceVariant,
@@ -60,7 +144,7 @@ class MealCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      title,
+                      widget.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -124,10 +208,36 @@ class MealCard extends StatelessWidget {
                   width: double.infinity,
                   margin: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: color,
+                    color: widget.color,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(Icons.image, color: context.onPrimary, size: 64),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: _imageUrl != null
+                        ? Image.network(
+                            _imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildPlaceholderIconLarge();
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    context.onPrimary,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : _buildPlaceholderIconLarge(),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -135,7 +245,7 @@ class MealCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        widget.title,
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -176,6 +286,28 @@ class MealCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderIcon() {
+    return Container(
+      color: context.surfaceVariant,
+      child: Icon(
+        Icons.restaurant,
+        color: context.onSurfaceContainer,
+        size: 32,
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderIconLarge() {
+    return Container(
+      color: widget.color,
+      child: Icon(
+        Icons.restaurant,
+        color: context.onPrimary,
+        size: 64,
       ),
     );
   }

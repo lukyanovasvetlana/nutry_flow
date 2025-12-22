@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nutry_flow/shared/design/tokens/theme_tokens.dart';
 import '../../../../app.dart';
+import '../../data/services/meal_image_service.dart';
 
 class MealDetailsScreen extends StatefulWidget {
   final String? mealId;
@@ -156,57 +157,115 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
   }
 
   Widget _buildMealImage() {
-    return Container(
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: context.surfaceVariant,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Placeholder для изображения
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    context.primary.withValues(alpha: 0.3),
-                    context.warning.withValues(alpha: 0.3),
-                  ],
-                ),
-              ),
-              child: const Icon(
-                Icons.restaurant,
-                size: 80,
-                color: Colors.white,
-              ),
-            ),
-            // Градиент для лучшей читаемости
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      context.shadowScrim,
-                    ],
+    return FutureBuilder<String?>(
+      future: _getMealImageUrl(),
+      builder: (context, snapshot) {
+        final imageUrl = snapshot.data;
+        final isLoading = snapshot.connectionState == ConnectionState.waiting;
+
+        return Container(
+          width: double.infinity,
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: context.surfaceVariant,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (isLoading)
+                  Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.primary,
+                      ),
+                    ),
+                  )
+                else if (imageUrl != null)
+                  Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildPlaceholderImage();
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            context.primary,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                else
+                  _buildPlaceholderImage(),
+                // Градиент для лучшей читаемости
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          context.shadowScrim,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String?> _getMealImageUrl() async {
+    try {
+      // Получаем название блюда из widget или используем дефолтное
+      final mealName = widget.mealName ?? mealData?['name'] ?? 'food';
+      // Определяем тип блюда из данных или используем дефолтный
+      final mealType = mealData?['type'] ?? 'Завтрак';
+      
+      return await MealImageService.instance.getMealImageUrl(
+        mealName: mealName,
+        mealType: mealType,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildPlaceholderImage() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            context.primary.withValues(alpha: 0.3),
+            context.warning.withValues(alpha: 0.3),
           ],
         ),
+      ),
+      child: const Icon(
+        Icons.restaurant,
+        size: 80,
+        color: Colors.white,
       ),
     );
   }
