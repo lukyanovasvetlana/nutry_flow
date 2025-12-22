@@ -15,9 +15,6 @@ class MealImageService {
   
   // Альтернативный вариант - использовать Foodish API (бесплатный, без ключа)
   static const String _foodishBaseUrl = 'https://foodish-api.herokuapp.com';
-  
-  // Еще один вариант - Lorem Picsum с категорией еды
-  static const String _loremPicsumBaseUrl = 'https://picsum.photos';
 
   /// Получить URL изображения для блюда по его названию
   /// 
