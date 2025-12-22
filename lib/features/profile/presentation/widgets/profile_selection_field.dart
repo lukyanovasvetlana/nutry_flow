@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/theme/app_colors.dart';
 
-class ProfileSelectionField<T> extends StatelessWidget {
+class ProfileSelectionField<T> extends StatefulWidget {
   final String label;
   final T? value;
   final String? displayText;
@@ -20,12 +20,28 @@ class ProfileSelectionField<T> extends StatelessWidget {
   });
 
   @override
+  State<ProfileSelectionField<T>> createState() => _ProfileSelectionFieldState<T>();
+}
+
+class _ProfileSelectionFieldState<T> extends State<ProfileSelectionField<T>> {
+  final GlobalKey<FormFieldState<T>> _fieldKey = GlobalKey<FormFieldState<T>>();
+
+  @override
+  void didUpdateWidget(ProfileSelectionField<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Обновляем значение FormField при изменении value
+    if (oldWidget.value != widget.value) {
+      _fieldKey.currentState?.didChange(widget.value);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -34,14 +50,15 @@ class ProfileSelectionField<T> extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         FormField<T>(
-          initialValue: value,
-          validator: validator,
+          key: _fieldKey,
+          initialValue: widget.value,
+          validator: widget.validator,
           builder: (field) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                  onTap: onTap,
+                  onTap: widget.onTap,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
@@ -59,10 +76,10 @@ class ProfileSelectionField<T> extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            displayText ?? hint ?? 'Выберите $label',
+                            widget.displayText ?? widget.hint ?? 'Выберите ${widget.label}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: displayText != null
+                              color: widget.displayText != null
                                   ? AppColors.dynamicTextPrimary
                                   : AppColors.dynamicTextSecondary,
                             ),

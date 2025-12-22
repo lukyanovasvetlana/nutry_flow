@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/theme/app_colors.dart';
 
-class ProfileMultiSelectionField<T> extends StatelessWidget {
+class ProfileMultiSelectionField<T> extends StatefulWidget {
   final String label;
   final List<T> selectedItems;
   final List<T> allItems;
@@ -9,6 +9,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
   final Function(List<T>) onSelectionChanged;
   final bool canAddCustom;
   final String? hint;
+  final String? Function(List<T>?)? validator;
 
   const ProfileMultiSelectionField({
     super.key,
@@ -19,7 +20,24 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
     required this.onSelectionChanged,
     this.canAddCustom = false,
     this.hint,
+    this.validator,
   });
+
+  @override
+  State<ProfileMultiSelectionField<T>> createState() => _ProfileMultiSelectionFieldState<T>();
+}
+
+class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionField<T>> {
+  final GlobalKey<FormFieldState<List<T>>> _fieldKey = GlobalKey<FormFieldState<List<T>>>();
+
+  @override
+  void didUpdateWidget(ProfileMultiSelectionField<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Обновляем значение FormField при изменении selectedItems
+    if (oldWidget.selectedItems != widget.selectedItems) {
+      _fieldKey.currentState?.didChange(widget.selectedItems);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +45,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -35,94 +53,121 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () => _showSelectionDialog(context),
-          child: Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(minHeight: 48),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.dynamicCard,
-              border: Border.all(color: AppColors.dynamicBorder),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
+        FormField<List<T>>(
+          key: _fieldKey,
+          initialValue: widget.selectedItems,
+          validator: widget.validator,
+          builder: (field) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: selectedItems.isEmpty
-                      ? Text(
-                          hint ?? 'Выберите $label',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.dynamicTextSecondary,
-                          ),
-                        )
-                      : Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: selectedItems.map((item) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
+                GestureDetector(
+                  onTap: () => _showSelectionDialog(context, field),
+                  child: Container(
+                    width: double.infinity,
+                    constraints: const BoxConstraints(minHeight: 48),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.dynamicCard,
+                      border: Border.all(
+                        color: field.hasError ? AppColors.dynamicError : AppColors.dynamicBorder,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: widget.selectedItems.isEmpty
+                              ? Text(
+                                  widget.hint ?? 'Выберите ${widget.label}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.dynamicTextSecondary,
+                                  ),
+                                )
+                              : Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  children: widget.selectedItems.map((item) {
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            widget.getDisplayText(item),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColors.dynamicPrimary,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          GestureDetector(
+                                            onTap: () => _removeItem(item, field),
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 14,
+                                              color: AppColors.dynamicPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    getDisplayText(item),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.dynamicPrimary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  GestureDetector(
-                                    onTap: () => _removeItem(item),
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 14,
-                                      color: AppColors.dynamicPrimary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
                         ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: AppColors.dynamicTextSecondary,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                Icon(
-                  Icons.arrow_drop_down,
-                  color: AppColors.dynamicTextSecondary,
-                ),
+                if (field.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 12),
+                    child: Text(
+                      field.errorText!,
+                      style: TextStyle(
+                        color: AppColors.dynamicError,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
               ],
-            ),
-          ),
+            );
+          },
         ),
       ],
     );
   }
 
-  void _removeItem(T item) {
-    final newList = List<T>.from(selectedItems);
+  void _removeItem(T item, FormFieldState<List<T>> field) {
+    final newList = List<T>.from(widget.selectedItems);
     newList.remove(item);
-    onSelectionChanged(newList);
+    field.didChange(newList);
+    widget.onSelectionChanged(newList);
   }
 
-  Future<void> _showSelectionDialog(BuildContext context) async {
+  Future<void> _showSelectionDialog(
+      BuildContext context, FormFieldState<List<T>> field) async {
     final TextEditingController customController = TextEditingController();
-    final List<T> tempSelected = List.from(selectedItems);
+    final List<T> tempSelected = List.from(widget.selectedItems);
 
     await showDialog(
       context: context,
@@ -130,7 +175,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
         builder: (context, setState) => AlertDialog(
           backgroundColor: AppColors.dynamicCard,
           title: Text(
-            'Выберите $label',
+            'Выберите ${widget.label}',
             style: TextStyle(color: AppColors.dynamicTextPrimary),
           ),
           content: SingleChildScrollView(
@@ -138,11 +183,11 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Existing options
-                ...allItems.map((item) {
+                ...widget.allItems.map((item) {
                   final isSelected = tempSelected.contains(item);
                   return CheckboxListTile(
                     title: Text(
-                      getDisplayText(item),
+                      widget.getDisplayText(item),
                       style: TextStyle(color: AppColors.dynamicTextPrimary),
                     ),
                     value: isSelected,
@@ -160,7 +205,7 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
                 }),
 
                 // Custom input if allowed
-                if (canAddCustom) ...[
+                if (widget.canAddCustom) ...[
                   const Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -234,7 +279,10 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                customController.dispose();
+                Navigator.of(context).pop();
+              },
               child: Text(
                 'Отмена',
                 style: TextStyle(color: AppColors.dynamicTextPrimary),
@@ -242,12 +290,14 @@ class ProfileMultiSelectionField<T> extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                onSelectionChanged(tempSelected);
+                field.didChange(tempSelected);
+                widget.onSelectionChanged(tempSelected);
+                customController.dispose();
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.green,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.dynamicSuccess,
+                foregroundColor: AppColors.dynamicOnPrimary,
               ),
               child: const Text('Готово'),
             ),

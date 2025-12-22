@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,30 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
 
+  // Keys for scrolling to errors
+  final _personalInfoKey = GlobalKey();
+  final _physicalInfoKey = GlobalKey();
+  final _healthInfoKey = GlobalKey();
+  final _nutritionTargetsKey = GlobalKey();
+  final _goalsKey = GlobalKey();
+
+  // Validation constants
+  static const int _minNameLength = 2;
+  static const int _minAge = 13;
+  static const int _maxAge = 120;
+  static const int _minHeight = 100; // см
+  static const int _maxHeight = 250; // см
+  static const double _minWeight = 30.0; // кг
+  static const double _maxWeight = 300.0; // кг
+  static const int _minCalories = 800;
+  static const int _maxCalories = 5000;
+  static const double _minProtein = 10.0; // г
+  static const double _maxProtein = 300.0; // г
+  static const double _minCarbs = 20.0; // г
+  static const double _maxCarbs = 500.0; // г
+  static const double _minFat = 10.0; // г
+  static const double _maxFat = 200.0; // г
+
   // Controllers for text fields
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
@@ -38,6 +63,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late final TextEditingController _targetCarbsController;
   late final TextEditingController _targetFatController;
 
+  // Focus nodes for navigation
+  late final FocusNode _firstNameFocus;
+  late final FocusNode _lastNameFocus;
+  late final FocusNode _emailFocus;
+  late final FocusNode _phoneFocus;
+  late final FocusNode _heightFocus;
+  late final FocusNode _weightFocus;
+  late final FocusNode _targetWeightFocus;
+  late final FocusNode _targetCaloriesFocus;
+  late final FocusNode _targetProteinFocus;
+  late final FocusNode _targetCarbsFocus;
+  late final FocusNode _targetFatFocus;
+
   // Form values
   DateTime? _selectedDateOfBirth;
   Gender? _selectedGender;
@@ -49,6 +87,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   bool _isModified = false;
   bool _isSubmitting = false;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -69,6 +108,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _targetProteinController = TextEditingController();
     _targetCarbsController = TextEditingController();
     _targetFatController = TextEditingController();
+
+    // Initialize focus nodes
+    _firstNameFocus = FocusNode();
+    _lastNameFocus = FocusNode();
+    _emailFocus = FocusNode();
+    _phoneFocus = FocusNode();
+    _heightFocus = FocusNode();
+    _weightFocus = FocusNode();
+    _targetWeightFocus = FocusNode();
+    _targetCaloriesFocus = FocusNode();
+    _targetProteinFocus = FocusNode();
+    _targetCarbsFocus = FocusNode();
+    _targetFatFocus = FocusNode();
 
     // Add listeners to track changes
     _firstNameController.addListener(_onFormChanged);
@@ -109,15 +161,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   void _onFormChanged() {
-    if (!_isModified) {
-      setState(() {
-        _isModified = true;
-      });
-    }
+    // Отменяем предыдущий таймер, если он существует
+    _debounceTimer?.cancel();
+    
+    // Устанавливаем новый таймер с задержкой 300ms
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!_isModified && mounted) {
+        setState(() {
+          _isModified = true;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -129,6 +188,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _targetProteinController.dispose();
     _targetCarbsController.dispose();
     _targetFatController.dispose();
+    _firstNameFocus.dispose();
+    _lastNameFocus.dispose();
+    _emailFocus.dispose();
+    _phoneFocus.dispose();
+    _heightFocus.dispose();
+    _weightFocus.dispose();
+    _targetWeightFocus.dispose();
+    _targetCaloriesFocus.dispose();
+    _targetProteinFocus.dispose();
+    _targetCarbsFocus.dispose();
+    _targetFatFocus.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -172,15 +242,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildPersonalInfoSection(),
+                        _buildPersonalInfoSection(key: _personalInfoKey),
                         const SizedBox(height: 24),
-                        _buildPhysicalInfoSection(),
+                        _buildPhysicalInfoSection(key: _physicalInfoKey),
                         const SizedBox(height: 24),
-                        _buildHealthInfoSection(),
+                        _buildHealthInfoSection(key: _healthInfoKey),
                         const SizedBox(height: 24),
-                        _buildNutritionTargetsSection(),
+                        _buildNutritionTargetsSection(key: _nutritionTargetsKey),
                         const SizedBox(height: 24),
-                        _buildGoalsSection(),
+                        _buildGoalsSection(key: _goalsKey),
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -226,8 +296,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildPersonalInfoSection() {
+  Widget _buildPersonalInfoSection({Key? key}) {
     return ProfileFormSection(
+      key: key,
       title: 'Личная информация',
       icon: Icons.person_outline,
       children: [
@@ -236,13 +307,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _firstNameController,
+                focusNode: _firstNameFocus,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => _lastNameFocus.requestFocus(),
                 label: 'Имя',
+                semanticLabel: 'Поле ввода имени',
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Введите имя';
                   }
-                  if (value.trim().length < 2) {
-                    return 'Имя должно содержать минимум 2 символа';
+                  if (value.trim().length < _minNameLength) {
+                    return 'Имя должно содержать минимум $_minNameLength символа';
                   }
                   return null;
                 },
@@ -252,13 +327,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _lastNameController,
+                focusNode: _lastNameFocus,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => _emailFocus.requestFocus(),
                 label: 'Фамилия',
+                semanticLabel: 'Поле ввода фамилии',
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Введите фамилию';
                   }
-                  if (value.trim().length < 2) {
-                    return 'Фамилия должна содержать минимум 2 символа';
+                  if (value.trim().length < _minNameLength) {
+                    return 'Фамилия должна содержать минимум $_minNameLength символа';
                   }
                   return null;
                 },
@@ -269,7 +348,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         const SizedBox(height: 16),
         ProfileFormField(
           controller: _emailController,
+          focusNode: _emailFocus,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _phoneFocus.requestFocus(),
           label: 'Email',
+          semanticLabel: 'Поле ввода email адреса',
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
@@ -284,7 +367,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         const SizedBox(height: 16),
         ProfileFormField(
           controller: _phoneController,
+          focusNode: _phoneFocus,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _heightFocus.requestFocus(),
           label: 'Телефон (необязательно)',
+          semanticLabel: 'Поле ввода номера телефона, необязательное',
           keyboardType: TextInputType.phone,
           validator: (value) {
             if (value != null && value.isNotEmpty) {
@@ -309,8 +396,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               return 'Выберите дату рождения';
             }
             final age = DateTime.now().difference(value).inDays / 365.25;
-            if (age < 13 || age > 120) {
-              return 'Возраст должен быть от 13 до 120 лет';
+            if (age < _minAge || age > _maxAge) {
+              return 'Возраст должен быть от $_minAge до $_maxAge лет';
             }
             return null;
           },
@@ -332,8 +419,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildPhysicalInfoSection() {
+  Widget _buildPhysicalInfoSection({Key? key}) {
     return ProfileFormSection(
+      key: key,
       title: 'Физические данные',
       icon: Icons.fitness_center_outlined,
       children: [
@@ -342,7 +430,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _heightController,
+                focusNode: _heightFocus,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => _weightFocus.requestFocus(),
                 label: 'Рост (см)',
+                semanticLabel: 'Поле ввода роста в сантиметрах',
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
@@ -350,8 +442,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     return 'Введите рост';
                   }
                   final height = int.tryParse(value);
-                  if (height == null || height < 100 || height > 250) {
-                    return 'Рост должен быть от 100 до 250 см';
+                  if (height == null) {
+                    return 'Введите корректное значение роста';
+                  }
+                  if (height < _minHeight || height > _maxHeight) {
+                    return 'Рост должен быть от $_minHeight до $_maxHeight см';
                   }
                   return null;
                 },
@@ -361,7 +456,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _weightController,
+                focusNode: _weightFocus,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => _targetWeightFocus.requestFocus(),
                 label: 'Вес (кг)',
+                semanticLabel: 'Поле ввода веса в килограммах',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
@@ -371,8 +470,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     return 'Введите вес';
                   }
                   final weight = double.tryParse(value);
-                  if (weight == null || weight < 30 || weight > 300) {
-                    return 'Вес должен быть от 30 до 300 кг';
+                  if (weight == null) {
+                    return 'Введите корректное значение веса';
+                  }
+                  if (weight < _minWeight || weight > _maxWeight) {
+                    return 'Вес должен быть от $_minWeight до $_maxWeight кг';
                   }
                   return null;
                 },
@@ -383,7 +485,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         const SizedBox(height: 16),
         ProfileFormField(
           controller: _targetWeightController,
+          focusNode: _targetWeightFocus,
+          textInputAction: TextInputAction.done,
           label: 'Целевой вес (кг, необязательно)',
+          semanticLabel: 'Поле ввода целевого веса в килограммах, необязательное',
           keyboardType: TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
@@ -391,8 +496,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           validator: (value) {
             if (value != null && value.isNotEmpty) {
               final weight = double.tryParse(value);
-              if (weight == null || weight < 30 || weight > 300) {
-                return 'Целевой вес должен быть от 30 до 300 кг';
+              if (weight == null) {
+                return 'Введите корректное значение целевого веса';
+              }
+              if (weight < _minWeight || weight > _maxWeight) {
+                return 'Целевой вес должен быть от $_minWeight до $_maxWeight кг';
               }
             }
             return null;
@@ -415,8 +523,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildHealthInfoSection() {
+  Widget _buildHealthInfoSection({Key? key}) {
     return ProfileFormSection(
+      key: key,
       title: 'Здоровье и предпочтения',
       icon: Icons.health_and_safety_outlined,
       children: [
@@ -480,21 +589,29 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildNutritionTargetsSection() {
+  Widget _buildNutritionTargetsSection({Key? key}) {
     return ProfileFormSection(
+      key: key,
       title: 'Цели по питанию',
       icon: Icons.restaurant_outlined,
       children: [
         ProfileFormField(
           controller: _targetCaloriesController,
+          focusNode: _targetCaloriesFocus,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _targetProteinFocus.requestFocus(),
           label: 'Целевые калории в день',
+          semanticLabel: 'Поле ввода целевых калорий в день',
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (value) {
             if (value != null && value.isNotEmpty) {
               final calories = int.tryParse(value);
-              if (calories == null || calories < 800 || calories > 5000) {
-                return 'Калории должны быть от 800 до 5000';
+              if (calories == null) {
+                return 'Введите корректное значение калорий';
+              }
+              if (calories < _minCalories || calories > _maxCalories) {
+                return 'Калории должны быть от $_minCalories до $_maxCalories';
               }
             }
             return null;
@@ -506,7 +623,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _targetProteinController,
+                focusNode: _targetProteinFocus,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => _targetCarbsFocus.requestFocus(),
                 label: 'Белки (г)',
+                semanticLabel: 'Поле ввода целевого количества белков в граммах',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
@@ -514,8 +635,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
                     final protein = double.tryParse(value);
-                    if (protein == null || protein < 10 || protein > 300) {
-                      return 'Белки: 10-300г';
+                    if (protein == null) {
+                      return 'Введите корректное значение белков';
+                    }
+                    if (protein < _minProtein || protein > _maxProtein) {
+                      return 'Белки: $_minProtein-${_maxProtein.toInt()}г';
                     }
                   }
                   return null;
@@ -526,7 +650,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _targetCarbsController,
+                focusNode: _targetCarbsFocus,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => _targetFatFocus.requestFocus(),
                 label: 'Углеводы (г)',
+                semanticLabel: 'Поле ввода целевого количества углеводов в граммах',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
@@ -534,8 +662,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
                     final carbs = double.tryParse(value);
-                    if (carbs == null || carbs < 20 || carbs > 500) {
-                      return 'Углеводы: 20-500г';
+                    if (carbs == null) {
+                      return 'Введите корректное значение углеводов';
+                    }
+                    if (carbs < _minCarbs || carbs > _maxCarbs) {
+                      return 'Углеводы: ${_minCarbs.toInt()}-${_maxCarbs.toInt()}г';
                     }
                   }
                   return null;
@@ -546,7 +677,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ProfileFormField(
                 controller: _targetFatController,
+                focusNode: _targetFatFocus,
+                textInputAction: TextInputAction.done,
                 label: 'Жиры (г)',
+                semanticLabel: 'Поле ввода целевого количества жиров в граммах',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
@@ -554,8 +688,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
                     final fat = double.tryParse(value);
-                    if (fat == null || fat < 10 || fat > 200) {
-                      return 'Жиры: 10-200г';
+                    if (fat == null) {
+                      return 'Введите корректное значение жиров';
+                    }
+                    if (fat < _minFat || fat > _maxFat) {
+                      return 'Жиры: ${_minFat.toInt()}-${_maxFat.toInt()}г';
                     }
                   }
                   return null;
@@ -568,8 +705,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildGoalsSection() {
+  Widget _buildGoalsSection({Key? key}) {
     return ProfileFormSection(
+      key: key,
       title: 'Фитнес-цели',
       icon: Icons.track_changes_outlined,
       children: [
@@ -719,24 +857,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         children: ActivityLevel.values
             .map((level) => SimpleDialogOption(
                   onPressed: () => Navigator.of(context).pop(level),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        level.displayName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.dynamicTextPrimary,
-                        ),
-                      ),
-                      Text(
-                        level.displayName,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.dynamicTextSecondary,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    level.displayName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.dynamicTextPrimary,
+                    ),
                   ),
                 ))
             .toList(),
@@ -772,7 +898,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       gender: _selectedGender,
       height: _heightController.text.isEmpty
           ? null
-          : double.tryParse(_heightController.text),
+          : int.tryParse(_heightController.text)?.toDouble(),
       weight: _weightController.text.isEmpty
           ? null
           : double.tryParse(_weightController.text),
@@ -802,12 +928,45 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   void _scrollToFirstError() {
-    // Scroll to the first validation error
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    // Wait for the next frame to ensure validation errors are rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Try to find the first section with an error by checking each section
+      final sections = [
+        _personalInfoKey,
+        _physicalInfoKey,
+        _healthInfoKey,
+        _nutritionTargetsKey,
+        _goalsKey,
+      ];
+
+      for (final sectionKey in sections) {
+        final context = sectionKey.currentContext;
+        if (context != null) {
+          // Check if this section's context is still valid and attached
+          final renderObject = context.findRenderObject();
+          if (renderObject != null && renderObject.attached) {
+            // Scroll to this section - this will show the first section
+            // that might contain errors (form validation will show errors in order)
+            Scrollable.ensureVisible(
+              context,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              alignment: 0.1, // Show section near top of viewport
+            );
+            return;
+          }
+        }
+      }
+
+      // Fallback: scroll to top if no section found
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   // Dialog methods
@@ -849,9 +1008,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   void _showSuccessMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Профиль успешно обновлен'),
-        backgroundColor: Colors.green,
+      SnackBar(
+        content: const Text('Профиль успешно обновлен'),
+        backgroundColor: AppColors.dynamicSuccess,
       ),
     );
   }
@@ -860,7 +1019,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Ошибка: $message'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.dynamicError,
       ),
     );
   }

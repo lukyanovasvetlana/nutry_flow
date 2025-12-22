@@ -14,6 +14,10 @@ class ProfileFormField extends StatelessWidget {
   final int? maxLines;
   final bool enabled;
   final VoidCallback? onTap;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
+  final String? semanticLabel;
 
   const ProfileFormField({
     super.key,
@@ -28,71 +32,82 @@ class ProfileFormField extends StatelessWidget {
     this.maxLines = 1,
     this.enabled = true,
     this.onTap,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.semanticLabel,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.dynamicTextPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          validator: validator,
-          obscureText: obscureText,
-          maxLines: maxLines,
-          enabled: enabled,
-          onTap: onTap,
-          decoration: InputDecoration(
-            hintText: hint ?? 'Введите $label',
-            hintStyle: TextStyle(
-              color: AppColors.dynamicTextSecondary,
+    return Semantics(
+      label: semanticLabel ?? label,
+      textField: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
               fontSize: 14,
-            ),
-            suffixIcon: suffixIcon,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.dynamicBorder),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.dynamicBorder),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.dynamicPrimary, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.dynamicError),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.dynamicError, width: 2),
-            ),
-            filled: true,
-            fillColor: AppColors.dynamicCard,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.dynamicTextPrimary,
             ),
           ),
-          style: TextStyle(
-            fontSize: 14,
-            color: enabled ? AppColors.dynamicTextPrimary : AppColors.dynamicTextSecondary,
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            focusNode: focusNode,
+            keyboardType: keyboardType,
+            textInputAction: textInputAction,
+            inputFormatters: inputFormatters,
+            validator: validator,
+            obscureText: obscureText,
+            maxLines: maxLines,
+            enabled: enabled,
+            onTap: onTap,
+            onFieldSubmitted: onFieldSubmitted,
+            decoration: InputDecoration(
+              hintText: hint ?? 'Введите $label',
+              hintStyle: TextStyle(
+                color: AppColors.dynamicTextSecondary,
+                fontSize: 14,
+              ),
+              suffixIcon: suffixIcon,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.dynamicBorder),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.dynamicBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.dynamicPrimary, width: 2),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.dynamicError),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.dynamicError, width: 2),
+              ),
+              filled: true,
+              fillColor: AppColors.dynamicCard,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 16,
+              ),
+            ),
+            style: TextStyle(
+              fontSize: 14,
+              color: enabled ? AppColors.dynamicTextPrimary : AppColors.dynamicTextSecondary,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
