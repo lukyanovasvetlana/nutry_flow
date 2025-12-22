@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutry_flow/features/profile/presentation/screens/profile_edit_screen.dart';
 import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
-import 'package:nutry_flow/features/profile/presentation/blocs/profile_bloc.dart';
 
 // Note: For full testing with BLoC, consider using bloc_test package
 // and mockito for mocking use cases. This is a simplified version.
@@ -39,9 +37,8 @@ void main() {
     Widget createWidgetUnderTest({
       UserProfile? profile,
     }) {
-      final testProfile = profile ?? this.testProfile;
-
       // Note: ProfileEditScreen requires BlocProvider<ProfileBloc>
+      // profile parameter is reserved for future use when BLoC is properly mocked
       // For proper testing, you need to:
       // 1. Add mockito and bloc_test to pubspec.yaml
       // 2. Create mocks for use cases using build_runner
