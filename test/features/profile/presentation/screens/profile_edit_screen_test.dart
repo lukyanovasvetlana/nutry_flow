@@ -8,10 +8,12 @@ import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
 
 void main() {
   group('ProfileEditScreen Tests', () {
-    late UserProfile testProfile;
+    // Reserved for future use when BLoC is properly mocked
+    // ignore: unused_field
+    late UserProfile _testProfile;
 
     setUp(() {
-      testProfile = UserProfile(
+      _testProfile = UserProfile(
         id: 'test-user-id',
         firstName: 'Иван',
         lastName: 'Петров',

@@ -106,7 +106,6 @@ void main() {
 
         // Act
         await tester.pumpWidget(widget);
-        final textField = tester.widget<TextFormField>(find.byType(TextFormField));
 
         // Assert - keyboardType is not directly accessible, test through input behavior
         // The field should accept email input
@@ -183,7 +182,6 @@ void main() {
 
         // Act
         await tester.pumpWidget(widget);
-        final textField = tester.widget<TextFormField>(find.byType(TextFormField));
 
         // Assert - focusNode is not directly accessible, test through focus behavior
         expect(find.byType(TextFormField), findsOneWidget);
@@ -250,7 +248,6 @@ void main() {
 
         // Act
         await tester.pumpWidget(widget);
-        final textField = tester.widget<TextFormField>(find.byType(TextFormField));
 
         // Assert - textInputAction is not directly accessible, test through widget structure
         expect(find.byType(TextFormField), findsOneWidget);
