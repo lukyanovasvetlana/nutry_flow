@@ -30,8 +30,19 @@ class _ProfileSelectionFieldState<T> extends State<ProfileSelectionField<T>> {
   void didUpdateWidget(ProfileSelectionField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Обновляем значение FormField при изменении value
+    // Откладываем вызов до следующего кадра, чтобы избежать setState во время сборки
     if (oldWidget.value != widget.value) {
-      _fieldKey.currentState?.didChange(widget.value);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final fieldState = _fieldKey.currentState;
+        if (fieldState != null && fieldState.mounted) {
+          try {
+            fieldState.didChange(widget.value);
+          } catch (e) {
+            // Игнорируем ошибки, если виджет уже удален
+          }
+        }
+      });
     }
   }
 

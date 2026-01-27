@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bottom_picker/bottom_picker.dart';
+import 'package:bottom_picker/resources/arrays.dart';
 import '../../domain/entities/user_profile.dart';
 import '../blocs/profile_bloc.dart';
 import '../widgets/profile_form_section.dart';
@@ -9,6 +11,7 @@ import '../widgets/profile_form_field.dart';
 import '../widgets/profile_selection_field.dart';
 import '../widgets/profile_multi_selection_field.dart';
 import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_styles.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   final UserProfile userProfile;
@@ -218,17 +221,25 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         body: BlocListener<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileUpdated) {
-              setState(() {
-                _isSubmitting = false;
-                _isModified = false;
-              });
-              _showSuccessMessage();
-              Navigator.of(context).pop(true);
+              if (mounted) {
+                setState(() {
+                  _isSubmitting = false;
+                  _isModified = false;
+                });
+                _showSuccessMessage();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    Navigator.of(context).pop(true);
+                  }
+                });
+              }
             } else if (state is ProfileError) {
-              setState(() {
-                _isSubmitting = false;
-              });
-              _showErrorMessage(state.message);
+              if (mounted) {
+                setState(() {
+                  _isSubmitting = false;
+                });
+                _showErrorMessage(state.message);
+              }
             }
           },
           child: Form(
@@ -243,14 +254,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildPersonalInfoSection(key: _personalInfoKey),
-                        const SizedBox(height: 24),
-                        _buildPhysicalInfoSection(key: _physicalInfoKey),
-                        const SizedBox(height: 24),
-                        _buildHealthInfoSection(key: _healthInfoKey),
-                        const SizedBox(height: 24),
-                        _buildNutritionTargetsSection(key: _nutritionTargetsKey),
-                        const SizedBox(height: 24),
-                        _buildGoalsSection(key: _goalsKey),
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -388,7 +391,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           label: 'Дата рождения',
           value: _selectedDateOfBirth,
           displayText: _selectedDateOfBirth != null
-              ? '${_selectedDateOfBirth!.day.toString().padLeft(2, '0')}.${_selectedDateOfBirth!.month.toString().padLeft(2, '0')}.${_selectedDateOfBirth!.year}'
+              ? _formatDateDDMMYYYY(_selectedDateOfBirth!)
               : null,
           onTap: () => _selectDateOfBirth(context),
           validator: (value) {
@@ -457,8 +460,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               child: ProfileFormField(
                 controller: _weightController,
                 focusNode: _weightFocus,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) => _targetWeightFocus.requestFocus(),
+                textInputAction: TextInputAction.done,
                 label: 'Вес (кг)',
                 semanticLabel: 'Поле ввода веса в килограммах',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -481,30 +483,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 16),
-        ProfileFormField(
-          controller: _targetWeightController,
-          focusNode: _targetWeightFocus,
-          textInputAction: TextInputAction.done,
-          label: 'Целевой вес (кг, необязательно)',
-          semanticLabel: 'Поле ввода целевого веса в килограммах, необязательное',
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-          ],
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              final weight = double.tryParse(value);
-              if (weight == null) {
-                return 'Введите корректное значение целевого веса';
-              }
-              if (weight < _minWeight || weight > _maxWeight) {
-                return 'Целевой вес должен быть от $_minWeight до $_maxWeight кг';
-              }
-            }
-            return null;
-          },
         ),
         const SizedBox(height: 16),
         ProfileSelectionField<ActivityLevel>(
@@ -535,10 +513,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           allItems: DietaryPreference.values,
           getDisplayText: (item) => item.displayName,
           onSelectionChanged: (items) {
-            setState(() {
-              _selectedDietaryPreferences = items;
-              _onFormChanged();
-            });
+            if (mounted) {
+              setState(() {
+                _selectedDietaryPreferences = items;
+                _onFormChanged();
+              });
+            }
           },
         ),
         const SizedBox(height: 16),
@@ -557,10 +537,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           ],
           getDisplayText: (item) => item,
           onSelectionChanged: (items) {
-            setState(() {
-              _allergies = items;
-              _onFormChanged();
-            });
+            if (mounted) {
+              setState(() {
+                _allergies = items;
+                _onFormChanged();
+              });
+            }
           },
           canAddCustom: true,
         ),
@@ -578,10 +560,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           ],
           getDisplayText: (item) => item,
           onSelectionChanged: (items) {
-            setState(() {
-              _healthConditions = items;
-              _onFormChanged();
-            });
+            if (mounted) {
+              setState(() {
+                _healthConditions = items;
+                _onFormChanged();
+              });
+            }
           },
           canAddCustom: true,
         ),
@@ -726,10 +710,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           ],
           getDisplayText: (item) => item,
           onSelectionChanged: (items) {
-            setState(() {
-              _fitnessGoals = items;
-              _onFormChanged();
-            });
+            if (mounted) {
+              setState(() {
+                _fitnessGoals = items;
+                _onFormChanged();
+              });
+            }
           },
           canAddCustom: true,
         ),
@@ -764,11 +750,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           Navigator.of(context).pop();
                         }
                       },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: AppColors.dynamicPrimary),
-                  foregroundColor: AppColors.dynamicTextPrimary,
-                ),
+                style: AppStyles.secondaryButtonStyle,
                 child: const Text('Отмена'),
               ),
             ),
@@ -776,11 +758,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: _isSubmitting ? null : _saveProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.dynamicPrimary,
-                  foregroundColor: AppColors.dynamicOnPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
+                style: AppStyles.primaryButtonStyle,
                 child: _isSubmitting
                     ? SizedBox(
                         height: 20,
@@ -802,19 +780,143 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   // Selection methods
   Future<void> _selectDateOfBirth(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDateOfBirth ??
-          DateTime.now().subtract(const Duration(days: 365 * 25)),
-      firstDate: DateTime.now().subtract(const Duration(days: 365 * 120)),
-      lastDate: DateTime.now().subtract(const Duration(days: 365 * 13)),
-    );
-    if (picked != null && picked != _selectedDateOfBirth) {
-      setState(() {
-        _selectedDateOfBirth = picked;
-        _onFormChanged();
-      });
+    final initialDate = _selectedDateOfBirth ??
+        DateTime.now().subtract(const Duration(days: 365 * 25));
+    final firstDate = DateTime.now().subtract(const Duration(days: 365 * 120));
+    final lastDate = DateTime.now().subtract(const Duration(days: 365 * 13));
+
+    // Используем Bottom Picker для выбора даты
+    BottomPicker.date(
+      headerBuilder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            'Выберите дату рождения',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: AppColors.dynamicTextPrimary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        );
+      },
+      onSubmit: (selectedDate) {
+        setState(() {
+          _selectedDateOfBirth = selectedDate;
+          _onFormChanged();
+        });
+      },
+      onDismiss: (dynamic value) {},
+      bottomPickerTheme: BottomPickerTheme.plumPlate,
+      maxDateTime: lastDate,
+      minDateTime: firstDate,
+      initialDateTime: initialDate,
+      buttonSingleColor: AppColors.dynamicPrimary,
+      backgroundColor: AppColors.dynamicCard,
+      pickerTextStyle: TextStyle(
+        color: AppColors.dynamicTextPrimary,
+        fontSize: 14,
+      ),
+    ).show(context);
+  }
+
+  /// Форматирует дату в формат dd/mm/yyyy
+  String _formatDateDDMMYYYY(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
+  /// Парсит строку формата dd/mm/yyyy в DateTime
+  DateTime? _parseDateDDMMYYYY(String dateString) {
+    try {
+      final parts = dateString.split('/');
+      if (parts.length != 3) return null;
+
+      final day = int.tryParse(parts[0]);
+      final month = int.tryParse(parts[1]);
+      final year = int.tryParse(parts[2]);
+
+      if (day == null || month == null || year == null) return null;
+      if (day < 1 || day > 31) return null;
+      if (month < 1 || month > 12) return null;
+      if (year < 1900 || year > 2100) return null;
+
+      return DateTime(year, month, day);
+    } catch (e) {
+      return null;
     }
+  }
+
+  /// Форматирует дату для отображения (например: "Ср, 24 дек")
+  String _formatDateDisplay(DateTime date) {
+    const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    const months = [
+      'янв',
+      'фев',
+      'мар',
+      'апр',
+      'май',
+      'июн',
+      'июл',
+      'авг',
+      'сен',
+      'окт',
+      'ноя',
+      'дек'
+    ];
+
+    final weekday = weekdays[date.weekday - 1];
+    final month = months[date.month - 1];
+    return '$weekday, ${date.day} $month';
+  }
+
+  /// Автоматически форматирует ввод даты, добавляя "/" после 2-й и 4-й цифры
+  String _autoFormatDate(String input) {
+    // Удаляем все символы, кроме цифр
+    final digitsOnly = input.replaceAll(RegExp(r'[^\d]'), '');
+    
+    // Ограничиваем до 8 цифр
+    final limitedDigits = digitsOnly.length > 8 
+        ? digitsOnly.substring(0, 8) 
+        : digitsOnly;
+    
+    if (limitedDigits.isEmpty) {
+      return '';
+    }
+    
+    // Форматируем с добавлением "/"
+    String formatted = '';
+    for (int i = 0; i < limitedDigits.length; i++) {
+      if (i == 2 || i == 4) {
+        formatted += '/';
+      }
+      formatted += limitedDigits[i];
+    }
+    
+    return formatted;
+  }
+
+  /// Вычисляет позицию курсора после форматирования
+  int _calculateCursorPosition({
+    required String oldText,
+    required String newText,
+    required int oldCursorPos,
+  }) {
+    // Подсчитываем количество цифр до курсора в старом тексте
+    final oldDigitsBeforeCursor = oldText
+        .substring(0, oldCursorPos.clamp(0, oldText.length))
+        .replaceAll(RegExp(r'[^\d]'), '')
+        .length;
+    
+    // Подсчитываем разделители в новом тексте до нужной позиции
+    final newDigitsOnly = newText.replaceAll(RegExp(r'[^\d]'), '');
+    final digitsToCount = oldDigitsBeforeCursor.clamp(0, newDigitsOnly.length);
+    
+    int separators = 0;
+    if (digitsToCount > 2) separators++;
+    if (digitsToCount > 4) separators++;
+    
+    return digitsToCount + separators;
   }
 
   Future<void> _selectGender(BuildContext context) async {
@@ -827,6 +929,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           style: TextStyle(color: AppColors.dynamicTextPrimary),
         ),
         children: Gender.values
+            .where((gender) => gender != Gender.other)
             .map((gender) => SimpleDialogOption(
                   onPressed: () => Navigator.of(context).pop(gender),
                   child: Text(
@@ -837,7 +940,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             .toList(),
       ),
     );
-    if (selected != null && selected != _selectedGender) {
+    if (selected != null && selected != _selectedGender && mounted) {
       setState(() {
         _selectedGender = selected;
         _onFormChanged();
@@ -868,7 +971,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             .toList(),
       ),
     );
-    if (selected != null && selected != _selectedActivityLevel) {
+    if (selected != null && selected != _selectedActivityLevel && mounted) {
       setState(() {
         _selectedActivityLevel = selected;
         _onFormChanged();
@@ -1021,6 +1124,88 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         content: Text('Ошибка: $message'),
         backgroundColor: AppColors.dynamicError,
       ),
+    );
+  }
+}
+
+/// TextInputFormatter для автоматического форматирования даты в формате dd/mm/yyyy
+class _DateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Получаем новый текст
+    String newText = newValue.text;
+    
+    // Удаляем все символы, кроме цифр
+    final digitsOnly = newText.replaceAll(RegExp(r'[^\d]'), '');
+    
+    // Ограничиваем до 8 цифр
+    final limitedDigits = digitsOnly.length > 8 
+        ? digitsOnly.substring(0, 8) 
+        : digitsOnly;
+
+    // Если нет цифр, возвращаем пустое значение
+    if (limitedDigits.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    // Форматируем с добавлением "/" после 2-й и 4-й цифры
+    String formatted = '';
+    for (int i = 0; i < limitedDigits.length; i++) {
+      if (i == 2 || i == 4) {
+        formatted += '/';
+      }
+      formatted += limitedDigits[i];
+    }
+
+    // Вычисляем позицию курсора
+    final oldDigits = oldValue.text.replaceAll(RegExp(r'[^\d]'), '').length;
+    final newDigits = limitedDigits.length;
+    
+    int cursorPosition;
+    
+    if (newDigits < oldDigits) {
+      // Удаляли символы
+      final oldCursorPos = oldValue.selection.baseOffset.clamp(0, oldValue.text.length);
+      final oldTextBeforeCursor = oldValue.text.substring(0, oldCursorPos);
+      final oldDigitsBeforeCursor = oldTextBeforeCursor.replaceAll(RegExp(r'[^\d]'), '').length;
+      
+      final adjustedDigits = oldDigitsBeforeCursor.clamp(0, newDigits);
+      int separators = 0;
+      if (adjustedDigits > 2) separators++;
+      if (adjustedDigits > 4) separators++;
+      
+      cursorPosition = adjustedDigits + separators;
+    } else {
+      // Добавляли символы
+      final cursorOffset = newValue.selection.baseOffset;
+      // Подсчитываем количество цифр до курсора в новом тексте
+      final textBeforeCursor = newText.substring(0, cursorOffset.clamp(0, newText.length));
+      final digitsBeforeCursor = textBeforeCursor.replaceAll(RegExp(r'[^\d]'), '').length;
+      
+      int separators = 0;
+      if (digitsBeforeCursor > 2) separators++;
+      if (digitsBeforeCursor > 4) separators++;
+      
+      cursorPosition = digitsBeforeCursor + separators;
+      
+      // Если курсор на разделителе, перемещаем после него
+      if (cursorPosition < formatted.length && formatted[cursorPosition] == '/') {
+        cursorPosition++;
+      }
+    }
+
+    // Ограничиваем позицию курсора
+    cursorPosition = cursorPosition.clamp(0, formatted.length);
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: cursorPosition),
     );
   }
 }

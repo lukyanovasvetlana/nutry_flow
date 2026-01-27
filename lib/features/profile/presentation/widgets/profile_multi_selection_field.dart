@@ -34,8 +34,19 @@ class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionFie
   void didUpdateWidget(ProfileMultiSelectionField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Обновляем значение FormField при изменении selectedItems
+    // Откладываем вызов до следующего кадра, чтобы избежать setState во время сборки
     if (oldWidget.selectedItems != widget.selectedItems) {
-      _fieldKey.currentState?.didChange(widget.selectedItems);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final fieldState = _fieldKey.currentState;
+        if (fieldState != null && fieldState.mounted) {
+          try {
+            fieldState.didChange(widget.selectedItems);
+          } catch (e) {
+            // Игнорируем ошибки, если виджет уже удален
+          }
+        }
+      });
     }
   }
 
@@ -158,9 +169,12 @@ class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionFie
   }
 
   void _removeItem(T item, FormFieldState<List<T>> field) {
+    if (!mounted) return;
     final newList = List<T>.from(widget.selectedItems);
     newList.remove(item);
-    field.didChange(newList);
+    if (field.mounted) {
+      field.didChange(newList);
+    }
     widget.onSelectionChanged(newList);
   }
 
@@ -169,141 +183,158 @@ class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionFie
     final TextEditingController customController = TextEditingController();
     final List<T> tempSelected = List.from(widget.selectedItems);
 
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          backgroundColor: AppColors.dynamicCard,
-          title: Text(
-            'Выберите ${widget.label}',
-            style: TextStyle(color: AppColors.dynamicTextPrimary),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Existing options
-                ...widget.allItems.map((item) {
-                  final isSelected = tempSelected.contains(item);
-                  return CheckboxListTile(
-                    title: Text(
-                      widget.getDisplayText(item),
-                      style: TextStyle(color: AppColors.dynamicTextPrimary),
-                    ),
-                    value: isSelected,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          tempSelected.add(item);
-                        } else {
-                          tempSelected.remove(item);
-                        }
-                      });
-                    },
-                    activeColor: AppColors.dynamicPrimary,
-                  );
-                }),
+    try {
+      await showDialog(
+        context: context,
+        builder: (dialogContext) => StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            backgroundColor: AppColors.dynamicCard,
+            title: Text(
+              'Выберите ${widget.label}',
+              style: TextStyle(color: AppColors.dynamicTextPrimary),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Existing options
+                  ...widget.allItems.map((item) {
+                    final isSelected = tempSelected.contains(item);
+                    return CheckboxListTile(
+                      title: Text(
+                        widget.getDisplayText(item),
+                        style: TextStyle(color: AppColors.dynamicTextPrimary),
+                      ),
+                      value: isSelected,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          if (value == true) {
+                            tempSelected.add(item);
+                          } else {
+                            tempSelected.remove(item);
+                          }
+                        });
+                      },
+                      activeColor: AppColors.dynamicPrimary,
+                    );
+                  }),
 
-                // Custom input if allowed
-                if (widget.canAddCustom) ...[
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: customController,
-                            decoration: InputDecoration(
-                              hintText: 'Добавить свой вариант',
-                              hintStyle: TextStyle(
-                                color: AppColors.dynamicTextSecondary,
-                              ),
-                              fillColor: AppColors.dynamicBackground,
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: AppColors.dynamicBorder,
+                  // Custom input if allowed
+                  if (widget.canAddCustom) ...[
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: customController,
+                              decoration: InputDecoration(
+                                hintText: 'Добавить свой вариант',
+                                hintStyle: TextStyle(
+                                  color: AppColors.dynamicTextSecondary,
+                                ),
+                                fillColor: AppColors.dynamicBackground,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: AppColors.dynamicBorder,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: AppColors.dynamicBorder,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: AppColors.dynamicPrimary,
+                                    width: 2,
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
                                 ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: AppColors.dynamicBorder,
-                                ),
+                              style: TextStyle(
+                                color: AppColors.dynamicTextPrimary,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: AppColors.dynamicPrimary,
-                                  width: 2,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                            style: TextStyle(
-                              color: AppColors.dynamicTextPrimary,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            final customText = customController.text.trim();
-                            if (customText.isNotEmpty && T == String) {
-                              final customItem = customText as T;
-                              if (!tempSelected.contains(customItem)) {
-                                setState(() {
-                                  tempSelected.add(customItem);
-                                  customController.clear();
-                                });
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () {
+                              try {
+                                final customText = customController.text.trim();
+                                if (customText.isNotEmpty && T == String) {
+                                  final customItem = customText as T;
+                                  if (!tempSelected.contains(customItem)) {
+                                    setState(() {
+                                      tempSelected.add(customItem);
+                                      customController.clear();
+                                    });
+                                  }
+                                }
+                              } catch (e) {
+                                // Игнорируем ошибки, если контроллер уже удален
                               }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.dynamicPrimary,
-                            foregroundColor: AppColors.dynamicOnPrimary,
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.dynamicPrimary,
+                              foregroundColor: AppColors.dynamicOnPrimary,
+                            ),
+                            child: const Text('Добавить'),
                           ),
-                          child: const Text('Добавить'),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+                child: Text(
+                  'Отмена',
+                  style: TextStyle(color: AppColors.dynamicTextPrimary),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (!mounted) return;
+                  try {
+                    if (field.mounted) {
+                      field.didChange(tempSelected);
+                    }
+                    widget.onSelectionChanged(tempSelected);
+                  } catch (e) {
+                    // Игнорируем ошибки, если виджет уже удален
+                  }
+                  Navigator.of(dialogContext).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.dynamicSuccess,
+                  foregroundColor: AppColors.dynamicOnPrimary,
+                ),
+                child: const Text('Готово'),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                customController.dispose();
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Отмена',
-                style: TextStyle(color: AppColors.dynamicTextPrimary),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                field.didChange(tempSelected);
-                widget.onSelectionChanged(tempSelected);
-                customController.dispose();
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dynamicSuccess,
-                foregroundColor: AppColors.dynamicOnPrimary,
-              ),
-              child: const Text('Готово'),
-            ),
-          ],
         ),
-      ),
-    );
+      );
+    } finally {
+      try {
+        customController.dispose();
+      } catch (e) {
+        // Игнорируем ошибки при dispose
+      }
+    }
   }
 }

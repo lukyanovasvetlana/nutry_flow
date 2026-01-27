@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'dart:async';
-import '../bloc/activity_bloc.dart';
+import 'package:neon_circular_timer/neon_circular_timer.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/activity_session.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
+import '../../../../shared/design/tokens/theme_tokens.dart';
 import '../../../analytics/presentation/utils/analytics_tracker.dart';
+import '../../../../shared/theme/app_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
 
 class WorkoutSessionScreen extends StatefulWidget {
   final Workout workout;
@@ -22,7 +23,6 @@ class WorkoutSessionScreen extends StatefulWidget {
 
 class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     with TickerProviderStateMixin {
-  late ActivityBloc _activityBloc;
   late AnimationController _animationController;
 
   ActivitySession? _currentSession;
@@ -30,8 +30,12 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   int _currentSet = 1;
   int _currentRep = 1;
   bool _isResting = false;
-  int _restTimeRemaining = 0;
-  Timer? _restTimer;
+  bool _isPaused = false;
+  bool _isWorkoutCompleteShown = false;
+  int? _selectedWorkoutDurationMinutes;
+  int _restTimeTotal = 0;
+  final CountDownController _restTimerController = CountDownController();
+  final CountDownController _workoutTimerController = CountDownController();
   Timer? _sessionTimer;
   int _sessionDuration = 0;
   int _caloriesBurned = 0;
@@ -39,9 +43,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   @override
   void initState() {
     super.initState();
-    _activityBloc = GetIt.instance.get<ActivityBloc>();
     _initializeAnimations();
     _startWorkoutSession();
+    _isPaused = true;
 
     // Отслеживаем просмотр экрана тренировки
     AnalyticsTracker.trackScreenView(
@@ -67,7 +71,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       createdAt: DateTime.now(),
     );
 
-    _activityBloc.add(StartActivitySession(session));
+    _currentSession = session;
     _startSessionTimer();
   }
 
@@ -82,10 +86,14 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     });
   }
 
+  void _stopSessionTimer() {
+    _sessionTimer?.cancel();
+    _sessionTimer = null;
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
-    _restTimer?.cancel();
     _sessionTimer?.cancel();
     super.dispose();
   }
@@ -93,116 +101,45 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.colors.surface,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           widget.workout.name,
           style: context.typography.headlineSmallStyle.copyWith(
-            color: context.colors.onSurface,
+            color: DesignTokens.colors.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: context.colors.surface,
+        backgroundColor: DesignTokens.colors.surface,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.close,
-            color: context.colors.onSurface,
+            color: DesignTokens.colors.onSurface,
           ),
           onPressed: _showExitDialog,
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.pause,
-              color: context.colors.onSurface,
-            ),
-            onPressed: _pauseWorkout,
-          ),
-        ],
+        actions: [],
       ),
-      body: BlocProvider.value(
-        value: _activityBloc,
-        child: BlocListener<ActivityBloc, ActivityState>(
-          listener: (context, state) {
-            if (state is ActivitySessionStarted) {
-              setState(() {
-                _currentSession = state.session;
-              });
-            } else if (state is ActivitySessionCompleted) {
-              _showCompletionDialog();
-            } else if (state is ActivityError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: context.colors.error,
-                ),
-              );
-            }
-          },
-          child: Column(
-            children: [
-              _buildSessionHeader(),
-              Expanded(
-                child: _buildWorkoutContent(),
-              ),
-              _buildActionButtons(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSessionHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: context.colors.primaryLight,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(16),
-          bottomRight: Radius.circular(16),
-        ),
-      ),
-      child: Row(
+      body: Stack(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Время тренировки',
-                  style: context.typography.bodyMediumStyle.copyWith(
-                    color: context.colors.onPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _formatDuration(_sessionDuration),
-                  style: context.typography.headlineMediumStyle.copyWith(
-                    color: context.colors.onPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+          Positioned.fill(
+            child: Image.asset(
+              _getBackgroundAsset(),
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withValues(alpha: 0.6)
+                  : Colors.white.withValues(alpha: 0.5),
             ),
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                'Калории',
-                style: context.typography.bodyMediumStyle.copyWith(
-                  color: context.colors.onPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '$_caloriesBurned',
-                style: context.typography.headlineMediumStyle.copyWith(
-                  color: context.colors.onPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+              Expanded(
+                child: _buildWorkoutContent(),
               ),
             ],
           ),
@@ -221,20 +158,48 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     final totalReps = currentExercise.reps ?? 1;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(DesignTokens.spacing.md),
       child: Column(
         children: [
-          _buildProgressIndicator(),
-          const SizedBox(height: 24),
           if (_isResting)
             _buildRestTimer()
           else
             _buildExerciseCard(currentExercise, totalSets, totalReps),
-          const SizedBox(height: 24),
-          _buildExerciseList(),
+          SizedBox(height: DesignTokens.spacing.xxl),
+          _buildFinishButton(),
         ],
       ),
     );
+  }
+
+  String _getBackgroundAsset() {
+    if (_currentExerciseIndex >= widget.workout.exercises.length) {
+      return 'assets/images/workout_backgrounds/default.jpg';
+    }
+
+    final name =
+        widget.workout.exercises[_currentExerciseIndex].exercise.name
+            .toLowerCase();
+    if (name.contains('бег')) {
+      return 'assets/images/workout_backgrounds/run.jpg';
+    }
+    if (name.contains('присед')) {
+      return 'assets/images/workout_backgrounds/squat.jpg';
+    }
+    if (name.contains('планк')) {
+      return 'assets/images/workout_backgrounds/plank.jpg';
+    }
+    if (name.contains('велосипед')) {
+      return 'assets/images/workout_backgrounds/bike.jpg';
+    }
+    if (name.contains('сурья') || name.contains('йога')) {
+      return 'assets/images/workout_backgrounds/yoga.jpg';
+    }
+    if (name.contains('пилатес')) {
+      return 'assets/images/workout_backgrounds/pilates.jpg';
+    }
+
+    return 'assets/images/workout_backgrounds/default.jpg';
   }
 
   Widget _buildProgressIndicator() {
@@ -250,13 +215,13 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               'Прогресс',
               style: context.typography.titleMediumStyle.copyWith(
                 fontWeight: FontWeight.w600,
-                color: context.colors.onSurface,
+                color: DesignTokens.colors.onSurface,
               ),
             ),
             Text(
               '${_currentExerciseIndex + 1}/${widget.workout.exercises.length}',
               style: context.typography.bodyMediumStyle.copyWith(
-                color: context.colors.onSurfaceVariant,
+                color: DesignTokens.colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -264,8 +229,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: progress,
-          backgroundColor: context.colors.surfaceVariant,
-          valueColor: AlwaysStoppedAnimation<Color>(context.colors.primary),
+          backgroundColor: DesignTokens.colors.surfaceVariant,
+          valueColor:
+              AlwaysStoppedAnimation<Color>(DesignTokens.colors.primary),
         ),
       ],
     );
@@ -273,69 +239,193 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
 
   Widget _buildExerciseCard(
       WorkoutExercise exercise, int totalSets, int totalReps) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Icon(
-              Icons.fitness_center,
-              size: 64,
-              color: context.colors.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              exercise.exercise.name,
-              style: context.typography.headlineSmallStyle.copyWith(
-                fontWeight: FontWeight.w600,
-                color: context.colors.onSurface,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              exercise.exercise.description,
-              style: context.typography.bodyMediumStyle.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Padding(
+      padding: EdgeInsets.all(DesignTokens.spacing.lg),
+      child: Column(
+        children: [
+          SizedBox(height: DesignTokens.spacing.lg),
+          SizedBox(
+            width: 220,
+            height: 220,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                _buildSetRepCounter('Подход', _currentSet, totalSets),
-                _buildSetRepCounter('Повторение', _currentRep, totalReps),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _previousSet,
-                    child: const Text('Предыдущий'),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _nextSet,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
+                Container(
+                  width: 220,
+                  height: 220,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFFCCCCCC).withValues(alpha: 0.6)
+                          : const Color(0xFFCCCCCC),
+                      width: DesignTokens.spacing.sm,
                     ),
-                    child: const Text('Следующий'),
+                  ),
+                ),
+                Transform.translate(
+                  offset: const Offset(0, 2),
+                  child: NeonCircularTimer(
+                    key: ValueKey<int>(_getWorkoutTimerDurationSeconds()),
+                    width: 220,
+                    duration: _getWorkoutTimerDurationSeconds(),
+                    controller: _workoutTimerController,
+                  autoStart: false,
+                    isReverse: false,
+                    isReverseAnimation: false,
+                    isTimerTextShown: true,
+                    strokeWidth: DesignTokens.spacing.sm,
+                    strokeCap: StrokeCap.round,
+                    neumorphicEffect: false,
+                    outerStrokeColor: Colors.transparent,
+                    innerFillColor: Colors.transparent,
+                    neonColor: DesignTokens.colors.primary,
+                    neon: 0,
+                    textStyle: context.typography.headlineMediumStyle.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.primary
+                          : DesignTokens.colors.onSurface,
+                    ),
+                    textFormat: TextFormat.MM_SS,
+                    onComplete: _handleWorkoutTimerComplete,
                   ),
                 ),
               ],
             ),
-          ],
+          ),
+          SizedBox(height: DesignTokens.spacing.lg),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: _goToPreviousExercise,
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.primary
+                      : DesignTokens.colors.onSurface,
+                ),
+              ),
+              IconButton(
+                onPressed: _pauseWorkout,
+                icon: Icon(
+                  _isPaused ? Icons.play_arrow : Icons.pause,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.primary
+                      : DesignTokens.colors.onSurface,
+                ),
+              ),
+              IconButton(
+                onPressed: _goToNextExercise,
+                icon: Icon(
+                  Icons.arrow_forward,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.primary
+                      : DesignTokens.colors.onSurface,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: DesignTokens.spacing.lg),
+          _buildDurationSelector(),
+          SizedBox(height: DesignTokens.spacing.lg),
+          _buildTechniqueCard(exercise.exercise.description),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTechniqueCard(String description) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(DesignTokens.spacing.cardPadding),
+      decoration: BoxDecoration(
+        color: context.surface,
+        borderRadius: BorderRadius.circular(DesignTokens.borders.md),
+        border: Border.all(
+          color: context.outline,
+          width: DesignTokens.borders.thin,
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Техника выполнения',
+            style: context.typography.titleMediumStyle.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.dynamicTextPrimary,
+            ),
+          ),
+          SizedBox(height: DesignTokens.spacing.sm),
+          Text(
+            description,
+            style: context.typography.bodyMediumStyle.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDurationSelector() {
+    const options = [1, 2, 3, 5, 10, 15, 20, 30, 45, 60];
+    final value = _selectedWorkoutDurationMinutes ??
+        (_getWorkoutTimerDurationSeconds() ~/ 60);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(DesignTokens.spacing.cardPadding),
+      decoration: BoxDecoration(
+        color: context.surface,
+        borderRadius: BorderRadius.circular(DesignTokens.borders.md),
+        border: Border.all(
+          color: context.outline,
+          width: DesignTokens.borders.thin,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Длительность тренировки',
+              style: context.typography.bodyMediumStyle.copyWith(
+                color: AppColors.dynamicTextPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          DropdownButton<int>(
+            value: options.contains(value) ? value : options.first,
+            onChanged: (next) {
+              if (next == null) return;
+              setState(() {
+                _selectedWorkoutDurationMinutes = next;
+                _isPaused = true;
+              });
+              _workoutTimerController.restart();
+              _workoutTimerController.pause();
+            },
+            style: context.typography.bodyMediumStyle.copyWith(
+              color: AppColors.dynamicTextPrimary,
+            ),
+            items: options
+                .map(
+                  (minutes) => DropdownMenuItem<int>(
+                    value: minutes,
+                    child: Text(
+                      '$minutes мин',
+                      style: context.typography.bodyMediumStyle.copyWith(
+                        color: AppColors.dynamicTextPrimary,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ],
       ),
     );
   }
@@ -346,150 +436,108 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
         Text(
           label,
           style: context.typography.bodySmallStyle.copyWith(
-            color: context.colors.onSurfaceVariant,
+            color: DesignTokens.colors.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: DesignTokens.spacing.xs),
         Text(
           '$current/$total',
           style: context.typography.headlineMediumStyle.copyWith(
             fontWeight: FontWeight.w600,
-            color: context.colors.onSurface,
+            color: DesignTokens.colors.onSurface,
           ),
         ),
       ],
     );
   }
 
+  int _getWorkoutTimerDurationSeconds() {
+    final minutes =
+        _selectedWorkoutDurationMinutes ?? widget.workout.totalEstimatedDuration;
+    if (minutes <= 0) return 60;
+    return minutes * 60;
+  }
+
   Widget _buildRestTimer() {
     return Card(
-      elevation: 4,
+      elevation: 0,
+      color: DesignTokens.colors.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(DesignTokens.borders.lg),
+        side: BorderSide(
+          color: DesignTokens.colors.outline,
+          width: DesignTokens.borders.thin,
+        ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(DesignTokens.spacing.lg),
         child: Column(
           children: [
             Icon(
               Icons.timer,
               size: 64,
-              color: context.colors.secondary,
+              color: DesignTokens.colors.secondary,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignTokens.spacing.md),
             Text(
               'Отдых',
               style: context.typography.headlineSmallStyle.copyWith(
                 fontWeight: FontWeight.w600,
-                color: context.colors.onSurface,
+                color: DesignTokens.colors.onSurface,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignTokens.spacing.sm),
             Text(
               'Подготовьтесь к следующему упражнению',
               style: context.typography.bodyMediumStyle.copyWith(
-                color: context.colors.onSurfaceVariant,
+                color: DesignTokens.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            Text(
-              _formatDuration(_restTimeRemaining),
-              style: context.typography.displaySmallStyle.copyWith(
-                fontWeight: FontWeight.w600,
-                color: context.colors.primary,
+            SizedBox(height: DesignTokens.spacing.lg),
+            NeonCircularTimer(
+              width: 140,
+              duration: _restTimeTotal,
+              controller: _restTimerController,
+              isReverse: true,
+              isReverseAnimation: true,
+              autoStart: true,
+              isTimerTextShown: true,
+              strokeWidth: 10,
+              neumorphicEffect: false,
+              outerStrokeColor: DesignTokens.colors.surfaceVariant,
+              innerFillColor: DesignTokens.colors.surface,
+              neonGradient: LinearGradient(
+                colors: [
+                  DesignTokens.colors.primary,
+                  DesignTokens.colors.secondary,
+                ],
               ),
+              textStyle: context.typography.headlineMediumStyle.copyWith(
+                fontWeight: FontWeight.w700,
+                color: DesignTokens.colors.onSurface,
+              ),
+              textFormat: TextFormat.MM_SS,
+              onComplete: () {
+                if (mounted) {
+                  setState(() {
+                    _isResting = false;
+                  });
+                }
+              },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: DesignTokens.spacing.lg),
             ElevatedButton(
               onPressed: _skipRest,
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.secondary,
-                foregroundColor: context.colors.onSecondary,
+                backgroundColor: DesignTokens.colors.secondary,
+                foregroundColor: DesignTokens.colors.onSecondary,
               ),
               child: const Text('Пропустить отдых'),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildExerciseList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'План тренировки',
-          style: context.typography.titleMediumStyle.copyWith(
-            fontWeight: FontWeight.w600,
-            color: context.colors.onSurface,
-          ),
-        ),
-        const SizedBox(height: 12),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: widget.workout.exercises.length,
-          itemBuilder: (context, index) {
-            final exercise = widget.workout.exercises[index];
-            final isCurrent = index == _currentExerciseIndex;
-            final isCompleted = index < _currentExerciseIndex;
-
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              color: isCurrent
-                  ? context.colors.primaryLight
-                  : isCompleted
-                      ? context.colors.surfaceVariant
-                      : context.colors.surface,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: isCurrent
-                      ? context.colors.primary
-                      : isCompleted
-                          ? context.colors.onSurfaceVariant
-                          : context.colors.outline,
-                  child: Text(
-                    '${index + 1}',
-                    style: TextStyle(
-                      color: isCurrent
-                          ? context.colors.onPrimary
-                          : isCompleted
-                              ? context.colors.surface
-                              : context.colors.onSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                title: Text(
-                  exercise.exercise.name,
-                  style: context.typography.bodyLargeStyle.copyWith(
-                    fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
-                    color: isCurrent
-                        ? context.colors.onPrimary
-                        : context.colors.onSurface,
-                  ),
-                ),
-                subtitle: Text(
-                  '${exercise.sets ?? 0} x ${exercise.reps ?? 0}',
-                  style: context.typography.bodyMediumStyle.copyWith(
-                    color: isCurrent
-                        ? context.colors.onPrimary.withValues(alpha: 0.7)
-                        : context.colors.onSurfaceVariant,
-                  ),
-                ),
-                trailing: isCompleted
-                    ? Icon(
-                        Icons.check_circle,
-                        color: context.colors.primary,
-                      )
-                    : null,
-              ),
-            );
-          },
-        ),
-      ],
     );
   }
 
@@ -501,32 +549,28 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
           Icon(
             Icons.celebration,
             size: 128,
-            color: context.colors.primary,
+            color: DesignTokens.colors.primary,
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignTokens.spacing.lg),
           Text(
             'Тренировка завершена!',
             style: context.typography.headlineMediumStyle.copyWith(
               fontWeight: FontWeight.w600,
-              color: context.colors.onSurface,
+              color: DesignTokens.colors.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignTokens.spacing.md),
           Text(
             'Отличная работа! Вы сожгли $_caloriesBurned калорий',
             style: context.typography.bodyLargeStyle.copyWith(
-              color: context.colors.onSurfaceVariant,
+              color: DesignTokens.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: DesignTokens.spacing.xl),
           ElevatedButton(
             onPressed: _completeWorkout,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            ),
+            style: AppStyles.primaryButtonStyle,
             child: const Text('Завершить тренировку'),
           ),
         ],
@@ -534,29 +578,16 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     );
   }
 
-  Widget _buildActionButtons() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: _pauseWorkout,
-              child: const Text('Пауза'),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: _completeWorkout,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.error,
-                foregroundColor: context.colors.onError,
-              ),
-              child: const Text('Завершить'),
-            ),
-          ),
-        ],
+  Widget _buildFinishButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: DesignTokens.spacing.md),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: _completeWorkout,
+          style: AppStyles.primaryButtonStyle,
+          child: const Text('Завершить'),
+        ),
       ),
     );
   }
@@ -598,18 +629,43 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   }
 
   void _nextExercise() {
-    if (_currentExerciseIndex < widget.workout.exercises.length - 1) {
-      setState(() {
-        _currentExerciseIndex++;
-        _currentSet = 1;
-        _currentRep = 1;
-        _startRest();
-      });
-    } else {
-      setState(() {
-        _currentExerciseIndex++;
-      });
-    }
+    if (_currentExerciseIndex >= widget.workout.exercises.length - 1) return;
+    setState(() {
+      _currentExerciseIndex++;
+      _currentSet = 1;
+      _currentRep = 1;
+      _isResting = false;
+    });
+  }
+
+  void _previousExercise() {
+    if (_currentExerciseIndex <= 0) return;
+    setState(() {
+      _currentExerciseIndex--;
+      _currentSet = 1;
+      _currentRep = 1;
+      _isResting = false;
+    });
+  }
+
+  void _goToNextExercise() {
+    if (_currentExerciseIndex >= widget.workout.exercises.length - 1) return;
+    setState(() {
+      _currentExerciseIndex++;
+      _currentSet = 1;
+      _currentRep = 1;
+      _isResting = false;
+    });
+  }
+
+  void _goToPreviousExercise() {
+    if (_currentExerciseIndex <= 0) return;
+    setState(() {
+      _currentExerciseIndex--;
+      _currentSet = 1;
+      _currentRep = 1;
+      _isResting = false;
+    });
   }
 
   void _startRest() {
@@ -618,63 +674,102 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
 
     setState(() {
       _isResting = true;
-      _restTimeRemaining = restTime;
+      _restTimeTotal = restTime;
     });
 
-    _restTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _restTimeRemaining--;
-      });
-
-      if (_restTimeRemaining <= 0) {
-        timer.cancel();
-        setState(() {
-          _isResting = false;
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _restTimerController.restart();
       }
     });
   }
 
   void _skipRest() {
-    _restTimer?.cancel();
+    _restTimerController.pause();
     setState(() {
       _isResting = false;
     });
   }
 
   void _pauseWorkout() {
-    // TODO: Implement pause functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Функция паузы будет добавлена позже'),
-        backgroundColor: context.colors.secondary,
-      ),
-    );
+    if (_isPaused) {
+      setState(() {
+        _isPaused = false;
+      });
+      _startSessionTimer();
+      if (_isResting) {
+        _restTimerController.resume();
+      } else {
+        _workoutTimerController.resume();
+      }
+      return;
+    }
+
+    setState(() {
+      _isPaused = true;
+    });
+    _stopSessionTimer();
+    if (_isResting) {
+      _restTimerController.pause();
+    } else {
+      _workoutTimerController.pause();
+    }
+  }
+
+  void _stopWorkoutTimer() {
+    _workoutTimerController.pause();
+    _restTimerController.pause();
+    _stopSessionTimer();
+    setState(() {
+      _isPaused = true;
+    });
+  }
+
+  void _handleWorkoutTimerComplete() {
+    if (_isWorkoutCompleteShown || !mounted) return;
+    _isWorkoutCompleteShown = true;
+    _stopSessionTimer();
+    setState(() {
+      _isPaused = true;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _completeWorkout();
+      }
+    });
   }
 
   void _completeWorkout() {
-    if (_currentSession != null) {
-      // Отслеживаем завершение тренировки
-      AnalyticsTracker.trackWorkoutCompleted(
-        workoutName: widget.workout.name,
-        duration: _sessionDuration,
-        caloriesBurned: _caloriesBurned,
-      );
-
-      _activityBloc.add(CompleteActivitySession(_currentSession!.id));
-    }
+    if (_currentSession == null) return;
+    // Отслеживаем завершение тренировки
+    AnalyticsTracker.trackWorkoutCompleted(
+      workoutName: widget.workout.name,
+      duration: _sessionDuration,
+      caloriesBurned: _caloriesBurned,
+    );
+    _showCompletionDialog();
   }
 
   void _showExitDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Выйти из тренировки?'),
-        content: const Text('Весь прогресс будет потерян. Вы уверены?'),
+        backgroundColor: DesignTokens.colors.surface,
+        title: Text(
+          'Выйти из тренировки?',
+          style: TextStyle(color: DesignTokens.colors.onSurface),
+        ),
+        content: Text(
+          'Весь прогресс будет потерян. Вы уверены?',
+          style: TextStyle(color: DesignTokens.colors.onSurfaceVariant),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Отмена'),
+            child: Text(
+              'Отмена',
+              style: TextStyle(color: DesignTokens.colors.onSurface),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -682,8 +777,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.error,
-              foregroundColor: context.colors.onError,
+              backgroundColor: DesignTokens.colors.error,
+              foregroundColor: DesignTokens.colors.onPrimary,
             ),
             child: const Text('Выйти'),
           ),
@@ -697,14 +792,27 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Тренировка завершена!'),
+        backgroundColor: DesignTokens.colors.surface,
+        title: Text(
+          'Тренировка завершена!',
+          style: TextStyle(color: DesignTokens.colors.onSurface),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Отличная работа!'),
+            Text(
+              'Отличная работа!',
+              style: TextStyle(color: DesignTokens.colors.onSurface),
+            ),
             const SizedBox(height: 8),
-            Text('Время: ${_formatDuration(_sessionDuration)}'),
-            Text('Калории: $_caloriesBurned'),
+            Text(
+              'Время: ${_formatDuration(_sessionDuration)}',
+              style: TextStyle(color: DesignTokens.colors.onSurfaceVariant),
+            ),
+            Text(
+              'Калории: $_caloriesBurned',
+              style: TextStyle(color: DesignTokens.colors.onSurfaceVariant),
+            ),
           ],
         ),
         actions: [
@@ -713,6 +821,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignTokens.colors.primary,
+              foregroundColor: DesignTokens.colors.onPrimary,
+            ),
             child: const Text('Отлично!'),
           ),
         ],
@@ -732,3 +844,4 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     }
   }
 }
+

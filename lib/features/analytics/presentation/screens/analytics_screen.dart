@@ -323,21 +323,40 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     final double fatsPercent = (fats / total) * 100;
 
      return Container(
-        padding: const EdgeInsets.all(16),
-       decoration: BoxDecoration(
-         color: AppColors.dynamicCard,
-         borderRadius: BorderRadius.circular(20),
-         boxShadow: [
-           BoxShadow(
-             color: AppColors.dynamicShadow.withValues(alpha: 0.08),
-             blurRadius: 12,
-             offset: const Offset(0, 4),
-             spreadRadius: 0,
-           ),
-         ],
-       ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.dynamicShadow.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? 'assets/images/dashboard_main_metrics_dark.jpg'
+                      : 'assets/images/dashboard_main_metrics_light.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned.fill(
+                child: Container(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black.withValues(alpha: 0.88)
+                      : Colors.white.withValues(alpha: 0.85),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
             // Размер диаграммы
             final double chartSize = constraints.maxWidth < 400 
                 ? 220.0 
@@ -371,22 +390,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                           // Выбранный элемент - яркий цвет, невыбранные - приглушенные
                           final isLightTheme = Theme.of(context).brightness == Brightness.light;
                           final desaturateColor = isLightTheme ? Colors.white : Colors.grey;
+                          final mutedFactor = isLightTheme ? 0.15 : 0.6;
+                          final blendFactor = isLightTheme ? 0.1 : 0.4;
                           
                           final carbsColor = selectedMacro == 'carbs'
                               ? carbsGradient[0]
                               : (selectedMacro != null 
-                                  ? Color.lerp(carbsGradient[0], desaturateColor, 0.6) ?? AppColors.dynamicOrange
-                                  : Color.lerp(carbsGradient[0], carbsGradient[1], 0.4) ?? AppColors.dynamicOrange);
+                                  ? Color.lerp(carbsGradient[0], desaturateColor, mutedFactor) ?? AppColors.dynamicOrange
+                                  : Color.lerp(carbsGradient[0], carbsGradient[1], blendFactor) ?? AppColors.dynamicOrange);
                           final proteinsColor = selectedMacro == 'proteins'
                               ? proteinsGradient[0]
                               : (selectedMacro != null 
-                                  ? Color.lerp(proteinsGradient[0], desaturateColor, 0.6) ?? AppColors.dynamicPrimary
-                                  : Color.lerp(proteinsGradient[0], proteinsGradient[1], 0.4) ?? AppColors.dynamicPrimary);
+                                  ? Color.lerp(proteinsGradient[0], desaturateColor, mutedFactor) ?? AppColors.dynamicPrimary
+                                  : Color.lerp(proteinsGradient[0], proteinsGradient[1], blendFactor) ?? AppColors.dynamicPrimary);
                           final fatsColor = selectedMacro == 'fats'
                               ? fatsGradient[0]
                               : (selectedMacro != null 
-                                  ? Color.lerp(fatsGradient[0], desaturateColor, 0.6) ?? AppColors.dynamicYellow
-                                  : Color.lerp(fatsGradient[0], fatsGradient[1], 0.4) ?? AppColors.dynamicYellow);
+                                  ? Color.lerp(fatsGradient[0], desaturateColor, mutedFactor) ?? AppColors.dynamicYellow
+                                  : Color.lerp(fatsGradient[0], fatsGradient[1], blendFactor) ?? AppColors.dynamicYellow);
 
                           return PieChartSz(
                             colors: [
@@ -463,6 +484,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
               ],
             );
           },
+        ),
+              ),
+            ],
+          ),
         ),
       );
   }
@@ -645,15 +670,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     required String trend,
     required bool isPositive,
   }) {
+    final isLightTheme = Theme.of(context).brightness == Brightness.light;
     return NutryCard(
       backgroundColor: AppColors.dynamicCard,
       margin: EdgeInsets.zero,
       child: Container(
         padding: const EdgeInsets.all(14), // Уменьшил с 16 до 14
         decoration: BoxDecoration(
+          color: isLightTheme ? color.withValues(alpha: 0.1) : null,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withValues(alpha: 0.2),
+            color: color.withValues(alpha: isLightTheme ? 0.6 : 0.2),
             width: 1,
           ),
         ),
@@ -663,7 +690,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                 Container(
               padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
+                color: color.withValues(alpha: isLightTheme ? 0.3 : 0.15),
                 borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(

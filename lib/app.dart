@@ -23,16 +23,16 @@ class _AppContainerState extends State<AppContainer> {
   // Список иконок для навигации
   final List<IconData> _iconList = [
     Icons.dashboard,
-    Icons.calendar_today,
-    Icons.add, // Центральная кнопка (будет заменена на FloatingActionButton)
-    Icons.person,
     Icons.restaurant_menu,
+    Icons.add, // Центральная кнопка (будет заменена на FloatingActionButton)
+    Icons.calendar_today,
+    Icons.person,
   ];
 
   List<Widget> _buildScreens() {
     return <Widget>[
       const DashboardScreen(),
-      const CalendarScreen(),
+      const MealPlanScreen(),
       ExerciseScreenRedesigned(
         key: const ValueKey('exercise_screen'),
         onBackPressed: () {
@@ -43,6 +43,7 @@ class _AppContainerState extends State<AppContainer> {
           }
         },
       ),
+      const CalendarScreen(),
       UnifiedProfileScreen(
         key: const ValueKey('profile_screen'),
         onBackPressed: () {
@@ -53,7 +54,6 @@ class _AppContainerState extends State<AppContainer> {
           }
         },
       ),
-      const MealPlanScreen(),
     ];
   }
 
@@ -131,9 +131,9 @@ class _AppContainerState extends State<AppContainer> {
     // Создаем список иконок без центральной (индекс 2)
     final List<IconData> navIcons = [
       _iconList[0], // Главная
-      _iconList[1], // Календарь
-      _iconList[3], // Профиль
-      _iconList[4], // Питание
+      _iconList[1], // Питание
+      _iconList[3], // Календарь
+      _iconList[4], // Профиль
     ];
 
     return Stack(
@@ -143,7 +143,7 @@ class _AppContainerState extends State<AppContainer> {
           itemCount: navIcons.length,
           tabBuilder: (int index, bool isActive) {
             // Маппинг индексов: 0->0, 1->1, 2->3, 3->4
-            final actualIndex = index < 2 ? index : index + 1;
+            final actualIndex = index == 0 ? 0 : index == 1 ? 1 : index == 2 ? 3 : 4;
             final icon = navIcons[index];
             final label = _getLabelForIndex(actualIndex);
 
@@ -176,7 +176,7 @@ class _AppContainerState extends State<AppContainer> {
           backgroundColor: backgroundColor,
           onTap: (index) {
             // Маппинг индексов обратно: 0->0, 1->1, 2->3, 3->4
-            final actualIndex = index < 2 ? index : index + 1;
+            final actualIndex = index == 0 ? 0 : index == 1 ? 1 : index == 2 ? 3 : 4;
             setState(() {
               _selectedIndex = actualIndex;
             });
@@ -188,12 +188,14 @@ class _AppContainerState extends State<AppContainer> {
 
   int _getActiveNavIndex() {
     // Маппинг: 0->0, 1->1, 3->2, 4->3
-    if (_selectedIndex < 2) {
-      return _selectedIndex;
+    if (_selectedIndex == 0) {
+      return 0; // Главная
+    } else if (_selectedIndex == 1) {
+      return 1; // Питание
     } else if (_selectedIndex == 3) {
-      return 2;
+      return 2; // Календарь
     } else if (_selectedIndex == 4) {
-      return 3;
+      return 3; // Профиль
     }
     return 0;
   }
@@ -203,11 +205,11 @@ class _AppContainerState extends State<AppContainer> {
       case 0:
         return 'Главная';
       case 1:
-        return 'Календарь';
-      case 3:
-        return 'Профиль';
-      case 4:
         return 'Питание';
+      case 3:
+        return 'Календарь';
+      case 4:
+        return 'Профиль';
       default:
         return '';
     }

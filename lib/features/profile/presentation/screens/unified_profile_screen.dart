@@ -200,9 +200,10 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Ошибка загрузки профиля',
-                  style: DesignTokens.typography.titleMediumStyle.copyWith(
-                    color: DesignTokens.colors.onSurface,
-                    fontWeight: DesignTokens.typography.semiBold,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.dynamicTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -210,8 +211,9 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Text(
                     state.message,
-                    style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                      color: DesignTokens.colors.onSurfaceVariant,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.dynamicTextSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -368,9 +370,10 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                   // Имя и фамилия
                   Text(
                     '${profile.firstName} ${profile.lastName}',
-                    style: DesignTokens.typography.titleMediumStyle.copyWith(
-                      color: DesignTokens.colors.onSurface,
-                      fontWeight: DesignTokens.typography.bold,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.dynamicTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -380,14 +383,15 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                       Icon(
                         Icons.email,
                         size: 14,
-                        color: DesignTokens.colors.onSurfaceVariant,
+                        color: AppColors.dynamicTextSecondary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           profile.email,
-                          style: DesignTokens.typography.bodySmallStyle.copyWith(
-                            color: DesignTokens.colors.onSurfaceVariant,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.dynamicTextSecondary,
                           ),
                         ),
                       ),
@@ -400,14 +404,15 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                       Icon(
                         Icons.phone,
                         size: 14,
-                        color: DesignTokens.colors.onSurfaceVariant,
+                        color: AppColors.dynamicTextSecondary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           profile.phone ?? 'Не указан',
-                          style: DesignTokens.typography.bodySmallStyle.copyWith(
-                            color: DesignTokens.colors.onSurfaceVariant,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.dynamicTextSecondary,
                           ),
                         ),
                       ),
@@ -562,9 +567,10 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
       ),
       child: Text(
         title,
-        style: DesignTokens.typography.titleMediumStyle.copyWith(
-          color: DesignTokens.colors.onSurface,
-          fontWeight: DesignTokens.typography.semiBold,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.dynamicTextPrimary,
         ),
       ),
     );
@@ -609,25 +615,27 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
       ),
       title: Text(
         title,
-        style: DesignTokens.typography.bodyMediumStyle.copyWith(
+        style: TextStyle(
+          fontSize: 14,
           color: isDestructive
-              ? DesignTokens.colors.error
-              : DesignTokens.colors.onSurface,
-          fontWeight: DesignTokens.typography.medium,
+              ? AppColors.dynamicError
+              : AppColors.dynamicTextPrimary,
+          fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: DesignTokens.typography.bodySmallStyle.copyWith(
+        style: TextStyle(
+          fontSize: 12,
           color: isDestructive
-              ? DesignTokens.colors.error.withValues(alpha: 0.7)
-              : DesignTokens.colors.onSurfaceVariant,
+              ? AppColors.dynamicError.withValues(alpha: 0.7)
+              : AppColors.dynamicTextSecondary,
         ),
       ),
       trailing: onTap != null
           ? Icon(
               Icons.chevron_right,
-              color: DesignTokens.colors.onSurfaceVariant,
+              color: AppColors.dynamicTextSecondary,
               size: 18,
             )
           : null,
@@ -724,9 +732,10 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
             SizedBox(height: DesignTokens.spacing.md),
             Text(
               'Изменить фото профиля',
-              style: DesignTokens.typography.titleMediumStyle.copyWith(
-                color: DesignTokens.colors.onSurface,
-                fontWeight: DesignTokens.typography.semiBold,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.dynamicTextPrimary,
               ),
             ),
             SizedBox(height: DesignTokens.spacing.lg),
@@ -875,40 +884,48 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Отмена',
-                style: TextStyle(
-                  color: AppColors.dynamicTextPrimary,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // TODO: Реализовать отправку ссылки для смены пароля
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Ссылка для смены пароля отправлена на email',
-                        style: TextStyle(
-                          color: AppColors.dynamicOnPrimary,
-                        ),
-                      ),
-                      backgroundColor: AppColors.dynamicPrimary,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Отмена',
+                    style: TextStyle(
+                      color: AppColors.dynamicTextPrimary,
                     ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dynamicPrimary,
-                foregroundColor: AppColors.dynamicOnPrimary,
-              ),
-              child: const Text('Отправить'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // TODO: Реализовать отправку ссылки для смены пароля
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Ссылка для смены пароля отправлена на email',
+                            style: TextStyle(
+                              color: AppColors.dynamicOnPrimary,
+                            ),
+                          ),
+                          backgroundColor: AppColors.dynamicPrimary,
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(
+                    'Отправить',
+                    style: TextStyle(
+                      color: AppColors.dynamicPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -921,84 +938,93 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: DesignTokens.colors.surface,
+          backgroundColor: AppColors.dynamicCard,
           title: Text(
             'Выйти из аккаунта',
-            style: DesignTokens.typography.titleLargeStyle.copyWith(
-              color: DesignTokens.colors.onSurface,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: AppColors.dynamicTextPrimary,
             ),
           ),
           content: Text(
             'Вы уверены, что хотите выйти из аккаунта?',
-            style: DesignTokens.typography.bodyMediumStyle.copyWith(
-              color: DesignTokens.colors.onSurfaceVariant,
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.dynamicTextSecondary,
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Отмена',
-                style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                  color: DesignTokens.colors.onSurfaceVariant,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Отмена',
+                    style: TextStyle(
+                      color: AppColors.dynamicTextPrimary,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                try {
-                  final authService = AuthService();
-                  await authService.signOut();
-                  if (!mounted) return;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/welcome',
-                        (route) => false,
+                const SizedBox(width: 16),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    try {
+                      final authService = AuthService();
+                      await authService.signOut();
+                      if (!mounted) return;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/welcome',
+                            (route) => false,
+                          );
+                        }
+                      });
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Вы вышли из аккаунта',
+                            style: TextStyle(
+                              color: DesignTokens.colors.onPrimary,
+                            ),
+                          ),
+                          backgroundColor: DesignTokens.colors.primary,
+                        ),
+                      );
+                    } catch (e) {
+                      developer.log(
+                        'Ошибка выхода из аккаунта: $e',
+                        name: 'UnifiedProfileScreen',
+                      );
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Ошибка выхода: $e',
+                            style: TextStyle(
+                              color: DesignTokens.colors.onError,
+                            ),
+                          ),
+                          backgroundColor: DesignTokens.colors.error,
+                        ),
                       );
                     }
-                  });
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Вы вышли из аккаунта',
-                        style: TextStyle(
-                          color: DesignTokens.colors.onPrimary,
-                        ),
-                      ),
-                      backgroundColor: DesignTokens.colors.primary,
+                  },
+                  child: Text(
+                    'Выйти',
+                    style: TextStyle(
+                      color: DesignTokens.colors.error,
+                      fontWeight: FontWeight.w600,
                     ),
-                  );
-                } catch (e) {
-                  developer.log(
-                    'Ошибка выхода из аккаунта: $e',
-                    name: 'UnifiedProfileScreen',
-                  );
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Ошибка выхода: $e',
-                        style: TextStyle(
-                          color: DesignTokens.colors.onError,
-                        ),
-                      ),
-                      backgroundColor: DesignTokens.colors.error,
-                    ),
-                  );
-                }
-              },
-              child: Text(
-                'Выйти',
-                style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                  color: DesignTokens.colors.error,
-                  fontWeight: DesignTokens.typography.semiBold,
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         );
@@ -1025,75 +1051,79 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                   color: AppColors.dynamicTextPrimary,
                 ),
               ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildSwitchTile(
-                      icon: Icons.notifications,
-                      title: 'Push-уведомления',
-                      subtitle: 'Получать уведомления в приложении',
-                      value: pushNotifications,
-                      onChanged: (value) {
-                        setDialogState(() {
-                          pushNotifications = value;
-                        });
-                      },
-                    ),
-                    _buildSwitchTile(
-                      icon: Icons.email,
-                      title: 'Email-уведомления',
-                      subtitle: 'Получать уведомления на email',
-                      value: emailNotifications,
-                      onChanged: (value) {
-                        setDialogState(() {
-                          emailNotifications = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildSwitchTile(
+                    icon: Icons.notifications,
+                    title: 'Push-уведомления',
+                    subtitle: 'Получать уведомления в приложении',
+                    value: pushNotifications,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        pushNotifications = value;
+                      });
+                    },
+                  ),
+                  _buildSwitchTile(
+                    icon: Icons.email,
+                    title: 'Email-уведомления',
+                    subtitle: 'Получать уведомления на email',
+                    value: emailNotifications,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        emailNotifications = value;
+                      });
+                    },
+                  ),
+                ],
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Отмена',
-                    style: TextStyle(
-                      color: AppColors.dynamicTextPrimary,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _pushNotifications = pushNotifications;
-                      _emailNotifications = emailNotifications;
-                    });
-                    Navigator.of(context).pop();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Настройки уведомлений сохранены',
-                            style: TextStyle(
-                              color: AppColors.dynamicOnPrimary,
-                            ),
-                          ),
-                          backgroundColor: AppColors.dynamicPrimary,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Отмена',
+                        style: TextStyle(
+                          color: AppColors.dynamicTextPrimary,
                         ),
-                      );
-                    }
-                  },
-                  child: Text(
-                    'Сохранить',
-                    style: TextStyle(
-                      color: AppColors.dynamicPrimary,
-                      fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 16),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _pushNotifications = pushNotifications;
+                          _emailNotifications = emailNotifications;
+                        });
+                        Navigator.of(context).pop();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Настройки уведомлений сохранены',
+                                style: TextStyle(
+                                  color: AppColors.dynamicOnPrimary,
+                                ),
+                              ),
+                              backgroundColor: AppColors.dynamicPrimary,
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Сохранить',
+                        style: TextStyle(
+                          color: AppColors.dynamicPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );

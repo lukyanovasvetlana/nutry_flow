@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
 import '../../../../shared/design/components/buttons/nutry_button.dart';
 import '../../../../shared/theme/app_colors.dart';
+import 'package:nutry_flow/features/activity/domain/entities/exercise.dart'
+    as activity;
+import 'package:nutry_flow/features/activity/domain/entities/workout.dart';
+import 'package:nutry_flow/features/activity/presentation/screens/workout_session_screen.dart';
 
 class ExerciseScreenRedesigned extends StatefulWidget {
   final VoidCallback? onBackPressed;
@@ -15,6 +19,8 @@ class ExerciseScreenRedesigned extends StatefulWidget {
 
 class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
   String selectedCategory = 'Все';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   final List<String> categories = [
     'Все',
@@ -32,6 +38,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       'duration': '30 мин',
       'calories': '300 ккал',
       'difficulty': 'Средний',
+      'technique': 'Ровная осанка, мягкая постановка стопы.',
       'icon': Icons.directions_run,
       'color': Colors.blue,
     },
@@ -41,6 +48,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       'duration': '15 мин',
       'calories': '150 ккал',
       'difficulty': 'Легкий',
+      'technique': 'Спина ровная, колени по линии носков.',
       'icon': Icons.fitness_center,
       'color': Colors.green,
     },
@@ -50,6 +58,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       'duration': '10 мин',
       'calories': '100 ккал',
       'difficulty': 'Средний',
+      'technique': 'Тело в одной линии, пресс напряжён.',
       'icon': Icons.accessibility_new,
       'color': Colors.orange,
     },
@@ -59,6 +68,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       'duration': '45 мин',
       'calories': '400 ккал',
       'difficulty': 'Средний',
+      'technique': 'Круговые движения, ровный темп.',
       'icon': Icons.directions_bike,
       'color': Colors.purple,
     },
@@ -68,6 +78,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       'duration': '20 мин',
       'calories': '120 ккал',
       'difficulty': 'Легкий',
+      'technique': 'Плавные переходы, дыхание ровное.',
       'icon': Icons.self_improvement,
       'color': Colors.teal,
     },
@@ -77,6 +88,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
       'duration': '25 мин',
       'calories': '180 ккал',
       'difficulty': 'Средний',
+      'technique': 'Контроль корпуса, движения медленные.',
       'icon': Icons.accessibility,
       'color': Colors.indigo,
     },
@@ -104,7 +116,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
               color: AppColors.dynamicTextPrimary,
             ),
             onPressed: () {
-              // TODO: Implement search
+              _showSearchDialog();
             },
           ),
           IconButton(
@@ -130,6 +142,101 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _showSearchDialog() {
+    _searchController.text = _searchQuery;
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: AppColors.dynamicCard,
+          title: Text(
+            'Поиск упражнений',
+            style: TextStyle(
+              color: AppColors.dynamicTextPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: TextField(
+            controller: _searchController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Введите название',
+              hintStyle: TextStyle(color: AppColors.dynamicTextSecondary),
+              prefixIcon: Icon(
+                Icons.search,
+                color: AppColors.dynamicTextSecondary,
+              ),
+              suffixIcon: _searchController.text.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                        color: AppColors.dynamicTextSecondary,
+                      ),
+                      onPressed: () {
+                        if (!mounted) return;
+                        setState(() {
+                          _searchController.clear();
+                          _searchQuery = '';
+                        });
+                      },
+                    ),
+              filled: true,
+              fillColor: AppColors.dynamicSurface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.dynamicBorder),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.dynamicBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.dynamicPrimary),
+              ),
+            ),
+            style: TextStyle(color: AppColors.dynamicTextPrimary),
+            onSubmitted: (_) => _applySearch(dialogContext),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                'Отмена',
+                style: TextStyle(color: AppColors.dynamicTextSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () => _applySearch(dialogContext),
+              child: Text(
+                'Найти',
+                style: TextStyle(
+                  color: AppColors.dynamicPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _applySearch(BuildContext dialogContext) {
+    if (!mounted) return;
+    setState(() {
+      _searchQuery = _searchController.text.trim();
+    });
+    Navigator.of(dialogContext).pop();
   }
 
   Widget _buildCategoriesSection() {
@@ -183,11 +290,19 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
   }
 
   Widget _buildExercisesList() {
-    final filteredExercises = selectedCategory == 'Все'
+    var filteredExercises = selectedCategory == 'Все'
         ? exercises
         : exercises
             .where((exercise) => exercise['category'] == selectedCategory)
             .toList();
+
+    if (_searchQuery.isNotEmpty) {
+      final normalizedQuery = _searchQuery.toLowerCase();
+      filteredExercises = filteredExercises
+          .where((exercise) =>
+              (exercise['name'] as String).toLowerCase().contains(normalizedQuery))
+          .toList();
+    }
 
     return ListView.builder(
       padding:
@@ -201,6 +316,123 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
         );
       },
     );
+  }
+
+  void _startExercise(Map<String, dynamic> exercise) {
+    if (!mounted) return;
+    final workout = _buildWorkoutForExercise(exercise);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => WorkoutSessionScreen(workout: workout),
+      ),
+    );
+  }
+
+  Workout _buildWorkoutForExercise(Map<String, dynamic> exercise) {
+    final now = DateTime.now();
+    final name = exercise['name'] as String;
+    final category = exercise['category'] as String;
+    final difficulty = exercise['difficulty'] as String;
+    final duration = exercise['duration'] as String?;
+    final icon = exercise['icon'] as IconData?;
+    final technique = exercise['technique'] as String? ??
+        'Техника выполнения уточняется';
+
+    final activityExercise = activity.Exercise(
+      id: 'exercise_${now.millisecondsSinceEpoch}',
+      name: name,
+      category: _mapCategory(category),
+      difficulty: _mapDifficulty(difficulty),
+      duration: duration,
+      iconName: _mapIconName(icon),
+      description: technique,
+      targetMuscles: const [],
+      equipment: const [],
+    );
+
+    final workoutExercise = WorkoutExercise(
+      id: 'workout_exercise_${now.millisecondsSinceEpoch}',
+      exercise: activityExercise,
+      orderIndex: 0,
+      sets: 3,
+      reps: 12,
+      duration: duration,
+      restSeconds: 60,
+    );
+
+    return Workout(
+      id: 'workout_${now.millisecondsSinceEpoch}',
+      userId: 'current_user_id',
+      name: name,
+      description: 'Тренировка на основе упражнения "$name"',
+      estimatedDurationMinutes: _parseDurationMinutes(duration),
+      difficulty: _mapWorkoutDifficulty(difficulty),
+      exercises: [workoutExercise],
+      createdAt: now,
+      updatedAt: now,
+    );
+  }
+
+  activity.ExerciseCategory _mapCategory(String category) {
+    switch (category) {
+      case 'Кардио':
+        return activity.ExerciseCategory.cardio;
+      case 'Йога':
+        return activity.ExerciseCategory.yoga;
+      case 'Пилатес':
+        return activity.ExerciseCategory.flexibility;
+      case 'Сила':
+        return activity.ExerciseCategory.arms;
+      case 'Танцы':
+        return activity.ExerciseCategory.cardio;
+      default:
+        return activity.ExerciseCategory.core;
+    }
+  }
+
+  activity.ExerciseDifficulty _mapDifficulty(String difficulty) {
+    switch (difficulty) {
+      case 'Легкий':
+        return activity.ExerciseDifficulty.beginner;
+      case 'Средний':
+        return activity.ExerciseDifficulty.intermediate;
+      case 'Сложный':
+        return activity.ExerciseDifficulty.advanced;
+      default:
+        return activity.ExerciseDifficulty.intermediate;
+    }
+  }
+
+  WorkoutDifficulty _mapWorkoutDifficulty(String difficulty) {
+    switch (difficulty) {
+      case 'Легкий':
+        return WorkoutDifficulty.beginner;
+      case 'Средний':
+        return WorkoutDifficulty.intermediate;
+      case 'Сложный':
+        return WorkoutDifficulty.advanced;
+      default:
+        return WorkoutDifficulty.intermediate;
+    }
+  }
+
+  String _mapIconName(IconData? icon) {
+    if (icon == Icons.directions_run) return 'directions_run';
+    if (icon == Icons.directions_bike) return 'directions_bike';
+    if (icon == Icons.self_improvement) return 'self_improvement';
+    if (icon == Icons.accessibility ||
+        icon == Icons.accessibility_new) {
+      return 'accessibility';
+    }
+    if (icon == Icons.fitness_center) return 'fitness_center';
+    return 'fitness_center';
+  }
+
+  int? _parseDurationMinutes(String? duration) {
+    if (duration == null) return null;
+    final match = RegExp(r'\d+').firstMatch(duration);
+    if (match == null) return null;
+    return int.tryParse(match.group(0)!);
   }
 
   Widget _buildExerciseCard(Map<String, dynamic> exercise) {
@@ -259,6 +491,16 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
                       overflow: TextOverflow.ellipsis, // Добавил ellipsis
                     ),
                     const SizedBox(height: 6), // Уменьшил с 8 до 6
+                    Text(
+                      exercise['technique'] as String? ??
+                          'Техника выполнения уточняется',
+                      style: DesignTokens.typography.bodySmallStyle.copyWith(
+                        color: AppColors.dynamicTextSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
 
                     // Детали упражнения
                     Wrap(
@@ -291,7 +533,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
                 height: 36, // Фиксированная высота
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Start exercise
+                    _startExercise(exercise);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.dynamicPrimary,

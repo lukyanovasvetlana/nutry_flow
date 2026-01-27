@@ -153,12 +153,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final result = await _getUserProfileUseCase.execute(event.userId);
       developer.log('🔵 ProfileBloc: UseCase result - isSuccess: ${result.isSuccess}', name: 'ProfileBloc');
 
-      if (result.isSuccess) {
+      if (result.isSuccess && result.profile != null) {
         developer.log('🔵 ProfileBloc: Profile loaded successfully: ${result.profile?.firstName}', name: 'ProfileBloc');
         emit(ProfileLoaded(result.profile!));
       } else {
         developer.log('🔴 ProfileBloc: Failed to load profile - error: ${result.error}', name: 'ProfileBloc');
-        emit(ProfileError(result.error ?? 'Failed to load profile'));
+        // Показываем более информативное сообщение об ошибке
+        final errorMessage = result.error ?? 'Не удалось загрузить профиль. Попробуйте обновить страницу.';
+        emit(ProfileError(errorMessage));
       }
     } catch (e, stackTrace) {
       developer.log('🔴 ProfileBloc: Exception in _onLoadProfile: $e', name: 'ProfileBloc');

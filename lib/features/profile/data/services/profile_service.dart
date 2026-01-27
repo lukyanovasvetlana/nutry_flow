@@ -92,13 +92,37 @@ class MockProfileService implements ProfileService {
   Future<UserProfileModel?> getCurrentUserProfile() async {
     await Future.delayed(
         const Duration(milliseconds: 500)); // Simulate network delay
-    return _demoProfile;
+    
+    // В демо-режиме возвращаем null, чтобы сработал fallback
+    // на SharedPreferences в ProfileRepositoryImpl
+    // Это позволяет использовать данные, введенные при регистрации
+    return null;
   }
 
   @override
   Future<UserProfileModel?> getUserProfile(String userId) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    return _profiles[userId];
+    
+    // Если профиль существует в _profiles, возвращаем его
+    if (_profiles.containsKey(userId)) {
+      return _profiles[userId];
+    }
+    
+    // В демо-режиме всегда возвращаем null для реальных пользователей,
+    // чтобы сработал fallback на SharedPreferences в ProfileRepositoryImpl
+    // Это позволяет использовать данные, введенные при регистрации
+    if (userId != 'demo-user-id') {
+      return null;
+    }
+    
+    // Если запрашивается демо-профиль, возвращаем его
+    if (userId == _demoProfile.id) {
+      return _demoProfile;
+    }
+    
+    // Для других userId возвращаем null (профиль не найден)
+    // В реальном сценарии здесь должен быть запрос к базе данных
+    return null;
   }
 
   @override

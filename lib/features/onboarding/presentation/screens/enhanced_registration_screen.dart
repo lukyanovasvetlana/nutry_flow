@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../bloc/auth_bloc.dart';
 import '../../di/onboarding_dependencies.dart';
@@ -60,6 +61,16 @@ class _EnhancedRegistrationScreenState
     }
   }
 
+  Future<void> _saveEmailToSharedPreferences(String email) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userEmail', email);
+      developer.log('🔵 Registration: Email saved to SharedPreferences: $email', name: 'enhanced_registration_screen');
+    } catch (e) {
+      developer.log('🔴 Registration: Error saving email to SharedPreferences: $e', name: 'enhanced_registration_screen');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     developer.log('🔵 Registration: build called', name: 'enhanced_registration_screen');
@@ -78,6 +89,9 @@ class _EnhancedRegistrationScreenState
           if (state is AuthAuthenticated) {
             developer.log(
                 '🟢 Registration: User authenticated, navigating to profile setup', name: 'enhanced_registration_screen');
+            // Сохраняем email в SharedPreferences
+            _saveEmailToSharedPreferences(state.user.email);
+            
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (context.mounted) {
                 Navigator.pushNamedAndRemoveUntil(

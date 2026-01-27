@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../models/user_profile_model.dart';
 import '../services/profile_service.dart';
+import 'package:nutry_flow/core/services/supabase_service.dart';
+import 'dart:developer' as developer;
 
 /// Implementation of ProfileRepository using ProfileService
 class ProfileRepositoryImpl implements ProfileRepository {
@@ -15,12 +18,20 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       final profileModel = await _profileService.getCurrentUserProfile();
 
-      if (profileModel == null) {
+      if (profileModel != null) {
+        // Convert model to entity
+        return _convertModelToEntity(profileModel);
+      }
+
+      // Если профиль не найден, проверяем SharedPreferences как fallback
+      developer.log('🔵 ProfileRepositoryImpl: Current profile not found in service, checking SharedPreferences', name: 'ProfileRepositoryImpl');
+      final currentUser = SupabaseService.instance.currentUser;
+      if (currentUser == null) {
+        developer.log('🔴 ProfileRepositoryImpl: No current user found', name: 'ProfileRepositoryImpl');
         return null;
       }
 
-      // Convert model to entity
-      return _convertModelToEntity(profileModel);
+      return await getUserProfile(currentUser.id);
     } on ProfileServiceException catch (e) {
       throw Exception('Failed to get current user profile: ${e.message}');
     } catch (e) {
@@ -35,18 +46,93 @@ class ProfileRepositoryImpl implements ProfileRepository {
         throw ArgumentError('User ID cannot be empty');
       }
 
-      final profileModel = await _profileService.getUserProfile(userId);
+      // Сначала проверяем SharedPreferences - приоритет реальным данным пользователя
+      developer.log('🔵 ProfileRepositoryImpl: Checking SharedPreferences first', name: 'ProfileRepositoryImpl');
+      final prefs = await SharedPreferences.getInstance();
+      final userName = prefs.getString('userName');
+      final userLastName = prefs.getString('userLastName');
+      final userEmail = prefs.getString('userEmail');
 
-      if (profileModel == null) {
-        return null;
+      if (userName != null && userName.isNotEmpty) {
+        developer.log('🔵 ProfileRepositoryImpl: Found profile data in SharedPreferences: $userName $userLastName', name: 'ProfileRepositoryImpl');
+        
+        // Получаем email из SupabaseService если он не сохранен в SharedPreferences
+        String email = userEmail ?? '';
+        if (email.isEmpty) {
+          final currentUser = SupabaseService.instance.currentUser;
+          email = currentUser?.email ?? '';
+        }
+
+        // Создаем профиль из данных SharedPreferences
+        final localProfile = UserProfile(
+          id: userId,
+          firstName: userName,
+          lastName: userLastName ?? '',
+          email: email.isNotEmpty ? email : 'user@example.com',
+          phone: prefs.getString('userPhone'),
+          dateOfBirth: prefs.getString('userBirthDate') != null
+              ? DateTime.parse(prefs.getString('userBirthDate')!)
+              : null,
+          gender: prefs.getString('userGender') != null
+              ? _parseGender(prefs.getString('userGender')!)
+              : null,
+          height: prefs.getDouble('userHeight'),
+          weight: prefs.getDouble('userWeight'),
+          activityLevel: null,
+          avatarUrl: null,
+          dietaryPreferences: const [],
+          allergies: const [],
+          healthConditions: const [],
+          fitnessGoals: const [],
+          targetWeight: null,
+          targetCalories: null,
+          targetProtein: null,
+          targetCarbs: null,
+          targetFat: null,
+          foodRestrictions: null,
+          pushNotificationsEnabled: true,
+          emailNotificationsEnabled: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        developer.log('🔵 ProfileRepositoryImpl: Created profile from SharedPreferences', name: 'ProfileRepositoryImpl');
+        return localProfile;
       }
 
-      // Convert model to entity
-      return _convertModelToEntity(profileModel);
+      // Если данных в SharedPreferences нет, используем данные из сервиса
+      developer.log('🔵 ProfileRepositoryImpl: No data in SharedPreferences, checking service', name: 'ProfileRepositoryImpl');
+      final profileModel = await _profileService.getUserProfile(userId);
+
+      if (profileModel != null) {
+        // Convert model to entity
+        developer.log('🔵 ProfileRepositoryImpl: Found profile in service', name: 'ProfileRepositoryImpl');
+        return _convertModelToEntity(profileModel);
+      }
+
+      developer.log('🔴 ProfileRepositoryImpl: No profile data found anywhere', name: 'ProfileRepositoryImpl');
+      return null;
     } on ProfileServiceException catch (e) {
       throw Exception('Failed to get user profile: ${e.message}');
     } catch (e) {
       throw Exception('Failed to get user profile: $e');
+    }
+  }
+
+  /// Парсит пол из строки
+  Gender? _parseGender(String genderString) {
+    switch (genderString.toLowerCase()) {
+      case 'мужской':
+      case 'male':
+        return Gender.male;
+      case 'женский':
+      case 'female':
+        return Gender.female;
+      case 'другой':
+      case 'other':
+        return Gender.other;
+      default:
+        return null;
     }
   }
 

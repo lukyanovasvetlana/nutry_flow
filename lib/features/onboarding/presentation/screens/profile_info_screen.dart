@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,34 +84,25 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   }
 
   Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
+    final initialDate = _selectedDate ?? DateTime.now().subtract(const Duration(days: 365 * 25));
+    final firstDate = DateTime(1900);
+    final lastDate = DateTime.now();
+
+    // Используем кастомный bottom sheet с правильным порядком день/месяц/год
+    await showModalBottomSheet(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.green,
-              onPrimary: Colors.white,
-              onSurface: Color(0xFF2D3748),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.green,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      backgroundColor: Colors.transparent,
+      builder: (context) => _CustomDatePicker(
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        onDateSelected: (date) {
+          setState(() {
+            _selectedDate = date;
+          });
+        },
+      ),
     );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
   }
 
   void _saveProfile() async {
@@ -184,7 +176,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                   child: const Text(
                     'Изменить фото',
                     style: TextStyle(
-                        color: AppColors.green, fontWeight: FontWeight.bold),
+                        color: AppColors.button, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -222,7 +214,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
             child: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: AppColors.green,
+                color: AppColors.button,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
               ),
@@ -450,6 +442,344 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
             color: Colors.grey[600],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Кастомный виджет для выбора даты с порядком день/месяц/год
+class _CustomDatePicker extends StatefulWidget {
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final Function(DateTime) onDateSelected;
+
+  const _CustomDatePicker({
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
+    required this.onDateSelected,
+  });
+
+  @override
+  State<_CustomDatePicker> createState() => _CustomDatePickerState();
+}
+
+class _CustomDatePickerState extends State<_CustomDatePicker> {
+  late int selectedDay;
+  late int selectedMonth;
+  late int selectedYear;
+  late List<int> availableDays;
+  late FixedExtentScrollController dayController;
+  late FixedExtentScrollController monthController;
+  late FixedExtentScrollController yearController;
+  int selectedDayIndex = 0;
+  int selectedMonthIndex = 0;
+  int selectedYearIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDay = widget.initialDate.day;
+    selectedMonth = widget.initialDate.month;
+    selectedYear = widget.initialDate.year.clamp(
+      widget.firstDate.year,
+      widget.lastDate.year,
+    );
+    availableDays = _getDaysInMonth(selectedYear, selectedMonth);
+    // Убеждаемся, что выбранный день существует в текущем месяце
+    if (selectedDay > availableDays.length) {
+      selectedDay = availableDays.length;
+    }
+    if (selectedDay < 1 && availableDays.isNotEmpty) {
+      selectedDay = 1;
+    }
+    
+    // Инициализируем контроллеры сразу с правильными значениями
+    final dayIndex = availableDays.indexOf(selectedDay);
+    selectedDayIndex = dayIndex >= 0 && dayIndex < availableDays.length ? dayIndex : 0;
+    dayController = FixedExtentScrollController(
+      initialItem: selectedDayIndex,
+    );
+    
+    selectedMonthIndex = (selectedMonth - 1).clamp(0, 11);
+    monthController = FixedExtentScrollController(
+      initialItem: selectedMonthIndex,
+    );
+    
+    final years = _getYears();
+    final yearIndex = years.indexOf(selectedYear);
+    selectedYearIndex = yearIndex >= 0 && yearIndex < years.length ? yearIndex : 0;
+    yearController = FixedExtentScrollController(
+      initialItem: selectedYearIndex,
+    );
+  }
+
+  List<int> _getYears() {
+    return List.generate(
+      widget.lastDate.year - widget.firstDate.year + 1,
+      (index) => widget.firstDate.year + index,
+    );
+  }
+
+  @override
+  void dispose() {
+    dayController.dispose();
+    monthController.dispose();
+    yearController.dispose();
+    super.dispose();
+  }
+
+  List<int> _getDaysInMonth(int year, int month) {
+    final daysInMonth = DateTime(year, month + 1, 0).day;
+    return List.generate(daysInMonth, (index) => index + 1);
+  }
+
+  void _updateDays() {
+    final newDays = _getDaysInMonth(selectedYear, selectedMonth);
+    if (newDays.length != availableDays.length || 
+        !newDays.contains(selectedDay)) {
+      setState(() {
+        availableDays = newDays;
+        if (selectedDay > availableDays.length) {
+          selectedDay = availableDays.length;
+        }
+        // Обновляем позицию контроллера дня
+        final dayIndex = availableDays.indexOf(selectedDay);
+        if (dayIndex >= 0 && dayIndex < availableDays.length) {
+          selectedDayIndex = dayIndex;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              dayController.jumpToItem(dayIndex);
+            }
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final years = _getYears();
+    final months = List.generate(12, (index) => index + 1);
+    
+    // Отладочная информация
+    debugPrint('DatePicker: availableDays=${availableDays.length}, selectedDay=$selectedDay');
+    debugPrint('DatePicker: months=${months.length}, selectedMonth=$selectedMonth');
+    debugPrint('DatePicker: years=${years.length}, selectedYear=$selectedYear');
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Заголовок
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Отмена',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'Выберите дату рождения',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColors.button,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final selectedDate = DateTime(selectedYear, selectedMonth, selectedDay);
+                    if (selectedDate.isAfter(widget.lastDate) || selectedDate.isBefore(widget.firstDate)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Выбранная дата вне допустимого диапазона')),
+                      );
+                      return;
+                    }
+                    widget.onDateSelected(selectedDate);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Готово',
+                    style: TextStyle(
+                      color: AppColors.button,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Колеса прокрутки: День, Месяц, Год
+          SizedBox(
+            height: 200,
+            child: Stack(
+              children: [
+                // Фон с выделением выбранного элемента
+                Positioned.fill(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: AppColors.button.withValues(alpha: 0.3), width: 1),
+                        bottom: BorderSide(color: AppColors.button.withValues(alpha: 0.3), width: 1),
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    // День
+                    Expanded(
+                      child: availableDays.isEmpty
+                          ? const Center(child: Text('Нет данных'))
+                          : CupertinoPicker(
+                              scrollController: dayController,
+                              itemExtent: 40,
+                              diameterRatio: 1.0,
+                              useMagnifier: true,
+                              magnification: 1.0,
+                              onSelectedItemChanged: (index) {
+                                if (index >= 0 && index < availableDays.length) {
+                                  setState(() {
+                                    selectedDay = availableDays[index];
+                                    selectedDayIndex = index;
+                                  });
+                                }
+                              },
+                              children: availableDays.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final day = entry.value;
+                                final isSelected = index == selectedDayIndex;
+                                return Center(
+                                  child: Text(
+                                    day.toString().padLeft(2, '0'),
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: isSelected ? AppColors.button : Colors.black87,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                    ),
+                    // Месяц
+                    Expanded(
+                      child: months.isEmpty
+                          ? const Center(child: Text('Нет данных'))
+                          : CupertinoPicker(
+                              scrollController: monthController,
+                              itemExtent: 40,
+                              diameterRatio: 1.0,
+                              useMagnifier: true,
+                              magnification: 1.0,
+                              onSelectedItemChanged: (index) {
+                                if (index >= 0 && index < months.length) {
+                                  setState(() {
+                                    selectedMonth = months[index];
+                                    selectedMonthIndex = index;
+                                    _updateDays();
+                                    // Обновляем позицию контроллера дня
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted) {
+                                        final dayIndex = availableDays.indexOf(selectedDay);
+                                        if (dayIndex >= 0 && dayIndex < availableDays.length) {
+                                          selectedDayIndex = dayIndex;
+                                          dayController.jumpToItem(dayIndex);
+                                        }
+                                      }
+                                    });
+                                  });
+                                }
+                              },
+                              children: months.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final month = entry.value;
+                                final isSelected = index == selectedMonthIndex;
+                                final monthNames = [
+                                  'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                                  'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
+                                ];
+                                return Center(
+                                  child: Text(
+                                    monthNames[month - 1],
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: isSelected ? AppColors.button : Colors.black87,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                    ),
+                    // Год
+                    Expanded(
+                      child: years.isEmpty
+                          ? const Center(child: Text('Нет данных'))
+                          : CupertinoPicker(
+                              scrollController: yearController,
+                              itemExtent: 40,
+                              diameterRatio: 1.0,
+                              useMagnifier: true,
+                              magnification: 1.0,
+                              onSelectedItemChanged: (index) {
+                                if (index >= 0 && index < years.length) {
+                                  setState(() {
+                                    selectedYear = years[index];
+                                    selectedYearIndex = index;
+                                    _updateDays();
+                                    // Обновляем позицию контроллера дня
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted) {
+                                        final dayIndex = availableDays.indexOf(selectedDay);
+                                        if (dayIndex >= 0 && dayIndex < availableDays.length) {
+                                          selectedDayIndex = dayIndex;
+                                          dayController.jumpToItem(dayIndex);
+                                        }
+                                      }
+                                    });
+                                  });
+                                }
+                              },
+                              children: years.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final year = entry.value;
+                                final isSelected = index == selectedYearIndex;
+                                return Center(
+                                  child: Text(
+                                    year.toString(),
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: isSelected ? AppColors.button : Colors.black87,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
