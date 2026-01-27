@@ -104,16 +104,16 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
         title: Text(
           widget.workout.name,
           style: context.typography.headlineSmallStyle.copyWith(
-            color: DesignTokens.colors.onSurface,
+            color: context.colors.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: DesignTokens.colors.surface,
+        backgroundColor: context.colors.surface,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.close,
-            color: DesignTokens.colors.onSurface,
+            color: context.colors.onSurface,
           ),
           onPressed: _showExitDialog,
         ),
@@ -241,13 +241,11 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                     neumorphicEffect: false,
                     outerStrokeColor: Colors.transparent,
                     innerFillColor: Colors.transparent,
-                    neonColor: DesignTokens.colors.primary,
+                    neonColor: context.colors.primary,
                     neon: 0,
                     textStyle: context.typography.headlineMediumStyle.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppColors.primary
-                          : DesignTokens.colors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                     textFormat: TextFormat.MM_SS,
                     onComplete: _handleWorkoutTimerComplete,
@@ -266,7 +264,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                   Icons.arrow_back,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? AppColors.primary
-                      : DesignTokens.colors.onSurface,
+                      : context.colors.onSurface,
                 ),
               ),
               IconButton(
@@ -275,7 +273,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                   _isPaused ? Icons.play_arrow : Icons.pause,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? AppColors.primary
-                      : DesignTokens.colors.onSurface,
+                      : context.colors.onSurface,
                 ),
               ),
               IconButton(
@@ -284,7 +282,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                   Icons.arrow_forward,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? AppColors.primary
-                      : DesignTokens.colors.onSurface,
+                      : context.colors.onSurface,
                 ),
               ),
             ],
@@ -402,11 +400,11 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
   Widget _buildRestTimer() {
     return Card(
       elevation: 0,
-      color: DesignTokens.colors.surface,
+      color: context.colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(DesignTokens.borders.lg),
         side: BorderSide(
-          color: DesignTokens.colors.outline,
+          color: context.colors.outline,
           width: DesignTokens.borders.thin,
         ),
       ),
@@ -417,21 +415,21 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             Icon(
               Icons.timer,
               size: 64,
-              color: DesignTokens.colors.secondary,
+              color: context.colors.secondary,
             ),
             SizedBox(height: DesignTokens.spacing.md),
             Text(
               'Отдых',
               style: context.typography.headlineSmallStyle.copyWith(
                 fontWeight: FontWeight.w600,
-                color: DesignTokens.colors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             SizedBox(height: DesignTokens.spacing.sm),
             Text(
               'Подготовьтесь к следующему упражнению',
               style: context.typography.bodyMediumStyle.copyWith(
-                color: DesignTokens.colors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -446,17 +444,17 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               isTimerTextShown: true,
               strokeWidth: 10,
               neumorphicEffect: false,
-              outerStrokeColor: DesignTokens.colors.surfaceVariant,
-              innerFillColor: DesignTokens.colors.surface,
+              outerStrokeColor: context.colors.surfaceVariant,
+              innerFillColor: context.colors.surface,
               neonGradient: LinearGradient(
                 colors: [
-                  DesignTokens.colors.primary,
-                  DesignTokens.colors.secondary,
+                  context.colors.primary,
+                  context.colors.secondary,
                 ],
               ),
               textStyle: context.typography.headlineMediumStyle.copyWith(
                 fontWeight: FontWeight.w700,
-                color: DesignTokens.colors.onSurface,
+                color: context.colors.onSurface,
               ),
               textFormat: TextFormat.MM_SS,
               onComplete: () {
@@ -471,8 +469,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
             ElevatedButton(
               onPressed: _skipRest,
               style: ElevatedButton.styleFrom(
-                backgroundColor: DesignTokens.colors.secondary,
-                foregroundColor: DesignTokens.colors.onSecondary,
+                backgroundColor: context.colors.secondary,
+                foregroundColor: context.colors.onSecondary,
               ),
               child: const Text('Пропустить отдых'),
             ),
@@ -490,21 +488,21 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
           Icon(
             Icons.celebration,
             size: 128,
-            color: DesignTokens.colors.primary,
+            color: context.colors.primary,
           ),
           SizedBox(height: DesignTokens.spacing.lg),
           Text(
             'Тренировка завершена!',
             style: context.typography.headlineMediumStyle.copyWith(
               fontWeight: FontWeight.w600,
-              color: DesignTokens.colors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           SizedBox(height: DesignTokens.spacing.md),
           Text(
             'Отличная работа! Вы сожгли $_caloriesBurned калорий',
             style: context.typography.bodyLargeStyle.copyWith(
-              color: DesignTokens.colors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -610,21 +608,21 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: DesignTokens.colors.surface,
+        backgroundColor: context.colors.surface,
         title: Text(
           'Выйти из тренировки?',
-          style: TextStyle(color: DesignTokens.colors.onSurface),
+          style: TextStyle(color: context.colors.onSurface),
         ),
         content: Text(
           'Весь прогресс будет потерян. Вы уверены?',
-          style: TextStyle(color: DesignTokens.colors.onSurfaceVariant),
+          style: TextStyle(color: context.colors.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               'Отмена',
-              style: TextStyle(color: DesignTokens.colors.onSurface),
+              style: TextStyle(color: context.colors.onSurface),
             ),
           ),
           ElevatedButton(
@@ -633,8 +631,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: DesignTokens.colors.error,
-              foregroundColor: DesignTokens.colors.onPrimary,
+              backgroundColor: context.colors.error,
+              foregroundColor: context.colors.onPrimary,
             ),
             child: const Text('Выйти'),
           ),
@@ -648,26 +646,26 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: DesignTokens.colors.surface,
+        backgroundColor: context.colors.surface,
         title: Text(
           'Тренировка завершена!',
-          style: TextStyle(color: DesignTokens.colors.onSurface),
+          style: TextStyle(color: context.colors.onSurface),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Отличная работа!',
-              style: TextStyle(color: DesignTokens.colors.onSurface),
+              style: TextStyle(color: context.colors.onSurface),
             ),
             const SizedBox(height: 8),
             Text(
               'Время: ${_formatDuration(_sessionDuration)}',
-              style: TextStyle(color: DesignTokens.colors.onSurfaceVariant),
+              style: TextStyle(color: context.colors.onSurfaceVariant),
             ),
             Text(
               'Калории: $_caloriesBurned',
-              style: TextStyle(color: DesignTokens.colors.onSurfaceVariant),
+              style: TextStyle(color: context.colors.onSurfaceVariant),
             ),
           ],
         ),
@@ -678,8 +676,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: DesignTokens.colors.primary,
-              foregroundColor: DesignTokens.colors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
             ),
             child: const Text('Отлично!'),
           ),

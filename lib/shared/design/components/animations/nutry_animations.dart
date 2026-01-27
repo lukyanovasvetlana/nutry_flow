@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import '../../tokens/design_tokens.dart';
 
 /// Типы анимаций
@@ -138,24 +139,30 @@ class NutryAnimations {
     Duration? duration,
     Curve? curve,
     VoidCallback? onComplete,
+    BuildContext? context,
   }) {
-    return AnimatedContainer(
-      duration: duration ?? DesignTokens.animations.normal,
-      curve: curve ?? DesignTokens.animations.easeInOut,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(DesignTokens.borders.md),
-        boxShadow: isPulsing
-            ? [
-                BoxShadow(
-                  color: DesignTokens.colors.primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  spreadRadius: 2,
-                ),
-              ]
-            : [],
-      ),
-      onEnd: onComplete,
-      child: child,
+    return Builder(
+      builder: (ctx) {
+        final effectiveContext = context ?? ctx;
+        return AnimatedContainer(
+          duration: duration ?? DesignTokens.animations.normal,
+          curve: curve ?? DesignTokens.animations.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(DesignTokens.borders.md),
+            boxShadow: isPulsing
+                ? [
+                    BoxShadow(
+                      color: effectiveContext.colors.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : [],
+          ),
+          onEnd: onComplete,
+          child: child,
+        );
+      },
     );
   }
 
@@ -168,10 +175,12 @@ class NutryAnimations {
   }) {
     if (!isLoading) return child;
 
-    return _ShimmerWidget(
-      shimmerColor: shimmerColor ?? DesignTokens.colors.surfaceVariant,
-      duration: duration ?? DesignTokens.animations.slower,
-      child: child,
+    return Builder(
+      builder: (context) => _ShimmerWidget(
+        shimmerColor: shimmerColor ?? context.colors.surfaceVariant,
+        duration: duration ?? DesignTokens.animations.slower,
+        child: child,
+      ),
     );
   }
 
@@ -181,19 +190,26 @@ class NutryAnimations {
     required VoidCallback? onTap,
     Color? rippleColor,
     BorderRadius? borderRadius,
+    BuildContext? context,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius:
-            borderRadius ?? BorderRadius.circular(DesignTokens.borders.md),
-        splashColor:
-            rippleColor ?? DesignTokens.colors.primary.withValues(alpha: 0.2),
-        highlightColor:
-            rippleColor ?? DesignTokens.colors.primary.withValues(alpha: 0.1),
-        child: child,
-      ),
+    return Builder(
+      builder: (ctx) {
+        final effectiveContext = context ?? ctx;
+        final primaryColor = effectiveContext.colors.primary;
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius:
+                borderRadius ?? BorderRadius.circular(DesignTokens.borders.md),
+            splashColor:
+                rippleColor ?? primaryColor.withValues(alpha: 0.2),
+            highlightColor:
+                rippleColor ?? primaryColor.withValues(alpha: 0.1),
+            child: child,
+          ),
+        );
+      },
     );
   }
 
@@ -205,18 +221,25 @@ class NutryAnimations {
     Color? color,
     Duration? duration,
     Curve? curve,
+    BuildContext? context,
   }) {
-    return AnimatedContainer(
-      duration: duration ?? DesignTokens.animations.fast,
-      curve: curve ?? DesignTokens.animations.easeInOut,
-      child: Icon(
-        icon,
-        size: size ?? DesignTokens.spacing.iconMedium,
-        color: color ??
+    return Builder(
+      builder: (ctx) {
+        final effectiveContext = context ?? ctx;
+        final defaultColor = color ??
             (isActive
-                ? DesignTokens.colors.primary
-                : DesignTokens.colors.onSurfaceVariant),
-      ),
+                ? effectiveContext.colors.primary
+                : effectiveContext.colors.onSurfaceVariant);
+        return AnimatedContainer(
+          duration: duration ?? DesignTokens.animations.fast,
+          curve: curve ?? DesignTokens.animations.easeInOut,
+          child: Icon(
+            icon,
+            size: size ?? DesignTokens.spacing.iconMedium,
+            color: defaultColor,
+          ),
+        );
+      },
     );
   }
 
@@ -290,16 +313,22 @@ class NutryAnimations {
     Curve? curve,
     Color? color,
     double? height,
+    BuildContext? context,
   }) {
-    return AnimatedContainer(
-      duration: duration ?? DesignTokens.animations.normal,
-      curve: curve ?? DesignTokens.animations.easeInOut,
-      height: height ?? 4.0,
-      decoration: BoxDecoration(
-        color: color ?? DesignTokens.colors.primary,
-        borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
-      ),
-      width: (progress / maxProgress) * 100,
+    return Builder(
+      builder: (ctx) {
+        final effectiveContext = context ?? ctx;
+        return AnimatedContainer(
+          duration: duration ?? DesignTokens.animations.normal,
+          curve: curve ?? DesignTokens.animations.easeInOut,
+          height: height ?? 4.0,
+          decoration: BoxDecoration(
+            color: color ?? effectiveContext.colors.primary,
+            borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
+          ),
+          width: (progress / maxProgress) * 100,
+        );
+      },
     );
   }
 
@@ -388,6 +417,56 @@ class NutryAnimations {
     );
   }
 
+  /// Spring-анимация для интерактивных элементов
+  /// Использует физику пружины для естественного движения
+  static Widget spring({
+    required Widget child,
+    required bool isActive,
+    SpringDescription? spring,
+    Alignment alignment = Alignment.center,
+  }) {
+    return _SpringAnimationWidget(
+      child: child,
+      isActive: isActive,
+      spring: spring ?? const SpringDescription(
+        mass: 0.5,
+        stiffness: 200,
+        damping: 20,
+      ),
+      alignment: alignment,
+    );
+  }
+
+  /// Микро-анимация для кнопок (легкое увеличение при нажатии)
+  static Widget microScale({
+    required Widget child,
+    required bool isPressed,
+    double scale = 0.98,
+    Duration? duration,
+  }) {
+    return AnimatedScale(
+      scale: isPressed ? scale : 1.0,
+      duration: duration ?? DesignTokens.animations.fast,
+      curve: Curves.easeOut,
+      child: child,
+    );
+  }
+
+  /// Микро-анимация для иконок (легкое вращение)
+  static Widget microRotate({
+    required Widget child,
+    required bool isActive,
+    double angle = 0.1,
+    Duration? duration,
+  }) {
+    return AnimatedRotation(
+      turns: isActive ? angle : 0.0,
+      duration: duration ?? DesignTokens.animations.fast,
+      curve: Curves.easeOut,
+      child: child,
+    );
+  }
+
   /// Утилитарные методы
   static Offset _getSlideOffset(NutryAnimationDirection direction) {
     switch (direction) {
@@ -404,6 +483,81 @@ class NutryAnimations {
       case NutryAnimationDirection.out:
         return const Offset(0, 0);
     }
+  }
+}
+
+/// Виджет для Spring-анимации
+class _SpringAnimationWidget extends StatefulWidget {
+  final Widget child;
+  final bool isActive;
+  final SpringDescription spring;
+  final Alignment alignment;
+
+  const _SpringAnimationWidget({
+    required this.child,
+    required this.isActive,
+    required this.spring,
+    required this.alignment,
+  });
+
+  @override
+  State<_SpringAnimationWidget> createState() => _SpringAnimationWidgetState();
+}
+
+class _SpringAnimationWidgetState extends State<_SpringAnimationWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late SpringSimulation _springSimulation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      upperBound: 1.0,
+    );
+    _springSimulation = SpringSimulation(
+      widget.spring,
+      0.0,
+      1.0,
+      0.0,
+    );
+    _animation = _controller.drive(
+      Tween<double>(begin: 0.0, end: 1.0),
+    );
+  }
+
+  @override
+  void didUpdateWidget(_SpringAnimationWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _controller.animateWith(_springSimulation);
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: 0.9 + (_animation.value * 0.1),
+          alignment: widget.alignment,
+          child: widget.child,
+        );
+      },
+    );
   }
 }
 

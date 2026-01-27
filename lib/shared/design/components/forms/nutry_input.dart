@@ -340,7 +340,7 @@ class _NutryInputState extends State<NutryInput> {
       child: Text(
         widget.label!,
         style: DesignTokens.typography.labelLargeStyle.copyWith(
-          color: DesignTokens.colors.onSurface,
+          color: context.colors.onSurface,
           fontWeight: DesignTokens.typography.medium,
         ),
       ),
@@ -379,7 +379,7 @@ class _NutryInputState extends State<NutryInput> {
         children: [
           Icon(
             Icons.error_outline,
-            color: DesignTokens.colors.error,
+            color: context.colors.error,
             size: DesignTokens.spacing.iconSmall,
           ),
           SizedBox(width: DesignTokens.spacing.xs),
@@ -387,7 +387,7 @@ class _NutryInputState extends State<NutryInput> {
             child: Text(
               _errorText!,
               style: DesignTokens.typography.bodySmallStyle.copyWith(
-                color: DesignTokens.colors.error,
+                color: context.colors.error,
               ),
             ),
           ),
@@ -403,7 +403,7 @@ class _NutryInputState extends State<NutryInput> {
         children: [
           Icon(
             Icons.check_circle_outline,
-            color: DesignTokens.colors.success,
+            color: context.colors.success,
             size: DesignTokens.spacing.iconSmall,
           ),
           SizedBox(width: DesignTokens.spacing.xs),
@@ -411,7 +411,7 @@ class _NutryInputState extends State<NutryInput> {
             child: Text(
               _successText!,
               style: DesignTokens.typography.bodySmallStyle.copyWith(
-                color: DesignTokens.colors.success,
+                color: context.colors.success,
               ),
             ),
           ),
@@ -426,7 +426,7 @@ class _NutryInputState extends State<NutryInput> {
       child: Text(
         widget.helperText!,
         style: DesignTokens.typography.bodySmallStyle.copyWith(
-          color: DesignTokens.colors.onSurfaceVariant,
+          color: context.colors.onSurfaceVariant,
         ),
       ),
     );
@@ -438,7 +438,7 @@ class _NutryInputState extends State<NutryInput> {
     return InputDecoration(
       hintText: widget.hint,
       hintStyle: DesignTokens.typography.bodyMediumStyle.copyWith(
-        color: DesignTokens.colors.onSurfaceVariant,
+        color: context.colors.onSurfaceVariant,
       ),
       prefixIcon: widget.prefixIcon != null
           ? Icon(
@@ -538,15 +538,15 @@ class _NutryInputState extends State<NutryInput> {
   Color _getIconColor(NutryInputState state) {
     switch (state) {
       case NutryInputState.error:
-        return DesignTokens.colors.error;
+        return context.colors.error;
       case NutryInputState.success:
-        return DesignTokens.colors.success;
+        return context.colors.success;
       case NutryInputState.focused:
-        return DesignTokens.colors.primary;
+        return context.colors.primary;
       case NutryInputState.disabled:
-        return DesignTokens.colors.onSurfaceVariant;
+        return context.colors.onSurfaceVariant;
       default:
-        return DesignTokens.colors.onSurfaceVariant;
+        return context.colors.onSurfaceVariant;
     }
   }
 
@@ -572,18 +572,18 @@ class _NutryInputState extends State<NutryInput> {
 
   Color _getFillColor(NutryInputState state) {
     if (!widget.enabled) {
-      return DesignTokens.colors.surfaceVariant;
+      return context.colors.surfaceVariant;
     }
 
     switch (state) {
       case NutryInputState.error:
-        return DesignTokens.colors.error.withValues(alpha: 0.05);
+        return context.colors.error.withValues(alpha: 0.05);
       case NutryInputState.success:
-        return DesignTokens.colors.success.withValues(alpha: 0.05);
+        return context.colors.success.withValues(alpha: 0.05);
       case NutryInputState.focused:
-        return DesignTokens.colors.primary.withValues(alpha: 0.05);
+        return context.colors.primary.withValues(alpha: 0.05);
       default:
-        return DesignTokens.colors.surface;
+        return context.colors.surface;
     }
   }
 
@@ -595,19 +595,19 @@ class _NutryInputState extends State<NutryInput> {
     Color borderColor;
     switch (state) {
       case NutryInputState.error:
-        borderColor = DesignTokens.colors.error;
+        borderColor = context.colors.error;
         break;
       case NutryInputState.success:
-        borderColor = DesignTokens.colors.success;
+        borderColor = context.colors.success;
         break;
       case NutryInputState.focused:
-        borderColor = DesignTokens.colors.primary;
+        borderColor = context.colors.primary;
         break;
       case NutryInputState.disabled:
-        borderColor = DesignTokens.colors.outline;
+        borderColor = context.colors.outline;
         break;
       default:
-        borderColor = DesignTokens.colors.outline;
+        borderColor = context.colors.outline;
     }
 
     return OutlineInputBorder(

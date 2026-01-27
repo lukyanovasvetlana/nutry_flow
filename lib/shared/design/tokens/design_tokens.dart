@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'theme_tokens.dart';
 
 /// Дизайн-токены для NutryFlow
 /// Создано для интеграции с дизайнером
@@ -6,7 +7,9 @@ class DesignTokens {
   // Prevent instantiation
   DesignTokens._();
 
-  /// Цветовая палитра
+  /// Цветовая палитра (статические значения для градиентов и констант)
+  /// Для динамических цветов в UI используйте extension через BuildContext:
+  /// `context.colors.primary` вместо `DesignTokens.colors.primary`
   static const _ColorTokens colors = _ColorTokens();
 
   /// Типографика
@@ -111,8 +114,8 @@ class _ColorTokens {
 class _TypographyTokens {
   const _TypographyTokens();
 
-  // Семейство шрифтов
-  String get fontFamily => 'Roboto';
+  // Семейство шрифтов (унифицировано с ThemeManager)
+  String get fontFamily => 'Inter';
 
   // Размеры шрифтов
   double get displayLarge => 57.0;
@@ -395,11 +398,90 @@ class _BorderTokens {
 }
 
 /// Удобные геттеры для быстрого доступа
+/// ВАЖНО: Используйте эти extension для получения динамических цветов,
+/// которые автоматически обновляются при смене темы
 extension DesignTokensExtension on BuildContext {
-  _ColorTokens get colors => DesignTokens.colors;
+  /// Динамические цвета (автоматически обновляются при смене темы)
+  /// Используйте вместо DesignTokens.colors для UI элементов
+  _DynamicColorTokens get colors => _DynamicColorTokens(this);
+  
   _TypographyTokens get typography => DesignTokens.typography;
   _SpacingTokens get spacing => DesignTokens.spacing;
   _ShadowTokens get shadows => DesignTokens.shadows;
   _AnimationTokens get animations => DesignTokens.animations;
   _BorderTokens get borders => DesignTokens.borders;
+}
+
+/// Динамические цветовые токены через BuildContext
+/// Автоматически получают цвета из текущей темы
+class _DynamicColorTokens {
+  final BuildContext _context;
+  
+  _DynamicColorTokens(this._context);
+  
+  // Получаем токены текущей темы
+  BaseThemeTokens get _theme => ThemeTokens.current;
+  
+  // Основные цвета бренда (динамические)
+  Color get primary => _theme.primary;
+  Color get primaryLight => _theme.primaryContainer;
+  Color get primaryDark => _theme.primary;
+  
+  // Вторичные цвета (динамические)
+  Color get secondary => _theme.secondary;
+  Color get secondaryLight => _theme.secondaryContainer;
+  Color get secondaryDark => _theme.secondary;
+  
+  // Акцентные цвета (динамические)
+  Color get accent => _theme.tertiary;
+  Color get accentLight => _theme.tertiaryContainer;
+  Color get accentDark => _theme.tertiary;
+  
+  // Семантические цвета питания (статические, одинаковые для обеих тем)
+  Color get protein => const Color(0xFFE91E63);
+  Color get carbs => const Color(0xFFFFC107);
+  Color get fats => const Color(0xFFFF9800);
+  Color get water => const Color(0xFF03A9F4);
+  Color get fiber => const Color(0xFF9C27B0);
+  
+  // Системные цвета (динамические)
+  Color get background => _theme.background;
+  Color get surface => _theme.surface;
+  Color get surfaceVariant => _theme.surfaceVariant;
+  Color get outline => _theme.outline;
+  Color get outlineVariant => _theme.outlineVariant;
+  
+  // Текстовые цвета (динамические)
+  Color get onPrimary => _theme.onPrimary;
+  Color get onSecondary => _theme.onSecondary;
+  Color get onSurface => _theme.onSurface;
+  Color get onSurfaceVariant => _theme.onSurfaceVariant;
+  Color get onBackground => _theme.onBackground;
+  
+  // Состояния (динамические)
+  Color get success => _theme.success;
+  Color get warning => _theme.warning;
+  Color get error => _theme.error;
+  Color get info => _theme.info;
+  
+  // Цвета для текста на цветных фонах (динамические)
+  Color get onError => _theme.onError;
+  Color get onSuccess => _theme.onSuccess;
+  Color get onWarning => _theme.onWarning;
+  Color get onInfo => _theme.onInfo;
+  
+  // Тени (статические)
+  Color get shadow => const Color(0xFF000000);
+  
+  // Алиасы для nutrition colors
+  Color get nutritionProtein => protein;
+  Color get nutritionCarbs => carbs;
+  Color get nutritionFats => fats;
+  Color get nutritionWater => water;
+  Color get nutritionFiber => fiber;
+  
+  // Градиенты (динамические из текущей темы)
+  LinearGradient get primaryGradient => _theme.primaryGradient;
+  LinearGradient get secondaryGradient => _theme.secondaryGradient;
+  LinearGradient get accentGradient => _theme.tertiaryGradient;
 }

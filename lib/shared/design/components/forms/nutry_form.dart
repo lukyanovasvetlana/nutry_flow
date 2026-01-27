@@ -187,22 +187,22 @@ class _NutryFormState extends State<NutryForm> {
     return Column(
       children: [
         ...widget.children,
-        if (widget.state == NutryFormState.loading) _buildLoadingState(),
-        if (widget.errorMessage != null) _buildErrorMessage(),
-        if (widget.successMessage != null) _buildSuccessMessage(),
+        if (widget.state == NutryFormState.loading) _buildLoadingState(context),
+        if (widget.errorMessage != null) _buildErrorMessage(context),
+        if (widget.successMessage != null) _buildSuccessMessage(context),
       ],
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: DesignTokens.spacing.md),
       padding: EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
-        color: DesignTokens.colors.primary.withValues(alpha: 0.1),
+        color: context.colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.borders.md),
         border: Border.all(
-          color: DesignTokens.colors.primary.withValues(alpha: 0.3),
+          color: context.colors.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -213,7 +213,7 @@ class _NutryFormState extends State<NutryForm> {
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                DesignTokens.colors.primary,
+                context.colors.primary,
               ),
             ),
           ),
@@ -222,7 +222,7 @@ class _NutryFormState extends State<NutryForm> {
             child: Text(
               widget.loadingMessage ?? 'Обработка...',
               style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                color: DesignTokens.colors.primary,
+                color: context.colors.primary,
               ),
             ),
           ),
@@ -231,22 +231,22 @@ class _NutryFormState extends State<NutryForm> {
     );
   }
 
-  Widget _buildErrorMessage() {
+  Widget _buildErrorMessage(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: DesignTokens.spacing.md),
       padding: EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
-        color: DesignTokens.colors.error.withValues(alpha: 0.1),
+        color: context.colors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.borders.md),
         border: Border.all(
-          color: DesignTokens.colors.error.withValues(alpha: 0.3),
+          color: context.colors.error.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.error_outline,
-            color: DesignTokens.colors.error,
+            color: context.colors.error,
             size: DesignTokens.spacing.iconMedium,
           ),
           SizedBox(width: DesignTokens.spacing.sm),
@@ -254,7 +254,7 @@ class _NutryFormState extends State<NutryForm> {
             child: Text(
               widget.errorMessage!,
               style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                color: DesignTokens.colors.error,
+                color: context.colors.error,
               ),
             ),
           ),
@@ -263,22 +263,22 @@ class _NutryFormState extends State<NutryForm> {
     );
   }
 
-  Widget _buildSuccessMessage() {
+  Widget _buildSuccessMessage(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: DesignTokens.spacing.md),
       padding: EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
-        color: DesignTokens.colors.success.withValues(alpha: 0.1),
+        color: context.colors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.borders.md),
         border: Border.all(
-          color: DesignTokens.colors.success.withValues(alpha: 0.3),
+          color: context.colors.success.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.check_circle_outline,
-            color: DesignTokens.colors.success,
+            color: context.colors.success,
             size: DesignTokens.spacing.iconMedium,
           ),
           SizedBox(width: DesignTokens.spacing.sm),
@@ -286,7 +286,7 @@ class _NutryFormState extends State<NutryForm> {
             child: Text(
               widget.successMessage!,
               style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                color: DesignTokens.colors.success,
+                color: context.colors.success,
               ),
             ),
           ),
@@ -302,28 +302,28 @@ class _NutryFormState extends State<NutryForm> {
         children: [
           if (widget.onReset != null) ...[
             Expanded(
-              child: _buildResetButton(),
+              child: _buildResetButton(context),
             ),
             SizedBox(width: DesignTokens.spacing.md),
           ],
           Expanded(
             flex: widget.onReset != null ? 1 : 1,
-            child: _buildSubmitButton(),
+            child: _buildSubmitButton(context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(BuildContext context) {
     final isLoading = widget.state == NutryFormState.loading;
     final isDisabled = widget.disableActions || isLoading;
 
     return ElevatedButton(
       onPressed: isDisabled ? null : _handleSubmit,
       style: ElevatedButton.styleFrom(
-        backgroundColor: DesignTokens.colors.primary,
-        foregroundColor: DesignTokens.colors.onPrimary,
+        backgroundColor: context.colors.primary,
+        foregroundColor: context.colors.onPrimary,
         padding: EdgeInsets.symmetric(
           vertical: DesignTokens.spacing.md,
         ),
@@ -340,30 +340,30 @@ class _NutryFormState extends State<NutryForm> {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  DesignTokens.colors.onPrimary,
+                  context.colors.onPrimary,
                 ),
               ),
             )
           : Text(
               widget.submitText,
               style: DesignTokens.typography.labelLargeStyle.copyWith(
-                color: DesignTokens.colors.onPrimary,
+                color: context.colors.onPrimary,
                 fontWeight: DesignTokens.typography.medium,
               ),
             ),
     );
   }
 
-  Widget _buildResetButton() {
+  Widget _buildResetButton(BuildContext context) {
     final isDisabled =
         widget.disableActions || widget.state == NutryFormState.loading;
 
     return OutlinedButton(
       onPressed: isDisabled ? null : _handleReset,
       style: OutlinedButton.styleFrom(
-        foregroundColor: DesignTokens.colors.primary,
+        foregroundColor: context.colors.primary,
         side: BorderSide(
-          color: DesignTokens.colors.primary,
+          color: context.colors.primary,
           width: 1,
         ),
         padding: EdgeInsets.symmetric(
@@ -377,7 +377,7 @@ class _NutryFormState extends State<NutryForm> {
       child: Text(
         widget.resetText,
         style: DesignTokens.typography.labelLargeStyle.copyWith(
-          color: DesignTokens.colors.primary,
+          color: context.colors.primary,
           fontWeight: DesignTokens.typography.medium,
         ),
       ),

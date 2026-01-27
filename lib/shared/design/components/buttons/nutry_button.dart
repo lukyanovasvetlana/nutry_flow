@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../tokens/design_tokens.dart';
 
 /// Типы кнопок NutryFlow
@@ -155,6 +156,8 @@ class _NutryButtonState extends State<NutryButton>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   bool _isPressed = false;
+  final FocusNode _focusNode = FocusNode();
+  bool _hasFocus = false;
 
   @override
   void initState() {
@@ -175,6 +178,7 @@ class _NutryButtonState extends State<NutryButton>
   @override
   void dispose() {
     _animationController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -202,62 +206,108 @@ class _NutryButtonState extends State<NutryButton>
   @override
   Widget build(BuildContext context) {
     final spacing = DesignTokens.spacing;
+    final semanticLabel = widget.text.isNotEmpty 
+        ? widget.text 
+        : (widget.isLoading ? 'Загрузка' : 'Кнопка');
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: GestureDetector(
-            onTapDown: _onTapDown,
-            onTapUp: _onTapUp,
-            onTapCancel: _onTapCancel,
-            onTap:
-                widget.isEnabled && !widget.isLoading ? widget.onPressed : null,
-            child: AnimatedContainer(
-              duration: DesignTokens.animations.fast,
-              width: widget.width,
-              height: _getButtonHeight(),
-              padding: widget.padding ?? _getButtonPadding(),
-              decoration: _getButtonDecoration(),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (widget.isLoading) ...[
-                    SizedBox(
-                      width: _getIconSize(),
-                      height: _getIconSize(),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          _getTextColor(),
-                        ),
-                      ),
+        return Semantics(
+          label: semanticLabel,
+          button: true,
+          enabled: widget.isEnabled && !widget.isLoading,
+          hint: widget.isLoading ? 'Загрузка' : null,
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() => _hasFocus = hasFocus);
+            },
+            child: KeyboardListener(
+              focusNode: _focusNode,
+              onKeyEvent: (event) {
+                if (event is KeyDownEvent && 
+                    (event.logicalKey.keyLabel == 'Enter' || 
+                     event.logicalKey.keyLabel == ' ')) {
+                  if (widget.isEnabled && !widget.isLoading && widget.onPressed != null) {
+                    widget.onPressed!();
+                  }
+                }
+              },
+              child: InkWell(
+                onTapDown: _onTapDown,
+                onTapUp: _onTapUp,
+                onTapCancel: _onTapCancel,
+                onTap: widget.isEnabled && !widget.isLoading ? widget.onPressed : null,
+                borderRadius: BorderRadius.circular(DesignTokens.borders.buttonRadius),
+                child: Transform.scale(
+                  scale: _scaleAnimation.value,
+                  child: AnimatedContainer(
+                    duration: DesignTokens.animations.fast,
+                    width: widget.width,
+                    height: _getButtonHeight(),
+                    padding: widget.padding ?? _getButtonPadding(),
+                    decoration: _getButtonDecoration(context),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (widget.isLoading) ...[
+                          SizedBox(
+                            width: _getIconSize(),
+                            height: _getIconSize(),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                _getTextColor(context),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: spacing.sm),
+                        ] else if (widget.icon != null) ...[
+                          Semantics(
+                            label: _getIconLabel(widget.icon!),
+                            excludeSemantics: true,
+                            child: Icon(
+                              widget.icon,
+                              size: _getIconSize(),
+                              color: _getTextColor(context),
+                            ),
+                          ),
+                          SizedBox(width: spacing.sm),
+                        ],
+                        if (widget.child != null)
+                          widget.child!
+                        else
+                          Text(
+                            widget.text,
+                            style: _getTextStyle(context),
+                          ),
+                      ],
                     ),
-                    SizedBox(width: spacing.sm),
-                  ] else if (widget.icon != null) ...[
-                    Icon(
-                      widget.icon,
-                      size: _getIconSize(),
-                      color: _getTextColor(),
-                    ),
-                    SizedBox(width: spacing.sm),
-                  ],
-                  if (widget.child != null)
-                    widget.child!
-                  else
-                    Text(
-                      widget.text,
-                      style: _getTextStyle(),
-                    ),
-                ],
+                  ),
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  String _getIconLabel(IconData icon) {
+    // Базовые метки для популярных иконок
+    if (icon == Icons.add) return 'Добавить';
+    if (icon == Icons.delete) return 'Удалить';
+    if (icon == Icons.edit) return 'Редактировать';
+    if (icon == Icons.save) return 'Сохранить';
+    if (icon == Icons.close) return 'Закрыть';
+    if (icon == Icons.check) return 'Подтвердить';
+    if (icon == Icons.cancel) return 'Отмена';
+    if (icon == Icons.search) return 'Поиск';
+    if (icon == Icons.favorite) return 'Избранное';
+    if (icon == Icons.star) return 'Звезда';
+    return 'Иконка';
   }
 
   double _getButtonHeight() {
@@ -299,8 +349,8 @@ class _NutryButtonState extends State<NutryButton>
     }
   }
 
-  BoxDecoration _getButtonDecoration() {
-    final colors = DesignTokens.colors;
+  BoxDecoration _getButtonDecoration(BuildContext context) {
+    final colors = context.colors; // Динамические цвета через context
     final shadows = DesignTokens.shadows;
     final borders = DesignTokens.borders;
 
@@ -355,20 +405,28 @@ class _NutryButtonState extends State<NutryButton>
       gradient = null;
     }
 
+    // Добавляем индикатор фокуса
+    final focusBorderWidth = _hasFocus ? borders.medium.toDouble() : 0.0;
+    final focusBorderColor = _hasFocus 
+        ? colors.primary.withValues(alpha: 0.6)
+        : Colors.transparent;
+
     return BoxDecoration(
       color: gradient == null ? backgroundColor : null,
       gradient: gradient,
       border: Border.all(
-        color: borderColor,
-        width: widget.type == NutryButtonType.outline ? borders.medium : 0,
+        color: _hasFocus ? focusBorderColor : borderColor,
+        width: _hasFocus 
+            ? focusBorderWidth 
+            : (widget.type == NutryButtonType.outline ? borders.medium.toDouble() : 0.0),
       ),
       borderRadius: BorderRadius.circular(borders.buttonRadius),
       boxShadow: boxShadow,
     );
   }
 
-  Color _getTextColor() {
-    final colors = DesignTokens.colors;
+  Color _getTextColor(BuildContext context) {
+    final colors = context.colors; // Динамические цвета через context
 
     Color textColor;
     switch (widget.type) {
@@ -391,9 +449,9 @@ class _NutryButtonState extends State<NutryButton>
     return textColor;
   }
 
-  TextStyle _getTextStyle() {
+  TextStyle _getTextStyle(BuildContext context) {
     final typography = DesignTokens.typography;
-    final textColor = _getTextColor();
+    final textColor = _getTextColor(context);
 
     double fontSize;
     FontWeight fontWeight;

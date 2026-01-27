@@ -210,13 +210,12 @@ class NutryCard extends StatelessWidget {
             : null,
         boxShadow: shadow ?? DesignTokens.shadows.md,
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(
-            borderRadius ?? 16.0,
-          ),
+      child: _InteractiveCardWrapper(
+        onTap: onTap,
+        title: title,
+        borderRadius: borderRadius ?? 16.0,
+        child: Material(
+          color: Colors.transparent,
           child: Padding(
             padding:
                 padding ?? EdgeInsets.all(DesignTokens.spacing.cardPadding),
@@ -461,11 +460,12 @@ class NutryGradientCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16.0),
+      child: _InteractiveCardWrapper(
+        onTap: onTap,
+        title: title != null ? 'Градиентная карточка: $title' : null,
+        borderRadius: 16.0,
+        child: Material(
+          color: Colors.transparent,
           child: Padding(
             padding:
                 padding ?? EdgeInsets.all(DesignTokens.spacing.cardPadding),
@@ -478,11 +478,11 @@ class NutryGradientCard extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     if (isLoading) {
-      return loadingWidget ?? _buildLoadingState();
+      return loadingWidget ?? _buildLoadingState(context);
     }
 
     if (isEmpty) {
-      return emptyWidget ?? _buildEmptyState();
+      return emptyWidget ?? _buildEmptyState(context);
     }
 
     return Column(
@@ -503,7 +503,7 @@ class NutryGradientCard extends StatelessWidget {
           if (icon != null) ...[
             Icon(
               icon,
-              color: DesignTokens.colors.onPrimary,
+              color: context.colors.onPrimary,
               size: DesignTokens.spacing.iconMedium,
             ),
             SizedBox(width: DesignTokens.spacing.sm),
@@ -516,7 +516,7 @@ class NutryGradientCard extends StatelessWidget {
                   Text(
                     title!,
                     style: DesignTokens.typography.titleMediumStyle.copyWith(
-                      color: DesignTokens.colors.onPrimary,
+                      color: context.colors.onPrimary,
                       fontWeight: DesignTokens.typography.semiBold,
                     ),
                   ),
@@ -526,7 +526,7 @@ class NutryGradientCard extends StatelessWidget {
                     subtitle!,
                     style: DesignTokens.typography.bodyMediumStyle.copyWith(
                       color:
-                          DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
+                          context.colors.onPrimary.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -538,13 +538,13 @@ class NutryGradientCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
     return Column(
       children: [
         Container(
           height: 20,
           decoration: BoxDecoration(
-            color: DesignTokens.colors.onPrimary.withValues(alpha: 0.3),
+            color: context.colors.onPrimary.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
           ),
         ),
@@ -552,7 +552,7 @@ class NutryGradientCard extends StatelessWidget {
         Container(
           height: 16,
           decoration: BoxDecoration(
-            color: DesignTokens.colors.onPrimary.withValues(alpha: 0.3),
+            color: context.colors.onPrimary.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
           ),
         ),
@@ -561,7 +561,7 @@ class NutryGradientCard extends StatelessWidget {
           height: 16,
           width: 100,
           decoration: BoxDecoration(
-            color: DesignTokens.colors.onPrimary.withValues(alpha: 0.3),
+            color: context.colors.onPrimary.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(DesignTokens.borders.xs),
           ),
         ),
@@ -569,30 +569,107 @@ class NutryGradientCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           Icons.inbox_outlined,
           size: DesignTokens.spacing.iconXLarge,
-          color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
+          color: context.colors.onPrimary.withValues(alpha: 0.8),
         ),
         SizedBox(height: DesignTokens.spacing.md),
         Text(
           'Нет данных',
           style: DesignTokens.typography.titleMediumStyle.copyWith(
-            color: DesignTokens.colors.onPrimary,
+            color: context.colors.onPrimary,
           ),
         ),
         SizedBox(height: DesignTokens.spacing.xs),
         Text(
           'Здесь пока ничего нет',
           style: DesignTokens.typography.bodyMediumStyle.copyWith(
-            color: DesignTokens.colors.onPrimary.withValues(alpha: 0.8),
+            color: context.colors.onPrimary.withValues(alpha: 0.8),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Обертка для интерактивных карточек с поддержкой фокуса и доступности
+class _InteractiveCardWrapper extends StatefulWidget {
+  final VoidCallback? onTap;
+  final String? title;
+  final double borderRadius;
+  final Widget child;
+
+  const _InteractiveCardWrapper({
+    required this.onTap,
+    this.title,
+    required this.borderRadius,
+    required this.child,
+  });
+
+  @override
+  State<_InteractiveCardWrapper> createState() => _InteractiveCardWrapperState();
+}
+
+class _InteractiveCardWrapperState extends State<_InteractiveCardWrapper> {
+  final FocusNode _focusNode = FocusNode();
+  bool _hasFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() => _hasFocus = _focusNode.hasFocus);
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.onTap == null) {
+      return widget.child;
+    }
+
+    final label = widget.title != null 
+        ? widget.title!.startsWith('Градиентная карточка:')
+            ? '${widget.title}. Нажмите для открытия'
+            : 'Карточка: ${widget.title}. Нажмите для открытия'
+        : 'Интерактивная карточка. Нажмите для открытия';
+    
+    return Semantics(
+      label: label,
+      button: true,
+      child: Focus(
+        focusNode: _focusNode,
+        child: Container(
+          decoration: _hasFocus
+              ? BoxDecoration(
+                  border: Border.all(
+                    color: context.colors.primary.withValues(alpha: 0.6),
+                    width: DesignTokens.borders.medium,
+                  ),
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                )
+              : null,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: widget.onTap,
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              child: widget.child,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

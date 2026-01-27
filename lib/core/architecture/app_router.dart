@@ -12,6 +12,7 @@ import 'package:nutry_flow/features/analytics/presentation/screens/analytics_scr
 import 'package:nutry_flow/features/analytics/presentation/screens/developer_analytics_screen.dart';
 import 'package:nutry_flow/features/analytics/presentation/screens/ab_testing_screen.dart';
 import 'package:nutry_flow/screens/theme_demo_screen.dart';
+import 'package:nutry_flow/shared/design/showcase/design_system_storybook.dart';
 import 'package:nutry_flow/app.dart';
 import 'dart:developer' as developer;
 
@@ -177,6 +178,13 @@ class AppRouter {
         path: '/theme-demo',
         name: 'theme-demo',
         builder: (context, state) => const ThemeDemoScreen(),
+      ),
+
+      // Design System Storybook маршрут
+      GoRoute(
+        path: '/design-system-storybook',
+        name: 'design-system-storybook',
+        builder: (context, state) => const DesignSystemStorybook(),
       ),
     ];
   }

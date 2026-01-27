@@ -85,7 +85,7 @@ class _ModernLoadingIndicatorState extends State<ModernLoadingIndicator>
                   ),
                   child: Icon(
                     Icons.restaurant_rounded,
-                    color: DesignTokens.colors.onPrimary,
+                    color: context.colors.onPrimary,
                     size: widget.size * 0.5,
                   ),
                 ),
@@ -99,12 +99,400 @@ class _ModernLoadingIndicatorState extends State<ModernLoadingIndicator>
             widget.message!,
             style: TextStyle(
               fontSize: DesignTokens.typography.bodyMedium,
-              color: DesignTokens.colors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
               fontWeight: DesignTokens.typography.medium,
             ),
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Скелетон для элемента списка
+class ListItemSkeleton extends StatefulWidget {
+  final bool showAvatar;
+  final bool showTrailing;
+
+  const ListItemSkeleton({
+    super.key,
+    this.showAvatar = true,
+    this.showTrailing = false,
+  });
+
+  @override
+  State<ListItemSkeleton> createState() => _ListItemSkeletonState();
+}
+
+class _ListItemSkeletonState extends State<ListItemSkeleton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      duration: DesignTokens.animations.slower,
+      vsync: this,
+    )..repeat();
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
+        .animate(_shimmerController);
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignTokens.spacing.md,
+        vertical: DesignTokens.spacing.sm,
+      ),
+      child: Row(
+        children: [
+          if (widget.showAvatar) ...[
+            _buildShimmerBox(48, 48, borderRadius: DesignTokens.borders.full),
+            SizedBox(width: DesignTokens.spacing.md),
+          ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildShimmerBox(200, 16),
+                SizedBox(height: DesignTokens.spacing.xs),
+                _buildShimmerBox(150, 12),
+              ],
+            ),
+          ),
+          if (widget.showTrailing) ...[
+            SizedBox(width: DesignTokens.spacing.sm),
+            _buildShimmerBox(24, 24, borderRadius: DesignTokens.borders.full),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerBox(double width, double height, {double? borderRadius}) {
+    return AnimatedBuilder(
+      animation: _shimmerAnimation,
+      builder: (context, child) {
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              borderRadius ?? DesignTokens.borders.sm,
+            ),
+            gradient: LinearGradient(
+              colors: [
+                context.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.3),
+                context.colors.outline.withValues(alpha: 0.1),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+              begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
+              end: Alignment(1.0 + _shimmerAnimation.value, 0.0),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Скелетон для профиля пользователя
+class ProfileSkeleton extends StatefulWidget {
+  const ProfileSkeleton({super.key});
+
+  @override
+  State<ProfileSkeleton> createState() => _ProfileSkeletonState();
+}
+
+class _ProfileSkeletonState extends State<ProfileSkeleton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      duration: DesignTokens.animations.slower,
+      vsync: this,
+    )..repeat();
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
+        .animate(_shimmerController);
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(DesignTokens.spacing.lg),
+      child: Column(
+        children: [
+          // Аватар
+          _buildShimmerBox(100, 100, borderRadius: DesignTokens.borders.full),
+          SizedBox(height: DesignTokens.spacing.md),
+          // Имя
+          _buildShimmerBox(200, 24),
+          SizedBox(height: DesignTokens.spacing.sm),
+          // Email
+          _buildShimmerBox(180, 16),
+          SizedBox(height: DesignTokens.spacing.xl),
+          // Поля формы
+          ...List.generate(5, (index) => Padding(
+                padding: EdgeInsets.only(bottom: DesignTokens.spacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildShimmerBox(100, 12),
+                    SizedBox(height: DesignTokens.spacing.xs),
+                    _buildShimmerBox(double.infinity, 48,
+                        borderRadius: DesignTokens.borders.md),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerBox(double width, double height, {double? borderRadius}) {
+    return AnimatedBuilder(
+      animation: _shimmerAnimation,
+      builder: (context, child) {
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              borderRadius ?? DesignTokens.borders.sm,
+            ),
+            gradient: LinearGradient(
+              colors: [
+                context.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.3),
+                context.colors.outline.withValues(alpha: 0.1),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+              begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
+              end: Alignment(1.0 + _shimmerAnimation.value, 0.0),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Скелетон для карточки упражнения
+class ExerciseCardSkeleton extends StatefulWidget {
+  const ExerciseCardSkeleton({super.key});
+
+  @override
+  State<ExerciseCardSkeleton> createState() => _ExerciseCardSkeletonState();
+}
+
+class _ExerciseCardSkeletonState extends State<ExerciseCardSkeleton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      duration: DesignTokens.animations.slower,
+      vsync: this,
+    )..repeat();
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
+        .animate(_shimmerController);
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(DesignTokens.spacing.md),
+      padding: EdgeInsets.all(DesignTokens.spacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(DesignTokens.borders.md),
+        boxShadow: DesignTokens.shadows.sm,
+      ),
+      child: Row(
+        children: [
+          // Изображение
+          _buildShimmerBox(80, 80, borderRadius: DesignTokens.borders.md),
+          SizedBox(width: DesignTokens.spacing.md),
+          // Контент
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildShimmerBox(150, 18),
+                SizedBox(height: DesignTokens.spacing.xs),
+                _buildShimmerBox(200, 14),
+                SizedBox(height: DesignTokens.spacing.sm),
+                Row(
+                  children: [
+                    _buildShimmerBox(60, 20,
+                        borderRadius: DesignTokens.borders.full),
+                    SizedBox(width: DesignTokens.spacing.sm),
+                    _buildShimmerBox(60, 20,
+                        borderRadius: DesignTokens.borders.full),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerBox(double width, double height, {double? borderRadius}) {
+    return AnimatedBuilder(
+      animation: _shimmerAnimation,
+      builder: (context, child) {
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              borderRadius ?? DesignTokens.borders.sm,
+            ),
+            gradient: LinearGradient(
+              colors: [
+                context.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.3),
+                context.colors.outline.withValues(alpha: 0.1),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+              begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
+              end: Alignment(1.0 + _shimmerAnimation.value, 0.0),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Скелетон для таблицы
+class TableSkeleton extends StatefulWidget {
+  final int rowCount;
+  final int columnCount;
+
+  const TableSkeleton({
+    super.key,
+    this.rowCount = 5,
+    this.columnCount = 4,
+  });
+
+  @override
+  State<TableSkeleton> createState() => _TableSkeletonState();
+}
+
+class _TableSkeletonState extends State<TableSkeleton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      duration: DesignTokens.animations.slower,
+      vsync: this,
+    )..repeat();
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
+        .animate(_shimmerController);
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(DesignTokens.spacing.md),
+      child: Column(
+        children: [
+          // Заголовок
+          Row(
+            children: List.generate(
+              widget.columnCount,
+              (index) => Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(DesignTokens.spacing.sm),
+                  child: _buildShimmerBox(double.infinity, 20),
+                ),
+              ),
+            ),
+          ),
+          // Строки
+          ...List.generate(
+            widget.rowCount,
+            (index) => Row(
+              children: List.generate(
+                widget.columnCount,
+                (colIndex) => Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(DesignTokens.spacing.sm),
+                    child: _buildShimmerBox(double.infinity, 16),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerBox(double width, double height) {
+    return AnimatedBuilder(
+      animation: _shimmerAnimation,
+      builder: (context, child) {
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
+            gradient: LinearGradient(
+              colors: [
+                context.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.3),
+                context.colors.outline.withValues(alpha: 0.1),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+              begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
+              end: Alignment(1.0 + _shimmerAnimation.value, 0.0),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -147,7 +535,7 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
     return Container(
       padding: EdgeInsets.all(DesignTokens.spacing.md),
       decoration: BoxDecoration(
-        color: DesignTokens.colors.surface,
+        color: context.colors.surface,
         borderRadius:
             BorderRadius.circular(DesignTokens.borders.cardRadius.toDouble()),
         boxShadow: DesignTokens.shadows.sm,
@@ -194,9 +582,9 @@ class _StatsCardSkeletonState extends State<StatsCardSkeleton>
                 : BorderRadius.circular(DesignTokens.borders.sm.toDouble()),
             gradient: LinearGradient(
               colors: [
-                DesignTokens.colors.outline.withValues(alpha: 0.1),
-                DesignTokens.colors.outline.withValues(alpha: 0.3),
-                DesignTokens.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.3),
+                context.colors.outline.withValues(alpha: 0.1),
               ],
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
@@ -267,7 +655,7 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: DesignTokens.colors.surface,
+        color: context.colors.surface,
         borderRadius:
             BorderRadius.circular(DesignTokens.borders.cardRadius.toDouble()),
         boxShadow: DesignTokens.shadows.sm,
@@ -327,9 +715,9 @@ class _RecipeCardSkeletonState extends State<RecipeCardSkeleton>
                 BorderRadius.circular(borderRadius ?? DesignTokens.borders.sm),
             gradient: LinearGradient(
               colors: [
-                DesignTokens.colors.outline.withValues(alpha: 0.1),
-                DesignTokens.colors.outline.withValues(alpha: 0.3),
-                DesignTokens.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.1),
+                context.colors.outline.withValues(alpha: 0.3),
+                context.colors.outline.withValues(alpha: 0.1),
               ],
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-1.0 + _shimmerAnimation.value, 0.0),
@@ -356,7 +744,7 @@ class FullScreenLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DesignTokens.colors.background,
+      backgroundColor: context.colors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -419,14 +807,14 @@ class ErrorStateWidget extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: DesignTokens.colors.error.withValues(alpha: 0.1),
+                color: context.colors.error.withValues(alpha: 0.1),
                 borderRadius:
                     BorderRadius.circular(DesignTokens.borders.full.toDouble()),
               ),
               child: Icon(
                 icon,
                 size: 40,
-                color: DesignTokens.colors.error,
+                color: context.colors.error,
               ),
             ),
             SizedBox(height: DesignTokens.spacing.lg),
@@ -436,7 +824,7 @@ class ErrorStateWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: DesignTokens.typography.headlineSmall,
                 fontWeight: DesignTokens.typography.semiBold,
-                color: DesignTokens.colors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             SizedBox(height: DesignTokens.spacing.sm),
@@ -445,7 +833,7 @@ class ErrorStateWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: DesignTokens.typography.bodyMedium,
-                color: DesignTokens.colors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
                 height: DesignTokens.typography.lineHeightLoose,
               ),
             ),
@@ -456,8 +844,8 @@ class ErrorStateWidget extends StatelessWidget {
                 icon: const Icon(Icons.refresh_rounded),
                 label: const Text('Попробовать снова'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: DesignTokens.colors.primary,
-                  foregroundColor: DesignTokens.colors.onPrimary,
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
                   padding: EdgeInsets.symmetric(
                     horizontal: DesignTokens.spacing.lg,
                     vertical: DesignTokens.spacing.md,
@@ -505,14 +893,14 @@ class EmptyStateWidget extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                gradient: DesignTokens.colors.secondaryGradient.scale(0.3),
+                gradient: context.colors.secondaryGradient.scale(0.3),
                 borderRadius:
                     BorderRadius.circular(DesignTokens.borders.full.toDouble()),
               ),
               child: Icon(
                 icon,
                 size: 60,
-                color: DesignTokens.colors.primary,
+                color: context.colors.primary,
               ),
             ),
             SizedBox(height: DesignTokens.spacing.xl),
@@ -522,7 +910,7 @@ class EmptyStateWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: DesignTokens.typography.headlineMedium,
                 fontWeight: DesignTokens.typography.semiBold,
-                color: DesignTokens.colors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             SizedBox(height: DesignTokens.spacing.md),
@@ -531,7 +919,7 @@ class EmptyStateWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: DesignTokens.typography.bodyLarge,
-                color: DesignTokens.colors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
                 height: DesignTokens.typography.lineHeightLoose,
               ),
             ),
@@ -540,8 +928,8 @@ class EmptyStateWidget extends StatelessWidget {
               ElevatedButton(
                 onPressed: onAction,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: DesignTokens.colors.primary,
-                  foregroundColor: DesignTokens.colors.onPrimary,
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
                   padding: EdgeInsets.symmetric(
                     horizontal: DesignTokens.spacing.xl,
                     vertical: DesignTokens.spacing.md,
