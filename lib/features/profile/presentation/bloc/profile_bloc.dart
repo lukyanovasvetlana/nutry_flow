@@ -145,26 +145,37 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Future<void> _onLoadProfile(
       LoadProfile event, Emitter<ProfileState> emit) async {
-    developer.log('🔵 ProfileBloc: Loading profile for userId: ${event.userId}', name: 'ProfileBloc');
+    developer.log('🔵 ProfileBloc: Loading profile for userId: ${event.userId}',
+        name: 'ProfileBloc');
     emit(ProfileLoading());
 
     try {
-      developer.log('🔵 ProfileBloc: Calling getUserProfileUseCase.execute', name: 'ProfileBloc');
+      developer.log('🔵 ProfileBloc: Calling getUserProfileUseCase.execute',
+          name: 'ProfileBloc');
       final result = await _getUserProfileUseCase.execute(event.userId);
-      developer.log('🔵 ProfileBloc: UseCase result - isSuccess: ${result.isSuccess}', name: 'ProfileBloc');
+      developer.log(
+          '🔵 ProfileBloc: UseCase result - isSuccess: ${result.isSuccess}',
+          name: 'ProfileBloc');
 
       if (result.isSuccess && result.profile != null) {
-        developer.log('🔵 ProfileBloc: Profile loaded successfully: ${result.profile?.firstName}', name: 'ProfileBloc');
+        developer.log(
+            '🔵 ProfileBloc: Profile loaded successfully: ${result.profile?.firstName}',
+            name: 'ProfileBloc');
         emit(ProfileLoaded(result.profile!));
       } else {
-        developer.log('🔴 ProfileBloc: Failed to load profile - error: ${result.error}', name: 'ProfileBloc');
+        developer.log(
+            '🔴 ProfileBloc: Failed to load profile - error: ${result.error}',
+            name: 'ProfileBloc');
         // Показываем более информативное сообщение об ошибке
-        final errorMessage = result.error ?? 'Не удалось загрузить профиль. Попробуйте обновить страницу.';
+        final errorMessage = result.error ??
+            'Не удалось загрузить профиль. Попробуйте обновить страницу.';
         emit(ProfileError(errorMessage));
       }
     } catch (e, stackTrace) {
-      developer.log('🔴 ProfileBloc: Exception in _onLoadProfile: $e', name: 'ProfileBloc');
-      developer.log('🔴 ProfileBloc: Stack trace: $stackTrace', name: 'ProfileBloc');
+      developer.log('🔴 ProfileBloc: Exception in _onLoadProfile: $e',
+          name: 'ProfileBloc');
+      developer.log('🔴 ProfileBloc: Stack trace: $stackTrace',
+          name: 'ProfileBloc');
       emit(ProfileError('An unexpected error occurred: $e'));
     }
   }

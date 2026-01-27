@@ -24,10 +24,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
       }
 
       // Если профиль не найден, проверяем SharedPreferences как fallback
-      developer.log('🔵 ProfileRepositoryImpl: Current profile not found in service, checking SharedPreferences', name: 'ProfileRepositoryImpl');
+      developer.log(
+          '🔵 ProfileRepositoryImpl: Current profile not found in service, checking SharedPreferences',
+          name: 'ProfileRepositoryImpl');
       final currentUser = SupabaseService.instance.currentUser;
       if (currentUser == null) {
-        developer.log('🔴 ProfileRepositoryImpl: No current user found', name: 'ProfileRepositoryImpl');
+        developer.log('🔴 ProfileRepositoryImpl: No current user found',
+            name: 'ProfileRepositoryImpl');
         return null;
       }
 
@@ -47,15 +50,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
       }
 
       // Сначала проверяем SharedPreferences - приоритет реальным данным пользователя
-      developer.log('🔵 ProfileRepositoryImpl: Checking SharedPreferences first', name: 'ProfileRepositoryImpl');
+      developer.log(
+          '🔵 ProfileRepositoryImpl: Checking SharedPreferences first',
+          name: 'ProfileRepositoryImpl');
       final prefs = await SharedPreferences.getInstance();
       final userName = prefs.getString('userName');
       final userLastName = prefs.getString('userLastName');
       final userEmail = prefs.getString('userEmail');
 
       if (userName != null && userName.isNotEmpty) {
-        developer.log('🔵 ProfileRepositoryImpl: Found profile data in SharedPreferences: $userName $userLastName', name: 'ProfileRepositoryImpl');
-        
+        developer.log(
+            '🔵 ProfileRepositoryImpl: Found profile data in SharedPreferences: $userName $userLastName',
+            name: 'ProfileRepositoryImpl');
+
         // Получаем email из SupabaseService если он не сохранен в SharedPreferences
         String email = userEmail ?? '';
         if (email.isEmpty) {
@@ -96,21 +103,27 @@ class ProfileRepositoryImpl implements ProfileRepository {
           updatedAt: DateTime.now(),
         );
 
-        developer.log('🔵 ProfileRepositoryImpl: Created profile from SharedPreferences', name: 'ProfileRepositoryImpl');
+        developer.log(
+            '🔵 ProfileRepositoryImpl: Created profile from SharedPreferences',
+            name: 'ProfileRepositoryImpl');
         return localProfile;
       }
 
       // Если данных в SharedPreferences нет, используем данные из сервиса
-      developer.log('🔵 ProfileRepositoryImpl: No data in SharedPreferences, checking service', name: 'ProfileRepositoryImpl');
+      developer.log(
+          '🔵 ProfileRepositoryImpl: No data in SharedPreferences, checking service',
+          name: 'ProfileRepositoryImpl');
       final profileModel = await _profileService.getUserProfile(userId);
 
       if (profileModel != null) {
         // Convert model to entity
-        developer.log('🔵 ProfileRepositoryImpl: Found profile in service', name: 'ProfileRepositoryImpl');
+        developer.log('🔵 ProfileRepositoryImpl: Found profile in service',
+            name: 'ProfileRepositoryImpl');
         return _convertModelToEntity(profileModel);
       }
 
-      developer.log('🔴 ProfileRepositoryImpl: No profile data found anywhere', name: 'ProfileRepositoryImpl');
+      developer.log('🔴 ProfileRepositoryImpl: No profile data found anywhere',
+          name: 'ProfileRepositoryImpl');
       return null;
     } on ProfileServiceException catch (e) {
       throw Exception('Failed to get user profile: ${e.message}');

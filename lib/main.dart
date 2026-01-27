@@ -30,8 +30,7 @@ void main() async {
       name: 'Main');
   developer.log('🔵 Main: SupabaseConfig.url = ${SupabaseConfig.url}',
       name: 'Main');
-  developer.log(
-      '🔵 Main: SupabaseConfig.anonKey = ${SupabaseConfig.anonKey}',
+  developer.log('🔵 Main: SupabaseConfig.anonKey = ${SupabaseConfig.anonKey}',
       name: 'Main');
 
   // Проверяем, что демо-режим действительно работает

@@ -1,9 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:nutry_flow/features/activity/domain/entities/exercise.dart';
+import 'package:nutry_flow/features/exercise/domain/entities/exercise.dart';
 import 'package:nutry_flow/features/activity/domain/entities/workout.dart';
 import 'package:nutry_flow/features/activity/domain/entities/activity_session.dart';
-import 'package:nutry_flow/features/exercise/data/repositories/exercise_repository.dart';
+import 'package:nutry_flow/features/exercise/domain/usecases/get_all_exercises_usecase.dart';
+import 'package:nutry_flow/features/exercise/domain/usecases/get_exercises_by_category_usecase.dart';
+import 'package:nutry_flow/features/exercise/domain/usecases/save_exercise_usecase.dart';
+import 'package:nutry_flow/features/exercise/domain/usecases/delete_exercise_usecase.dart';
 import 'dart:developer' as developer;
 
 // Events
@@ -189,21 +192,35 @@ class WorkoutSessionActive extends ExerciseState {
 
 // BLoC
 class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
-  final ExerciseRepository _exerciseRepository;
+  final GetAllExercisesUseCase _getAllExercisesUseCase;
+  final GetExercisesByCategoryUseCase _getExercisesByCategoryUseCase;
+  final SaveExerciseUseCase _saveExerciseUseCase;
+  final DeleteExerciseUseCase _deleteExerciseUseCase;
+
+  // TODO: Методы для Workout и ActivitySession должны использовать репозитории из activity модуля
+  // Временно оставлены для совместимости, но требуют рефакторинга
 
   ExerciseBloc({
-    required ExerciseRepository exerciseRepository,
-  })  : _exerciseRepository = exerciseRepository,
+    required GetAllExercisesUseCase getAllExercisesUseCase,
+    required GetExercisesByCategoryUseCase getExercisesByCategoryUseCase,
+    required SaveExerciseUseCase saveExerciseUseCase,
+    required DeleteExerciseUseCase deleteExerciseUseCase,
+  })  : _getAllExercisesUseCase = getAllExercisesUseCase,
+        _getExercisesByCategoryUseCase = getExercisesByCategoryUseCase,
+        _saveExerciseUseCase = saveExerciseUseCase,
+        _deleteExerciseUseCase = deleteExerciseUseCase,
         super(ExerciseInitial()) {
     on<LoadExercises>(_onLoadExercises);
     on<LoadExercisesByCategory>(_onLoadExercisesByCategory);
     on<CreateExercise>(_onCreateExercise);
     on<UpdateExercise>(_onUpdateExercise);
     on<DeleteExercise>(_onDeleteExercise);
+    // TODO: Методы для Workout требуют WorkoutRepository из activity модуля
     on<LoadWorkouts>(_onLoadWorkouts);
     on<CreateWorkout>(_onCreateWorkout);
     on<UpdateWorkout>(_onUpdateWorkout);
     on<DeleteWorkout>(_onDeleteWorkout);
+    // TODO: Методы для ActivitySession требуют ActivityRepository из activity модуля
     on<StartWorkoutSession>(_onStartWorkoutSession);
     on<CompleteWorkoutSession>(_onCompleteWorkoutSession);
     on<LoadWorkoutHistory>(_onLoadWorkoutHistory);
@@ -217,7 +234,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Loading exercises', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
-      final exercises = await _exerciseRepository.getAllExercises();
+      final exercises = await _getAllExercisesUseCase();
 
       if (state is ExerciseLoaded) {
         final currentState = state as ExerciseLoaded;
@@ -249,8 +266,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
-      final exercises =
-          await _exerciseRepository.getExercisesByCategory(event.category);
+      final exercises = await _getExercisesByCategoryUseCase(event.category);
 
       if (state is ExerciseLoaded) {
         final currentState = state as ExerciseLoaded;
@@ -285,10 +301,10 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Creating exercise', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
-      await _exerciseRepository.saveExercise(event.exercise);
+      await _saveExerciseUseCase(event.exercise);
 
       // Перезагружаем упражнения
-      final exercises = await _exerciseRepository.getAllExercises();
+      final exercises = await _getAllExercisesUseCase();
 
       if (state is ExerciseLoaded) {
         final currentState = state as ExerciseLoaded;
@@ -319,10 +335,10 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Updating exercise', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
-      await _exerciseRepository.saveExercise(event.exercise);
+      await _saveExerciseUseCase(event.exercise);
 
       // Перезагружаем упражнения
-      final exercises = await _exerciseRepository.getAllExercises();
+      final exercises = await _getAllExercisesUseCase();
 
       if (state is ExerciseLoaded) {
         final currentState = state as ExerciseLoaded;
@@ -353,11 +369,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Deleting exercise', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
-      // Удаляем упражнение (в реальном приложении нужно добавить метод deleteExercise в репозиторий)
-      // await _exerciseRepository.deleteExercise(event.exerciseId);
+      // Удаляем упражнение
+      await _deleteExerciseUseCase(event.exerciseId);
 
       // Перезагружаем упражнения
-      final exercises = await _exerciseRepository.getAllExercises();
+      final exercises = await _getAllExercisesUseCase();
 
       if (state is ExerciseLoaded) {
         final currentState = state as ExerciseLoaded;
@@ -384,7 +400,10 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     LoadWorkouts event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать WorkoutRepository из activity модуля
+    emit(ExerciseError('Метод требует WorkoutRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Loading workouts', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
@@ -407,14 +426,17 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Load workouts failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось загрузить тренировки: $e'));
-    }
+    } */
   }
 
   Future<void> _onCreateWorkout(
     CreateWorkout event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать WorkoutRepository из activity модуля
+    emit(ExerciseError('Метод требует WorkoutRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Creating workout', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
@@ -441,14 +463,17 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Create workout failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось создать тренировку: $e'));
-    }
+    } */
   }
 
   Future<void> _onUpdateWorkout(
     UpdateWorkout event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать WorkoutRepository из activity модуля
+    emit(ExerciseError('Метод требует WorkoutRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Updating workout', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
@@ -475,14 +500,17 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Update workout failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось обновить тренировку: $e'));
-    }
+    } */
   }
 
   Future<void> _onDeleteWorkout(
     DeleteWorkout event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать WorkoutRepository из activity модуля
+    emit(ExerciseError('Метод требует WorkoutRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Deleting workout', name: 'ExerciseBloc');
       emit(ExerciseLoading());
 
@@ -510,14 +538,17 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Delete workout failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось удалить тренировку: $e'));
-    }
+    } */
   }
 
   Future<void> _onStartWorkoutSession(
     StartWorkoutSession event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать ActivityRepository из activity модуля
+    emit(ExerciseError('Метод требует ActivityRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Starting workout session',
           name: 'ExerciseBloc');
 
@@ -543,14 +574,17 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Start workout session failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось начать тренировку: $e'));
-    }
+    } */
   }
 
   Future<void> _onCompleteWorkoutSession(
     CompleteWorkoutSession event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать ActivityRepository из activity модуля
+    emit(ExerciseError('Метод требует ActivityRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Completing workout session',
           name: 'ExerciseBloc');
 
@@ -578,14 +612,17 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Complete workout session failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось завершить тренировку: $e'));
-    }
+    } */
   }
 
   Future<void> _onLoadWorkoutHistory(
     LoadWorkoutHistory event,
     Emitter<ExerciseState> emit,
   ) async {
-    try {
+    // TODO: Использовать ActivityRepository из activity модуля
+    emit(ExerciseError('Метод требует ActivityRepository из activity модуля'));
+    return;
+    /* try {
       developer.log('💪 ExerciseBloc: Loading workout history',
           name: 'ExerciseBloc');
       emit(ExerciseLoading());
@@ -610,6 +647,6 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       developer.log('💪 ExerciseBloc: Load workout history failed: $e',
           name: 'ExerciseBloc');
       emit(ExerciseError('Не удалось загрузить историю тренировок: $e'));
-    }
+    } */
   }
 }

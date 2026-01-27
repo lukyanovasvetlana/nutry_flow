@@ -134,8 +134,8 @@ class _SplashScreenState extends State<SplashScreen>
 
                         // Loading indicator
                         const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.button),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.button),
                         ),
                       ],
                     ),

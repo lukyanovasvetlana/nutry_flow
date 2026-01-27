@@ -19,14 +19,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signIn(String email, String password) async {
     try {
-      developer.log('🔐 AuthRemoteDataSource: Starting signin for \$email', name: 'auth_remote_data_source');
+      developer.log(r'🔐 AuthRemoteDataSource: Starting signin for $email',
+          name: 'auth_remote_data_source');
 
       // Проверяем демо-режим
       final isDemo = SupabaseConfig.isDemo;
-      developer.log('🔐 AuthRemoteDataSource: Demo mode = \$isDemo', name: 'auth_remote_data_source');
+      developer.log(r'🔐 AuthRemoteDataSource: Demo mode = $isDemo',
+          name: 'auth_remote_data_source');
 
       if (isDemo) {
-        developer.log('🔐 AuthRemoteDataSource: Demo mode detected, simulating signin', name: 'auth_remote_data_source');
+        developer.log(
+            '🔐 AuthRemoteDataSource: Demo mode detected, simulating signin',
+            name: 'auth_remote_data_source');
 
         // Симулируем успешный вход в демо-режиме
         await Future.delayed(const Duration(seconds: 1));
@@ -43,7 +47,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           role: 'authenticated',
         );
 
-        developer.log('🔐 AuthRemoteDataSource: Demo signin successful for \$email', name: 'auth_remote_data_source');
+        developer.log(
+            r'🔐 AuthRemoteDataSource: Demo signin successful for $email',
+            name: 'auth_remote_data_source');
         return UserModel.fromSupabaseUser(demoUser);
       }
 
@@ -59,7 +65,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return UserModel.fromSupabaseUser(response.user);
     } catch (e) {
-      developer.log('🔐 AuthRemoteDataSource: Signin failed: \$e', name: 'auth_remote_data_source');
+      developer.log(r'🔐 AuthRemoteDataSource: Signin failed: $e',
+          name: 'auth_remote_data_source');
       throw Exception('Failed to sign in: $e');
     }
   }
@@ -67,14 +74,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signUp(String email, String password) async {
     try {
-      developer.log('🔐 AuthRemoteDataSource: Starting signup for \$email', name: 'auth_remote_data_source');
+      developer.log(r'🔐 AuthRemoteDataSource: Starting signup for $email',
+          name: 'auth_remote_data_source');
 
       // Проверяем демо-режим
       final isDemo = SupabaseConfig.isDemo;
-      developer.log('🔐 AuthRemoteDataSource: Demo mode = \$isDemo', name: 'auth_remote_data_source');
+      developer.log(r'🔐 AuthRemoteDataSource: Demo mode = $isDemo',
+          name: 'auth_remote_data_source');
 
       if (isDemo) {
-        developer.log('🔐 AuthRemoteDataSource: Demo mode detected, simulating signup', name: 'auth_remote_data_source');
+        developer.log(
+            '🔐 AuthRemoteDataSource: Demo mode detected, simulating signup',
+            name: 'auth_remote_data_source');
 
         // Симулируем успешную регистрацию в демо-режиме
         await Future.delayed(const Duration(seconds: 1));
@@ -91,7 +102,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           role: 'authenticated',
         );
 
-        developer.log('🔐 AuthRemoteDataSource: Demo signup successful for \$email', name: 'auth_remote_data_source');
+        developer.log(
+            r'🔐 AuthRemoteDataSource: Demo signup successful for $email',
+            name: 'auth_remote_data_source');
         return UserModel.fromSupabaseUser(demoUser);
       }
 
@@ -107,7 +120,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return UserModel.fromSupabaseUser(response.user);
     } catch (e) {
-      developer.log('🔐 AuthRemoteDataSource: Signup failed: \$e', name: 'auth_remote_data_source');
+      developer.log(r'🔐 AuthRemoteDataSource: Signup failed: $e',
+          name: 'auth_remote_data_source');
       throw Exception('Failed to sign up: $e');
     }
   }

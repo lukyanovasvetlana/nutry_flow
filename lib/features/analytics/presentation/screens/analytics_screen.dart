@@ -64,7 +64,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   List<Color> get fatsGradient => [
         AppColors.dynamicYellow,
         AppColors.dynamicYellow.withValues(alpha: 0.7),
-  ];
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -85,39 +85,39 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     );
 
     if (widget.showAppBar) {
-    return Scaffold(
+      return Scaffold(
         backgroundColor: AppColors.dynamicBackground,
-      appBar: AppBar(
+        appBar: AppBar(
           backgroundColor: AppColors.dynamicSurface,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-              color: AppColors.dynamicOnSurface,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Аналитика',
-          style: DesignTokens.typography.titleLargeStyle.copyWith(
-              color: AppColors.dynamicOnSurface,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
+          elevation: 0,
+          leading: IconButton(
             icon: Icon(
-              Icons.share,
-                color: AppColors.dynamicOnSurface,
+              Icons.arrow_back,
+              color: AppColors.dynamicOnSurface,
             ),
-            onPressed: () {
-              // TODO: Share analytics
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+          title: Text(
+            'Аналитика',
+            style: DesignTokens.typography.titleLargeStyle.copyWith(
+              color: AppColors.dynamicOnSurface,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.share,
+                color: AppColors.dynamicOnSurface,
+              ),
+              onPressed: () {
+                // TODO: Share analytics
+              },
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
           child: content,
         ),
       );
@@ -168,10 +168,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                   ),
                   child: GestureDetector(
                     onTap: () {
-                    setState(() {
+                      setState(() {
                         selectedPeriod = periodName;
-                    });
-                  },
+                      });
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -185,7 +185,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.dynamicShadow.withValues(alpha: 0.05),
+                            color:
+                                AppColors.dynamicShadow.withValues(alpha: 0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -202,8 +203,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                               Container(
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                  color: periodColor
-                                      .withValues(alpha: isSelected ? 0.2 : 0.1),
+                                  color: periodColor.withValues(
+                                      alpha: isSelected ? 0.2 : 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -268,43 +269,43 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
         const SizedBox(height: 16),
         // Горизонтальные карточки в одну колонку
         _buildMetricCard(
-                title: 'Калории',
-                value: '1,850',
-                unit: 'ккал',
-                icon: Icons.local_fire_department,
+          title: 'Калории',
+          value: '1,850',
+          unit: 'ккал',
+          icon: Icons.local_fire_department,
           color: AppColors.dynamicOrange,
-                trend: '+5%',
-                isPositive: true,
-              ),
-        const SizedBox(height: 8),
-        _buildMetricCard(
-                title: 'Белки',
-                value: '85',
-                unit: 'г',
-                icon: Icons.fitness_center,
-          color: AppColors.dynamicPrimary, // Зеленые
-                trend: '+2%',
-                isPositive: true,
+          trend: '+5%',
+          isPositive: true,
         ),
         const SizedBox(height: 8),
         _buildMetricCard(
-                title: 'Жиры',
-                value: '65',
-                unit: 'г',
-                icon: Icons.water_drop,
-          color: AppColors.dynamicYellow, // Желтые
-                trend: '-3%',
-                isPositive: false,
-              ),
+          title: 'Белки',
+          value: '85',
+          unit: 'г',
+          icon: Icons.fitness_center,
+          color: AppColors.dynamicPrimary, // Зеленые
+          trend: '+2%',
+          isPositive: true,
+        ),
         const SizedBox(height: 8),
         _buildMetricCard(
-                title: 'Углеводы',
-                value: '220',
-                unit: 'г',
-                icon: Icons.grain,
+          title: 'Жиры',
+          value: '65',
+          unit: 'г',
+          icon: Icons.water_drop,
+          color: AppColors.dynamicYellow, // Желтые
+          trend: '-3%',
+          isPositive: false,
+        ),
+        const SizedBox(height: 8),
+        _buildMetricCard(
+          title: 'Углеводы',
+          value: '220',
+          unit: 'г',
+          icon: Icons.grain,
           color: AppColors.dynamicOrange, // Оранжевые
-                trend: '+8%',
-                isPositive: true,
+          trend: '+8%',
+          isPositive: true,
         ),
       ],
     );
@@ -322,174 +323,195 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     final double proteinsPercent = (proteins / total) * 100;
     final double fatsPercent = (fats / total) * 100;
 
-     return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.dynamicShadow.withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-              spreadRadius: 0,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.dynamicShadow.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/dashboard_main_metrics_dark.jpg'
+                    : 'assets/images/dashboard_main_metrics_light.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned.fill(
+              child: Container(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withValues(alpha: 0.88)
+                    : Colors.white.withValues(alpha: 0.85),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Размер диаграммы
+                  final double chartSize = constraints.maxWidth < 400
+                      ? 220.0
+                      : (constraints.maxWidth < 600 ? 250.0 : 280.0);
+
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Диаграмма сверху
+                      Center(
+                        child: SizedBox(
+                          width: chartSize,
+                          height: chartSize,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.dynamicPrimary
+                                      .withValues(alpha: 0.1),
+                                  blurRadius: 20,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: AnimatedBuilder(
+                              animation: _animation,
+                              builder: (context, child) {
+                                // Определяем цвета с учетом выбранного элемента и градиентов
+                                // Выбранный элемент - яркий цвет, невыбранные - приглушенные
+                                final isLightTheme =
+                                    Theme.of(context).brightness ==
+                                        Brightness.light;
+                                final desaturateColor =
+                                    isLightTheme ? Colors.white : Colors.grey;
+                                final mutedFactor = isLightTheme ? 0.15 : 0.6;
+                                final blendFactor = isLightTheme ? 0.1 : 0.4;
+
+                                final carbsColor = selectedMacro == 'carbs'
+                                    ? carbsGradient[0]
+                                    : (selectedMacro != null
+                                        ? Color.lerp(carbsGradient[0],
+                                                desaturateColor, mutedFactor) ??
+                                            AppColors.dynamicOrange
+                                        : Color.lerp(
+                                                carbsGradient[0],
+                                                carbsGradient[1],
+                                                blendFactor) ??
+                                            AppColors.dynamicOrange);
+                                final proteinsColor =
+                                    selectedMacro == 'proteins'
+                                        ? proteinsGradient[0]
+                                        : (selectedMacro != null
+                                            ? Color.lerp(
+                                                    proteinsGradient[0],
+                                                    desaturateColor,
+                                                    mutedFactor) ??
+                                                AppColors.dynamicPrimary
+                                            : Color.lerp(
+                                                    proteinsGradient[0],
+                                                    proteinsGradient[1],
+                                                    blendFactor) ??
+                                                AppColors.dynamicPrimary);
+                                final fatsColor = selectedMacro == 'fats'
+                                    ? fatsGradient[0]
+                                    : (selectedMacro != null
+                                        ? Color.lerp(fatsGradient[0],
+                                                desaturateColor, mutedFactor) ??
+                                            AppColors.dynamicYellow
+                                        : Color.lerp(fatsGradient[0],
+                                                fatsGradient[1], blendFactor) ??
+                                            AppColors.dynamicYellow);
+
+                                return PieChartSz(
+                                  colors: [
+                                    carbsColor,
+                                    proteinsColor,
+                                    fatsColor,
+                                  ],
+                                  values: [
+                                    carbsPercent * _animation.value,
+                                    proteinsPercent * _animation.value,
+                                    fatsPercent * _animation.value,
+                                  ],
+                                  gapSize: 0.18,
+                                  centerText: 'Всего\n${total.toInt()}г',
+                                  centerTextStyle: TextStyle(
+                                    fontSize: chartSize * 0.065,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.dynamicOnBackground,
+                                    height: 1.3,
+                                  ),
+                                  valueSettings: Valuesettings(
+                                    showValues: false,
+                                    ValueTextStyle: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.dynamicOnBackground,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Легенда в одну строку
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildCompactLegendItem(
+                              'Углеводы',
+                              AppColors.dynamicOrange,
+                              '${carbs.toInt()}г',
+                              carbsPercent,
+                              icon: Icons.grain,
+                              macroKey: 'carbs',
+                              gradient: carbsGradient,
+                            ),
+                            const SizedBox(width: 6),
+                            _buildCompactLegendItem(
+                              'Белки',
+                              AppColors.dynamicPrimary,
+                              '${proteins.toInt()}г',
+                              proteinsPercent,
+                              icon: Icons.fitness_center,
+                              macroKey: 'proteins',
+                              gradient: proteinsGradient,
+                            ),
+                            const SizedBox(width: 6),
+                            _buildCompactLegendItem(
+                              'Жиры',
+                              AppColors.dynamicYellow,
+                              '${fats.toInt()}г',
+                              fatsPercent,
+                              icon: Icons.water_drop,
+                              macroKey: 'fats',
+                              gradient: fatsGradient,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  Theme.of(context).brightness == Brightness.dark
-                      ? 'assets/images/dashboard_main_metrics_dark.jpg'
-                      : 'assets/images/dashboard_main_metrics_light.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned.fill(
-                child: Container(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.black.withValues(alpha: 0.88)
-                      : Colors.white.withValues(alpha: 0.85),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-            // Размер диаграммы
-            final double chartSize = constraints.maxWidth < 400 
-                ? 220.0 
-                : (constraints.maxWidth < 600 
-                    ? 250.0 
-                    : 280.0);
-            
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Диаграмма сверху
-                Center(
-                  child: SizedBox(
-                    width: chartSize,
-                    height: chartSize,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: AnimatedBuilder(
-                        animation: _animation,
-                        builder: (context, child) {
-                          // Определяем цвета с учетом выбранного элемента и градиентов
-                          // Выбранный элемент - яркий цвет, невыбранные - приглушенные
-                          final isLightTheme = Theme.of(context).brightness == Brightness.light;
-                          final desaturateColor = isLightTheme ? Colors.white : Colors.grey;
-                          final mutedFactor = isLightTheme ? 0.15 : 0.6;
-                          final blendFactor = isLightTheme ? 0.1 : 0.4;
-                          
-                          final carbsColor = selectedMacro == 'carbs'
-                              ? carbsGradient[0]
-                              : (selectedMacro != null 
-                                  ? Color.lerp(carbsGradient[0], desaturateColor, mutedFactor) ?? AppColors.dynamicOrange
-                                  : Color.lerp(carbsGradient[0], carbsGradient[1], blendFactor) ?? AppColors.dynamicOrange);
-                          final proteinsColor = selectedMacro == 'proteins'
-                              ? proteinsGradient[0]
-                              : (selectedMacro != null 
-                                  ? Color.lerp(proteinsGradient[0], desaturateColor, mutedFactor) ?? AppColors.dynamicPrimary
-                                  : Color.lerp(proteinsGradient[0], proteinsGradient[1], blendFactor) ?? AppColors.dynamicPrimary);
-                          final fatsColor = selectedMacro == 'fats'
-                              ? fatsGradient[0]
-                              : (selectedMacro != null 
-                                  ? Color.lerp(fatsGradient[0], desaturateColor, mutedFactor) ?? AppColors.dynamicYellow
-                                  : Color.lerp(fatsGradient[0], fatsGradient[1], blendFactor) ?? AppColors.dynamicYellow);
-
-                          return PieChartSz(
-                            colors: [
-                              carbsColor,
-                              proteinsColor,
-                              fatsColor,
-                            ],
-                            values: [
-                              carbsPercent * _animation.value,
-                              proteinsPercent * _animation.value,
-                              fatsPercent * _animation.value,
-                            ],
-                            gapSize: 0.18,
-                            centerText: 'Всего\n${total.toInt()}г',
-                            centerTextStyle: TextStyle(
-                              fontSize: chartSize * 0.065,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.dynamicOnBackground,
-                              height: 1.3,
-                            ),
-                            valueSettings: Valuesettings(
-                              showValues: false,
-                              ValueTextStyle: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.dynamicOnBackground,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Легенда в одну строку
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildCompactLegendItem(
-                        'Углеводы',
-                        AppColors.dynamicOrange,
-                        '${carbs.toInt()}г',
-                        carbsPercent,
-                        icon: Icons.grain,
-                        macroKey: 'carbs',
-                        gradient: carbsGradient,
-                      ),
-                      const SizedBox(width: 6),
-                      _buildCompactLegendItem(
-                        'Белки',
-                        AppColors.dynamicPrimary,
-                        '${proteins.toInt()}г',
-                        proteinsPercent,
-                        icon: Icons.fitness_center,
-                        macroKey: 'proteins',
-                        gradient: proteinsGradient,
-                      ),
-                      const SizedBox(width: 6),
-                      _buildCompactLegendItem(
-                        'Жиры',
-                        AppColors.dynamicYellow,
-                        '${fats.toInt()}г',
-                        fatsPercent,
-                        icon: Icons.water_drop,
-                        macroKey: 'fats',
-                        gradient: fatsGradient,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-              ),
-            ],
-          ),
-        ),
-      );
+      ),
+    );
   }
 
   Widget _buildCompactLegendItem(
@@ -503,7 +525,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   }) {
     final isSelected = selectedMacro == macroKey;
     final baseColor = gradient?.first ?? color;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -519,143 +541,144 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
             horizontal: isSelected ? 10 : 8,
             vertical: isSelected ? 8 : 6,
           ),
-        decoration: BoxDecoration(
-          gradient: gradient != null && isSelected
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    gradient[0].withValues(alpha: 0.3),
-                    gradient[1].withValues(alpha: 0.25),
-                  ],
-                )
-              : null,
-          color: gradient == null || !isSelected
-              ? baseColor.withValues(alpha: isSelected ? 0.25 : 0.1)
-              : null,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: baseColor.withValues(alpha: isSelected ? 0.8 : 0.3),
-            width: isSelected ? 2.5 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: baseColor.withValues(alpha: 0.5),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                  BoxShadow(
-                    color: baseColor.withValues(alpha: 0.3),
-                    blurRadius: 6,
-                    spreadRadius: 1,
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Иконка
-            if (icon != null) ...[
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  gradient: gradient != null && isSelected
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: gradient,
-                        )
-                      : null,
-                  color: gradient == null || !isSelected
-                      ? baseColor.withValues(alpha: isSelected ? 0.3 : 0.2)
-                      : null,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: baseColor.withValues(alpha: 0.4),
-                            blurRadius: 4,
-                            spreadRadius: 0.5,
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Icon(
-                  icon,
-                  size: 10,
-                  color: isSelected ? Colors.white : baseColor,
-                ),
-              ),
-              const SizedBox(width: 4),
-            ] else ...[
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  gradient: gradient != null && isSelected
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: gradient,
-                        )
-                      : null,
-                  color: gradient == null || !isSelected ? baseColor : null,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: baseColor.withValues(alpha: isSelected ? 0.5 : 0.3),
-                      blurRadius: isSelected ? 4 : 3,
-                      spreadRadius: isSelected ? 1 : 0.5,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 4),
-            ],
-            // Текст и значения в одну строку (более компактно)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.dynamicOnBackground,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      '${percent.toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: baseColor,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 1),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.dynamicOnBackground,
-                  ),
-                ),
-              ],
+          decoration: BoxDecoration(
+            gradient: gradient != null && isSelected
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      gradient[0].withValues(alpha: 0.3),
+                      gradient[1].withValues(alpha: 0.25),
+                    ],
+                  )
+                : null,
+            color: gradient == null || !isSelected
+                ? baseColor.withValues(alpha: isSelected ? 0.25 : 0.1)
+                : null,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: baseColor.withValues(alpha: isSelected ? 0.8 : 0.3),
+              width: isSelected ? 2.5 : 1,
             ),
-          ],
-        ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: baseColor.withValues(alpha: 0.5),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: baseColor.withValues(alpha: 0.3),
+                      blurRadius: 6,
+                      spreadRadius: 1,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Иконка
+              if (icon != null) ...[
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    gradient: gradient != null && isSelected
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: gradient,
+                          )
+                        : null,
+                    color: gradient == null || !isSelected
+                        ? baseColor.withValues(alpha: isSelected ? 0.3 : 0.2)
+                        : null,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: baseColor.withValues(alpha: 0.4),
+                              blurRadius: 4,
+                              spreadRadius: 0.5,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 10,
+                    color: isSelected ? Colors.white : baseColor,
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ] else ...[
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    gradient: gradient != null && isSelected
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: gradient,
+                          )
+                        : null,
+                    color: gradient == null || !isSelected ? baseColor : null,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            baseColor.withValues(alpha: isSelected ? 0.5 : 0.3),
+                        blurRadius: isSelected ? 4 : 3,
+                        spreadRadius: isSelected ? 1 : 0.5,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
+              // Текст и значения в одну строку (более компактно)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.dynamicOnBackground,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${percent.toStringAsFixed(0)}%',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: baseColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.dynamicOnBackground,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -684,29 +707,29 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
             width: 1,
           ),
         ),
-            child: Row(
-              children: [
+        child: Row(
+          children: [
             // Иконка слева
-                Container(
+            Container(
               padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
+              decoration: BoxDecoration(
                 color: color.withValues(alpha: isLightTheme ? 0.3 : 0.15),
                 borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: color,
+              ),
+              child: Icon(
+                icon,
+                color: color,
                 size: 24,
-                  ),
-                ),
+              ),
+            ),
             const SizedBox(width: 14), // Уменьшил с 16 до 14
             // Основная информация по центру
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
                     style: DesignTokens.typography.bodyMediumStyle.copyWith(
                       color: AppColors.dynamicOnSurfaceVariant,
                       fontSize: 14,
@@ -778,12 +801,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                           : AppColors.dynamicError,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
         ),
       ),
     );
@@ -909,6 +932,5 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     );
   }
 }
-
 
 /// CustomPainter для рисования черной обводки секторов диаграммы

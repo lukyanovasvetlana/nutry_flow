@@ -36,20 +36,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (user != null) {
         setState(() {
           _userEmail = user.email;
-          _userName = user.userMetadata?['name'] as String? ?? 
-                     user.userMetadata?['firstName'] as String? ?? 
-                     'Пользователь';
+          _userName = user.userMetadata?['name'] as String? ??
+              user.userMetadata?['firstName'] as String? ??
+              'Пользователь';
         });
       }
     } catch (e) {
-      developer.log('Ошибка загрузки данных пользователя: $e', name: 'ProfileScreen');
+      developer.log('Ошибка загрузки данных пользователя: $e',
+          name: 'ProfileScreen');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final themeManager = ThemeManager();
-    
+
     return Scaffold(
       backgroundColor: AppColors.dynamicBackground,
       appBar: AppBar(
@@ -70,9 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               // Фотография и информация профиля
               _buildProfileHeader(),
-              
+
               const SizedBox(height: 24),
-              
+
               // Редактирование профиля
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -89,9 +90,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Переключение темы
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -129,9 +130,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Настройки и безопасность
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -164,9 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.lock,
                       title: 'Смена пароля',
                       subtitle: 'Обновить пароль аккаунта',
-                      onTap: () {
-                        _showChangePasswordDialog();
-                      },
+                      onTap: _showChangePasswordDialog,
                     ),
                     _buildSettingsTile(
                       icon: Icons.logout,
@@ -178,9 +177,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Юридическая информация
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -191,14 +190,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.privacy_tip,
                       title: 'Политика конфиденциальности',
                       subtitle: 'Как мы используем ваши данные',
-                      onTap: () {
-                        _showPrivacyPolicy();
-                      },
+                      onTap: _showPrivacyPolicy,
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32),
             ],
           ),
@@ -218,9 +215,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                backgroundImage: _avatarUrl != null
-                    ? NetworkImage(_avatarUrl!)
-                    : null,
+                backgroundImage:
+                    _avatarUrl != null ? NetworkImage(_avatarUrl!) : null,
                 child: _avatarUrl == null
                     ? Icon(
                         Icons.person,
@@ -313,9 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: Text(
         title,
         style: DesignTokens.typography.bodyLargeStyle.copyWith(
-          color: isDestructive
-              ? AppColors.error
-              : AppColors.dynamicTextPrimary,
+          color: isDestructive ? AppColors.error : AppColors.dynamicTextPrimary,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -407,7 +401,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // TODO: Реализовать отправку ссылки для смены пароля
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Ссылка для смены пароля отправлена на email'),
+                    content:
+                        Text('Ссылка для смены пароля отправлена на email'),
                   ),
                 );
               },
@@ -476,7 +471,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   );
                 } catch (e) {
-                  developer.log('Ошибка выхода из аккаунта: $e', name: 'ProfileScreen');
+                  developer.log('Ошибка выхода из аккаунта: $e',
+                      name: 'ProfileScreen');
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -552,4 +548,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-

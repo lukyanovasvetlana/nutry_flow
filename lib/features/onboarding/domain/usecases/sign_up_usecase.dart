@@ -58,7 +58,8 @@ class SignUpUseCase {
 
       // Валидация пароля
       if (password.length < 6) {
-        developer.log('🔵 SignUpUseCase: validation failed - password too short',
+        developer.log(
+            '🔵 SignUpUseCase: validation failed - password too short',
             name: 'SignUpUseCase');
         return SignUpResult.failure('Password must be at least 6 characters');
       }

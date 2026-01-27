@@ -24,11 +24,14 @@ class ProfileMultiSelectionField<T> extends StatefulWidget {
   });
 
   @override
-  State<ProfileMultiSelectionField<T>> createState() => _ProfileMultiSelectionFieldState<T>();
+  State<ProfileMultiSelectionField<T>> createState() =>
+      _ProfileMultiSelectionFieldState<T>();
 }
 
-class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionField<T>> {
-  final GlobalKey<FormFieldState<List<T>>> _fieldKey = GlobalKey<FormFieldState<List<T>>>();
+class _ProfileMultiSelectionFieldState<T>
+    extends State<ProfileMultiSelectionField<T>> {
+  final GlobalKey<FormFieldState<List<T>>> _fieldKey =
+      GlobalKey<FormFieldState<List<T>>>();
 
   @override
   void didUpdateWidget(ProfileMultiSelectionField<T> oldWidget) {
@@ -84,7 +87,9 @@ class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionFie
                     decoration: BoxDecoration(
                       color: AppColors.dynamicCard,
                       border: Border.all(
-                        color: field.hasError ? AppColors.dynamicError : AppColors.dynamicBorder,
+                        color: field.hasError
+                            ? AppColors.dynamicError
+                            : AppColors.dynamicBorder,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -109,10 +114,12 @@ class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionFie
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
+                                        color: AppColors.dynamicPrimary
+                                            .withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
-                                          color: AppColors.dynamicPrimary.withValues(alpha: 0.3),
+                                          color: AppColors.dynamicPrimary
+                                              .withValues(alpha: 0.3),
                                         ),
                                       ),
                                       child: Row(
@@ -128,7 +135,8 @@ class _ProfileMultiSelectionFieldState<T> extends State<ProfileMultiSelectionFie
                                           ),
                                           const SizedBox(width: 4),
                                           GestureDetector(
-                                            onTap: () => _removeItem(item, field),
+                                            onTap: () =>
+                                                _removeItem(item, field),
                                             child: Icon(
                                               Icons.close,
                                               size: 14,

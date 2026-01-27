@@ -8,7 +8,7 @@ import 'package:nutry_flow/shared/design/components/cards/nutry_card.dart';
 import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'package:nutry_flow/features/auth/data/services/auth_service.dart';
 import 'package:nutry_flow/config/supabase_config.dart';
-import '../blocs/profile_bloc.dart';
+import '../bloc/profile_bloc.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../di/profile_dependencies.dart';
 import 'profile_edit_screen.dart';
@@ -51,33 +51,41 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
       // В демо-режиме используем фиктивный ID пользователя
       final isDemo = SupabaseConfig.isDemo;
       String? userId;
-      
+
       if (isDemo) {
         // В демо-режиме создаем фиктивного пользователя
         userId = 'demo-user-id';
-        developer.log('🔵 UnifiedProfileScreen: Demo mode, using demo user ID', name: 'UnifiedProfileScreen');
+        developer.log('🔵 UnifiedProfileScreen: Demo mode, using demo user ID',
+            name: 'UnifiedProfileScreen');
       } else {
         final user = SupabaseService.instance.currentUser;
         userId = user?.id;
       }
-      
+
       if (userId != null) {
-        developer.log('🔵 UnifiedProfileScreen: User ID set to $userId', name: 'UnifiedProfileScreen');
+        developer.log('🔵 UnifiedProfileScreen: User ID set to $userId',
+            name: 'UnifiedProfileScreen');
         setState(() {
           _userId = userId;
           _isLoadingUser = false;
         });
-        
+
         // Убеждаемся, что ProfileDependencies инициализирован
         try {
           await ProfileDependencies.instance.initialize();
-          developer.log('🔵 UnifiedProfileScreen: ProfileDependencies initialized', name: 'UnifiedProfileScreen');
+          developer.log(
+              '🔵 UnifiedProfileScreen: ProfileDependencies initialized',
+              name: 'UnifiedProfileScreen');
         } catch (e) {
-          developer.log('🔴 UnifiedProfileScreen: ProfileDependencies already initialized or error: $e', name: 'UnifiedProfileScreen');
+          developer.log(
+              '🔴 UnifiedProfileScreen: ProfileDependencies already initialized or error: $e',
+              name: 'UnifiedProfileScreen');
         }
-        
+
         _profileBloc = ProfileDependencies.createProfileBloc();
-        developer.log('🔵 UnifiedProfileScreen: ProfileBloc created, loading profile for $userId', name: 'UnifiedProfileScreen');
+        developer.log(
+            '🔵 UnifiedProfileScreen: ProfileBloc created, loading profile for $userId',
+            name: 'UnifiedProfileScreen');
         _profileBloc!.add(LoadProfile(_userId!));
       } else {
         setState(() {
@@ -96,7 +104,8 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
         }
       }
     } catch (e) {
-      developer.log('Ошибка загрузки пользователя: $e', name: 'UnifiedProfileScreen');
+      developer.log('Ошибка загрузки пользователя: $e',
+          name: 'UnifiedProfileScreen');
       setState(() {
         _isLoadingUser = false;
       });
@@ -219,7 +228,7 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Container(
+                DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: DesignTokens.colors.primaryGradient,
                     borderRadius: BorderRadius.circular(
@@ -324,40 +333,41 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
             onTap: () => _showAvatarOptions(context, profile),
             child: Stack(
               children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: DesignTokens.colors.primary.withValues(alpha: 0.1),
-                    backgroundImage: profile.avatarUrl != null
-                        ? NetworkImage(profile.avatarUrl!)
-                        : null,
-                    child: profile.avatarUrl == null
-                        ? Icon(
-                            Icons.person,
-                            size: 32,
-                            color: DesignTokens.colors.primary,
-                          )
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: DesignTokens.colors.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.dynamicCard,
-                          width: 2,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.camera_alt,
-                        size: 14,
-                        color: DesignTokens.colors.onPrimary,
+                CircleAvatar(
+                  radius: 32,
+                  backgroundColor:
+                      DesignTokens.colors.primary.withValues(alpha: 0.1),
+                  backgroundImage: profile.avatarUrl != null
+                      ? NetworkImage(profile.avatarUrl!)
+                      : null,
+                  child: profile.avatarUrl == null
+                      ? Icon(
+                          Icons.person,
+                          size: 32,
+                          color: DesignTokens.colors.primary,
+                        )
+                      : null,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: DesignTokens.colors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.dynamicCard,
+                        width: 2,
                       ),
                     ),
+                    child: Icon(
+                      Icons.camera_alt,
+                      size: 14,
+                      color: DesignTokens.colors.onPrimary,
+                    ),
                   ),
+                ),
               ],
             ),
           ),
@@ -367,57 +377,57 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                  // Имя и фамилия
-                  Text(
-                    '${profile.firstName} ${profile.lastName}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.dynamicTextPrimary,
+                // Имя и фамилия
+                Text(
+                  '${profile.firstName} ${profile.lastName}',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.dynamicTextPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                // Email
+                Row(
+                  children: [
+                    Icon(
+                      Icons.email,
+                      size: 14,
+                      color: AppColors.dynamicTextSecondary,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Email
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.email,
-                        size: 14,
-                        color: AppColors.dynamicTextSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          profile.email,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.dynamicTextSecondary,
-                          ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        profile.email,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.dynamicTextSecondary,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  // Телефон
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.phone,
-                        size: 14,
-                        color: AppColors.dynamicTextSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          profile.phone ?? 'Не указан',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.dynamicTextSecondary,
-                          ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                // Телефон
+                Row(
+                  children: [
+                    Icon(
+                      Icons.phone,
+                      size: 14,
+                      color: AppColors.dynamicTextSecondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        profile.phone ?? 'Не указан',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.dynamicTextSecondary,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -454,13 +464,15 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
               builder: (context, child) {
                 final isDark = themeManager.isDarkMode;
                 return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   dense: true,
                   leading: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: AppColors.dynamicPrimary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(DesignTokens.borders.sm),
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.borders.sm),
                     ),
                     child: Icon(
                       isDark ? Icons.light_mode : Icons.dark_mode,
@@ -491,9 +503,12 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
                       themeManager.toggleTheme();
                     },
                     activeThumbColor: AppColors.dynamicPrimary,
-                    activeTrackColor: AppColors.dynamicPrimary.withValues(alpha: 0.5),
-                    inactiveThumbColor: AppColors.dynamicPrimary.withValues(alpha: 0.5),
-                    inactiveTrackColor: AppColors.dynamicPrimary.withValues(alpha: 0.2),
+                    activeTrackColor:
+                        AppColors.dynamicPrimary.withValues(alpha: 0.5),
+                    inactiveThumbColor:
+                        AppColors.dynamicPrimary.withValues(alpha: 0.5),
+                    inactiveTrackColor:
+                        AppColors.dynamicPrimary.withValues(alpha: 0.2),
                   ),
                 );
               },
@@ -516,9 +531,7 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
               icon: Icons.notifications,
               title: 'Настройки уведомлений',
               subtitle: 'Управление push и email уведомлениями',
-              onTap: () {
-                _showNotificationSettingsDialog();
-              },
+              onTap: _showNotificationSettingsDialog,
             ),
             _buildSettingsTile(
               icon: Icons.lock,
@@ -1038,7 +1051,7 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
       builder: (BuildContext context) {
         bool pushNotifications = _pushNotifications;
         bool emailNotifications = _emailNotifications;
-        
+
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
@@ -1180,5 +1193,3 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
     );
   }
 }
-
-

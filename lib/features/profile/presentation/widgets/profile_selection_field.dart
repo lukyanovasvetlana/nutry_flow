@@ -20,7 +20,8 @@ class ProfileSelectionField<T> extends StatefulWidget {
   });
 
   @override
-  State<ProfileSelectionField<T>> createState() => _ProfileSelectionFieldState<T>();
+  State<ProfileSelectionField<T>> createState() =>
+      _ProfileSelectionFieldState<T>();
 }
 
 class _ProfileSelectionFieldState<T> extends State<ProfileSelectionField<T>> {
@@ -79,7 +80,9 @@ class _ProfileSelectionFieldState<T> extends State<ProfileSelectionField<T>> {
                     decoration: BoxDecoration(
                       color: AppColors.dynamicCard,
                       border: Border.all(
-                        color: field.hasError ? AppColors.dynamicError : AppColors.dynamicBorder,
+                        color: field.hasError
+                            ? AppColors.dynamicError
+                            : AppColors.dynamicBorder,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -87,7 +90,9 @@ class _ProfileSelectionFieldState<T> extends State<ProfileSelectionField<T>> {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.displayText ?? widget.hint ?? 'Выберите ${widget.label}',
+                            widget.displayText ??
+                                widget.hint ??
+                                'Выберите ${widget.label}',
                             style: TextStyle(
                               fontSize: 14,
                               color: widget.displayText != null

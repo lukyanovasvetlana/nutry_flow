@@ -12,12 +12,12 @@ class MealImageService {
   // Unsplash API (можно заменить на другой сервис)
   // Для демо используем публичный API без ключа
   static const String _unsplashBaseUrl = 'https://source.unsplash.com';
-  
+
   // Альтернативный вариант - использовать Foodish API (бесплатный, без ключа)
   static const String _foodishBaseUrl = 'https://foodish-api.herokuapp.com';
 
   /// Получить URL изображения для блюда по его названию
-  /// 
+  ///
   /// Использует несколько стратегий:
   /// 1. Пытается найти изображение по названию блюда
   /// 2. Если не найдено, использует категорию блюда (завтрак, обед, ужин)
@@ -29,10 +29,10 @@ class MealImageService {
     try {
       // Очищаем название от лишних символов
       final cleanName = _cleanMealName(mealName);
-      
+
       // Пробуем получить изображение через Unsplash
       final unsplashUrl = _getUnsplashUrl(cleanName);
-      
+
       // Проверяем доступность изображения
       final isAvailable = await _checkImageAvailability(unsplashUrl);
       if (isAvailable) {
@@ -119,8 +119,8 @@ class MealImageService {
   Future<bool> _checkImageAvailability(String url) async {
     try {
       final response = await http.head(Uri.parse(url)).timeout(
-        const Duration(seconds: 3),
-      );
+            const Duration(seconds: 3),
+          );
       return response.statusCode == 200;
     } catch (e) {
       return false;
@@ -137,11 +137,11 @@ class MealImageService {
   }) {
     // Создаем хеш из названия для консистентности
     final hash = mealName.hashCode.abs();
-    
+
     // Используем хеш для выбора изображения из определенного набора
     // Это гарантирует, что одно и то же блюдо всегда будет иметь одно изображение
     final seed = hash % 1000; // Ограничиваем диапазон
-    
+
     // Используем seed для получения консистентного изображения
     return '$_unsplashBaseUrl/${width}x$height/?food&sig=$seed';
   }
@@ -150,9 +150,11 @@ class MealImageService {
   /// Этот API возвращает случайные изображения еды
   Future<String?> getRandomFoodImage() async {
     try {
-      final response = await http.get(
-        Uri.parse('$_foodishBaseUrl/images/random'),
-      ).timeout(const Duration(seconds: 5));
+      final response = await http
+          .get(
+            Uri.parse('$_foodishBaseUrl/images/random'),
+          )
+          .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -167,4 +169,3 @@ class MealImageService {
     return null;
   }
 }
-

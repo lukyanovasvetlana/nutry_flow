@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../analytics/presentation/screens/analytics_screen.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
@@ -9,6 +8,7 @@ import '../../../profile/data/services/profile_service.dart';
 import '../../../../shared/theme/theme_manager.dart';
 import '../../../analytics/presentation/mixins/analytics_mixin.dart';
 import '../../../analytics/presentation/utils/analytics_utils.dart';
+import '../../data/repositories/dashboard_repository.dart';
 
 /// Экран дашборда NutryFlow
 ///
@@ -62,47 +62,17 @@ class _DashboardScreenState extends State<DashboardScreen> with AnalyticsMixin {
 
   /// Загружает профиль пользователя
   ///
-  /// Сначала пытается загрузить профиль из локального хранилища (SharedPreferences),
-  /// если не найден - использует переданный репозиторий для демо-режима.
+  /// Сначала пытается загрузить профиль из локального хранилища через DashboardRepository,
+  /// если не найден - использует MockProfileService для демо-режима.
   ///
   /// Отслеживает успешность загрузки профиля для аналитики.
   Future<void> _loadUserProfile() async {
     try {
-      // Сначала пробуем загрузить из SharedPreferences (если пользователь регистрировался)
-      final prefs = await SharedPreferences.getInstance();
-      final userName = prefs.getString('userName');
-      final userLastName = prefs.getString('userLastName');
+      // Сначала пробуем загрузить из локального хранилища через репозиторий
+      final dashboardRepository = DashboardRepository();
+      final localProfile = await dashboardRepository.getLocalUserProfile();
 
-      if (userName != null && userName.isNotEmpty) {
-        // Создаем локальный профиль из SharedPreferences
-        final localProfile = UserProfile(
-          id: 'local-user',
-          firstName: userName,
-          lastName: userLastName ?? '',
-          email: prefs.getString('userEmail') ?? 'user@example.com',
-          phone: null,
-          dateOfBirth: null,
-          gender: null,
-          height: null,
-          weight: null,
-          activityLevel: null,
-          avatarUrl: null,
-          dietaryPreferences: const [],
-          allergies: const [],
-          healthConditions: const [],
-          fitnessGoals: const [],
-          targetWeight: null,
-          targetCalories: null,
-          targetProtein: null,
-          targetCarbs: null,
-          targetFat: null,
-          foodRestrictions: null,
-          pushNotificationsEnabled: true,
-          emailNotificationsEnabled: true,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-
+      if (localProfile != null) {
         if (mounted) {
           setState(() {
             _userProfile = localProfile;

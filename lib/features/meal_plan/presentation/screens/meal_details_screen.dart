@@ -240,7 +240,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
       final mealName = widget.mealName ?? mealData?['name'] ?? 'food';
       // Определяем тип блюда из данных или используем дефолтный
       final mealType = mealData?['type'] ?? 'Завтрак';
-      
+
       return await MealImageService.instance.getMealImageUrl(
         mealName: mealName,
         mealType: mealType,

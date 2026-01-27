@@ -2,36 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _register() {
+  void _login() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
-            RegisterRequested(
+            LoginRequested(
               email: _emailController.text.trim(),
               password: _passwordController.text,
-              confirmPassword: _confirmPasswordController.text,
             ),
           );
     }
@@ -41,15 +37,19 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Регистрация'),
+        title: const Text('Вход'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            // Навигация на главный экран после успешной регистрации
-            Navigator.of(context).pushReplacementNamed('/dashboard');
+            // Навигация на главный экран после успешного входа
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                Navigator.of(context).pushReplacementNamed('/dashboard');
+              }
+            });
           } else if (state is AuthFailure) {
             // Показать ошибку
             ScaffoldMessenger.of(context).showSnackBar(
@@ -60,7 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           }
         },
-        child: SingleChildScrollView(
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
@@ -68,8 +68,6 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 32),
-
                 // Логотип или заголовок
                 const Icon(
                   Icons.restaurant_menu,
@@ -78,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'Создайте аккаунт',
+                  'Добро пожаловать в NutryFlow',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -87,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Присоединяйтесь к NutryFlow',
+                  'Войдите в свой аккаунт',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -138,8 +136,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     border: const OutlineInputBorder(),
-                    helperText:
-                        'Минимум 6 символов, включая заглавные, строчные буквы и цифры',
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -148,52 +144,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (value.length < 6) {
                       return 'Пароль должен содержать минимум 6 символов';
                     }
-                    if (!_isStrongPassword(value)) {
-                      return 'Пароль должен содержать заглавные, строчные буквы и цифры';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Поле подтверждения пароля
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirmPassword,
-                  decoration: InputDecoration(
-                    labelText: 'Подтвердите пароль',
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
-                    ),
-                    border: const OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Пожалуйста, подтвердите пароль';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Пароли не совпадают';
-                    }
                     return null;
                   },
                 ),
                 const SizedBox(height: 24),
 
-                // Кнопка регистрации
+                // Кнопка входа
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     return ElevatedButton(
-                      onPressed: state is AuthLoading ? null : _register,
+                      onPressed: state is AuthLoading ? null : _login,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: Colors.green,
@@ -202,7 +162,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: state is AuthLoading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : const Text(
-                              'Зарегистрироваться',
+                              'Войти',
                               style: TextStyle(fontSize: 16),
                             ),
                     );
@@ -210,14 +170,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Ссылка на вход
+                // Ссылка на регистрацию
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/register');
                   },
                   child: const Text(
-                    'Уже есть аккаунт? Войдите',
+                    'Нет аккаунта? Зарегистрируйтесь',
                     style: TextStyle(color: Colors.green),
+                  ),
+                ),
+
+                // Ссылка на восстановление пароля
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/forgot-password');
+                  },
+                  child: const Text(
+                    'Забыли пароль?',
+                    style: TextStyle(color: Colors.grey),
                   ),
                 ),
               ],
@@ -226,13 +197,5 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  bool _isStrongPassword(String password) {
-    final hasUppercase = password.contains(RegExp('[A-Z]'));
-    final hasLowercase = password.contains(RegExp('[a-z]'));
-    final hasNumbers = password.contains(RegExp('[0-9]'));
-
-    return hasUppercase && hasLowercase && hasNumbers;
   }
 }

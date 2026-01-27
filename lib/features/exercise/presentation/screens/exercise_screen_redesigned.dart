@@ -115,9 +115,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
               Icons.search,
               color: AppColors.dynamicTextPrimary,
             ),
-            onPressed: () {
-              _showSearchDialog();
-            },
+            onPressed: _showSearchDialog,
           ),
           IconButton(
             icon: Icon(
@@ -299,8 +297,9 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
     if (_searchQuery.isNotEmpty) {
       final normalizedQuery = _searchQuery.toLowerCase();
       filteredExercises = filteredExercises
-          .where((exercise) =>
-              (exercise['name'] as String).toLowerCase().contains(normalizedQuery))
+          .where((exercise) => (exercise['name'] as String)
+              .toLowerCase()
+              .contains(normalizedQuery))
           .toList();
     }
 
@@ -335,8 +334,8 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
     final difficulty = exercise['difficulty'] as String;
     final duration = exercise['duration'] as String?;
     final icon = exercise['icon'] as IconData?;
-    final technique = exercise['technique'] as String? ??
-        'Техника выполнения уточняется';
+    final technique =
+        exercise['technique'] as String? ?? 'Техника выполнения уточняется';
 
     final activityExercise = activity.Exercise(
       id: 'exercise_${now.millisecondsSinceEpoch}',
@@ -420,8 +419,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
     if (icon == Icons.directions_run) return 'directions_run';
     if (icon == Icons.directions_bike) return 'directions_bike';
     if (icon == Icons.self_improvement) return 'self_improvement';
-    if (icon == Icons.accessibility ||
-        icon == Icons.accessibility_new) {
+    if (icon == Icons.accessibility || icon == Icons.accessibility_new) {
       return 'accessibility';
     }
     if (icon == Icons.fitness_center) return 'fitness_center';

@@ -9,11 +9,13 @@ class RegisterUseCase {
 
   Future<User> call(
       String email, String password, String confirmPassword) async {
-    developer.log('🔐 RegisterUseCase: Starting validation for \$email', name: 'register_usecase');
+    developer.log(r'🔐 RegisterUseCase: Starting validation for $email',
+        name: 'register_usecase');
 
     // Валидация входных данных
     if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      developer.log('🔐 RegisterUseCase: Validation failed - empty fields', name: 'register_usecase');
+      developer.log('🔐 RegisterUseCase: Validation failed - empty fields',
+          name: 'register_usecase');
       throw Exception('All fields are required');
     }
 
@@ -35,10 +37,12 @@ class RegisterUseCase {
     // }
 
     try {
-      developer.log('🔐 RegisterUseCase: Validation passed, calling repository', name: 'register_usecase');
+      developer.log('🔐 RegisterUseCase: Validation passed, calling repository',
+          name: 'register_usecase');
       return await _authRepository.signUp(email, password);
     } catch (e) {
-      developer.log('🔐 RegisterUseCase: Registration failed: \$e', name: 'register_usecase');
+      developer.log(r'🔐 RegisterUseCase: Registration failed: $e',
+          name: 'register_usecase');
       throw Exception('Registration failed: $e');
     }
   }

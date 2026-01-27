@@ -34,7 +34,8 @@ class AppRouter {
     }
 
     try {
-      developer.log('🗺️ AppRouter: Initializing router...', name: 'app_router');
+      developer.log('🗺️ AppRouter: Initializing router...',
+          name: 'app_router');
 
       _router = GoRouter(
         initialLocation: '/',
@@ -45,10 +46,12 @@ class AppRouter {
       );
 
       _isInitialized = true;
-      developer.log('✅ AppRouter: Router initialized successfully', name: 'app_router');
-    } catch (e, stackTrace) {
-      developer.log('❌ AppRouter: Initialization failed: \$e', name: 'app_router');
-      developer.log('❌ Stack trace: \$stackTrace', name: 'app_router');
+      developer.log('✅ AppRouter: Router initialized successfully',
+          name: 'app_router');
+    } catch (e) {
+      developer.log(r'❌ AppRouter: Initialization failed: $e',
+          name: 'app_router');
+      developer.log(r'❌ Stack trace: $stackTrace', name: 'app_router');
       rethrow;
     }
   }

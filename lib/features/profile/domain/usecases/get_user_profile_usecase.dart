@@ -40,29 +40,42 @@ class GetUserProfileUseCase {
   /// Если профиль не найден, пытается создать базовый профиль из данных пользователя
   Future<GetUserProfileResult> execute(String userId) async {
     try {
-      developer.log('🔵 GetUserProfileUseCase: Loading profile for userId: $userId', name: 'GetUserProfileUseCase');
-      
+      developer.log(
+          '🔵 GetUserProfileUseCase: Loading profile for userId: $userId',
+          name: 'GetUserProfileUseCase');
+
       final profile = await _profileRepository.getUserProfile(userId);
 
       if (profile != null) {
-        developer.log('🔵 GetUserProfileUseCase: Profile found: ${profile.firstName} ${profile.lastName}', name: 'GetUserProfileUseCase');
+        developer.log(
+            '🔵 GetUserProfileUseCase: Profile found: ${profile.firstName} ${profile.lastName}',
+            name: 'GetUserProfileUseCase');
         return GetUserProfileResult.success(profile);
       }
 
       // Если профиль не найден, пытаемся создать базовый профиль
-      developer.log('🔵 GetUserProfileUseCase: Profile not found, attempting to create default profile', name: 'GetUserProfileUseCase');
-      
+      developer.log(
+          '🔵 GetUserProfileUseCase: Profile not found, attempting to create default profile',
+          name: 'GetUserProfileUseCase');
+
       final defaultProfile = await _createDefaultProfile(userId);
       if (defaultProfile != null) {
-        developer.log('🔵 GetUserProfileUseCase: Default profile created successfully', name: 'GetUserProfileUseCase');
+        developer.log(
+            '🔵 GetUserProfileUseCase: Default profile created successfully',
+            name: 'GetUserProfileUseCase');
         return GetUserProfileResult.success(defaultProfile);
       }
 
-      developer.log('🔴 GetUserProfileUseCase: Failed to create default profile', name: 'GetUserProfileUseCase');
-      return GetUserProfileResult.failure('Profile not found and could not create default profile');
+      developer.log(
+          '🔴 GetUserProfileUseCase: Failed to create default profile',
+          name: 'GetUserProfileUseCase');
+      return GetUserProfileResult.failure(
+          'Profile not found and could not create default profile');
     } catch (e, stackTrace) {
-      developer.log('🔴 GetUserProfileUseCase: Exception: $e', name: 'GetUserProfileUseCase');
-      developer.log('🔴 GetUserProfileUseCase: Stack trace: $stackTrace', name: 'GetUserProfileUseCase');
+      developer.log('🔴 GetUserProfileUseCase: Exception: $e',
+          name: 'GetUserProfileUseCase');
+      developer.log('🔴 GetUserProfileUseCase: Stack trace: $stackTrace',
+          name: 'GetUserProfileUseCase');
       return GetUserProfileResult.failure('Failed to load profile: $e');
     }
   }
@@ -72,16 +85,18 @@ class GetUserProfileUseCase {
     try {
       final currentUser = SupabaseService.instance.currentUser;
       if (currentUser == null) {
-        developer.log('🔴 GetUserProfileUseCase: No current user found for creating default profile', name: 'GetUserProfileUseCase');
+        developer.log(
+            '🔴 GetUserProfileUseCase: No current user found for creating default profile',
+            name: 'GetUserProfileUseCase');
         return null;
       }
 
       // Создаем базовый профиль из данных пользователя
       final defaultProfile = UserProfile(
         id: userId,
-        firstName: currentUser.userMetadata?['firstName'] as String? ?? 
-                  currentUser.userMetadata?['name'] as String? ?? 
-                  'Пользователь',
+        firstName: currentUser.userMetadata?['firstName'] as String? ??
+            currentUser.userMetadata?['name'] as String? ??
+            'Пользователь',
         lastName: currentUser.userMetadata?['lastName'] as String? ?? '',
         email: currentUser.email ?? 'user@example.com',
         phone: currentUser.phone,
@@ -91,16 +106,22 @@ class GetUserProfileUseCase {
 
       // Пытаемся сохранить профиль в репозитории
       try {
-        final createdProfile = await _profileRepository.createUserProfile(defaultProfile);
-        developer.log('🔵 GetUserProfileUseCase: Profile created in repository', name: 'GetUserProfileUseCase');
+        final createdProfile =
+            await _profileRepository.createUserProfile(defaultProfile);
+        developer.log('🔵 GetUserProfileUseCase: Profile created in repository',
+            name: 'GetUserProfileUseCase');
         return createdProfile;
       } catch (e) {
         // Если не удалось создать в репозитории, возвращаем локальный профиль
-        developer.log('🔵 GetUserProfileUseCase: Could not save to repository, returning local profile: $e', name: 'GetUserProfileUseCase');
+        developer.log(
+            '🔵 GetUserProfileUseCase: Could not save to repository, returning local profile: $e',
+            name: 'GetUserProfileUseCase');
         return defaultProfile;
       }
     } catch (e) {
-      developer.log('🔴 GetUserProfileUseCase: Error creating default profile: $e', name: 'GetUserProfileUseCase');
+      developer.log(
+          '🔴 GetUserProfileUseCase: Error creating default profile: $e',
+          name: 'GetUserProfileUseCase');
       return null;
     }
   }

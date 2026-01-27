@@ -124,20 +124,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     developer.log(
         '🔵 AuthBloc: SignUpRequested received - email: ${event.email}',
         name: 'AuthBloc');
-    developer.log('🔵 AuthBloc: SignUpRequested received - email: \${event.email}', name: 'auth_bloc');
+    developer.log(
+        r'🔵 AuthBloc: SignUpRequested received - email: ${event.email}',
+        name: 'auth_bloc');
     emit(AuthLoading());
 
     try {
       // Проверяем демо-режим
       final isDemo = SupabaseConfig.isDemo;
-      developer.log('🔵 AuthBloc: Demo mode = \$isDemo', name: 'auth_bloc');
-      developer.log('🔵 AuthBloc: SupabaseConfig.url = \${SupabaseConfig.url}', name: 'auth_bloc');
-      developer.log('🔵 AuthBloc: SupabaseConfig.anonKey = \${SupabaseConfig.anonKey}', name: 'auth_bloc');
+      developer.log(r'🔵 AuthBloc: Demo mode = $isDemo', name: 'auth_bloc');
+      developer.log(r'🔵 AuthBloc: SupabaseConfig.url = ${SupabaseConfig.url}',
+          name: 'auth_bloc');
+      developer.log(
+          r'🔵 AuthBloc: SupabaseConfig.anonKey = ${SupabaseConfig.anonKey}',
+          name: 'auth_bloc');
       developer.log('🔵 AuthBloc: Demo mode = $isDemo', name: 'AuthBloc');
 
       if (isDemo) {
         developer.log(
-            '🔵 AuthBloc: Demo mode detected, simulating successful registration', name: 'auth_bloc');
+            '🔵 AuthBloc: Demo mode detected, simulating successful registration',
+            name: 'auth_bloc');
         developer.log(
             '🔵 AuthBloc: Demo mode detected, simulating successful registration',
             name: 'AuthBloc');
@@ -153,7 +159,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           updatedAt: DateTime.now(),
         );
 
-        developer.log('🔵 AuthBloc: Demo registration successful for \${event.email}', name: 'auth_bloc');
+        developer.log(
+            r'🔵 AuthBloc: Demo registration successful for ${event.email}',
+            name: 'auth_bloc');
         developer.log(
             '🔵 AuthBloc: Demo registration successful for ${event.email}',
             name: 'AuthBloc');
@@ -233,7 +241,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(result.error ?? 'Ошибка регистрации'));
       }
     } catch (e) {
-      developer.log('🔵 AuthBloc: SignUp exception: \$e', name: 'auth_bloc');
+      developer.log(r'🔵 AuthBloc: SignUp exception: $e', name: 'auth_bloc');
       developer.log('🔵 AuthBloc: SignUp exception: $e', name: 'AuthBloc');
       emit(AuthError('Ошибка регистрации: ${e.toString()}'));
     }
@@ -244,17 +252,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     developer.log(
         '🔵 AuthBloc: SignInRequested received - email: ${event.email}',
         name: 'AuthBloc');
-    developer.log('🔵 AuthBloc: SignInRequested received - email: \${event.email}', name: 'auth_bloc');
+    developer.log(
+        r'🔵 AuthBloc: SignInRequested received - email: ${event.email}',
+        name: 'auth_bloc');
     emit(AuthLoading());
 
     try {
       // Проверяем демо-режим
       final isDemo = SupabaseConfig.isDemo;
-      developer.log('🔵 AuthBloc: Demo mode = \$isDemo', name: 'auth_bloc');
+      developer.log(r'🔵 AuthBloc: Demo mode = $isDemo', name: 'auth_bloc');
       developer.log('🔵 AuthBloc: Demo mode = $isDemo', name: 'AuthBloc');
 
       if (isDemo) {
-        developer.log('🔵 AuthBloc: Demo mode detected, simulating successful login', name: 'auth_bloc');
+        developer.log(
+            '🔵 AuthBloc: Demo mode detected, simulating successful login',
+            name: 'auth_bloc');
         developer.log(
             '🔵 AuthBloc: Demo mode detected, simulating successful login',
             name: 'AuthBloc');
@@ -270,7 +282,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           updatedAt: DateTime.now(),
         );
 
-        developer.log('🔵 AuthBloc: Demo login successful for \${event.email}', name: 'auth_bloc');
+        developer.log(r'🔵 AuthBloc: Demo login successful for ${event.email}',
+            name: 'auth_bloc');
         developer.log('🔵 AuthBloc: Demo login successful for ${event.email}',
             name: 'AuthBloc');
         emit(AuthAuthenticated(user));

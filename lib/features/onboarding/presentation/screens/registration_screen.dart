@@ -28,29 +28,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _register(BuildContext context) {
-    developer.log('🔵 Registration: _register called', name: 'registration_screen');
-    developer.log('🔵 Registration: Form validation started', name: 'registration_screen');
+    developer.log('🔵 Registration: _register called',
+        name: 'registration_screen');
+    developer.log('🔵 Registration: Form validation started',
+        name: 'registration_screen');
 
     if (_formKey.currentState!.validate()) {
-      developer.log('🔵 Registration: Form is valid, sending SignUpRequested', name: 'registration_screen');
-      developer.log('🔵 Registration: Email: \${_emailController.text.trim()}', name: 'registration_screen');
+      developer.log('🔵 Registration: Form is valid, sending SignUpRequested',
+          name: 'registration_screen');
+      developer.log(r'🔵 Registration: Email: ${_emailController.text.trim()}',
+          name: 'registration_screen');
       developer.log(
-          '🔵 Registration: Password length: ${_passwordController.text.length}', name: 'registration_screen');
+          '🔵 Registration: Password length: ${_passwordController.text.length}',
+          name: 'registration_screen');
 
       context.read<AuthBloc>().add(SignUpRequested(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           ));
 
-      developer.log('🔵 Registration: SignUpRequested event sent', name: 'registration_screen');
+      developer.log('🔵 Registration: SignUpRequested event sent',
+          name: 'registration_screen');
     } else {
-      developer.log('🔴 Registration: Form validation failed', name: 'registration_screen');
+      developer.log('🔴 Registration: Form validation failed',
+          name: 'registration_screen');
     }
   }
 
   void _onRegistrationSuccess(BuildContext context) {
     developer.log(
-        '🟢 Registration: _onRegistrationSuccess called, navigating to /profile-info', name: 'registration_screen');
+        '🟢 Registration: _onRegistrationSuccess called, navigating to /profile-info',
+        name: 'registration_screen');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.mounted) {
         Navigator.pushReplacementNamed(context, '/profile-info');
@@ -68,10 +76,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           developer.log(
-              '🔵 Registration: BlocListener received state: ${state.runtimeType}', name: 'registration_screen');
+              '🔵 Registration: BlocListener received state: ${state.runtimeType}',
+              name: 'registration_screen');
 
           if (state is AuthError) {
-            developer.log('🔴 Registration: AuthError received: \${state.message}', name: 'registration_screen');
+            developer.log(
+                r'🔴 Registration: AuthError received: ${state.message}',
+                name: 'registration_screen');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -80,13 +91,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             );
           } else if (state is AuthAuthenticated) {
             developer.log(
-                '🟢 Registration: AuthAuthenticated received for user: ${state.user.email}', name: 'registration_screen');
+                '🟢 Registration: AuthAuthenticated received for user: ${state.user.email}',
+                name: 'registration_screen');
             _onRegistrationSuccess(context);
           } else if (state is AuthLoading) {
-            developer.log('🟡 Registration: AuthLoading received', name: 'registration_screen');
+            developer.log('🟡 Registration: AuthLoading received',
+                name: 'registration_screen');
           } else {
             developer.log(
-                '🔵 Registration: Other state received: ${state.runtimeType}', name: 'registration_screen');
+                '🔵 Registration: Other state received: ${state.runtimeType}',
+                name: 'registration_screen');
           }
         },
         child: Scaffold(

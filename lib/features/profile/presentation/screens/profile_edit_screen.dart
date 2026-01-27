@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
 import '../../domain/entities/user_profile.dart';
-import '../blocs/profile_bloc.dart';
+import '../bloc/profile_bloc.dart';
 import '../widgets/profile_form_section.dart';
 import '../widgets/profile_form_field.dart';
 import '../widgets/profile_selection_field.dart';
-import '../widgets/profile_multi_selection_field.dart';
 import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_styles.dart';
 
@@ -40,18 +38,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   static const int _minNameLength = 2;
   static const int _minAge = 13;
   static const int _maxAge = 120;
-  static const int _minHeight = 100; // см
-  static const int _maxHeight = 250; // см
-  static const double _minWeight = 30.0; // кг
-  static const double _maxWeight = 300.0; // кг
-  static const int _minCalories = 800;
-  static const int _maxCalories = 5000;
-  static const double _minProtein = 10.0; // г
-  static const double _maxProtein = 300.0; // г
-  static const double _minCarbs = 20.0; // г
-  static const double _maxCarbs = 500.0; // г
-  static const double _minFat = 10.0; // г
-  static const double _maxFat = 200.0; // г
 
   // Controllers for text fields
   late final TextEditingController _firstNameController;
@@ -166,7 +152,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void _onFormChanged() {
     // Отменяем предыдущий таймер, если он существует
     _debounceTimer?.cancel();
-    
+
     // Устанавливаем новый таймер с задержкой 300ms
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
       if (!_isModified && mounted) {
@@ -422,307 +408,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildPhysicalInfoSection({Key? key}) {
-    return ProfileFormSection(
-      key: key,
-      title: 'Физические данные',
-      icon: Icons.fitness_center_outlined,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: ProfileFormField(
-                controller: _heightController,
-                focusNode: _heightFocus,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) => _weightFocus.requestFocus(),
-                label: 'Рост (см)',
-                semanticLabel: 'Поле ввода роста в сантиметрах',
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Введите рост';
-                  }
-                  final height = int.tryParse(value);
-                  if (height == null) {
-                    return 'Введите корректное значение роста';
-                  }
-                  if (height < _minHeight || height > _maxHeight) {
-                    return 'Рост должен быть от $_minHeight до $_maxHeight см';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ProfileFormField(
-                controller: _weightController,
-                focusNode: _weightFocus,
-                textInputAction: TextInputAction.done,
-                label: 'Вес (кг)',
-                semanticLabel: 'Поле ввода веса в килограммах',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-                ],
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Введите вес';
-                  }
-                  final weight = double.tryParse(value);
-                  if (weight == null) {
-                    return 'Введите корректное значение веса';
-                  }
-                  if (weight < _minWeight || weight > _maxWeight) {
-                    return 'Вес должен быть от $_minWeight до $_maxWeight кг';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        ProfileSelectionField<ActivityLevel>(
-          label: 'Уровень активности',
-          value: _selectedActivityLevel,
-          displayText: _selectedActivityLevel?.displayName,
-          onTap: () => _selectActivityLevel(context),
-          validator: (value) {
-            if (value == null) {
-              return 'Выберите уровень активности';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHealthInfoSection({Key? key}) {
-    return ProfileFormSection(
-      key: key,
-      title: 'Здоровье и предпочтения',
-      icon: Icons.health_and_safety_outlined,
-      children: [
-        ProfileMultiSelectionField<DietaryPreference>(
-          label: 'Диетические предпочтения',
-          selectedItems: _selectedDietaryPreferences,
-          allItems: DietaryPreference.values,
-          getDisplayText: (item) => item.displayName,
-          onSelectionChanged: (items) {
-            if (mounted) {
-              setState(() {
-                _selectedDietaryPreferences = items;
-                _onFormChanged();
-              });
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        ProfileMultiSelectionField<String>(
-          label: 'Аллергии',
-          selectedItems: _allergies,
-          allItems: const [
-            'Глютен',
-            'Лактоза',
-            'Орехи',
-            'Морепродукты',
-            'Яйца',
-            'Соя',
-            'Рыба',
-            'Молочные продукты',
-          ],
-          getDisplayText: (item) => item,
-          onSelectionChanged: (items) {
-            if (mounted) {
-              setState(() {
-                _allergies = items;
-                _onFormChanged();
-              });
-            }
-          },
-          canAddCustom: true,
-        ),
-        const SizedBox(height: 16),
-        ProfileMultiSelectionField<String>(
-          label: 'Заболевания',
-          selectedItems: _healthConditions,
-          allItems: const [
-            'Диабет',
-            'Гипертония',
-            'Сердечные заболевания',
-            'Заболевания ЖКТ',
-            'Заболевания щитовидной железы',
-            'Остеопороз',
-          ],
-          getDisplayText: (item) => item,
-          onSelectionChanged: (items) {
-            if (mounted) {
-              setState(() {
-                _healthConditions = items;
-                _onFormChanged();
-              });
-            }
-          },
-          canAddCustom: true,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNutritionTargetsSection({Key? key}) {
-    return ProfileFormSection(
-      key: key,
-      title: 'Цели по питанию',
-      icon: Icons.restaurant_outlined,
-      children: [
-        ProfileFormField(
-          controller: _targetCaloriesController,
-          focusNode: _targetCaloriesFocus,
-          textInputAction: TextInputAction.next,
-          onFieldSubmitted: (_) => _targetProteinFocus.requestFocus(),
-          label: 'Целевые калории в день',
-          semanticLabel: 'Поле ввода целевых калорий в день',
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              final calories = int.tryParse(value);
-              if (calories == null) {
-                return 'Введите корректное значение калорий';
-              }
-              if (calories < _minCalories || calories > _maxCalories) {
-                return 'Калории должны быть от $_minCalories до $_maxCalories';
-              }
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: ProfileFormField(
-                controller: _targetProteinController,
-                focusNode: _targetProteinFocus,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) => _targetCarbsFocus.requestFocus(),
-                label: 'Белки (г)',
-                semanticLabel: 'Поле ввода целевого количества белков в граммах',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-                ],
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    final protein = double.tryParse(value);
-                    if (protein == null) {
-                      return 'Введите корректное значение белков';
-                    }
-                    if (protein < _minProtein || protein > _maxProtein) {
-                      return 'Белки: $_minProtein-${_maxProtein.toInt()}г';
-                    }
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ProfileFormField(
-                controller: _targetCarbsController,
-                focusNode: _targetCarbsFocus,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) => _targetFatFocus.requestFocus(),
-                label: 'Углеводы (г)',
-                semanticLabel: 'Поле ввода целевого количества углеводов в граммах',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-                ],
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    final carbs = double.tryParse(value);
-                    if (carbs == null) {
-                      return 'Введите корректное значение углеводов';
-                    }
-                    if (carbs < _minCarbs || carbs > _maxCarbs) {
-                      return 'Углеводы: ${_minCarbs.toInt()}-${_maxCarbs.toInt()}г';
-                    }
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ProfileFormField(
-                controller: _targetFatController,
-                focusNode: _targetFatFocus,
-                textInputAction: TextInputAction.done,
-                label: 'Жиры (г)',
-                semanticLabel: 'Поле ввода целевого количества жиров в граммах',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-                ],
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    final fat = double.tryParse(value);
-                    if (fat == null) {
-                      return 'Введите корректное значение жиров';
-                    }
-                    if (fat < _minFat || fat > _maxFat) {
-                      return 'Жиры: ${_minFat.toInt()}-${_maxFat.toInt()}г';
-                    }
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGoalsSection({Key? key}) {
-    return ProfileFormSection(
-      key: key,
-      title: 'Фитнес-цели',
-      icon: Icons.track_changes_outlined,
-      children: [
-        ProfileMultiSelectionField<String>(
-          label: 'Цели тренировок',
-          selectedItems: _fitnessGoals,
-          allItems: const [
-            'Похудение',
-            'Набор мышечной массы',
-            'Поддержание формы',
-            'Увеличение силы',
-            'Повышение выносливости',
-            'Улучшение гибкости',
-            'Реабилитация',
-            'Подготовка к соревнованиям',
-          ],
-          getDisplayText: (item) => item,
-          onSelectionChanged: (items) {
-            if (mounted) {
-              setState(() {
-                _fitnessGoals = items;
-                _onFormChanged();
-              });
-            }
-          },
-          canAddCustom: true,
-        ),
-      ],
-    );
-  }
-
   Widget _buildBottomActions() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -765,8 +450,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(AppColors.dynamicOnPrimary),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.dynamicOnPrimary),
                         ),
                       )
                     : const Text('Сохранить'),
@@ -826,99 +511,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
-  /// Парсит строку формата dd/mm/yyyy в DateTime
-  DateTime? _parseDateDDMMYYYY(String dateString) {
-    try {
-      final parts = dateString.split('/');
-      if (parts.length != 3) return null;
-
-      final day = int.tryParse(parts[0]);
-      final month = int.tryParse(parts[1]);
-      final year = int.tryParse(parts[2]);
-
-      if (day == null || month == null || year == null) return null;
-      if (day < 1 || day > 31) return null;
-      if (month < 1 || month > 12) return null;
-      if (year < 1900 || year > 2100) return null;
-
-      return DateTime(year, month, day);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Форматирует дату для отображения (например: "Ср, 24 дек")
-  String _formatDateDisplay(DateTime date) {
-    const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-    const months = [
-      'янв',
-      'фев',
-      'мар',
-      'апр',
-      'май',
-      'июн',
-      'июл',
-      'авг',
-      'сен',
-      'окт',
-      'ноя',
-      'дек'
-    ];
-
-    final weekday = weekdays[date.weekday - 1];
-    final month = months[date.month - 1];
-    return '$weekday, ${date.day} $month';
-  }
-
-  /// Автоматически форматирует ввод даты, добавляя "/" после 2-й и 4-й цифры
-  String _autoFormatDate(String input) {
-    // Удаляем все символы, кроме цифр
-    final digitsOnly = input.replaceAll(RegExp(r'[^\d]'), '');
-    
-    // Ограничиваем до 8 цифр
-    final limitedDigits = digitsOnly.length > 8 
-        ? digitsOnly.substring(0, 8) 
-        : digitsOnly;
-    
-    if (limitedDigits.isEmpty) {
-      return '';
-    }
-    
-    // Форматируем с добавлением "/"
-    String formatted = '';
-    for (int i = 0; i < limitedDigits.length; i++) {
-      if (i == 2 || i == 4) {
-        formatted += '/';
-      }
-      formatted += limitedDigits[i];
-    }
-    
-    return formatted;
-  }
-
-  /// Вычисляет позицию курсора после форматирования
-  int _calculateCursorPosition({
-    required String oldText,
-    required String newText,
-    required int oldCursorPos,
-  }) {
-    // Подсчитываем количество цифр до курсора в старом тексте
-    final oldDigitsBeforeCursor = oldText
-        .substring(0, oldCursorPos.clamp(0, oldText.length))
-        .replaceAll(RegExp(r'[^\d]'), '')
-        .length;
-    
-    // Подсчитываем разделители в новом тексте до нужной позиции
-    final newDigitsOnly = newText.replaceAll(RegExp(r'[^\d]'), '');
-    final digitsToCount = oldDigitsBeforeCursor.clamp(0, newDigitsOnly.length);
-    
-    int separators = 0;
-    if (digitsToCount > 2) separators++;
-    if (digitsToCount > 4) separators++;
-    
-    return digitsToCount + separators;
-  }
-
   Future<void> _selectGender(BuildContext context) async {
     final Gender? selected = await showDialog<Gender>(
       context: context,
@@ -943,37 +535,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     if (selected != null && selected != _selectedGender && mounted) {
       setState(() {
         _selectedGender = selected;
-        _onFormChanged();
-      });
-    }
-  }
-
-  Future<void> _selectActivityLevel(BuildContext context) async {
-    final ActivityLevel? selected = await showDialog<ActivityLevel>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        backgroundColor: AppColors.dynamicCard,
-        title: Text(
-          'Выберите уровень активности',
-          style: TextStyle(color: AppColors.dynamicTextPrimary),
-        ),
-        children: ActivityLevel.values
-            .map((level) => SimpleDialogOption(
-                  onPressed: () => Navigator.of(context).pop(level),
-                  child: Text(
-                    level.displayName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.dynamicTextPrimary,
-                    ),
-                  ),
-                ))
-            .toList(),
-      ),
-    );
-    if (selected != null && selected != _selectedActivityLevel && mounted) {
-      setState(() {
-        _selectedActivityLevel = selected;
         _onFormChanged();
       });
     }
@@ -1124,88 +685,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         content: Text('Ошибка: $message'),
         backgroundColor: AppColors.dynamicError,
       ),
-    );
-  }
-}
-
-/// TextInputFormatter для автоматического форматирования даты в формате dd/mm/yyyy
-class _DateInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    // Получаем новый текст
-    String newText = newValue.text;
-    
-    // Удаляем все символы, кроме цифр
-    final digitsOnly = newText.replaceAll(RegExp(r'[^\d]'), '');
-    
-    // Ограничиваем до 8 цифр
-    final limitedDigits = digitsOnly.length > 8 
-        ? digitsOnly.substring(0, 8) 
-        : digitsOnly;
-
-    // Если нет цифр, возвращаем пустое значение
-    if (limitedDigits.isEmpty) {
-      return const TextEditingValue(
-        text: '',
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    }
-
-    // Форматируем с добавлением "/" после 2-й и 4-й цифры
-    String formatted = '';
-    for (int i = 0; i < limitedDigits.length; i++) {
-      if (i == 2 || i == 4) {
-        formatted += '/';
-      }
-      formatted += limitedDigits[i];
-    }
-
-    // Вычисляем позицию курсора
-    final oldDigits = oldValue.text.replaceAll(RegExp(r'[^\d]'), '').length;
-    final newDigits = limitedDigits.length;
-    
-    int cursorPosition;
-    
-    if (newDigits < oldDigits) {
-      // Удаляли символы
-      final oldCursorPos = oldValue.selection.baseOffset.clamp(0, oldValue.text.length);
-      final oldTextBeforeCursor = oldValue.text.substring(0, oldCursorPos);
-      final oldDigitsBeforeCursor = oldTextBeforeCursor.replaceAll(RegExp(r'[^\d]'), '').length;
-      
-      final adjustedDigits = oldDigitsBeforeCursor.clamp(0, newDigits);
-      int separators = 0;
-      if (adjustedDigits > 2) separators++;
-      if (adjustedDigits > 4) separators++;
-      
-      cursorPosition = adjustedDigits + separators;
-    } else {
-      // Добавляли символы
-      final cursorOffset = newValue.selection.baseOffset;
-      // Подсчитываем количество цифр до курсора в новом тексте
-      final textBeforeCursor = newText.substring(0, cursorOffset.clamp(0, newText.length));
-      final digitsBeforeCursor = textBeforeCursor.replaceAll(RegExp(r'[^\d]'), '').length;
-      
-      int separators = 0;
-      if (digitsBeforeCursor > 2) separators++;
-      if (digitsBeforeCursor > 4) separators++;
-      
-      cursorPosition = digitsBeforeCursor + separators;
-      
-      // Если курсор на разделителе, перемещаем после него
-      if (cursorPosition < formatted.length && formatted[cursorPosition] == '/') {
-        cursorPosition++;
-      }
-    }
-
-    // Ограничиваем позицию курсора
-    cursorPosition = cursorPosition.clamp(0, formatted.length);
-
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: cursorPosition),
     );
   }
 }

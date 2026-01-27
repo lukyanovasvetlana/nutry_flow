@@ -10,10 +10,10 @@ void main() {
   group('ProfileEditScreen Tests', () {
     // Reserved for future use when BLoC is properly mocked
     // ignore: unused_local_variable
-    late UserProfile _testProfile;
+    late UserProfile testProfile;
 
     setUp(() {
-      _testProfile = UserProfile(
+      testProfile = UserProfile(
         id: 'test-user-id',
         firstName: 'Иван',
         lastName: 'Петров',

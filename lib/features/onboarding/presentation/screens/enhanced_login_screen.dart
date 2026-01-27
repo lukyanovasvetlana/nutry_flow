@@ -34,13 +34,15 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      developer.log('🔵 Login: Attempting login...', name: 'enhanced_login_screen');
+      developer.log('🔵 Login: Attempting login...',
+          name: 'enhanced_login_screen');
       context.read<AuthBloc>().add(SignInRequested(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           ));
     } catch (e) {
-      developer.log('🔴 Login: Error during login: \$e', name: 'enhanced_login_screen');
+      developer.log(r'🔴 Login: Error during login: $e',
+          name: 'enhanced_login_screen');
     }
   }
 
@@ -48,57 +50,65 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-        developer.log('🔵 Login: Creating AuthBloc via OnboardingDependencies', name: 'enhanced_login_screen');
+        developer.log('🔵 Login: Creating AuthBloc via OnboardingDependencies',
+            name: 'enhanced_login_screen');
         final authBloc = OnboardingDependencies.instance.createAuthBloc();
-        developer.log('🔵 Login: AuthBloc created: \${authBloc.runtimeType}', name: 'enhanced_login_screen');
+        developer.log(r'🔵 Login: AuthBloc created: ${authBloc.runtimeType}',
+            name: 'enhanced_login_screen');
         return authBloc;
       },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           developer.log(
-              '🔵 Login: BlocListener received state: ${state.runtimeType}', name: 'enhanced_login_screen');
+              '🔵 Login: BlocListener received state: ${state.runtimeType}',
+              name: 'enhanced_login_screen');
 
           if (state is AuthAuthenticated) {
-            developer.log(
-                '🟢 Login: User authenticated, navigating to app', name: 'enhanced_login_screen');
-            developer.log(
-                '🟢 Login: User email: ${state.user.email}', name: 'enhanced_login_screen');
-            developer.log(
-                '🟢 Login: Context mounted: ${context.mounted}', name: 'enhanced_login_screen');
+            developer.log('🟢 Login: User authenticated, navigating to app',
+                name: 'enhanced_login_screen');
+            developer.log('🟢 Login: User email: ${state.user.email}',
+                name: 'enhanced_login_screen');
+            developer.log('🟢 Login: Context mounted: ${context.mounted}',
+                name: 'enhanced_login_screen');
             // Используем небольшую задержку для обеспечения готовности контекста
             Future.delayed(const Duration(milliseconds: 100), () {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
-                  developer.log(
-                      '🟢 Login: Executing navigation to /app', name: 'enhanced_login_screen');
+                  developer.log('🟢 Login: Executing navigation to /app',
+                      name: 'enhanced_login_screen');
                   try {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/app', (route) => false);
-                    developer.log(
-                        '🟢 Login: Navigation completed', name: 'enhanced_login_screen');
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/app', (route) => false);
+                    developer.log('🟢 Login: Navigation completed',
+                        name: 'enhanced_login_screen');
                   } catch (e) {
-                    developer.log(
-                        '🔴 Login: Navigation error: $e', name: 'enhanced_login_screen');
+                    developer.log('🔴 Login: Navigation error: $e',
+                        name: 'enhanced_login_screen');
                     // Пробуем альтернативный способ навигации
                     try {
                       Navigator.of(context).pushReplacementNamed('/app');
                       developer.log(
-                          '🟢 Login: Alternative navigation completed', name: 'enhanced_login_screen');
+                          '🟢 Login: Alternative navigation completed',
+                          name: 'enhanced_login_screen');
                     } catch (e2) {
                       developer.log(
-                          '🔴 Login: Alternative navigation also failed: $e2', name: 'enhanced_login_screen');
+                          '🔴 Login: Alternative navigation also failed: $e2',
+                          name: 'enhanced_login_screen');
                     }
                   }
                 } else {
                   developer.log(
-                      '🔴 Login: Context not mounted, cannot navigate', name: 'enhanced_login_screen');
+                      '🔴 Login: Context not mounted, cannot navigate',
+                      name: 'enhanced_login_screen');
                 }
               });
             });
           } else if (state is AuthLoading) {
-            developer.log('🟡 Login: AuthLoading received', name: 'enhanced_login_screen');
+            developer.log('🟡 Login: AuthLoading received',
+                name: 'enhanced_login_screen');
           } else if (state is AuthError) {
-            developer.log('🔴 Login: AuthError received: \${state.message}', name: 'enhanced_login_screen');
+            developer.log(r'🔴 Login: AuthError received: ${state.message}',
+                name: 'enhanced_login_screen');
             // Улучшенная обработка ошибок
             String errorMessage = state.message;
 
@@ -190,14 +200,16 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: Colors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.email),
                                 ),
@@ -216,22 +228,24 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                                     borderSide: BorderSide(color: Colors.grey),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.green, width: 2),
+                                    borderSide: BorderSide(
+                                        color: Colors.green, width: 2),
                                   ),
                                   errorBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red),
                                   ),
-                                  focusedErrorBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red, width: 2),
+                                  focusedErrorBorder:
+                                      const UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
                                   ),
                                   prefixIcon: const Icon(Icons.lock),
                                   suffixIcon: IconButton(
                                     icon: Icon(_obscurePassword
                                         ? Icons.visibility_off
                                         : Icons.visibility),
-                                    onPressed: () => setState(
-                                        () => _obscurePassword = !_obscurePassword),
+                                    onPressed: () => setState(() =>
+                                        _obscurePassword = !_obscurePassword),
                                   ),
                                 ),
                                 obscureText: _obscurePassword,
@@ -244,11 +258,13 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: isLoading ? null : () => _login(context),
+                                  onPressed:
+                                      isLoading ? null : () => _login(context),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -259,7 +275,9 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
                                           ),
                                         )
                                       : const Text('Войти'),
@@ -272,7 +290,8 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                                 width: double.infinity,
                                 child: OutlinedButton(
                                   onPressed: () {
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
                                       if (context.mounted) {
                                         Navigator.pushReplacementNamed(
                                             context, '/registration');
@@ -281,7 +300,8 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: Colors.green),
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),

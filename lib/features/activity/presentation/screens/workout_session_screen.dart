@@ -27,13 +27,11 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
 
   ActivitySession? _currentSession;
   int _currentExerciseIndex = 0;
-  int _currentSet = 1;
-  int _currentRep = 1;
   bool _isResting = false;
   bool _isPaused = false;
   bool _isWorkoutCompleteShown = false;
   int? _selectedWorkoutDurationMinutes;
-  int _restTimeTotal = 0;
+  final int _restTimeTotal = 0;
   final CountDownController _restTimerController = CountDownController();
   final CountDownController _workoutTimerController = CountDownController();
   Timer? _sessionTimer;
@@ -177,9 +175,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       return 'assets/images/workout_backgrounds/default.jpg';
     }
 
-    final name =
-        widget.workout.exercises[_currentExerciseIndex].exercise.name
-            .toLowerCase();
+    final name = widget.workout.exercises[_currentExerciseIndex].exercise.name
+        .toLowerCase();
     if (name.contains('бег')) {
       return 'assets/images/workout_backgrounds/run.jpg';
     }
@@ -200,41 +197,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     }
 
     return 'assets/images/workout_backgrounds/default.jpg';
-  }
-
-  Widget _buildProgressIndicator() {
-    final progress =
-        (_currentExerciseIndex + 1) / widget.workout.exercises.length;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Прогресс',
-              style: context.typography.titleMediumStyle.copyWith(
-                fontWeight: FontWeight.w600,
-                color: DesignTokens.colors.onSurface,
-              ),
-            ),
-            Text(
-              '${_currentExerciseIndex + 1}/${widget.workout.exercises.length}',
-              style: context.typography.bodyMediumStyle.copyWith(
-                color: DesignTokens.colors.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        LinearProgressIndicator(
-          value: progress,
-          backgroundColor: DesignTokens.colors.surfaceVariant,
-          valueColor:
-              AlwaysStoppedAnimation<Color>(DesignTokens.colors.primary),
-        ),
-      ],
-    );
   }
 
   Widget _buildExerciseCard(
@@ -270,7 +232,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
                     width: 220,
                     duration: _getWorkoutTimerDurationSeconds(),
                     controller: _workoutTimerController,
-                  autoStart: false,
+                    autoStart: false,
                     isReverse: false,
                     isReverseAnimation: false,
                     isTimerTextShown: true,
@@ -430,30 +392,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     );
   }
 
-  Widget _buildSetRepCounter(String label, int current, int total) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: context.typography.bodySmallStyle.copyWith(
-            color: DesignTokens.colors.onSurfaceVariant,
-          ),
-        ),
-        SizedBox(height: DesignTokens.spacing.xs),
-        Text(
-          '$current/$total',
-          style: context.typography.headlineMediumStyle.copyWith(
-            fontWeight: FontWeight.w600,
-            color: DesignTokens.colors.onSurface,
-          ),
-        ),
-      ],
-    );
-  }
-
   int _getWorkoutTimerDurationSeconds() {
-    final minutes =
-        _selectedWorkoutDurationMinutes ?? widget.workout.totalEstimatedDuration;
+    final minutes = _selectedWorkoutDurationMinutes ??
+        widget.workout.totalEstimatedDuration;
     if (minutes <= 0) return 60;
     return minutes * 60;
   }
@@ -592,68 +533,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     );
   }
 
-  void _nextSet() {
-    final currentExercise = widget.workout.exercises[_currentExerciseIndex];
-    final totalSets = currentExercise.sets ?? 1;
-    final totalReps = currentExercise.reps ?? 1;
-
-    if (_currentRep < totalReps) {
-      setState(() {
-        _currentRep++;
-      });
-    } else if (_currentSet < totalSets) {
-      setState(() {
-        _currentSet++;
-        _currentRep = 1;
-        _startRest();
-      });
-    } else {
-      _nextExercise();
-    }
-  }
-
-  void _previousSet() {
-    final currentExercise = widget.workout.exercises[_currentExerciseIndex];
-    final totalReps = currentExercise.reps ?? 1;
-
-    if (_currentRep > 1) {
-      setState(() {
-        _currentRep--;
-      });
-    } else if (_currentSet > 1) {
-      setState(() {
-        _currentSet--;
-        _currentRep = totalReps;
-      });
-    }
-  }
-
-  void _nextExercise() {
-    if (_currentExerciseIndex >= widget.workout.exercises.length - 1) return;
-    setState(() {
-      _currentExerciseIndex++;
-      _currentSet = 1;
-      _currentRep = 1;
-      _isResting = false;
-    });
-  }
-
-  void _previousExercise() {
-    if (_currentExerciseIndex <= 0) return;
-    setState(() {
-      _currentExerciseIndex--;
-      _currentSet = 1;
-      _currentRep = 1;
-      _isResting = false;
-    });
-  }
-
   void _goToNextExercise() {
     if (_currentExerciseIndex >= widget.workout.exercises.length - 1) return;
     setState(() {
       _currentExerciseIndex++;
-      _currentSet = 1;
-      _currentRep = 1;
       _isResting = false;
     });
   }
@@ -662,25 +545,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     if (_currentExerciseIndex <= 0) return;
     setState(() {
       _currentExerciseIndex--;
-      _currentSet = 1;
-      _currentRep = 1;
       _isResting = false;
-    });
-  }
-
-  void _startRest() {
-    final currentExercise = widget.workout.exercises[_currentExerciseIndex];
-    final restTime = currentExercise.restSeconds ?? 60;
-
-    setState(() {
-      _isResting = true;
-      _restTimeTotal = restTime;
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _restTimerController.restart();
-      }
     });
   }
 
@@ -714,15 +579,6 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     } else {
       _workoutTimerController.pause();
     }
-  }
-
-  void _stopWorkoutTimer() {
-    _workoutTimerController.pause();
-    _restTimerController.pause();
-    _stopSessionTimer();
-    setState(() {
-      _isPaused = true;
-    });
   }
 
   void _handleWorkoutTimerComplete() {
@@ -844,4 +700,3 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     }
   }
 }
-

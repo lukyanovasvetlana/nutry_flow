@@ -68,8 +68,8 @@ class GoalsSetupView extends StatelessWidget {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
                   try {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/app', (route) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/app', (route) => false);
                   } catch (e) {
                     // Пробуем альтернативный способ навигации
                     try {
@@ -77,7 +77,8 @@ class GoalsSetupView extends StatelessWidget {
                     } catch (e2) {
                       // Если и это не сработало, пробуем через MaterialPageRoute
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => const AppContainer()),
+                        MaterialPageRoute(
+                            builder: (context) => const AppContainer()),
                         (route) => false,
                       );
                     }
@@ -610,8 +611,8 @@ class GoalsSetupView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               try {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/app', (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/app', (route) => false);
               } catch (e) {
                 Navigator.of(context).pushReplacementNamed('/app');
               }

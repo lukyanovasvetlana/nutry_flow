@@ -291,7 +291,7 @@ class _MealCardState extends State<MealCard> {
   }
 
   Widget _buildPlaceholderIcon() {
-    return Container(
+    return ColoredBox(
       color: context.surfaceVariant,
       child: Icon(
         Icons.restaurant,
@@ -302,7 +302,7 @@ class _MealCardState extends State<MealCard> {
   }
 
   Widget _buildPlaceholderIconLarge() {
-    return Container(
+    return ColoredBox(
       color: widget.color,
       child: Icon(
         Icons.restaurant,

@@ -143,7 +143,13 @@ class _AppContainerState extends State<AppContainer> {
           itemCount: navIcons.length,
           tabBuilder: (int index, bool isActive) {
             // Маппинг индексов: 0->0, 1->1, 2->3, 3->4
-            final actualIndex = index == 0 ? 0 : index == 1 ? 1 : index == 2 ? 3 : 4;
+            final actualIndex = index == 0
+                ? 0
+                : index == 1
+                    ? 1
+                    : index == 2
+                        ? 3
+                        : 4;
             final icon = navIcons[index];
             final label = _getLabelForIndex(actualIndex);
 
@@ -176,7 +182,13 @@ class _AppContainerState extends State<AppContainer> {
           backgroundColor: backgroundColor,
           onTap: (index) {
             // Маппинг индексов обратно: 0->0, 1->1, 2->3, 3->4
-            final actualIndex = index == 0 ? 0 : index == 1 ? 1 : index == 2 ? 3 : 4;
+            final actualIndex = index == 0
+                ? 0
+                : index == 1
+                    ? 1
+                    : index == 2
+                        ? 3
+                        : 4;
             setState(() {
               _selectedIndex = actualIndex;
             });

@@ -84,7 +84,8 @@ class ProfileFormField extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: AppColors.dynamicPrimary, width: 2),
+                borderSide:
+                    BorderSide(color: AppColors.dynamicPrimary, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -103,7 +104,9 @@ class ProfileFormField extends StatelessWidget {
             ),
             style: TextStyle(
               fontSize: 14,
-              color: enabled ? AppColors.dynamicTextPrimary : AppColors.dynamicTextSecondary,
+              color: enabled
+                  ? AppColors.dynamicTextPrimary
+                  : AppColors.dynamicTextSecondary,
             ),
           ),
         ],

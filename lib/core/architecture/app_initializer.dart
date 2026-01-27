@@ -25,23 +25,30 @@ class AppInitializer {
   /// Инициализация всех зависимостей
   Future<void> initialize() async {
     if (_isInitialized) {
-      developer.log('⚠️ AppInitializer: Already initialized', name: 'app_initializer');
+      developer.log('⚠️ AppInitializer: Already initialized',
+          name: 'app_initializer');
       return;
     }
 
     try {
       developer.log(
-          '🚀 AppInitializer: Starting feature dependencies initialization...', name: 'app_initializer');
+          '🚀 AppInitializer: Starting feature dependencies initialization...',
+          name: 'app_initializer');
 
       // Инициализация фич в определенном порядке
       await _initializeFeatureDependencies();
 
       _isInitialized = true;
-      developer.log('✅ AppInitializer: All dependencies initialized successfully', name: 'app_initializer');
-      developer.log('📋 AppInitializer: Initialized features: \$_initializedFeatures', name: 'app_initializer');
-    } catch (e, stackTrace) {
-      developer.log('❌ AppInitializer: Initialization failed: \$e', name: 'app_initializer');
-      developer.log('❌ Stack trace: \$stackTrace', name: 'app_initializer');
+      developer.log(
+          '✅ AppInitializer: All dependencies initialized successfully',
+          name: 'app_initializer');
+      developer.log(
+          r'📋 AppInitializer: Initialized features: $_initializedFeatures',
+          name: 'app_initializer');
+    } catch (e) {
+      developer.log(r'❌ AppInitializer: Initialization failed: $e',
+          name: 'app_initializer');
+      developer.log(r'❌ Stack trace: $stackTrace', name: 'app_initializer');
       rethrow;
     }
   }
@@ -97,12 +104,15 @@ class AppInitializer {
   Future<void> _initializeFeature(
       String featureName, Future<void> Function() initializer) async {
     try {
-      developer.log('🔄 AppInitializer: Initializing \$featureName...', name: 'app_initializer');
+      developer.log(r'🔄 AppInitializer: Initializing $featureName...',
+          name: 'app_initializer');
       await initializer();
       _initializedFeatures.add(featureName);
-      developer.log('✅ AppInitializer: \$featureName initialized successfully', name: 'app_initializer');
+      developer.log(r'✅ AppInitializer: $featureName initialized successfully',
+          name: 'app_initializer');
     } catch (e) {
-      developer.log('❌ AppInitializer: Failed to initialize \$featureName: \$e', name: 'app_initializer');
+      developer.log(r'❌ AppInitializer: Failed to initialize $featureName: $e',
+          name: 'app_initializer');
       rethrow;
     }
   }
@@ -139,7 +149,8 @@ class AppInitializer {
 
     // Очистка в обратном порядке
     for (final feature in _initializedFeatures.reversed) {
-      developer.log('🧹 AppInitializer: Disposing \$feature...', name: 'app_initializer');
+      developer.log(r'🧹 AppInitializer: Disposing $feature...',
+          name: 'app_initializer');
       // Здесь можно добавить логику очистки для каждой фичи
       // ignore: unused_local_variable
       feature;
@@ -148,12 +159,14 @@ class AppInitializer {
     _initializedFeatures.clear();
     _isInitialized = false;
 
-    developer.log('✅ AppInitializer: Disposed successfully', name: 'app_initializer');
+    developer.log('✅ AppInitializer: Disposed successfully',
+        name: 'app_initializer');
   }
 
   /// Переинициализация (для hot reload или сброса состояния)
   Future<void> reinitialize() async {
-    developer.log('🔄 AppInitializer: Reinitializing...', name: 'app_initializer');
+    developer.log('🔄 AppInitializer: Reinitializing...',
+        name: 'app_initializer');
     await dispose();
     await initialize();
   }

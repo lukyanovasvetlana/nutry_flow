@@ -35,18 +35,24 @@ class _EnhancedRegistrationScreenState
   }
 
   Future<void> _register(BuildContext context) async {
-    developer.log('🔵 Registration: _register called', name: 'enhanced_registration_screen');
-    developer.log('🔵 Registration: Form validation started', name: 'enhanced_registration_screen');
+    developer.log('🔵 Registration: _register called',
+        name: 'enhanced_registration_screen');
+    developer.log('🔵 Registration: Form validation started',
+        name: 'enhanced_registration_screen');
 
     if (!_formKey.currentState!.validate()) {
-      developer.log('🔴 Registration: Form validation failed', name: 'enhanced_registration_screen');
+      developer.log('🔴 Registration: Form validation failed',
+          name: 'enhanced_registration_screen');
       return;
     }
 
-    developer.log('🔵 Registration: Form is valid, sending SignUpRequested', name: 'enhanced_registration_screen');
-    developer.log('🔵 Registration: Email: \${_emailController.text.trim()}', name: 'enhanced_registration_screen');
+    developer.log('🔵 Registration: Form is valid, sending SignUpRequested',
+        name: 'enhanced_registration_screen');
+    developer.log(r'🔵 Registration: Email: ${_emailController.text.trim()}',
+        name: 'enhanced_registration_screen');
     developer.log(
-        '🔵 Registration: Password length: ${_passwordController.text.length}', name: 'enhanced_registration_screen');
+        '🔵 Registration: Password length: ${_passwordController.text.length}',
+        name: 'enhanced_registration_screen');
 
     try {
       // Отправляем событие регистрации
@@ -55,9 +61,11 @@ class _EnhancedRegistrationScreenState
             password: _passwordController.text,
           ));
 
-      developer.log('🔵 Registration: SignUpRequested event sent', name: 'enhanced_registration_screen');
+      developer.log('🔵 Registration: SignUpRequested event sent',
+          name: 'enhanced_registration_screen');
     } catch (e) {
-      developer.log('🔴 Registration: Error during registration: \$e', name: 'enhanced_registration_screen');
+      developer.log(r'🔴 Registration: Error during registration: $e',
+          name: 'enhanced_registration_screen');
     }
   }
 
@@ -65,33 +73,43 @@ class _EnhancedRegistrationScreenState
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('userEmail', email);
-      developer.log('🔵 Registration: Email saved to SharedPreferences: $email', name: 'enhanced_registration_screen');
+      developer.log('🔵 Registration: Email saved to SharedPreferences: $email',
+          name: 'enhanced_registration_screen');
     } catch (e) {
-      developer.log('🔴 Registration: Error saving email to SharedPreferences: $e', name: 'enhanced_registration_screen');
+      developer.log(
+          '🔴 Registration: Error saving email to SharedPreferences: $e',
+          name: 'enhanced_registration_screen');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    developer.log('🔵 Registration: build called', name: 'enhanced_registration_screen');
+    developer.log('🔵 Registration: build called',
+        name: 'enhanced_registration_screen');
     return BlocProvider(
       create: (context) {
-        developer.log('🔵 Registration: Creating AuthBloc via OnboardingDependencies', name: 'enhanced_registration_screen');
+        developer.log(
+            '🔵 Registration: Creating AuthBloc via OnboardingDependencies',
+            name: 'enhanced_registration_screen');
         final authBloc = OnboardingDependencies.instance.createAuthBloc();
-        developer.log('🔵 Registration: AuthBloc created: \${authBloc.runtimeType}', name: 'enhanced_registration_screen');
+        developer.log(
+            r'🔵 Registration: AuthBloc created: ${authBloc.runtimeType}',
+            name: 'enhanced_registration_screen');
         return authBloc;
       },
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           developer.log(
-              '🔵 Registration: BlocListener received state: ${state.runtimeType}', name: 'enhanced_registration_screen');
+              '🔵 Registration: BlocListener received state: ${state.runtimeType}',
+              name: 'enhanced_registration_screen');
 
           if (state is AuthAuthenticated) {
             developer.log(
-                '🟢 Registration: User authenticated, navigating to profile setup', name: 'enhanced_registration_screen');
+                '🟢 Registration: User authenticated, navigating to profile setup',
+                name: 'enhanced_registration_screen');
             // Сохраняем email в SharedPreferences
             _saveEmailToSharedPreferences(state.user.email);
-            
+
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (context.mounted) {
                 Navigator.pushNamedAndRemoveUntil(
@@ -99,9 +117,12 @@ class _EnhancedRegistrationScreenState
               }
             });
           } else if (state is AuthLoading) {
-            developer.log('🟡 Registration: AuthLoading received', name: 'enhanced_registration_screen');
+            developer.log('🟡 Registration: AuthLoading received',
+                name: 'enhanced_registration_screen');
           } else if (state is AuthError) {
-            developer.log('🔴 Registration: AuthError received: \${state.message}', name: 'enhanced_registration_screen');
+            developer.log(
+                r'🔴 Registration: AuthError received: ${state.message}',
+                name: 'enhanced_registration_screen');
             // Улучшенная обработка ошибок
             String errorMessage = state.message;
 
@@ -135,7 +156,8 @@ class _EnhancedRegistrationScreenState
             );
           } else {
             developer.log(
-                '🔵 Registration: Other state received: ${state.runtimeType}', name: 'enhanced_registration_screen');
+                '🔵 Registration: Other state received: ${state.runtimeType}',
+                name: 'enhanced_registration_screen');
           }
         },
         child: Scaffold(

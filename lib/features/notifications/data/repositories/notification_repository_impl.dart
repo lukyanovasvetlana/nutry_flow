@@ -1,15 +1,20 @@
+import 'package:injectable/injectable.dart';
 import 'package:nutry_flow/core/services/supabase_service.dart';
 import 'package:nutry_flow/core/services/notification_service.dart';
 import 'package:nutry_flow/features/notifications/domain/entities/notification_preferences.dart';
 import 'package:nutry_flow/features/notifications/domain/entities/scheduled_notification.dart';
+import 'package:nutry_flow/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:nutry_flow/features/notifications/data/models/notification_preferences_model.dart';
+import 'package:nutry_flow/features/notifications/data/models/scheduled_notification_model.dart';
 import 'dart:developer' as developer;
 import 'dart:convert';
 
-class NotificationRepository {
+@Injectable(as: NotificationRepository)
+class NotificationRepositoryImpl implements NotificationRepository {
   final SupabaseService _supabaseService = SupabaseService.instance;
   final NotificationService _notificationService = NotificationService.instance;
 
-  /// Сохранение настроек уведомлений пользователя
+  @override
   Future<void> saveNotificationPreferences(
       NotificationPreferences preferences) async {
     try {
@@ -20,22 +25,9 @@ class NotificationRepository {
       if (_supabaseService.isAvailable) {
         final user = _supabaseService.currentUser;
         if (user != null) {
-          await _supabaseService.saveUserData('user_notification_preferences', {
-            'user_id': user.id,
-            'meal_reminders_enabled': preferences.mealRemindersEnabled,
-            'workout_reminders_enabled': preferences.workoutRemindersEnabled,
-            'goal_reminders_enabled': preferences.goalRemindersEnabled,
-            'general_notifications_enabled':
-                preferences.generalNotificationsEnabled,
-            'meal_reminder_time':
-                preferences.mealReminderTime?.toIso8601String(),
-            'workout_reminder_time':
-                preferences.workoutReminderTime?.toIso8601String(),
-            'goal_reminder_time':
-                preferences.goalReminderTime?.toIso8601String(),
-            'created_at': DateTime.now().toIso8601String(),
-            'updated_at': DateTime.now().toIso8601String(),
-          });
+          final model = NotificationPreferencesModel.fromEntity(preferences);
+          await _supabaseService.saveUserData(
+              'user_notification_preferences', model.toJson());
           developer.log(
               '🔔 NotificationRepository: Preferences saved to Supabase',
               name: 'NotificationRepository');
@@ -53,7 +45,7 @@ class NotificationRepository {
     }
   }
 
-  /// Получение настроек уведомлений пользователя
+  @override
   Future<NotificationPreferences> getNotificationPreferences() async {
     try {
       developer.log(
@@ -67,26 +59,7 @@ class NotificationRepository {
               .getUserData('user_notification_preferences', userId: user.id);
 
           if (data.isNotEmpty) {
-            final preferences = data.first;
-            return NotificationPreferences(
-              mealRemindersEnabled:
-                  preferences['meal_reminders_enabled'] ?? true,
-              workoutRemindersEnabled:
-                  preferences['workout_reminders_enabled'] ?? true,
-              goalRemindersEnabled:
-                  preferences['goal_reminders_enabled'] ?? true,
-              generalNotificationsEnabled:
-                  preferences['general_notifications_enabled'] ?? true,
-              mealReminderTime: preferences['meal_reminder_time'] != null
-                  ? DateTime.parse(preferences['meal_reminder_time'])
-                  : null,
-              workoutReminderTime: preferences['workout_reminder_time'] != null
-                  ? DateTime.parse(preferences['workout_reminder_time'])
-                  : null,
-              goalReminderTime: preferences['goal_reminder_time'] != null
-                  ? DateTime.parse(preferences['goal_reminder_time'])
-                  : null,
-            );
+            return NotificationPreferencesModel.fromJson(data.first).toEntity();
           }
         }
       } else {
@@ -96,32 +69,16 @@ class NotificationRepository {
       }
 
       // Возвращаем настройки по умолчанию
-      return NotificationPreferences(
-        mealRemindersEnabled: true,
-        workoutRemindersEnabled: true,
-        goalRemindersEnabled: true,
-        generalNotificationsEnabled: true,
-        mealReminderTime: DateTime.now().add(const Duration(hours: 1)),
-        workoutReminderTime: DateTime.now().add(const Duration(hours: 2)),
-        goalReminderTime: DateTime.now().add(const Duration(days: 1)),
-      );
+      return NotificationPreferences.defaultPreferences();
     } catch (e) {
       developer.log('🔔 NotificationRepository: Failed to get preferences: $e',
           name: 'NotificationRepository');
       // Возвращаем настройки по умолчанию в случае ошибки
-      return NotificationPreferences(
-        mealRemindersEnabled: true,
-        workoutRemindersEnabled: true,
-        goalRemindersEnabled: true,
-        generalNotificationsEnabled: true,
-        mealReminderTime: DateTime.now().add(const Duration(hours: 1)),
-        workoutReminderTime: DateTime.now().add(const Duration(hours: 2)),
-        goalReminderTime: DateTime.now().add(const Duration(days: 1)),
-      );
+      return NotificationPreferences.defaultPreferences();
     }
   }
 
-  /// Планирование уведомления
+  @override
   Future<void> scheduleNotification(ScheduledNotification notification) async {
     try {
       developer.log('🔔 NotificationRepository: Scheduling notification',
@@ -141,18 +98,9 @@ class NotificationRepository {
       if (_supabaseService.isAvailable) {
         final user = _supabaseService.currentUser;
         if (user != null) {
-          await _supabaseService.saveUserData('scheduled_notifications', {
-            'id': notification.id,
-            'user_id': user.id,
-            'title': notification.title,
-            'body': notification.body,
-            'type': notification.type,
-            'scheduled_date': notification.scheduledDate.toIso8601String(),
-            'payload': notification.payload,
-            'is_active': true,
-            'created_at': DateTime.now().toIso8601String(),
-            'updated_at': DateTime.now().toIso8601String(),
-          });
+          final model = ScheduledNotificationModel.fromEntity(notification);
+          await _supabaseService.saveUserData(
+              'scheduled_notifications', model.toJson());
           developer.log(
               '🔔 NotificationRepository: Notification saved to Supabase',
               name: 'NotificationRepository');
@@ -166,7 +114,7 @@ class NotificationRepository {
     }
   }
 
-  /// Отмена уведомления
+  @override
   Future<void> cancelNotification(int notificationId) async {
     try {
       developer.log(
@@ -192,7 +140,7 @@ class NotificationRepository {
     }
   }
 
-  /// Получение запланированных уведомлений
+  @override
   Future<List<ScheduledNotification>> getScheduledNotifications() async {
     try {
       developer.log(
@@ -206,15 +154,8 @@ class NotificationRepository {
               .getUserData('scheduled_notifications', userId: user.id);
 
           return data
-              .map((item) => ScheduledNotification(
-                    id: item['id'],
-                    title: item['title'],
-                    body: item['body'],
-                    type: item['type'],
-                    scheduledDate: DateTime.parse(item['scheduled_date']),
-                    payload: item['payload'],
-                    isActive: item['is_active'] ?? true,
-                  ))
+              .map((item) =>
+                  ScheduledNotificationModel.fromJson(item).toEntity())
               .toList();
         }
       }
@@ -228,7 +169,7 @@ class NotificationRepository {
     }
   }
 
-  /// Отправка push-уведомления через Supabase
+  @override
   Future<void> sendPushNotification({
     required String userId,
     required String title,
@@ -303,7 +244,7 @@ class NotificationRepository {
     }
   }
 
-  /// Планирование напоминания о еде
+  @override
   Future<void> scheduleMealReminder({
     required DateTime mealTime,
     required String mealName,
@@ -325,7 +266,7 @@ class NotificationRepository {
     await scheduleNotification(notification);
   }
 
-  /// Планирование напоминания о тренировке
+  @override
   Future<void> scheduleWorkoutReminder({
     required DateTime workoutTime,
     required String workoutName,
@@ -347,7 +288,7 @@ class NotificationRepository {
     await scheduleNotification(notification);
   }
 
-  /// Планирование напоминания о цели
+  @override
   Future<void> scheduleGoalReminder({
     required DateTime reminderTime,
     required String goalName,
@@ -369,7 +310,7 @@ class NotificationRepository {
     await scheduleNotification(notification);
   }
 
-  /// Отправка уведомления о достижении цели
+  @override
   Future<void> sendGoalAchievementNotification({
     required String userId,
     required String goalName,
@@ -387,7 +328,7 @@ class NotificationRepository {
     );
   }
 
-  /// Отправка уведомления о пропущенной тренировке
+  @override
   Future<void> sendMissedWorkoutNotification({
     required String userId,
     required String workoutName,
@@ -403,7 +344,7 @@ class NotificationRepository {
     );
   }
 
-  /// Отправка уведомления о превышении калорий
+  @override
   Future<void> sendCalorieExceededNotification({
     required String userId,
     required int targetCalories,

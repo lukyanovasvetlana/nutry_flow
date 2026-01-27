@@ -4,7 +4,7 @@ import 'package:nutry_flow/features/profile/data/services/profile_service.dart';
 import 'package:nutry_flow/features/profile/domain/repositories/profile_repository.dart';
 import 'package:nutry_flow/features/profile/domain/usecases/get_user_profile_usecase.dart';
 import 'package:nutry_flow/features/profile/domain/usecases/update_user_profile_usecase.dart';
-import 'package:nutry_flow/features/profile/presentation/blocs/profile_bloc.dart';
+import 'package:nutry_flow/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nutry_flow/config/supabase_config.dart';
 import 'package:nutry_flow/features/profile/di/goals_dependencies.dart';
 
@@ -21,7 +21,7 @@ class ProfileDependencies {
   // Use Cases
   late final GetUserProfileUseCase _getUserProfileUseCase;
   late final UpdateUserProfileUseCase _updateUserProfileUseCase;
-  
+
   bool _isInitialized = false;
 
   ProfileDependencies._();
@@ -37,7 +37,7 @@ class ProfileDependencies {
     if (_isInitialized) {
       return; // Уже инициализирован
     }
-    
+
     // Выбираем реализацию в зависимости от конфигурации
 
     if (SupabaseConfig.isDemo) {
@@ -56,7 +56,7 @@ class ProfileDependencies {
 
     // Инициализация зависимостей целей
     await GoalsDependencies.init();
-    
+
     _isInitialized = true;
   }
 
@@ -71,7 +71,8 @@ class ProfileDependencies {
   static ProfileBloc createProfileBloc() {
     final instance = ProfileDependencies.instance;
     if (!instance._isInitialized) {
-      throw StateError('ProfileDependencies must be initialized before creating ProfileBloc');
+      throw StateError(
+          'ProfileDependencies must be initialized before creating ProfileBloc');
     }
     return ProfileBloc(
       getUserProfileUseCase: instance.getUserProfileUseCase,

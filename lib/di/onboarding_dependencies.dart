@@ -44,9 +44,11 @@ class OnboardingDependencies {
 
   /// Инициализирует все зависимости
   Future<void> initialize() async {
-    developer.log('🔵 OnboardingDependencies: initialize called', name: 'onboarding_dependencies');
+    developer.log('🔵 OnboardingDependencies: initialize called',
+        name: 'onboarding_dependencies');
     developer.log(
-        '🔵 OnboardingDependencies: SupabaseConfig.isDemo = ${SupabaseConfig.isDemo}', name: 'onboarding_dependencies');
+        '🔵 OnboardingDependencies: SupabaseConfig.isDemo = ${SupabaseConfig.isDemo}',
+        name: 'onboarding_dependencies');
 
     // Инициализация сервисов
     _supabaseService = SupabaseService.instance;
@@ -55,7 +57,9 @@ class OnboardingDependencies {
     // Выбираем реализацию репозиториев в зависимости от конфигурации
 
     if (SupabaseConfig.isDemo) {
-      developer.log('🔵 OnboardingDependencies: Using demo mode - MockAuthRepository', name: 'onboarding_dependencies');
+      developer.log(
+          '🔵 OnboardingDependencies: Using demo mode - MockAuthRepository',
+          name: 'onboarding_dependencies');
       _userGoalsRepository = MockUserGoalsRepository();
 
       _authRepository = MockAuthRepository();
@@ -63,7 +67,8 @@ class OnboardingDependencies {
       MockAuthRepository.createTestUser();
     } else {
       developer.log(
-          '🔵 OnboardingDependencies: Using production mode - AuthRepositoryImpl', name: 'onboarding_dependencies');
+          '🔵 OnboardingDependencies: Using production mode - AuthRepositoryImpl',
+          name: 'onboarding_dependencies');
       _userGoalsRepository = UserGoalsRepositoryImpl(
         _supabaseService,
         _localStorageService,
@@ -97,11 +102,14 @@ class OnboardingDependencies {
 
   /// Создает новый экземпляр AuthBloc с инжектированными зависимостями
   AuthBloc createAuthBloc() {
-    developer.log('🔵 OnboardingDependencies: createAuthBloc called', name: 'onboarding_dependencies');
+    developer.log('🔵 OnboardingDependencies: createAuthBloc called',
+        name: 'onboarding_dependencies');
     developer.log(
-        '🔵 OnboardingDependencies: _authRepository type = ${_authRepository.runtimeType}', name: 'onboarding_dependencies');
+        '🔵 OnboardingDependencies: _authRepository type = ${_authRepository.runtimeType}',
+        name: 'onboarding_dependencies');
     developer.log(
-        '🔵 OnboardingDependencies: _signUpUseCase type = ${_signUpUseCase.runtimeType}', name: 'onboarding_dependencies');
+        '🔵 OnboardingDependencies: _signUpUseCase type = ${_signUpUseCase.runtimeType}',
+        name: 'onboarding_dependencies');
 
     return AuthBloc(
       authRepository: _authRepository,

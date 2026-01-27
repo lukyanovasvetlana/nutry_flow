@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/profile_bloc.dart';
+import '../bloc/profile_bloc.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../di/profile_dependencies.dart';
 import '../widgets/profile_header.dart';

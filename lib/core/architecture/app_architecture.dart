@@ -28,7 +28,8 @@ class AppArchitecture {
   /// Инициализация архитектуры приложения
   Future<void> initialize() async {
     try {
-      developer.log('🏗️ AppArchitecture: Starting initialization...', name: 'app_architecture');
+      developer.log('🏗️ AppArchitecture: Starting initialization...',
+          name: 'app_architecture');
 
       // Инициализация сервис-локатора
       _serviceLocator = GetIt.instance;
@@ -51,17 +52,21 @@ class AppArchitecture {
       // Инициализация состояния
       await _state.initialize();
 
-      developer.log('🏗️ AppArchitecture: Initialization completed successfully', name: 'app_architecture');
-    } catch (e, stackTrace) {
-      developer.log('❌ AppArchitecture: Initialization failed: \$e', name: 'app_architecture');
-      developer.log('❌ Stack trace: \$stackTrace', name: 'app_architecture');
+      developer.log(
+          '🏗️ AppArchitecture: Initialization completed successfully',
+          name: 'app_architecture');
+    } catch (e) {
+      developer.log(r'❌ AppArchitecture: Initialization failed: $e',
+          name: 'app_architecture');
+      developer.log(r'❌ Stack trace: $stackTrace', name: 'app_architecture');
       rethrow;
     }
   }
 
   /// Регистрация сервисов в GetIt
   void _registerServices() {
-    developer.log('🏗️ AppArchitecture: Registering services...', name: 'app_architecture');
+    developer.log('🏗️ AppArchitecture: Registering services...',
+        name: 'app_architecture');
 
     // Регистрируем основные сервисы как синглтоны
     _serviceLocator
@@ -78,12 +83,14 @@ class AppArchitecture {
         PersonaAnalyticsTracker.instance);
     _serviceLocator.registerSingleton<ThemeManager>(ThemeManager());
 
-    developer.log('🏗️ AppArchitecture: Services registered successfully', name: 'app_architecture');
+    developer.log('🏗️ AppArchitecture: Services registered successfully',
+        name: 'app_architecture');
   }
 
   /// Инициализация основных сервисов
   Future<void> _initializeCoreServices() async {
-    developer.log('🏗️ AppArchitecture: Initializing core services...', name: 'app_architecture');
+    developer.log('🏗️ AppArchitecture: Initializing core services...',
+        name: 'app_architecture');
 
     await SupabaseService.instance.initialize();
     await LocalCacheService.instance.initialize();
@@ -93,7 +100,8 @@ class AppArchitecture {
     await PersonaAnalyticsTracker.instance.initialize();
     // ThemeManager теперь инициализируется синхронно при создании
 
-    developer.log('🏗️ AppArchitecture: Core services initialized successfully', name: 'app_architecture');
+    developer.log('🏗️ AppArchitecture: Core services initialized successfully',
+        name: 'app_architecture');
   }
 
   /// Получение экземпляра инициализатора
@@ -116,13 +124,15 @@ class AppArchitecture {
 
   /// Очистка ресурсов
   Future<void> dispose() async {
-    developer.log('🏗️ AppArchitecture: Disposing...', name: 'app_architecture');
+    developer.log('🏗️ AppArchitecture: Disposing...',
+        name: 'app_architecture');
 
     await _state.dispose();
     await _router.dispose();
     await _initializer.dispose();
 
-    developer.log('🏗️ AppArchitecture: Disposed successfully', name: 'app_architecture');
+    developer.log('🏗️ AppArchitecture: Disposed successfully',
+        name: 'app_architecture');
   }
 
   /// Создание главного виджета приложения

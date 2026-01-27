@@ -34,7 +34,8 @@ class AppState {
     }
 
     try {
-      developer.log('📊 AppState: Initializing application state...', name: 'app_state');
+      developer.log('📊 AppState: Initializing application state...',
+          name: 'app_state');
 
       // Инициализация глобальных BLoC провайдеров
       await _initializeGlobalProviders();
@@ -43,17 +44,20 @@ class AppState {
       await _initializeGlobalState();
 
       _isInitialized = true;
-      developer.log('✅ AppState: Application state initialized successfully', name: 'app_state');
-    } catch (e, stackTrace) {
-      developer.log('❌ AppState: Initialization failed: \$e', name: 'app_state');
-      developer.log('❌ Stack trace: \$stackTrace', name: 'app_state');
+      developer.log('✅ AppState: Application state initialized successfully',
+          name: 'app_state');
+    } catch (e) {
+      developer.log(r'❌ AppState: Initialization failed: $e',
+          name: 'app_state');
+      developer.log(r'❌ Stack trace: $stackTrace', name: 'app_state');
       rethrow;
     }
   }
 
   /// Инициализация глобальных провайдеров
   Future<void> _initializeGlobalProviders() async {
-    developer.log('📊 AppState: Initializing global providers...', name: 'app_state');
+    developer.log('📊 AppState: Initializing global providers...',
+        name: 'app_state');
 
     // Добавляем глобальные провайдеры, которые нужны во всем приложении
 
@@ -76,12 +80,14 @@ class AppState {
       ),
     );
 
-    developer.log('📊 AppState: Global providers initialized successfully', name: 'app_state');
+    developer.log('📊 AppState: Global providers initialized successfully',
+        name: 'app_state');
   }
 
   /// Инициализация глобального состояния
   Future<void> _initializeGlobalState() async {
-    developer.log('📊 AppState: Initializing global state...', name: 'app_state');
+    developer.log('📊 AppState: Initializing global state...',
+        name: 'app_state');
 
     // Инициализируем базовые значения состояния
     _globalState['appVersion'] = '1.0.0';
@@ -91,7 +97,8 @@ class AppState {
     _globalState['userPreferences'] = <String, dynamic>{};
     _globalState['appSettings'] = <String, dynamic>{};
 
-    developer.log('📊 AppState: Global state initialized successfully', name: 'app_state');
+    developer.log('📊 AppState: Global state initialized successfully',
+        name: 'app_state');
   }
 
   /// Получение значения из глобального состояния
@@ -116,7 +123,8 @@ class AppState {
     }
 
     _globalState[key] = value;
-    developer.log('📊 AppState: Set value for key "$key": $value', name: 'app_state');
+    developer.log('📊 AppState: Set value for key "$key": $value',
+        name: 'app_state');
   }
 
   /// Обновление значения в глобальном состоянии
@@ -130,7 +138,8 @@ class AppState {
     if (currentValue != null) {
       final newValue = updater(currentValue as T);
       _globalState[key] = newValue;
-      developer.log('📊 AppState: Updated value for key "$key": $newValue', name: 'app_state');
+      developer.log('📊 AppState: Updated value for key "$key": $newValue',
+          name: 'app_state');
     }
   }
 
@@ -143,7 +152,8 @@ class AppState {
 
     if (_globalState.containsKey(key)) {
       final removedValue = _globalState.remove(key);
-      developer.log('📊 AppState: Removed value for key "$key": $removedValue', name: 'app_state');
+      developer.log('📊 AppState: Removed value for key "$key": $removedValue',
+          name: 'app_state');
     }
   }
 
@@ -181,7 +191,8 @@ class AppState {
       return;
     }
 
-    developer.log('📊 AppState: Resetting state to initial values...', name: 'app_state');
+    developer.log('📊 AppState: Resetting state to initial values...',
+        name: 'app_state');
     await _initializeGlobalState();
     developer.log('📊 AppState: State reset successfully', name: 'app_state');
   }
@@ -204,7 +215,8 @@ class AppState {
 
     _globalState.clear();
     _globalState.addAll(state);
-    developer.log('📊 AppState: State imported successfully', name: 'app_state');
+    developer.log('📊 AppState: State imported successfully',
+        name: 'app_state');
   }
 
   /// Получение статистики состояния

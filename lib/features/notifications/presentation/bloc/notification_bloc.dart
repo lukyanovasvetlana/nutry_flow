@@ -1,8 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:nutry_flow/features/notifications/data/repositories/notification_repository.dart';
 import 'package:nutry_flow/features/notifications/domain/entities/notification_preferences.dart';
 import 'package:nutry_flow/features/notifications/domain/entities/scheduled_notification.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/get_notification_preferences_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/save_notification_preferences_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/get_scheduled_notifications_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/schedule_notification_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/cancel_notification_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/schedule_meal_reminder_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/schedule_workout_reminder_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/schedule_goal_reminder_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/send_goal_achievement_notification_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/send_missed_workout_notification_usecase.dart';
+import 'package:nutry_flow/features/notifications/domain/usecases/send_calorie_exceeded_notification_usecase.dart';
 import 'dart:developer' as developer;
 
 // Events
@@ -186,11 +196,53 @@ class NotificationError extends NotificationState {
 
 // BLoC
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  final NotificationRepository _notificationRepository;
+  final GetNotificationPreferencesUseCase _getNotificationPreferencesUseCase;
+  final SaveNotificationPreferencesUseCase _saveNotificationPreferencesUseCase;
+  final GetScheduledNotificationsUseCase _getScheduledNotificationsUseCase;
+  final ScheduleNotificationUseCase _scheduleNotificationUseCase;
+  final CancelNotificationUseCase _cancelNotificationUseCase;
+  final ScheduleMealReminderUseCase _scheduleMealReminderUseCase;
+  final ScheduleWorkoutReminderUseCase _scheduleWorkoutReminderUseCase;
+  final ScheduleGoalReminderUseCase _scheduleGoalReminderUseCase;
+  final SendGoalAchievementNotificationUseCase
+      _sendGoalAchievementNotificationUseCase;
+  final SendMissedWorkoutNotificationUseCase
+      _sendMissedWorkoutNotificationUseCase;
+  final SendCalorieExceededNotificationUseCase
+      _sendCalorieExceededNotificationUseCase;
 
   NotificationBloc({
-    required NotificationRepository notificationRepository,
-  })  : _notificationRepository = notificationRepository,
+    required GetNotificationPreferencesUseCase
+        getNotificationPreferencesUseCase,
+    required SaveNotificationPreferencesUseCase
+        saveNotificationPreferencesUseCase,
+    required GetScheduledNotificationsUseCase getScheduledNotificationsUseCase,
+    required ScheduleNotificationUseCase scheduleNotificationUseCase,
+    required CancelNotificationUseCase cancelNotificationUseCase,
+    required ScheduleMealReminderUseCase scheduleMealReminderUseCase,
+    required ScheduleWorkoutReminderUseCase scheduleWorkoutReminderUseCase,
+    required ScheduleGoalReminderUseCase scheduleGoalReminderUseCase,
+    required SendGoalAchievementNotificationUseCase
+        sendGoalAchievementNotificationUseCase,
+    required SendMissedWorkoutNotificationUseCase
+        sendMissedWorkoutNotificationUseCase,
+    required SendCalorieExceededNotificationUseCase
+        sendCalorieExceededNotificationUseCase,
+  })  : _getNotificationPreferencesUseCase = getNotificationPreferencesUseCase,
+        _saveNotificationPreferencesUseCase =
+            saveNotificationPreferencesUseCase,
+        _getScheduledNotificationsUseCase = getScheduledNotificationsUseCase,
+        _scheduleNotificationUseCase = scheduleNotificationUseCase,
+        _cancelNotificationUseCase = cancelNotificationUseCase,
+        _scheduleMealReminderUseCase = scheduleMealReminderUseCase,
+        _scheduleWorkoutReminderUseCase = scheduleWorkoutReminderUseCase,
+        _scheduleGoalReminderUseCase = scheduleGoalReminderUseCase,
+        _sendGoalAchievementNotificationUseCase =
+            sendGoalAchievementNotificationUseCase,
+        _sendMissedWorkoutNotificationUseCase =
+            sendMissedWorkoutNotificationUseCase,
+        _sendCalorieExceededNotificationUseCase =
+            sendCalorieExceededNotificationUseCase,
         super(NotificationInitial()) {
     on<LoadNotificationPreferences>(_onLoadNotificationPreferences);
     on<SaveNotificationPreferences>(_onSaveNotificationPreferences);
@@ -214,8 +266,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      final preferences =
-          await _notificationRepository.getNotificationPreferences();
+      final preferences = await _getNotificationPreferencesUseCase();
 
       emit(NotificationPreferencesLoaded(preferences));
       developer.log(
@@ -238,8 +289,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository
-          .saveNotificationPreferences(event.preferences);
+      await _saveNotificationPreferencesUseCase(event.preferences);
 
       emit(NotificationSuccess('Настройки уведомлений сохранены успешно'));
       developer.log(
@@ -262,8 +312,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      final notifications =
-          await _notificationRepository.getScheduledNotifications();
+      final notifications = await _getScheduledNotificationsUseCase();
 
       emit(ScheduledNotificationsLoaded(notifications));
       developer.log(
@@ -287,7 +336,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.scheduleNotification(event.notification);
+      await _scheduleNotificationUseCase(event.notification);
 
       emit(NotificationSuccess('Уведомление запланировано успешно'));
       developer.log('🔔 NotificationBloc: Notification scheduled successfully',
@@ -309,7 +358,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.cancelNotification(event.notificationId);
+      await _cancelNotificationUseCase(event.notificationId);
 
       emit(NotificationSuccess('Уведомление отменено успешно'));
       developer.log('🔔 NotificationBloc: Notification cancelled successfully',
@@ -330,7 +379,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.scheduleMealReminder(
+      await _scheduleMealReminderUseCase(
         mealTime: event.mealTime,
         mealName: event.mealName,
         description: event.description,
@@ -355,7 +404,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.scheduleWorkoutReminder(
+      await _scheduleWorkoutReminderUseCase(
         workoutTime: event.workoutTime,
         workoutName: event.workoutName,
         description: event.description,
@@ -384,7 +433,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.scheduleGoalReminder(
+      await _scheduleGoalReminderUseCase(
         reminderTime: event.reminderTime,
         goalName: event.goalName,
         description: event.description,
@@ -411,7 +460,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.sendGoalAchievementNotification(
+      await _sendGoalAchievementNotificationUseCase(
         userId: event.userId,
         goalName: event.goalName,
         achievement: event.achievement,
@@ -440,7 +489,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.sendMissedWorkoutNotification(
+      await _sendMissedWorkoutNotificationUseCase(
         userId: event.userId,
         workoutName: event.workoutName,
       );
@@ -469,7 +518,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           name: 'NotificationBloc');
       emit(NotificationLoading());
 
-      await _notificationRepository.sendCalorieExceededNotification(
+      await _sendCalorieExceededNotificationUseCase(
         userId: event.userId,
         targetCalories: event.targetCalories,
         consumedCalories: event.consumedCalories,

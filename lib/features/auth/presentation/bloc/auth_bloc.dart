@@ -49,21 +49,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      developer.log('🔐 AuthBloc: Starting registration for \${event.email}', name: 'auth_bloc');
-      developer.log('🔐 AuthBloc: Password length = \${event.password.length}', name: 'auth_bloc');
+      developer.log(r'🔐 AuthBloc: Starting registration for ${event.email}',
+          name: 'auth_bloc');
+      developer.log(r'🔐 AuthBloc: Password length = ${event.password.length}',
+          name: 'auth_bloc');
       developer.log(
-          '🔐 AuthBloc: Confirm password length = ${event.confirmPassword.length}', name: 'auth_bloc');
+          '🔐 AuthBloc: Confirm password length = ${event.confirmPassword.length}',
+          name: 'auth_bloc');
 
       final user = await _registerUseCase(
         event.email,
         event.password,
         event.confirmPassword,
       );
-      developer.log('🔐 AuthBloc: Registration successful for \${event.email}', name: 'auth_bloc');
+      developer.log(r'🔐 AuthBloc: Registration successful for ${event.email}',
+          name: 'auth_bloc');
       emit(AuthSuccess(user));
     } catch (e) {
-      developer.log('🔐 AuthBloc: Registration failed for \${event.email}: \$e', name: 'auth_bloc');
-      developer.log('🔐 AuthBloc: Error type = \${e.runtimeType}', name: 'auth_bloc');
+      developer.log(r'🔐 AuthBloc: Registration failed for ${event.email}: $e',
+          name: 'auth_bloc');
+      developer.log(r'🔐 AuthBloc: Error type = ${e.runtimeType}',
+          name: 'auth_bloc');
       emit(AuthFailure(e.toString()));
     }
   }

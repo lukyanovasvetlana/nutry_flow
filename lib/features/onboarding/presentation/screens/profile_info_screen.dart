@@ -84,7 +84,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   }
 
   Future<void> _selectDate() async {
-    final initialDate = _selectedDate ?? DateTime.now().subtract(const Duration(days: 365 * 25));
+    final initialDate = _selectedDate ??
+        DateTime.now().subtract(const Duration(days: 365 * 25));
     final firstDate = DateTime(1900);
     final lastDate = DateTime.now();
 
@@ -494,22 +495,24 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
     if (selectedDay < 1 && availableDays.isNotEmpty) {
       selectedDay = 1;
     }
-    
+
     // Инициализируем контроллеры сразу с правильными значениями
     final dayIndex = availableDays.indexOf(selectedDay);
-    selectedDayIndex = dayIndex >= 0 && dayIndex < availableDays.length ? dayIndex : 0;
+    selectedDayIndex =
+        dayIndex >= 0 && dayIndex < availableDays.length ? dayIndex : 0;
     dayController = FixedExtentScrollController(
       initialItem: selectedDayIndex,
     );
-    
+
     selectedMonthIndex = (selectedMonth - 1).clamp(0, 11);
     monthController = FixedExtentScrollController(
       initialItem: selectedMonthIndex,
     );
-    
+
     final years = _getYears();
     final yearIndex = years.indexOf(selectedYear);
-    selectedYearIndex = yearIndex >= 0 && yearIndex < years.length ? yearIndex : 0;
+    selectedYearIndex =
+        yearIndex >= 0 && yearIndex < years.length ? yearIndex : 0;
     yearController = FixedExtentScrollController(
       initialItem: selectedYearIndex,
     );
@@ -537,7 +540,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
 
   void _updateDays() {
     final newDays = _getDaysInMonth(selectedYear, selectedMonth);
-    if (newDays.length != availableDays.length || 
+    if (newDays.length != availableDays.length ||
         !newDays.contains(selectedDay)) {
       setState(() {
         availableDays = newDays;
@@ -562,13 +565,15 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
   Widget build(BuildContext context) {
     final years = _getYears();
     final months = List.generate(12, (index) => index + 1);
-    
+
     // Отладочная информация
-    debugPrint('DatePicker: availableDays=${availableDays.length}, selectedDay=$selectedDay');
-    debugPrint('DatePicker: months=${months.length}, selectedMonth=$selectedMonth');
+    debugPrint(
+        'DatePicker: availableDays=${availableDays.length}, selectedDay=$selectedDay');
+    debugPrint(
+        'DatePicker: months=${months.length}, selectedMonth=$selectedMonth');
     debugPrint('DatePicker: years=${years.length}, selectedYear=$selectedYear');
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -602,10 +607,14 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                 ),
                 TextButton(
                   onPressed: () {
-                    final selectedDate = DateTime(selectedYear, selectedMonth, selectedDay);
-                    if (selectedDate.isAfter(widget.lastDate) || selectedDate.isBefore(widget.firstDate)) {
+                    final selectedDate =
+                        DateTime(selectedYear, selectedMonth, selectedDay);
+                    if (selectedDate.isAfter(widget.lastDate) ||
+                        selectedDate.isBefore(widget.firstDate)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Выбранная дата вне допустимого диапазона')),
+                        const SnackBar(
+                            content: Text(
+                                'Выбранная дата вне допустимого диапазона')),
                       );
                       return;
                     }
@@ -634,8 +643,12 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: AppColors.button.withValues(alpha: 0.3), width: 1),
-                        bottom: BorderSide(color: AppColors.button.withValues(alpha: 0.3), width: 1),
+                        top: BorderSide(
+                            color: AppColors.button.withValues(alpha: 0.3),
+                            width: 1),
+                        bottom: BorderSide(
+                            color: AppColors.button.withValues(alpha: 0.3),
+                            width: 1),
                       ),
                     ),
                   ),
@@ -653,14 +666,16 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                               useMagnifier: true,
                               magnification: 1.0,
                               onSelectedItemChanged: (index) {
-                                if (index >= 0 && index < availableDays.length) {
+                                if (index >= 0 &&
+                                    index < availableDays.length) {
                                   setState(() {
                                     selectedDay = availableDays[index];
                                     selectedDayIndex = index;
                                   });
                                 }
                               },
-                              children: availableDays.asMap().entries.map((entry) {
+                              children:
+                                  availableDays.asMap().entries.map((entry) {
                                 final index = entry.key;
                                 final day = entry.value;
                                 final isSelected = index == selectedDayIndex;
@@ -670,7 +685,9 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w500,
-                                      color: isSelected ? AppColors.button : Colors.black87,
+                                      color: isSelected
+                                          ? AppColors.button
+                                          : Colors.black87,
                                     ),
                                   ),
                                 );
@@ -694,10 +711,13 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                                     selectedMonthIndex = index;
                                     _updateDays();
                                     // Обновляем позицию контроллера дня
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
                                       if (mounted) {
-                                        final dayIndex = availableDays.indexOf(selectedDay);
-                                        if (dayIndex >= 0 && dayIndex < availableDays.length) {
+                                        final dayIndex =
+                                            availableDays.indexOf(selectedDay);
+                                        if (dayIndex >= 0 &&
+                                            dayIndex < availableDays.length) {
                                           selectedDayIndex = dayIndex;
                                           dayController.jumpToItem(dayIndex);
                                         }
@@ -711,8 +731,18 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                                 final month = entry.value;
                                 final isSelected = index == selectedMonthIndex;
                                 final monthNames = [
-                                  'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
-                                  'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
+                                  'Янв',
+                                  'Фев',
+                                  'Мар',
+                                  'Апр',
+                                  'Май',
+                                  'Июн',
+                                  'Июл',
+                                  'Авг',
+                                  'Сен',
+                                  'Окт',
+                                  'Ноя',
+                                  'Дек'
                                 ];
                                 return Center(
                                   child: Text(
@@ -720,7 +750,9 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w500,
-                                      color: isSelected ? AppColors.button : Colors.black87,
+                                      color: isSelected
+                                          ? AppColors.button
+                                          : Colors.black87,
                                     ),
                                   ),
                                 );
@@ -744,10 +776,13 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                                     selectedYearIndex = index;
                                     _updateDays();
                                     // Обновляем позицию контроллера дня
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
                                       if (mounted) {
-                                        final dayIndex = availableDays.indexOf(selectedDay);
-                                        if (dayIndex >= 0 && dayIndex < availableDays.length) {
+                                        final dayIndex =
+                                            availableDays.indexOf(selectedDay);
+                                        if (dayIndex >= 0 &&
+                                            dayIndex < availableDays.length) {
                                           selectedDayIndex = dayIndex;
                                           dayController.jumpToItem(dayIndex);
                                         }
@@ -766,7 +801,9 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w500,
-                                      color: isSelected ? AppColors.button : Colors.black87,
+                                      color: isSelected
+                                          ? AppColors.button
+                                          : Colors.black87,
                                     ),
                                   ),
                                 );
