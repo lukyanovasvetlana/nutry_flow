@@ -403,7 +403,7 @@ class _BorderTokens {
 extension DesignTokensExtension on BuildContext {
   /// Динамические цвета (автоматически обновляются при смене темы)
   /// Используйте вместо DesignTokens.colors для UI элементов
-  _DynamicColorTokens get colors => _DynamicColorTokens(this);
+  _DynamicColorTokens get colors => _DynamicColorTokens();
   
   _TypographyTokens get typography => DesignTokens.typography;
   _SpacingTokens get spacing => DesignTokens.spacing;
@@ -415,9 +415,7 @@ extension DesignTokensExtension on BuildContext {
 /// Динамические цветовые токены через BuildContext
 /// Автоматически получают цвета из текущей темы
 class _DynamicColorTokens {
-  final BuildContext _context;
-  
-  _DynamicColorTokens(this._context);
+  _DynamicColorTokens();
   
   // Получаем токены текущей темы
   BaseThemeTokens get _theme => ThemeTokens.current;
