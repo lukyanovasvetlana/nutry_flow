@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../tokens/design_tokens.dart';
-import '../tokens/theme_tokens.dart';
-import '../theme/app_colors.dart';
-import '../theme/theme_manager.dart';
+import '../../theme/theme_manager.dart';
 import '../components/buttons/nutry_button.dart';
 import '../components/cards/nutry_card.dart';
 import '../components/forms/nutry_input.dart';

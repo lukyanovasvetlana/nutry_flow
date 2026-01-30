@@ -162,7 +162,6 @@ class NutryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final spacing = _SpacingHelper();
     final borders = context.borders;
     final typography = _TypographyHelper();
@@ -221,8 +220,8 @@ class NutryBadge extends StatelessWidget {
   (Color, Color, Color) _getColors(BuildContext context) {
     final colors = context.colors;
 
-    if (backgroundColor != null && textColor != null) {
-      return (backgroundColor!, textColor!, textColor!);
+    if (backgroundColor != null && this.textColor != null) {
+      return (backgroundColor!, this.textColor!, this.textColor!);
     }
 
     Color bgColor;
@@ -344,7 +343,6 @@ class _TypographyHelper {
   final double labelLarge = DesignTokens.typography.labelLarge;
   final FontWeight medium = DesignTokens.typography.medium;
   final FontWeight semiBold = DesignTokens.typography.semiBold;
-}
 }
 
 
