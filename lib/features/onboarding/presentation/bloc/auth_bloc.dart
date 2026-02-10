@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'dart:developer' as developer;
+import 'package:nutry_flow/shared/auth/auth_session_store.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
@@ -165,6 +166,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         developer.log(
             '🔵 AuthBloc: Demo registration successful for ${event.email}',
             name: 'AuthBloc');
+        AuthSessionStore.update(
+          email: event.email,
+          password: event.password,
+        );
         emit(AuthAuthenticated(user));
         return;
       }
@@ -184,6 +189,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           developer.log(
               '🔵 AuthBloc: SignUp successful - user: ${result.user?.email}',
               name: 'AuthBloc');
+          AuthSessionStore.update(
+            email: event.email,
+            password: event.password,
+          );
           emit(AuthAuthenticated(result.user!));
         } else {
           developer.log('🔵 AuthBloc: SignUp failed - error: ${result.error}',
@@ -212,6 +221,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           );
           developer.log('🔵 AuthBloc: Supabase sign up successful',
               name: 'AuthBloc');
+          AuthSessionStore.update(
+            email: event.email,
+            password: event.password,
+          );
           emit(AuthAuthenticated(user));
           return;
         } else {
@@ -234,6 +247,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         developer.log(
             '🔵 AuthBloc: SignUp successful - user: ${result.user?.email}',
             name: 'AuthBloc');
+        AuthSessionStore.update(
+          email: event.email,
+          password: event.password,
+        );
         emit(AuthAuthenticated(result.user!));
       } else {
         developer.log('🔵 AuthBloc: SignUp failed - error: ${result.error}',
@@ -286,6 +303,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             name: 'auth_bloc');
         developer.log('🔵 AuthBloc: Demo login successful for ${event.email}',
             name: 'AuthBloc');
+        AuthSessionStore.update(
+          email: event.email,
+          password: event.password,
+        );
         emit(AuthAuthenticated(user));
         return;
       }
@@ -309,6 +330,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           );
           developer.log('🔵 AuthBloc: Supabase sign in successful',
               name: 'AuthBloc');
+          AuthSessionStore.update(
+            email: event.email,
+            password: event.password,
+          );
           emit(AuthAuthenticated(user));
           return;
         } else {
@@ -331,6 +356,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         developer.log(
             '🔵 AuthBloc: SignIn successful - user: ${result.user?.email}',
             name: 'AuthBloc');
+        AuthSessionStore.update(
+          email: event.email,
+          password: event.password,
+        );
         emit(AuthAuthenticated(result.user!));
       } else {
         developer.log('🔵 AuthBloc: SignIn failed - error: ${result.error}',

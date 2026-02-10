@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
-import '../../../../shared/design/components/buttons/nutry_button.dart';
 import '../../../../shared/theme/app_colors.dart';
 import 'package:nutry_flow/features/activity/domain/entities/exercise.dart'
     as activity;
@@ -263,20 +262,9 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
 
                 return Padding(
                   padding: const EdgeInsets.only(right: 6), // Уменьшил с 8 до 6
-                  child: NutryButton.chip(
-                    onPressed: () {
-                      setState(() {
-                        selectedCategory = category;
-                      });
-                    },
+                  child: _buildCategoryChip(
+                    category: category,
                     isSelected: isSelected,
-                    child: Text(
-                      category,
-                      style: TextStyle(
-                        fontSize: 12, // Уменьшил размер шрифта
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
                   ),
                 );
               },
@@ -526,7 +514,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
 
               const SizedBox(width: 8), // Добавил небольшой отступ
 
-              // Кнопка "Начать" - сделал более компактной
+              // Кнопка "Начать" - в стиле основного приложения
               SizedBox(
                 height: 36, // Фиксированная высота
                 child: ElevatedButton(
@@ -534,19 +522,20 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
                     _startExercise(exercise);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.dynamicPrimary,
-                    foregroundColor: AppColors.dynamicOnPrimary,
+                    backgroundColor: AppColors.button,
+                    foregroundColor: Colors.white,
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30),
                     ),
+                    elevation: 2,
                   ),
                   child: const Text(
                     'Начать',
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -576,6 +565,42 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
           ),
         ),
       ],
+    );
+  }
+
+  /// Упрощенная версия chip кнопки без FocusNode для использования в списках
+  Widget _buildCategoryChip({
+    required String category,
+    required bool isSelected,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedCategory = category;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.dynamicPrimary : Colors.transparent,
+          borderRadius: BorderRadius.circular(DesignTokens.borders.full),
+          border: Border.all(
+            color:
+                isSelected ? AppColors.dynamicPrimary : AppColors.dynamicBorder,
+            width: DesignTokens.borders.thin,
+          ),
+        ),
+        child: Text(
+          category,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isSelected
+                ? AppColors.dynamicOnPrimary
+                : AppColors.dynamicTextPrimary,
+          ),
+        ),
+      ),
     );
   }
 }

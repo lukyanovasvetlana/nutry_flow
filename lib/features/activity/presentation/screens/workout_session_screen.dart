@@ -6,7 +6,6 @@ import '../../domain/entities/activity_session.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
 import '../../../../shared/design/tokens/theme_tokens.dart';
 import '../../../analytics/presentation/utils/analytics_tracker.dart';
-import '../../../../shared/theme/app_styles.dart';
 import '../../../../shared/theme/app_colors.dart';
 
 class WorkoutSessionScreen extends StatefulWidget {
@@ -509,7 +508,15 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
           SizedBox(height: DesignTokens.spacing.xl),
           ElevatedButton(
             onPressed: _completeWorkout,
-            style: AppStyles.primaryButtonStyle,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.button,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 2,
+            ),
             child: const Text('Завершить тренировку'),
           ),
         ],
@@ -524,7 +531,15 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
         width: double.infinity,
         child: ElevatedButton(
           onPressed: _completeWorkout,
-          style: AppStyles.primaryButtonStyle,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.button,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            elevation: 2,
+          ),
           child: const Text('Завершить'),
         ),
       ),
@@ -631,8 +646,13 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.error,
-              foregroundColor: context.colors.onPrimary,
+              backgroundColor: AppColors.button,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 2,
             ),
             child: const Text('Выйти'),
           ),
@@ -676,8 +696,13 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
+              backgroundColor: AppColors.button,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 2,
             ),
             child: const Text('Отлично!'),
           ),

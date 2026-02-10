@@ -610,6 +610,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  horizontal_gauge:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: b020cf5f7c079e494c2faa21678740d69881a486
+      url: "https://github.com/SpinexIO/horizontal_gauge.git"
+    source: git
+    version: "2.0.2"
   http:
     dependency: "direct main"
     description:
@@ -850,6 +859,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mobile_scanner:
+    dependency: "direct main"
+    description:
+      name: mobile_scanner
+      sha256: "0b466a0a8a211b366c2e87f3345715faef9b6011c7147556ad22f37de6ba3173"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.11"
   mockito:
     dependency: "direct dev"
     description:
@@ -1449,7 +1466,7 @@ packages:
     source: hosted
     version: "1.4.0"
   url_launcher:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: url_launcher
       sha256: "9d06212b1362abc2f0f0d78e6f09f726608c74e3b9462e8368bb03314aa8d603"
@@ -1609,5 +1626,5 @@ packages:
     source: hosted
     version: "2.1.0"
 sdks:
-  dart: ">=3.8.0 <4.0.0"
+  dart: ">=3.9.0 <4.0.0"
   flutter: ">=3.27.0"

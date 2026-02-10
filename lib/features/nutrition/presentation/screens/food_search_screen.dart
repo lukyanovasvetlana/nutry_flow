@@ -11,11 +11,13 @@ import '../../domain/entities/food_item.dart';
 class FoodSearchScreen extends StatefulWidget {
   final Function(FoodItem)? onFoodItemSelected;
   final String? initialQuery;
+  final String? initialBarcode;
 
   const FoodSearchScreen({
     super.key,
     this.onFoodItemSelected,
     this.initialQuery,
+    this.initialBarcode,
   });
 
   @override
@@ -32,6 +34,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+
+    if (widget.initialBarcode != null) {
+      _searchController.text = widget.initialBarcode!;
+      context.read<NutritionSearchCubit>().searchByBarcode(
+            widget.initialBarcode!,
+          );
+      return;
+    }
 
     if (widget.initialQuery != null) {
       _searchController.text = widget.initialQuery!;

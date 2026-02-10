@@ -5,6 +5,7 @@ import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import 'dart:developer' as developer;
+import 'package:nutry_flow/shared/auth/auth_session_store.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -36,6 +37,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final user = await _loginUseCase(event.email, event.password);
+      AuthSessionStore.update(
+        email: event.email,
+        password: event.password,
+      );
       emit(AuthSuccess(user));
     } catch (e) {
       emit(AuthFailure(e.toString()));
@@ -64,6 +69,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       developer.log(r'🔐 AuthBloc: Registration successful for ${event.email}',
           name: 'auth_bloc');
+      AuthSessionStore.update(
+        email: event.email,
+        password: event.password,
+      );
       emit(AuthSuccess(user));
     } catch (e) {
       developer.log(r'🔐 AuthBloc: Registration failed for ${event.email}: $e',
