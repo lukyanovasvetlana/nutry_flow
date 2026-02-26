@@ -116,9 +116,11 @@ void main() {
     group('Validation', () {
       testWidgets('should call validator when provided', (WidgetTester tester) async {
         // Arrange
+        final formKey = GlobalKey<FormState>();
         final widget = MaterialApp(
           home: Scaffold(
             body: Form(
+              key: formKey,
               child: ProfileFormField(
                 controller: controller,
                 label: 'Test',
@@ -135,11 +137,7 @@ void main() {
 
         // Act
         await tester.pumpWidget(widget);
-        final form = tester.widget<Form>(find.byType(Form));
-        final formState = form.key as GlobalKey<FormState>;
-
-        // Try to validate
-        final isValid = formState.currentState?.validate() ?? false;
+        final isValid = formKey.currentState?.validate() ?? false;
 
         // Assert
         expect(isValid, isFalse);
@@ -148,9 +146,11 @@ void main() {
       testWidgets('should not show error when validator returns null',
           (WidgetTester tester) async {
         // Arrange
+        final formKey = GlobalKey<FormState>();
         final widget = MaterialApp(
           home: Scaffold(
             body: Form(
+              key: formKey,
               child: ProfileFormField(
                 controller: controller,
                 label: 'Test',
@@ -165,9 +165,7 @@ void main() {
         controller.text = 'Valid input';
         await tester.pump();
 
-        final form = tester.widget<Form>(find.byType(Form));
-        final formState = form.key as GlobalKey<FormState>;
-        final isValid = formState.currentState?.validate() ?? false;
+        final isValid = formKey.currentState?.validate() ?? false;
 
         // Assert
         expect(isValid, isTrue);
@@ -213,7 +211,14 @@ void main() {
         await tester.pumpWidget(widget);
 
         // Assert
-        expect(find.byType(Semantics), findsOneWidget);
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Semantics &&
+                widget.properties.label == 'Email input field',
+          ),
+          findsOneWidget,
+        );
       });
 
       testWidgets('should use label as semantic label if not provided',
@@ -225,7 +230,13 @@ void main() {
         await tester.pumpWidget(widget);
 
         // Assert
-        expect(find.byType(Semantics), findsOneWidget);
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Semantics && widget.properties.label == 'Email',
+          ),
+          findsOneWidget,
+        );
       });
     });
 

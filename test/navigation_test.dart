@@ -44,7 +44,7 @@ void main() {
 
       // Assert
       expect(find.byType(MealPlanScreen), findsOneWidget);
-      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.text('Сегодня'), findsOneWidget);
     });
 
     testWidgets('Profile settings screen should display correctly', (WidgetTester tester) async {
@@ -69,11 +69,11 @@ void main() {
       );
 
       // Act & Assert
-      final titleFinder = find.text('План питания');
+      final titleFinder = find.text('Сегодня');
       expect(titleFinder, findsOneWidget);
       
       final Text titleWidget = tester.widget(titleFinder);
-      expect(titleWidget.style?.color, AppColors.textPrimary);
+      expect(titleWidget.style?.color, AppColors.dynamicTextPrimary);
     });
   });
 } 

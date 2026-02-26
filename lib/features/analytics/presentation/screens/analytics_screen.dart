@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pie_chart_sz/pie_chart_sz.dart';
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:horizontal_gauge/horizontal_gauge.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/notifiers/nutrition_metrics_notifier.dart';
+import '../../../../core/services/supabase_service.dart';
+import '../../../nutrition/data/repositories/nutrition_repository_impl.dart';
+import '../../../nutrition/data/services/nutrition_api_service.dart';
+import '../../../nutrition/data/services/nutrition_cache_service.dart';
+import '../../../nutrition/domain/entities/nutrition_summary.dart';
+import '../../../profile/data/repositories/profile_repository_impl.dart';
+import '../../../profile/data/services/profile_service.dart';
+import '../../../profile/domain/entities/user_profile.dart';
 import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/design/components/cards/nutry_card.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
@@ -16,12 +29,13 @@ class AnalyticsScreen extends StatefulWidget {
   State<AnalyticsScreen> createState() => _AnalyticsScreenState();
 }
 
-class _AnalyticsScreenState extends State<AnalyticsScreen>
-    with SingleTickerProviderStateMixin {
+class _AnalyticsScreenState extends State<AnalyticsScreen> {
   String selectedPeriod = 'Неделя';
-  String? selectedMacro; // Для интерактивности легенды
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   final List<Map<String, dynamic>> periods = [
     {'name': 'День', 'icon': Icons.today},
@@ -29,42 +43,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     {'name': 'Месяц', 'icon': Icons.calendar_month},
     {'name': 'Год', 'icon': Icons.date_range},
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    );
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  // Градиенты для макронутриентов
-  List<Color> get carbsGradient => [
-        AppColors.dynamicOrange,
-        AppColors.dynamicOrange.withValues(alpha: 0.7),
-      ];
-
-  List<Color> get proteinsGradient => [
-        AppColors.dynamicPrimary,
-        AppColors.dynamicPrimary.withValues(alpha: 0.7),
-      ];
-
-  List<Color> get fatsGradient => [
-        AppColors.dynamicYellow,
-        AppColors.dynamicYellow.withValues(alpha: 0.7),
-      ];
 
   @override
   Widget build(BuildContext context) {
@@ -252,76 +230,85 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   }
 
   Widget _buildMainMetrics() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Основные показатели',
-          style: DesignTokens.typography.titleLargeStyle.copyWith(
-            color: AppColors.dynamicOnBackground,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        const SizedBox(height: 12),
-        // Круговая диаграмма макронутриентов
-        _buildNutritionPieChart(),
-        const SizedBox(height: 16),
-        // Горизонтальные карточки в одну колонку
-        _buildMetricCard(
-          title: 'Калории',
-          value: '1,850',
-          unit: 'ккал',
-          icon: Icons.local_fire_department,
-          color: AppColors.dynamicOrange,
-          trend: '+5%',
-          isPositive: true,
-        ),
-        const SizedBox(height: 8),
-        _buildMetricCard(
-          title: 'Белки',
-          value: '85',
-          unit: 'г',
-          icon: Icons.fitness_center,
-          color: AppColors.dynamicPrimary, // Зеленые
-          trend: '+2%',
-          isPositive: true,
-        ),
-        const SizedBox(height: 8),
-        _buildMetricCard(
-          title: 'Жиры',
-          value: '65',
-          unit: 'г',
-          icon: Icons.water_drop,
-          color: AppColors.dynamicYellow, // Желтые
-          trend: '-3%',
-          isPositive: false,
-        ),
-        const SizedBox(height: 8),
-        _buildMetricCard(
-          title: 'Углеводы',
-          value: '220',
-          unit: 'г',
-          icon: Icons.grain,
-          color: AppColors.dynamicOrange, // Оранжевые
-          trend: '+8%',
-          isPositive: true,
-        ),
-      ],
+    return ValueListenableBuilder<int>(
+      valueListenable: nutritionMetricsRefresh,
+      builder: (context, _, __) {
+        return FutureBuilder<_MacroMetrics>(
+          future: _loadMacroMetrics(),
+          builder: (context, snapshot) {
+            final data = snapshot.data ?? const _MacroMetrics.empty();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Основные показатели',
+                  style: DesignTokens.typography.titleLargeStyle.copyWith(
+                    color: AppColors.dynamicOnBackground,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Горизонтальная диаграмма основных показателей
+                _buildMainMetricsGauge(data),
+                const SizedBox(height: 16),
+                // Горизонтальные карточки в одну колонку
+                _buildMetricCard(
+                  title: 'Калории',
+                  value: data.calories.toStringAsFixed(0),
+                  unit: 'ккал',
+                  icon: Icons.local_fire_department,
+                  color: AppColors.dynamicOrange,
+                  trend: '0%',
+                  isPositive: true,
+                ),
+                const SizedBox(height: 8),
+                _buildMetricCard(
+                  title: 'Белки',
+                  value: data.proteins.toStringAsFixed(0),
+                  unit: 'г',
+                  icon: Icons.fitness_center,
+                  color: AppColors.dynamicPrimary,
+                  trend: '0%',
+                  isPositive: true,
+                ),
+                const SizedBox(height: 8),
+                _buildMetricCard(
+                  title: 'Жиры',
+                  value: data.fats.toStringAsFixed(0),
+                  unit: 'г',
+                  icon: Icons.water_drop,
+                  color: AppColors.dynamicYellow,
+                  trend: '0%',
+                  isPositive: true,
+                ),
+                const SizedBox(height: 8),
+                _buildMetricCard(
+                  title: 'Углеводы',
+                  value: data.carbs.toStringAsFixed(0),
+                  unit: 'г',
+                  icon: Icons.grain,
+                  color: AppColors.dynamicOrange,
+                  trend: '0%',
+                  isPositive: true,
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildNutritionPieChart() {
-    // Данные для диаграммы макронутриентов
-    final double carbs = 220;
-    final double proteins = 85;
-    final double fats = 65;
-    final double total = carbs + proteins + fats;
+  Widget _buildMainMetricsGauge(_MacroMetrics data) {
+    final bool isLightTheme = Theme.of(context).brightness == Brightness.light;
 
-    // Проценты для каждого макронутриента
-    final double carbsPercent = (carbs / total) * 100;
-    final double proteinsPercent = (proteins / total) * 100;
-    final double fatsPercent = (fats / total) * 100;
+    final double carbs = data.carbs;
+    final double proteins = data.proteins;
+    final double fats = data.fats;
+    final double carbsGoal = data.carbsGoal;
+    final double proteinsGoal = data.proteinsGoal;
+    final double fatsGoal = data.fatsGoal;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -356,156 +343,72 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  // Размер диаграммы
-                  final double chartSize = constraints.maxWidth < 400
-                      ? 220.0
-                      : (constraints.maxWidth < 600 ? 250.0 : 280.0);
-
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Диаграмма сверху
-                      Center(
-                        child: SizedBox(
-                          width: chartSize,
-                          height: chartSize,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.dynamicPrimary
-                                      .withValues(alpha: 0.1),
-                                  blurRadius: 20,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: AnimatedBuilder(
-                              animation: _animation,
-                              builder: (context, child) {
-                                // Определяем цвета с учетом выбранного элемента и градиентов
-                                // Выбранный элемент - яркий цвет, невыбранные - приглушенные
-                                final isLightTheme =
-                                    Theme.of(context).brightness ==
-                                        Brightness.light;
-                                final desaturateColor =
-                                    isLightTheme ? Colors.white : Colors.grey;
-                                final mutedFactor = isLightTheme ? 0.15 : 0.6;
-                                final blendFactor = isLightTheme ? 0.1 : 0.4;
-
-                                final carbsColor = selectedMacro == 'carbs'
-                                    ? carbsGradient[0]
-                                    : (selectedMacro != null
-                                        ? Color.lerp(carbsGradient[0],
-                                                desaturateColor, mutedFactor) ??
-                                            AppColors.dynamicOrange
-                                        : Color.lerp(
-                                                carbsGradient[0],
-                                                carbsGradient[1],
-                                                blendFactor) ??
-                                            AppColors.dynamicOrange);
-                                final proteinsColor =
-                                    selectedMacro == 'proteins'
-                                        ? proteinsGradient[0]
-                                        : (selectedMacro != null
-                                            ? Color.lerp(
-                                                    proteinsGradient[0],
-                                                    desaturateColor,
-                                                    mutedFactor) ??
-                                                AppColors.dynamicPrimary
-                                            : Color.lerp(
-                                                    proteinsGradient[0],
-                                                    proteinsGradient[1],
-                                                    blendFactor) ??
-                                                AppColors.dynamicPrimary);
-                                final fatsColor = selectedMacro == 'fats'
-                                    ? fatsGradient[0]
-                                    : (selectedMacro != null
-                                        ? Color.lerp(fatsGradient[0],
-                                                desaturateColor, mutedFactor) ??
-                                            AppColors.dynamicYellow
-                                        : Color.lerp(fatsGradient[0],
-                                                fatsGradient[1], blendFactor) ??
-                                            AppColors.dynamicYellow);
-
-                                return PieChartSz(
-                                  colors: [
-                                    carbsColor,
-                                    proteinsColor,
-                                    fatsColor,
-                                  ],
-                                  values: [
-                                    carbsPercent * _animation.value,
-                                    proteinsPercent * _animation.value,
-                                    fatsPercent * _animation.value,
-                                  ],
-                                  gapSize: 0.18,
-                                  centerText: 'Всего\n${total.toInt()}г',
-                                  centerTextStyle: TextStyle(
-                                    fontSize: chartSize * 0.065,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.dynamicOnBackground,
-                                    height: 1.3,
-                                  ),
-                                  valueSettings: Valuesettings(
-                                    showValues: false,
-                                    ValueTextStyle: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.dynamicOnBackground,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IgnorePointer(
+                    ignoring: true,
+                    child: HorizontalGauge(
+                      title: 'Углеводы',
+                      min: 0.0,
+                      max: carbsGoal,
+                      value: carbs,
+                      unit: 'г',
+                      color: AppColors.dynamicOrange,
+                      onChanged: null,
+                      showTicks: true,
+                      showLabels: true,
+                      customTickCount: 61,
+                      theme: _buildGaugeTheme(
+                        isLightTheme: isLightTheme,
+                        primaryColor: AppColors.dynamicOrange,
+                        secondaryColor: AppColors.dynamicYellow,
                       ),
-                      const SizedBox(height: 16),
-                      // Легенда в одну строку
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildCompactLegendItem(
-                              'Углеводы',
-                              AppColors.dynamicOrange,
-                              '${carbs.toInt()}г',
-                              carbsPercent,
-                              icon: Icons.grain,
-                              macroKey: 'carbs',
-                              gradient: carbsGradient,
-                            ),
-                            const SizedBox(width: 6),
-                            _buildCompactLegendItem(
-                              'Белки',
-                              AppColors.dynamicPrimary,
-                              '${proteins.toInt()}г',
-                              proteinsPercent,
-                              icon: Icons.fitness_center,
-                              macroKey: 'proteins',
-                              gradient: proteinsGradient,
-                            ),
-                            const SizedBox(width: 6),
-                            _buildCompactLegendItem(
-                              'Жиры',
-                              AppColors.dynamicYellow,
-                              '${fats.toInt()}г',
-                              fatsPercent,
-                              icon: Icons.water_drop,
-                              macroKey: 'fats',
-                              gradient: fatsGradient,
-                            ),
-                          ],
-                        ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  IgnorePointer(
+                    ignoring: true,
+                    child: HorizontalGauge(
+                      title: 'Белки',
+                      min: 0.0,
+                      max: proteinsGoal,
+                      value: proteins,
+                      unit: 'г',
+                      color: AppColors.dynamicPrimary,
+                      onChanged: null,
+                      showTicks: true,
+                      showLabels: true,
+                      customTickCount: 61,
+                      theme: _buildGaugeTheme(
+                        isLightTheme: isLightTheme,
+                        primaryColor: AppColors.dynamicPrimary,
+                        secondaryColor: AppColors.dynamicTeal,
                       ),
-                    ],
-                  );
-                },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  IgnorePointer(
+                    ignoring: true,
+                    child: HorizontalGauge(
+                      title: 'Жиры',
+                      min: 0.0,
+                      max: fatsGoal,
+                      value: fats,
+                      unit: 'г',
+                      color: AppColors.dynamicYellow,
+                      onChanged: null,
+                      showTicks: true,
+                      showLabels: true,
+                      customTickCount: 61,
+                      theme: _buildGaugeTheme(
+                        isLightTheme: isLightTheme,
+                        primaryColor: AppColors.dynamicYellow,
+                        secondaryColor: AppColors.dynamicOrange,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -514,174 +417,144 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     );
   }
 
-  Widget _buildCompactLegendItem(
-    String label,
-    Color color,
-    String value,
-    double percent, {
-    IconData? icon,
-    String? macroKey,
-    List<Color>? gradient,
+  HorizontalGaugeTheme _buildGaugeTheme({
+    required bool isLightTheme,
+    required Color primaryColor,
+    required Color secondaryColor,
   }) {
-    final isSelected = selectedMacro == macroKey;
-    final baseColor = gradient?.first ?? color;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedMacro = selectedMacro == macroKey ? null : macroKey;
-        });
-      },
-      child: Transform.scale(
-        scale: isSelected ? 1.05 : 1.0,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: EdgeInsets.symmetric(
-            horizontal: isSelected ? 10 : 8,
-            vertical: isSelected ? 8 : 6,
-          ),
-          decoration: BoxDecoration(
-            gradient: gradient != null && isSelected
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      gradient[0].withValues(alpha: 0.3),
-                      gradient[1].withValues(alpha: 0.25),
-                    ],
-                  )
-                : null,
-            color: gradient == null || !isSelected
-                ? baseColor.withValues(alpha: isSelected ? 0.25 : 0.1)
-                : null,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: baseColor.withValues(alpha: isSelected ? 0.8 : 0.3),
-              width: isSelected ? 2.5 : 1,
-            ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: baseColor.withValues(alpha: 0.5),
-                      blurRadius: 12,
-                      spreadRadius: 2,
-                    ),
-                    BoxShadow(
-                      color: baseColor.withValues(alpha: 0.3),
-                      blurRadius: 6,
-                      spreadRadius: 1,
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Иконка
-              if (icon != null) ...[
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    gradient: gradient != null && isSelected
-                        ? LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: gradient,
-                          )
-                        : null,
-                    color: gradient == null || !isSelected
-                        ? baseColor.withValues(alpha: isSelected ? 0.3 : 0.2)
-                        : null,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: baseColor.withValues(alpha: 0.4),
-                              blurRadius: 4,
-                              spreadRadius: 0.5,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 10,
-                    color: isSelected ? Colors.white : baseColor,
-                  ),
-                ),
-                const SizedBox(width: 4),
-              ] else ...[
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    gradient: gradient != null && isSelected
-                        ? LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: gradient,
-                          )
-                        : null,
-                    color: gradient == null || !isSelected ? baseColor : null,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            baseColor.withValues(alpha: isSelected ? 0.5 : 0.3),
-                        blurRadius: isSelected ? 4 : 3,
-                        spreadRadius: isSelected ? 1 : 0.5,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 4),
-              ],
-              // Текст и значения в одну строку (более компактно)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.dynamicOnBackground,
-                        ),
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        '${percent.toStringAsFixed(0)}%',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          color: baseColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.dynamicOnBackground,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+    final scaleColor = isLightTheme ? Colors.black : Colors.white;
+    return HorizontalGaugeTheme(
+      backgroundColor: isLightTheme
+          ? Colors.white.withValues(alpha: 0.3)
+          : Colors.black.withValues(alpha: 0.25),
+      borderColor: AppColors.dynamicBorder.withValues(alpha: 0.3),
+      titleColor: AppColors.dynamicTextSecondary,
+      valueColor: AppColors.dynamicTextPrimary,
+      unitColor: AppColors.dynamicTextSecondary,
+      tickColor: scaleColor,
+      majorTickColor: scaleColor,
+      labelColor: scaleColor,
+      indicatorGradient: LinearGradient(
+        colors: [
+          primaryColor,
+          secondaryColor,
+        ],
       ),
+      indicatorShadows: [
+        BoxShadow(
+          color: primaryColor.withValues(alpha: 0.35),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     );
+  }
+
+  Future<_MacroMetrics> _loadMacroMetrics() async {
+    final userId =
+        SupabaseService.instance.currentUser?.id ?? 'current_user_id';
+    final profile = await _loadUserProfile(userId);
+    final summary = await _loadNutritionSummary(userId);
+    final localTotals = await _loadLocalMealTotals(DateTime.now());
+
+    final carbs = (summary?.totalCarbs ?? 0) + localTotals.carbs;
+    final proteins = (summary?.totalProtein ?? 0) + localTotals.proteins;
+    final fats = (summary?.totalFats ?? 0) + localTotals.fats;
+    final calories = (summary?.totalCalories ?? 0) + localTotals.calories;
+
+    final carbsGoal = _normalizeGoal(profile?.targetCarbs, carbs, 200);
+    final proteinsGoal = _normalizeGoal(profile?.targetProtein, proteins, 100);
+    final fatsGoal = _normalizeGoal(profile?.targetFat, fats, 70);
+
+    return _MacroMetrics(
+      calories: calories,
+      carbs: carbs,
+      proteins: proteins,
+      fats: fats,
+      carbsGoal: carbsGoal,
+      proteinsGoal: proteinsGoal,
+      fatsGoal: fatsGoal,
+    );
+  }
+
+  double _normalizeGoal(double? goal, double value, double fallback) {
+    if (goal != null && goal > 0) {
+      return goal;
+    }
+    if (value > 0) {
+      return max(value * 1.2, fallback);
+    }
+    return fallback;
+  }
+
+  Future<UserProfile?> _loadUserProfile(String userId) async {
+    try {
+      final profileRepository = ProfileRepositoryImpl(MockProfileService());
+      return await profileRepository.getUserProfile(userId);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<NutritionSummary?> _loadNutritionSummary(String userId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cacheService = NutritionCacheService(prefs);
+
+      final cached =
+          await cacheService.getCachedNutritionSummary(userId, DateTime.now());
+      if (cached != null) {
+        return cached.toEntity();
+      }
+
+      final client = SupabaseService.instance.client;
+      if (client == null) {
+        return null;
+      }
+
+      final apiService = NutritionApiService(client);
+      final repository = NutritionRepositoryImpl(apiService, cacheService);
+      return await repository.getNutritionSummaryByDate(userId, DateTime.now());
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<_MacroTotals> _loadLocalMealTotals(DateTime date) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final dateKey = date.toIso8601String().split('T')[0];
+      final stored = prefs.getString('meal_entries_$dateKey');
+      if (stored == null || stored.isEmpty) {
+        return const _MacroTotals.empty();
+      }
+
+      final decoded = jsonDecode(stored) as Map<String, dynamic>;
+      double calories = 0;
+      double carbs = 0;
+      double proteins = 0;
+      double fats = 0;
+
+      for (final mealEntries in decoded.values) {
+        if (mealEntries is! List) continue;
+        for (final entry in mealEntries) {
+          if (entry is! Map<String, dynamic>) continue;
+          calories += (entry['calories'] as num?)?.toDouble() ?? 0;
+          carbs += (entry['carbs'] as num?)?.toDouble() ?? 0;
+          proteins += (entry['protein'] as num?)?.toDouble() ?? 0;
+          fats += (entry['fat'] as num?)?.toDouble() ?? 0;
+        }
+      }
+
+      return _MacroTotals(
+        calories: calories,
+        carbs: carbs,
+        proteins: proteins,
+        fats: fats,
+      );
+    } catch (_) {
+      return const _MacroTotals.empty();
+    }
   }
 
   Widget _buildMetricCard({
@@ -931,6 +804,55 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
       ),
     );
   }
+}
+
+class _MacroMetrics {
+  final double calories;
+  final double carbs;
+  final double proteins;
+  final double fats;
+  final double carbsGoal;
+  final double proteinsGoal;
+  final double fatsGoal;
+
+  const _MacroMetrics({
+    required this.calories,
+    required this.carbs,
+    required this.proteins,
+    required this.fats,
+    required this.carbsGoal,
+    required this.proteinsGoal,
+    required this.fatsGoal,
+  });
+
+  const _MacroMetrics.empty()
+      : calories = 0,
+        carbs = 0,
+        proteins = 0,
+        fats = 0,
+        carbsGoal = 200,
+        proteinsGoal = 100,
+        fatsGoal = 70;
+}
+
+class _MacroTotals {
+  final double calories;
+  final double carbs;
+  final double proteins;
+  final double fats;
+
+  const _MacroTotals({
+    required this.calories,
+    required this.carbs,
+    required this.proteins,
+    required this.fats,
+  });
+
+  const _MacroTotals.empty()
+      : calories = 0,
+        carbs = 0,
+        proteins = 0,
+        fats = 0;
 }
 
 /// CustomPainter для рисования черной обводки секторов диаграммы

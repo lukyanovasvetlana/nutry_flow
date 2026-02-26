@@ -1,7 +1,10 @@
-import 'package:nutry_flow/core/services/supabase_service.dart';
-import 'package:nutry_flow/core/services/firebase_interfaces.dart';
-import 'package:nutry_flow/core/services/firebase_analytics_impl.dart';
 import 'dart:developer' as developer;
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:nutry_flow/core/services/firebase_analytics_impl.dart';
+import 'package:nutry_flow/core/services/firebase_interfaces.dart';
+import 'package:nutry_flow/core/services/supabase_service.dart';
 
 class AnalyticsService {
   static final AnalyticsService _instance = AnalyticsService._();
@@ -20,9 +23,14 @@ class AnalyticsService {
       developer.log('📊 AnalyticsService: Initializing analytics service',
           name: 'AnalyticsService');
 
-      // Используем реальную реализацию Firebase Analytics
-      _analytics = FirebaseAnalyticsImpl.instance;
-      await _analytics.initialize();
+      final isTestEnvironment = const bool.fromEnvironment('FLUTTER_TEST') ||
+          (!kIsWeb && Platform.environment.containsKey('FLUTTER_TEST'));
+      if (isTestEnvironment) {
+        _analytics = MockFirebaseAnalytics.instance;
+      } else {
+        _analytics = FirebaseAnalyticsImpl.instance;
+        await _analytics.initialize();
+      }
 
       // Включаем сбор аналитики
       await _analytics.setAnalyticsCollectionEnabled(true);

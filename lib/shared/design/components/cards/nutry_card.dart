@@ -525,8 +525,7 @@ class NutryGradientCard extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: DesignTokens.typography.bodyMediumStyle.copyWith(
-                      color:
-                          context.colors.onPrimary.withValues(alpha: 0.8),
+                      color: context.colors.onPrimary.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -612,7 +611,8 @@ class _InteractiveCardWrapper extends StatefulWidget {
   });
 
   @override
-  State<_InteractiveCardWrapper> createState() => _InteractiveCardWrapperState();
+  State<_InteractiveCardWrapper> createState() =>
+      _InteractiveCardWrapperState();
 }
 
 class _InteractiveCardWrapperState extends State<_InteractiveCardWrapper> {
@@ -639,27 +639,27 @@ class _InteractiveCardWrapperState extends State<_InteractiveCardWrapper> {
       return widget.child;
     }
 
-    final label = widget.title != null 
+    final label = widget.title != null
         ? widget.title!.startsWith('Градиентная карточка:')
             ? '${widget.title}. Нажмите для открытия'
             : 'Карточка: ${widget.title}. Нажмите для открытия'
         : 'Интерактивная карточка. Нажмите для открытия';
-    
+
     return Semantics(
       label: label,
       button: true,
       child: Focus(
         focusNode: _focusNode,
-        child: Container(
-          decoration: _hasFocus
-              ? BoxDecoration(
-                  border: Border.all(
-                    color: context.colors.primary.withValues(alpha: 0.6),
-                    width: DesignTokens.borders.medium,
-                  ),
-                  borderRadius: BorderRadius.circular(widget.borderRadius),
-                )
-              : null,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: _hasFocus
+                  ? context.colors.primary.withValues(alpha: 0.6)
+                  : Colors.transparent,
+              width: _hasFocus ? DesignTokens.borders.medium : 0,
+            ),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+          ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(

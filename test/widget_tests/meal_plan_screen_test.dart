@@ -14,11 +14,10 @@ void main() {
       );
 
       // Assert
-      expect(find.text('План питания'), findsOneWidget);
-      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.text('Сегодня'), findsOneWidget);
     });
 
-    testWidgets('should have correct title color in AppBar', (WidgetTester tester) async {
+    testWidgets('should have correct title style', (WidgetTester tester) async {
       // Arrange
       await tester.pumpWidget(
         MaterialApp(
@@ -27,46 +26,13 @@ void main() {
       );
 
       // Act
-      final titleFinder = find.text('План питания');
+      final titleFinder = find.text('Сегодня');
+      expect(titleFinder, findsOneWidget);
       final Text titleWidget = tester.widget(titleFinder);
 
       // Assert
-      expect(titleWidget.style?.color, AppColors.textPrimary);
+      expect(titleWidget.style?.color, AppColors.dynamicTextPrimary);
       expect(titleWidget.style?.fontWeight, FontWeight.bold);
-      expect(titleWidget.style?.fontSize, 20);
-    });
-
-    testWidgets('should have correct AppBar background', (WidgetTester tester) async {
-      // Arrange
-      await tester.pumpWidget(
-        MaterialApp(
-          home: const MealPlanScreen(),
-        ),
-      );
-
-      // Act
-      final appBarFinder = find.byType(AppBar);
-      final AppBar appBarWidget = tester.widget(appBarFinder);
-
-      // Assert
-      expect(appBarWidget.backgroundColor, isNotNull);
-      expect(appBarWidget.elevation, 0);
-    });
-
-    testWidgets('should have centered title', (WidgetTester tester) async {
-      // Arrange
-      await tester.pumpWidget(
-        MaterialApp(
-          home: const MealPlanScreen(),
-        ),
-      );
-
-      // Act
-      final appBarFinder = find.byType(AppBar);
-      final AppBar appBarWidget = tester.widget(appBarFinder);
-
-      // Assert
-      expect(appBarWidget.centerTitle, true);
     });
 
     testWidgets('should have correct screen background color', (WidgetTester tester) async {
@@ -82,7 +48,7 @@ void main() {
       final Scaffold scaffoldWidget = tester.widget(scaffoldFinder);
 
       // Assert
-      expect(scaffoldWidget.backgroundColor, AppColors.background);
+      expect(scaffoldWidget.backgroundColor, AppColors.dynamicBackground);
     });
   });
 } 

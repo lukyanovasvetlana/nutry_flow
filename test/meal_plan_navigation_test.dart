@@ -16,12 +16,12 @@ void main() {
       ));
 
       // Act - tap on the meal plan card
-      await tester.tap(find.byType(GestureDetector));
+      await tester.tap(find.byType(MealPlanCard));
       await tester.pumpAndSettle();
 
       // Assert - verify that navigation was successful
       expect(find.byType(MealPlanScreen), findsOneWidget);
-      expect(find.text('План питания'), findsOneWidget);
+      expect(find.text('Сегодня'), findsOneWidget);
     });
 
     testWidgets('MealPlanCard should display correct content', (WidgetTester tester) async {
@@ -47,8 +47,7 @@ void main() {
       ));
 
       // Assert
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-      expect(find.text('План питания'), findsOneWidget);
+      expect(find.text('Сегодня'), findsOneWidget);
     });
   });
 } 

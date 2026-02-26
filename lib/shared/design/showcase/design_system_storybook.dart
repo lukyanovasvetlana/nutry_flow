@@ -76,7 +76,7 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
       'Токены',
     ];
 
-    return Container(
+    return ColoredBox(
       color: context.colors.surface,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -88,11 +88,11 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
               onTap: () => setState(() => _selectedTab = index),
               child: Container(
                 margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? context.colors.primary
-                      : Colors.transparent,
+                  color:
+                      isSelected ? context.colors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -101,9 +101,8 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
                     color: isSelected
                         ? context.colors.onPrimary
                         : context.colors.onSurface,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
               ),
@@ -271,29 +270,44 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionTitle('Display'),
-          _buildTypographyExample('Display Large', context.typography.displayLargeStyle),
-          _buildTypographyExample('Display Medium', context.typography.displayMediumStyle),
-          _buildTypographyExample('Display Small', context.typography.displaySmallStyle),
+          _buildTypographyExample(
+              'Display Large', context.typography.displayLargeStyle),
+          _buildTypographyExample(
+              'Display Medium', context.typography.displayMediumStyle),
+          _buildTypographyExample(
+              'Display Small', context.typography.displaySmallStyle),
           SizedBox(height: context.spacing.xl),
           _buildSectionTitle('Headline'),
-          _buildTypographyExample('Headline Large', context.typography.headlineLargeStyle),
-          _buildTypographyExample('Headline Medium', context.typography.headlineMediumStyle),
-          _buildTypographyExample('Headline Small', context.typography.headlineSmallStyle),
+          _buildTypographyExample(
+              'Headline Large', context.typography.headlineLargeStyle),
+          _buildTypographyExample(
+              'Headline Medium', context.typography.headlineMediumStyle),
+          _buildTypographyExample(
+              'Headline Small', context.typography.headlineSmallStyle),
           SizedBox(height: context.spacing.xl),
           _buildSectionTitle('Title'),
-          _buildTypographyExample('Title Large', context.typography.titleLargeStyle),
-          _buildTypographyExample('Title Medium', context.typography.titleMediumStyle),
-          _buildTypographyExample('Title Small', context.typography.titleSmallStyle),
+          _buildTypographyExample(
+              'Title Large', context.typography.titleLargeStyle),
+          _buildTypographyExample(
+              'Title Medium', context.typography.titleMediumStyle),
+          _buildTypographyExample(
+              'Title Small', context.typography.titleSmallStyle),
           SizedBox(height: context.spacing.xl),
           _buildSectionTitle('Body'),
-          _buildTypographyExample('Body Large', context.typography.bodyLargeStyle),
-          _buildTypographyExample('Body Medium', context.typography.bodyMediumStyle),
-          _buildTypographyExample('Body Small', context.typography.bodySmallStyle),
+          _buildTypographyExample(
+              'Body Large', context.typography.bodyLargeStyle),
+          _buildTypographyExample(
+              'Body Medium', context.typography.bodyMediumStyle),
+          _buildTypographyExample(
+              'Body Small', context.typography.bodySmallStyle),
           SizedBox(height: context.spacing.xl),
           _buildSectionTitle('Label'),
-          _buildTypographyExample('Label Large', context.typography.labelLargeStyle),
-          _buildTypographyExample('Label Medium', context.typography.labelMediumStyle),
-          _buildTypographyExample('Label Small', context.typography.labelSmallStyle),
+          _buildTypographyExample(
+              'Label Large', context.typography.labelLargeStyle),
+          _buildTypographyExample(
+              'Label Medium', context.typography.labelMediumStyle),
+          _buildTypographyExample(
+              'Label Small', context.typography.labelSmallStyle),
         ],
       ),
     );
@@ -627,7 +641,8 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
           SizedBox(height: context.spacing.md),
           ErrorStateWidget(
             title: 'Ошибка загрузки',
-            message: 'Не удалось загрузить данные. Проверьте подключение к интернету.',
+            message:
+                'Не удалось загрузить данные. Проверьте подключение к интернету.',
             onRetry: () {},
           ),
           SizedBox(height: context.spacing.xl),
@@ -756,9 +771,11 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
           _buildSectionTitle('Animations'),
           SizedBox(height: context.spacing.md),
           _buildTokenRow('fast', '${context.animations.fast.inMilliseconds}ms'),
-          _buildTokenRow('normal', '${context.animations.normal.inMilliseconds}ms'),
+          _buildTokenRow(
+              'normal', '${context.animations.normal.inMilliseconds}ms'),
           _buildTokenRow('slow', '${context.animations.slow.inMilliseconds}ms'),
-          _buildTokenRow('slower', '${context.animations.slower.inMilliseconds}ms'),
+          _buildTokenRow(
+              'slower', '${context.animations.slower.inMilliseconds}ms'),
         ],
       ),
     );
@@ -845,8 +862,7 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
                 position: TooltipPosition.below,
                 child: Icon(Icons.info, size: 32),
               ),
-              Icon(Icons.help)
-                  .withTooltip('Подсказка через extension метод'),
+              Icon(Icons.help).withTooltip('Подсказка через extension метод'),
             ],
           ),
         ],
@@ -1077,4 +1093,3 @@ class _DesignSystemStorybookState extends State<DesignSystemStorybook> {
     );
   }
 }
-

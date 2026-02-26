@@ -79,6 +79,9 @@ class _AppContainerState extends State<AppContainer> {
     final currentTheme = themeManager.currentTheme;
 
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: _selectedIndex == 0
           ? AppBar(
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -125,8 +128,7 @@ class _AppContainerState extends State<AppContainer> {
         theme.bottomNavigationBarTheme.selectedItemColor ?? AppColors.primary;
     final unselectedColor =
         theme.bottomNavigationBarTheme.unselectedItemColor ?? Colors.grey;
-    final backgroundColor = theme.bottomNavigationBarTheme.backgroundColor ??
-        theme.scaffoldBackgroundColor;
+    final backgroundColor = Colors.transparent;
 
     // Создаем список иконок без центральной (индекс 2)
     final List<IconData> navIcons = [
@@ -180,6 +182,12 @@ class _AppContainerState extends State<AppContainer> {
           leftCornerRadius: 32,
           rightCornerRadius: 32,
           backgroundColor: backgroundColor,
+          elevation: 0,
+          shadow: const Shadow(color: Colors.transparent, blurRadius: 0),
+          borderColor: Colors.transparent,
+          borderWidth: 0,
+          safeAreaValues: const SafeAreaValues(bottom: true),
+          height: kBottomNavigationBarHeight,
           onTap: (index) {
             // Маппинг индексов обратно: 0->0, 1->1, 2->3, 3->4
             final actualIndex = index == 0

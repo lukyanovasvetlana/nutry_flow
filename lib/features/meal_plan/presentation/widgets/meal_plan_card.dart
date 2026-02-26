@@ -23,7 +23,7 @@ class MealPlanCard extends StatelessWidget {
           // TODO: Navigate to article details using articleId.
         },
         borderRadius: BorderRadius.circular(16),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             color: AppColors.dynamicCard,
             borderRadius: BorderRadius.circular(16),
@@ -49,6 +49,10 @@ class MealPlanCard extends StatelessWidget {
                   height: 100,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const SizedBox(
+                    height: 100,
+                    width: double.infinity,
+                  ),
                 ),
               ),
               Padding(
@@ -71,4 +75,3 @@ class MealPlanCard extends StatelessWidget {
     );
   }
 }
-

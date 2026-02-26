@@ -232,4 +232,3 @@ enum NutryProgressType {
   linear,
   circular,
 }
-

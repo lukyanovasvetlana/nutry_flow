@@ -344,5 +344,3 @@ class _TypographyHelper {
   final FontWeight medium = DesignTokens.typography.medium;
   final FontWeight semiBold = DesignTokens.typography.semiBold;
 }
-
-

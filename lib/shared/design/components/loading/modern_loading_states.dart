@@ -136,8 +136,8 @@ class _ListItemSkeletonState extends State<ListItemSkeleton>
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
-        .animate(_shimmerController);
+    _shimmerAnimation =
+        Tween<double>(begin: -1.0, end: 1.0).animate(_shimmerController);
   }
 
   @override
@@ -226,8 +226,8 @@ class _ProfileSkeletonState extends State<ProfileSkeleton>
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
-        .animate(_shimmerController);
+    _shimmerAnimation =
+        Tween<double>(begin: -1.0, end: 1.0).animate(_shimmerController);
   }
 
   @override
@@ -252,18 +252,20 @@ class _ProfileSkeletonState extends State<ProfileSkeleton>
           _buildShimmerBox(180, 16),
           SizedBox(height: DesignTokens.spacing.xl),
           // Поля формы
-          ...List.generate(5, (index) => Padding(
-                padding: EdgeInsets.only(bottom: DesignTokens.spacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildShimmerBox(100, 12),
-                    SizedBox(height: DesignTokens.spacing.xs),
-                    _buildShimmerBox(double.infinity, 48,
-                        borderRadius: DesignTokens.borders.md),
-                  ],
-                ),
-              )),
+          ...List.generate(
+              5,
+              (index) => Padding(
+                    padding: EdgeInsets.only(bottom: DesignTokens.spacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildShimmerBox(100, 12),
+                        SizedBox(height: DesignTokens.spacing.xs),
+                        _buildShimmerBox(double.infinity, 48,
+                            borderRadius: DesignTokens.borders.md),
+                      ],
+                    ),
+                  )),
         ],
       ),
     );
@@ -317,8 +319,8 @@ class _ExerciseCardSkeletonState extends State<ExerciseCardSkeleton>
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
-        .animate(_shimmerController);
+    _shimmerAnimation =
+        Tween<double>(begin: -1.0, end: 1.0).animate(_shimmerController);
   }
 
   @override
@@ -423,8 +425,8 @@ class _TableSkeletonState extends State<TableSkeleton>
       duration: DesignTokens.animations.slower,
       vsync: this,
     )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -1.0, end: 1.0)
-        .animate(_shimmerController);
+    _shimmerAnimation =
+        Tween<double>(begin: -1.0, end: 1.0).animate(_shimmerController);
   }
 
   @override

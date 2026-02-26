@@ -74,7 +74,7 @@ class _NutryTabsState extends State<NutryTabs>
 
     return Column(
       children: [
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
             color: colors.surfaceVariant,
             borderRadius: BorderRadius.circular(borders.md),
@@ -88,9 +88,8 @@ class _NutryTabsState extends State<NutryTabs>
                   )
                 : null,
             indicatorSize: TabBarIndicatorSize.tab,
-            labelColor: widget.showIndicator
-                ? colors.onPrimary
-                : colors.primary,
+            labelColor:
+                widget.showIndicator ? colors.onPrimary : colors.primary,
             unselectedLabelColor: colors.onSurfaceVariant,
             labelStyle: _getLabelStyle(typography),
             unselectedLabelStyle: _getLabelStyle(typography),
@@ -126,9 +125,8 @@ class _NutryTabsState extends State<NutryTabs>
                         child: Text(
                           tab.badge!,
                           style: typography.labelSmallStyle.copyWith(
-                            color: isSelected
-                                ? colors.onPrimary
-                                : colors.onError,
+                            color:
+                                isSelected ? colors.onPrimary : colors.onError,
                             fontSize: 10,
                           ),
                         ),
@@ -207,4 +205,3 @@ enum NutryTabSize {
   medium,
   large,
 }
-

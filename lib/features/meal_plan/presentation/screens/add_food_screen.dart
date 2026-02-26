@@ -27,14 +27,24 @@ class AddFoodScreen extends StatefulWidget {
 
 class _AddFoodScreenState extends State<AddFoodScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final GlobalKey _mealTypeKey = GlobalKey();
   String _searchQuery = '';
   int _selectedNavIndex = 0; // По умолчанию выбран AI
   String? _selectedFoodItem; // Выбранный элемент для подсветки
+  late String _selectedMealType;
+
+  static const List<Map<String, String>> _mealTypes = [
+    {'value': 'Завтрак', 'label': 'Завтрак'},
+    {'value': 'Обед', 'label': 'Обед'},
+    {'value': 'Ужин', 'label': 'Ужин'},
+    {'value': 'Перекус/Другое', 'label': 'Перекус'},
+  ];
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    _selectedMealType = widget.mealType;
   }
 
   @override
@@ -89,27 +99,38 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.dynamicBackground,
         elevation: 0,
+        centerTitle: false,
         leading: const SizedBox.shrink(),
         leadingWidth: 0,
+        titleSpacing: DesignTokens.spacing.lg,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  widget.mealType,
-                  style: DesignTokens.typography.titleLargeStyle.copyWith(
-                    color: AppColors.dynamicTextPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+            InkWell(
+              key: _mealTypeKey,
+              onTap: _showMealTypeMenu,
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _getMealTypeLabel(_selectedMealType),
+                      style: DesignTokens.typography.titleLargeStyle.copyWith(
+                        color: AppColors.dynamicTextPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: DesignTokens.spacing.xs),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: AppColors.dynamicTextSecondary,
+                      size: DesignTokens.spacing.iconSmall,
+                    ),
+                  ],
                 ),
-                SizedBox(width: DesignTokens.spacing.xs),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  color: AppColors.dynamicTextSecondary,
-                  size: DesignTokens.spacing.iconSmall,
-                ),
-              ],
+              ),
             ),
             Text(
               _getDateString(),
@@ -310,7 +331,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
           MaterialPageRoute(
             builder: (context) => FoodDetailsScreen(
               foodName: name,
-              mealType: widget.mealType,
+              mealType: _selectedMealType,
             ),
           ),
         );
@@ -375,6 +396,67 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
         ),
       ),
     );
+  }
+
+  String _getMealTypeLabel(String value) {
+    final match = _mealTypes.firstWhere(
+      (type) => type['value'] == value,
+      orElse: () => const {'value': '', 'label': ''},
+    );
+    return match['label'] ?? value;
+  }
+
+  Future<void> _showMealTypeMenu() async {
+    final renderBox =
+        _mealTypeKey.currentContext?.findRenderObject() as RenderBox?;
+    final overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox?;
+    if (renderBox == null || overlay == null) return;
+
+    final position = renderBox.localToGlobal(Offset.zero, ancestor: overlay);
+    final rect = position & Size(renderBox.size.width, renderBox.size.height);
+
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromRect(rect, Offset.zero & overlay.size),
+      color: AppColors.dynamicCard,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(DesignTokens.borders.lg),
+      ),
+      items: _mealTypes
+          .map(
+            (type) => PopupMenuItem<String>(
+              value: type['value'],
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      type['label'] ?? '',
+                      style: DesignTokens.typography.bodyLargeStyle.copyWith(
+                        color: AppColors.dynamicTextPrimary,
+                        fontWeight: _selectedMealType == type['value']
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  if (_selectedMealType == type['value'])
+                    Icon(
+                      Icons.check,
+                      color: AppColors.dynamicPrimary,
+                    ),
+                ],
+              ),
+            ),
+          )
+          .toList(),
+    );
+
+    if (selected != null && selected != _selectedMealType && mounted) {
+      setState(() {
+        _selectedMealType = selected;
+      });
+    }
   }
 
   Widget _buildBottomNavigation() {

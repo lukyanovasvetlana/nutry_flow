@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nutry_flow/core/notifiers/nutrition_metrics_notifier.dart';
 import 'package:nutry_flow/shared/design/tokens/design_tokens.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../widgets/meal_plan_card.dart';
@@ -18,12 +21,18 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
   int _selectedDayIndex = 0; // Индекс выбранного дня (0 = сегодня)
 
   // Хранилище записей о еде по типам приемов пищи
-  final Map<String, List<Map<String, dynamic>>> _mealEntries = {
+  Map<String, List<Map<String, dynamic>>> _mealEntries = {
     'Завтрак': [],
     'Обед': [],
     'Ужин': [],
     'Перекус/Другое': [],
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMealEntriesForDate(_getSelectedDate());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +49,28 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   horizontal: DesignTokens.spacing.lg,
                   vertical: DesignTokens.spacing.md,
                 ),
-                child: Text(
-                  _getDateTitle(),
-                  style: DesignTokens.typography.titleLargeStyle.copyWith(
-                    color: AppColors.dynamicTextPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getDateTitle(),
+                      style: DesignTokens.typography.titleLargeStyle.copyWith(
+                        color: AppColors.dynamicTextPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (_selectedDayIndex == 0)
+                      Padding(
+                        padding: EdgeInsets.only(top: DesignTokens.spacing.xs),
+                        child: Text(
+                          _getDateSubtitle(),
+                          style:
+                              DesignTokens.typography.bodySmallStyle.copyWith(
+                            color: AppColors.dynamicTextSecondary,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               // Карточки дней недели
@@ -72,6 +97,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         setState(() {
                           _mealEntries['Завтрак']!.removeAt(index);
                         });
+                        _saveMealEntriesForDate(_getSelectedDate());
                       },
                     ),
                     SizedBox(height: DesignTokens.spacing.md),
@@ -85,6 +111,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         setState(() {
                           _mealEntries['Обед']!.removeAt(index);
                         });
+                        _saveMealEntriesForDate(_getSelectedDate());
                       },
                     ),
                     SizedBox(height: DesignTokens.spacing.md),
@@ -98,6 +125,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         setState(() {
                           _mealEntries['Ужин']!.removeAt(index);
                         });
+                        _saveMealEntriesForDate(_getSelectedDate());
                       },
                     ),
                     SizedBox(height: DesignTokens.spacing.md),
@@ -111,6 +139,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         setState(() {
                           _mealEntries['Перекус/Другое']!.removeAt(index);
                         });
+                        _saveMealEntriesForDate(_getSelectedDate());
                       },
                     ),
                   ],
@@ -172,9 +201,94 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
     return '${selectedDate.day} ${months[selectedDate.month - 1]}';
   }
 
-  void _openAddFoodScreen(String mealType) {
+  String _getDateSubtitle() {
     final now = DateTime.now();
-    final selectedDate = now.add(Duration(days: _selectedDayIndex));
+    final months = [
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря',
+    ];
+
+    return '${now.day} ${months[now.month - 1]}';
+  }
+
+  DateTime _getSelectedDate() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day)
+        .add(Duration(days: _selectedDayIndex));
+  }
+
+  String _getMealEntriesKey(DateTime date) {
+    final dateKey = date.toIso8601String().split('T')[0];
+    return 'meal_entries_$dateKey';
+  }
+
+  Map<String, List<Map<String, dynamic>>> _createEmptyMealEntries() {
+    return {
+      'Завтрак': [],
+      'Обед': [],
+      'Ужин': [],
+      'Перекус/Другое': [],
+    };
+  }
+
+  Future<void> _loadMealEntriesForDate(DateTime date) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = _getMealEntriesKey(date);
+    final jsonString = prefs.getString(key);
+
+    if (!mounted) return;
+
+    if (jsonString == null || jsonString.isEmpty) {
+      setState(() {
+        _mealEntries = _createEmptyMealEntries();
+      });
+      return;
+    }
+
+    try {
+      final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
+      final loaded = _createEmptyMealEntries();
+
+      for (final entry in decoded.entries) {
+        final value = entry.value;
+        if (value is List) {
+          loaded[entry.key] = value
+              .whereType<Map<String, dynamic>>()
+              .map(Map<String, dynamic>.from)
+              .toList();
+        }
+      }
+
+      setState(() {
+        _mealEntries = loaded;
+      });
+    } catch (_) {
+      setState(() {
+        _mealEntries = _createEmptyMealEntries();
+      });
+    }
+  }
+
+  Future<void> _saveMealEntriesForDate(DateTime date) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = _getMealEntriesKey(date);
+    final jsonString = jsonEncode(_mealEntries);
+    await prefs.setString(key, jsonString);
+    notifyNutritionMetricsUpdated();
+  }
+
+  void _openAddFoodScreen(String mealType) {
+    final selectedDate = _getSelectedDate();
 
     Navigator.of(context)
         .push(
@@ -194,6 +308,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             _mealEntries[savedMealType]!.add(result);
           }
         });
+        _saveMealEntriesForDate(selectedDate);
       }
     });
   }
@@ -243,6 +358,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   setState(() {
                     _selectedDayIndex = index;
                   });
+                  _loadMealEntriesForDate(_getSelectedDate());
                 },
                 child: Container(
                   width: 60,

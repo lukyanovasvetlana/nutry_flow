@@ -173,7 +173,8 @@ class _LightThemeTokens extends BaseThemeTokens {
   Color get onTertiaryContainer => const Color(0xFF2D3748);
 
   @override
-  Color get error => const Color(0xFFD32F2F); // Улучшенный контраст (было #E53935)
+  Color get error =>
+      const Color(0xFFD32F2F); // Улучшенный контраст (было #E53935)
 
   @override
   Color get onError => const Color(0xFFFFFFFF);

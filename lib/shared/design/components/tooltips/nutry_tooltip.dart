@@ -104,4 +104,3 @@ extension NutryTooltipExtension on Widget {
     );
   }
 }
-

@@ -87,16 +87,19 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
     context.read<NutritionSearchCubit>().searchByBarcode(barcode);
   }
 
-  void _onFoodItemSelected(FoodItem foodItem) {
+  Future<void> _onFoodItemSelected(FoodItem foodItem) async {
     if (widget.onFoodItemSelected != null) {
       widget.onFoodItemSelected!(foodItem);
     } else {
       // Navigate to food entry screen
-      Navigator.pushNamed(
+      final result = await Navigator.pushNamed(
         context,
         '/nutrition/add-entry',
         arguments: foodItem,
       );
+      if (result == true && mounted) {
+        Navigator.pop(context, true);
+      }
     }
   }
 

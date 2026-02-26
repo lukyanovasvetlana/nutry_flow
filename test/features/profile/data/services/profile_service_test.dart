@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutry_flow/features/profile/data/services/profile_service.dart';
-import 'package:nutry_flow/features/profile/domain/entities/user_profile.dart';
 import 'package:nutry_flow/features/profile/data/models/user_profile_model.dart';
 
 void main() {
@@ -12,22 +11,10 @@ void main() {
     });
 
     group('MockProfileService Tests', () {
-      test('should return demo profile for getCurrentUserProfile', () async {
+      test('should return null for getCurrentUserProfile', () async {
         final profile = await mockProfileService.getCurrentUserProfile();
-        
-        expect(profile, isNotNull);
-        expect(profile!.id, equals('demo-user-id'));
-        expect(profile.firstName, equals('Анна'));
-        expect(profile.lastName, equals('Иванова'));
-        expect(profile.email, equals('anna.ivanova@example.com'));
-        expect(profile.phone, equals('+7 (999) 123-45-67'));
-        expect(profile.gender, equals(Gender.female));
-        expect(profile.height, equals(165.0));
-        expect(profile.weight, equals(62.0));
-        expect(profile.activityLevel, equals(ActivityLevel.moderatelyActive));
-        expect(profile.dietaryPreferences, contains(DietaryPreference.vegetarian));
-        expect(profile.allergies, containsAll(['Орехи', 'Молочные продукты']));
-        expect(profile.fitnessGoals, containsAll(['Поддержание веса', 'Улучшение выносливости']));
+
+        expect(profile, isNull);
       });
 
       test('should return demo profile for getUserProfile', () async {

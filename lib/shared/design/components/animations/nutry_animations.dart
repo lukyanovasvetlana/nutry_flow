@@ -152,7 +152,8 @@ class NutryAnimations {
             boxShadow: isPulsing
                 ? [
                     BoxShadow(
-                      color: effectiveContext.colors.primary.withValues(alpha: 0.3),
+                      color: effectiveContext.colors.primary
+                          .withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -202,10 +203,8 @@ class NutryAnimations {
             onTap: onTap,
             borderRadius:
                 borderRadius ?? BorderRadius.circular(DesignTokens.borders.md),
-            splashColor:
-                rippleColor ?? primaryColor.withValues(alpha: 0.2),
-            highlightColor:
-                rippleColor ?? primaryColor.withValues(alpha: 0.1),
+            splashColor: rippleColor ?? primaryColor.withValues(alpha: 0.2),
+            highlightColor: rippleColor ?? primaryColor.withValues(alpha: 0.1),
             child: child,
           ),
         );
@@ -426,14 +425,15 @@ class NutryAnimations {
     Alignment alignment = Alignment.center,
   }) {
     return _SpringAnimationWidget(
-      child: child,
       isActive: isActive,
-      spring: spring ?? const SpringDescription(
-        mass: 0.5,
-        stiffness: 200,
-        damping: 20,
-      ),
+      spring: spring ??
+          const SpringDescription(
+            mass: 0.5,
+            stiffness: 200,
+            damping: 20,
+          ),
       alignment: alignment,
+      child: child,
     );
   }
 

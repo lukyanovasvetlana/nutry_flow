@@ -206,8 +206,8 @@ class _NutryButtonState extends State<NutryButton>
   @override
   Widget build(BuildContext context) {
     final spacing = DesignTokens.spacing;
-    final semanticLabel = widget.text.isNotEmpty 
-        ? widget.text 
+    final semanticLabel = widget.text.isNotEmpty
+        ? widget.text
         : (widget.isLoading ? 'Загрузка' : 'Кнопка');
 
     return AnimatedBuilder(
@@ -226,10 +226,12 @@ class _NutryButtonState extends State<NutryButton>
             child: KeyboardListener(
               focusNode: _focusNode,
               onKeyEvent: (event) {
-                if (event is KeyDownEvent && 
-                    (event.logicalKey.keyLabel == 'Enter' || 
-                     event.logicalKey.keyLabel == ' ')) {
-                  if (widget.isEnabled && !widget.isLoading && widget.onPressed != null) {
+                if (event is KeyDownEvent &&
+                    (event.logicalKey.keyLabel == 'Enter' ||
+                        event.logicalKey.keyLabel == ' ')) {
+                  if (widget.isEnabled &&
+                      !widget.isLoading &&
+                      widget.onPressed != null) {
                     widget.onPressed!();
                   }
                 }
@@ -238,8 +240,11 @@ class _NutryButtonState extends State<NutryButton>
                 onTapDown: _onTapDown,
                 onTapUp: _onTapUp,
                 onTapCancel: _onTapCancel,
-                onTap: widget.isEnabled && !widget.isLoading ? widget.onPressed : null,
-                borderRadius: BorderRadius.circular(DesignTokens.borders.buttonRadius),
+                onTap: widget.isEnabled && !widget.isLoading
+                    ? widget.onPressed
+                    : null,
+                borderRadius:
+                    BorderRadius.circular(DesignTokens.borders.buttonRadius),
                 child: Transform.scale(
                   scale: _scaleAnimation.value,
                   child: AnimatedContainer(
@@ -407,18 +412,19 @@ class _NutryButtonState extends State<NutryButton>
 
     // Добавляем индикатор фокуса
     final focusBorderWidth = _hasFocus ? borders.medium.toDouble() : 0.0;
-    final focusBorderColor = _hasFocus 
-        ? colors.primary.withValues(alpha: 0.6)
-        : Colors.transparent;
+    final focusBorderColor =
+        _hasFocus ? colors.primary.withValues(alpha: 0.6) : Colors.transparent;
 
     return BoxDecoration(
       color: gradient == null ? backgroundColor : null,
       gradient: gradient,
       border: Border.all(
         color: _hasFocus ? focusBorderColor : borderColor,
-        width: _hasFocus 
-            ? focusBorderWidth 
-            : (widget.type == NutryButtonType.outline ? borders.medium.toDouble() : 0.0),
+        width: _hasFocus
+            ? focusBorderWidth
+            : (widget.type == NutryButtonType.outline
+                ? borders.medium.toDouble()
+                : 0.0),
       ),
       borderRadius: BorderRadius.circular(borders.buttonRadius),
       boxShadow: boxShadow,

@@ -10,6 +10,19 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
 
   late FirebaseAnalytics _analytics;
 
+  Map<String, Object>? _toAnalyticsParams(Map<String, dynamic>? parameters) {
+    if (parameters == null) {
+      return null;
+    }
+    final sanitized = <String, Object>{};
+    parameters.forEach((key, value) {
+      if (value != null) {
+        sanitized[key] = value;
+      }
+    });
+    return sanitized.isEmpty ? null : sanitized;
+  }
+
   /// Инициализация Firebase Analytics
   @override
   Future<void> initialize() async {
@@ -28,7 +41,7 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
   }) async {
     await _analytics.logEvent(
       name: name,
-      parameters: parameters,
+      parameters: _toAnalyticsParams(parameters),
     );
   }
 
@@ -191,7 +204,7 @@ class FirebaseAnalyticsImpl implements FirebaseAnalyticsInterface {
   }) async {
     await _analytics.logEvent(
       name: name,
-      parameters: parameters,
+      parameters: _toAnalyticsParams(parameters),
     );
   }
 

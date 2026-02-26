@@ -854,6 +854,7 @@ class _SubscriptionAuthSheetState extends State<_SubscriptionAuthSheet> {
   bool _isButtonEnabled = false;
   bool _isPasswordVisible = false;
   String _email = 'user@example.com';
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -875,6 +876,36 @@ class _SubscriptionAuthSheetState extends State<_SubscriptionAuthSheet> {
     setState(() {
       _email = profileEmail;
       _emailController.text = profileEmail;
+    });
+  }
+
+  Future<void> _handleConfirm() async {
+    if (_isSubmitting) return;
+    final password = _passwordController.text.trim();
+    if (password.isEmpty) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    AuthSessionStore.update(
+      email: _emailController.text.trim(),
+      password: password,
+    );
+
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    Navigator.of(context).pop();
+    messenger.showSnackBar(
+      SnackBar(
+        content: const Text('Подписка подтверждена. Спасибо!'),
+        backgroundColor: AppColors.dynamicSuccess,
+      ),
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _isSubmitting = false;
     });
   }
 
@@ -1025,7 +1056,8 @@ class _SubscriptionAuthSheetState extends State<_SubscriptionAuthSheet> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isButtonEnabled ? () {} : null,
+                onPressed:
+                    _isButtonEnabled && !_isSubmitting ? _handleConfirm : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.button,
                   foregroundColor: Colors.white,
@@ -1038,13 +1070,23 @@ class _SubscriptionAuthSheetState extends State<_SubscriptionAuthSheet> {
                   disabledForegroundColor:
                       AppColors.dynamicTextSecondary.withValues(alpha: 0.7),
                 ),
-                child: const Text(
-                  'Подтвердить',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: _isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text(
+                        'Подтвердить',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ),
             SizedBox(height: DesignTokens.spacing.md),
