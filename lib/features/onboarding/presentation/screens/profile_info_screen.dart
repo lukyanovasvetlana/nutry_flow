@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nutry_flow/shared/design/components/buttons/nutry_save_button.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class ProfileInfoScreen extends StatefulWidget {
@@ -396,25 +397,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   }
 
   Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: _saveProfile,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.button,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          elevation: 2,
-          shadowColor: AppColors.green.withValues(alpha: 0.4),
-        ),
-        child: const Text(
-          'Сохранить',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
+    return NutrySaveButton(
+      onPressed: _saveProfile,
     );
   }
 

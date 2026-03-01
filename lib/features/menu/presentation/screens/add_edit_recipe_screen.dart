@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutry_flow/shared/design/components/buttons/nutry_save_button.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import '../../data/models/ingredient.dart';
 import '../../data/models/recipe_step.dart';
@@ -378,15 +379,9 @@ class _AddEditRecipeScreenState extends State<AddEditRecipeScreen> {
                         'Калории: ${_nutritionFacts!.calories} ккал, Белки: ${_nutritionFacts!.protein} г, Жиры: ${_nutritionFacts!.fat} г, Углеводы: ${_nutritionFacts!.carbs} г'),
                 const SizedBox(height: 32),
                 // Кнопка сохранить
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _saveRecipe,
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Сохранить'),
-                  ),
+                NutrySaveButton(
+                  onPressed: _saveRecipe,
+                  isLoading: _isLoading,
                 ),
               ],
             ),

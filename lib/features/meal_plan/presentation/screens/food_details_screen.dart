@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutry_flow/shared/design/components/buttons/nutry_save_button.dart';
 import 'package:nutry_flow/shared/design/tokens/design_tokens.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'nutrition_edit_screen.dart';
@@ -107,7 +108,7 @@ class _FoodDetailsScreenState extends State<FoodDetailsScreen> {
           Positioned.fill(
             child: Image.asset(
               'assets/images/food_background.png',
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Positioned.fill(
@@ -236,42 +237,21 @@ class _FoodDetailsScreenState extends State<FoodDetailsScreen> {
   }
 
   Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pop({
-            'mealType': widget.mealType,
-            'foodName': widget.foodName,
-            'quantity': _portion,
-            'unit': _unitController.text.trim().isEmpty
-                ? 'г'
-                : _unitController.text.trim(),
-            'calories': _scaledValue(_nutritionPer100['calories'] ?? 0),
-            'fat': _scaledValue(_nutritionPer100['fat'] ?? 0),
-            'carbs': _scaledValue(_nutritionPer100['carbs'] ?? 0),
-            'protein': _scaledValue(_nutritionPer100['protein'] ?? 0),
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.dynamicPrimary,
-          foregroundColor: Colors.white,
-          minimumSize:
-              Size(double.infinity, DesignTokens.spacing.buttonHeightLarge),
-          padding: EdgeInsets.symmetric(vertical: DesignTokens.spacing.sm),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.borders.full),
-          ),
-          elevation: 0,
-        ),
-        child: Text(
-          'Сохранить',
-          style: DesignTokens.typography.bodyLargeStyle.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+    return NutrySaveButton(
+      onPressed: () {
+        Navigator.of(context).pop({
+          'mealType': widget.mealType,
+          'foodName': widget.foodName,
+          'quantity': _portion,
+          'unit': _unitController.text.trim().isEmpty
+              ? 'г'
+              : _unitController.text.trim(),
+          'calories': _scaledValue(_nutritionPer100['calories'] ?? 0),
+          'fat': _scaledValue(_nutritionPer100['fat'] ?? 0),
+          'carbs': _scaledValue(_nutritionPer100['carbs'] ?? 0),
+          'protein': _scaledValue(_nutritionPer100['protein'] ?? 0),
+        });
+      },
     );
   }
 
@@ -526,7 +506,11 @@ class _FoodDetailsScreenState extends State<FoodDetailsScreen> {
             color: AppColors.dynamicTextSecondary,
           ),
         ),
-        SizedBox(height: DesignTokens.spacing.xxxl),
+        SizedBox(
+          height: DesignTokens.spacing.xxxl +
+              DesignTokens.spacing.xxl +
+              DesignTokens.spacing.xs * 10,
+        ),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(

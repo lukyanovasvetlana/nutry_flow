@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutry_flow/features/notifications/presentation/bloc/notification_bloc.dart';
 import 'package:nutry_flow/features/notifications/domain/entities/notification_preferences.dart';
+import 'package:nutry_flow/shared/design/components/buttons/nutry_save_button.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 import 'package:nutry_flow/shared/theme/app_styles.dart';
 
@@ -251,23 +252,9 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _savePreferences,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: const Text(
-          'Сохранить настройки',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
+    return NutrySaveButton(
+      onPressed: _savePreferences,
+      text: 'Сохранить настройки',
     );
   }
 
