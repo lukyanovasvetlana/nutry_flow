@@ -499,6 +499,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       initialDateTime: initialDate,
       buttonSingleColor: AppColors.dynamicPrimary,
       backgroundColor: AppColors.dynamicCard,
+      // ignore: deprecated_member_use
       pickerTextStyle: TextStyle(
         color: AppColors.dynamicTextPrimary,
         fontSize: 14,

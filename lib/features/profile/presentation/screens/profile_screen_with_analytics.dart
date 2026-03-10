@@ -50,7 +50,9 @@ class _ProfileScreenWithAnalyticsState extends State<ProfileScreenWithAnalytics>
     try {
       // Аналитика инициализируется через миксин
       // Профиль будет установлен при первом отслеживании
-    } catch (e) {}
+    } catch (_) {
+      // Analytics init - ignore
+    }
   }
 
   /// Получение персоны пользователя

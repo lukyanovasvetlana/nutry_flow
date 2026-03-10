@@ -168,7 +168,9 @@ class AnalyticsTracker {
     try {
       final analyticsService = GetIt.instance.get<AnalyticsService>();
       await analyticsService.setUser(userId);
-    } catch (e) {}
+    } catch (_) {
+      // Analytics setUser failed - ignore
+    }
   }
 
   /// Сбрасывает пользователя
@@ -176,6 +178,8 @@ class AnalyticsTracker {
     try {
       final analyticsService = GetIt.instance.get<AnalyticsService>();
       await analyticsService.resetUser();
-    } catch (e) {}
+    } catch (_) {
+      // Analytics setUser failed - ignore
+    }
   }
 }

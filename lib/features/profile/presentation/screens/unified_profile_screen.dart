@@ -323,7 +323,7 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
   /// Заголовок профиля: фото слева, имя и фамилия справа, email и телефон ниже
   Widget _buildProfileHeader(UserProfile profile) {
     return NutryCard(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      margin: EdgeInsets.zero,
       padding: const EdgeInsets.all(12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,7 +591,7 @@ class _UnifiedProfileScreenState extends State<UnifiedProfileScreen> {
 
   Widget _buildSectionCard({required List<Widget> children}) {
     return NutryCard(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      margin: EdgeInsets.zero,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         children: children,

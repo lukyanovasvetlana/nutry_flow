@@ -942,6 +942,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
       _openCamera();
     } else if (status.isDenied) {
       // Показываем диалог с запросом разрешения
+      if (!mounted) return;
       final result = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(

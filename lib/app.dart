@@ -129,8 +129,7 @@ class _AppContainerState extends State<AppContainer> {
     final unselectedColor =
         theme.bottomNavigationBarTheme.unselectedItemColor ?? Colors.grey;
     final backgroundColor =
-        theme.bottomNavigationBarTheme.backgroundColor ??
-            AppColors.dynamicCard;
+        theme.bottomNavigationBarTheme.backgroundColor ?? AppColors.dynamicCard;
 
     // Создаем список иконок без центральной (индекс 2)
     final List<IconData> navIcons = [

@@ -479,9 +479,9 @@ class NutryAnimations {
       case NutryAnimationDirection.right:
         return const Offset(1, 0);
       case NutryAnimationDirection.inward:
-        return const Offset(0, 0);
+        return Offset.zero;
       case NutryAnimationDirection.out:
-        return const Offset(0, 0);
+        return Offset.zero;
     }
   }
 }

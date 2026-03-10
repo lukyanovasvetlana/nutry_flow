@@ -125,8 +125,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           return CupertinoActionSheet(
             actions: [
               CupertinoActionSheetAction(
-                onPressed: () =>
-                    Navigator.pop(context, ImageSource.gallery),
+                onPressed: () => Navigator.pop(context, ImageSource.gallery),
                 child: const Text('Галерея'),
               ),
               CupertinoActionSheetAction(
@@ -250,9 +249,10 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () {
+            final navigator = Navigator.of(context);
             Future.microtask(() {
               if (mounted) {
-                Navigator.pushReplacementNamed(context, '/registration');
+                navigator.pushReplacementNamed('/registration');
               }
             });
           },

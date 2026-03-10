@@ -325,12 +325,13 @@ class NutritionCacheService {
       for (final key in allKeys) {
         if (key.startsWith('food_item_')) {
           foodItemsCount++;
-        } else if (key.startsWith('food_entries_'))
+        } else if (key.startsWith('food_entries_')) {
           foodEntriesCount++;
-        else if (key.startsWith('nutrition_summary_'))
+        } else if (key.startsWith('nutrition_summary_')) {
           summariesCount++;
-        else if (key.startsWith('search_suggestions_'))
+        } else if (key.startsWith('search_suggestions_')) {
           searchSuggestionsCount++;
+        }
       }
 
       stats['cached_food_items'] = foodItemsCount;

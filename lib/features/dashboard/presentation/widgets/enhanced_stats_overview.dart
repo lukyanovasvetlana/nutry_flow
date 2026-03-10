@@ -175,7 +175,7 @@ class _EnhancedStatsOverviewState extends State<EnhancedStatsOverview>
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? DesignTokens.colors.onPrimary
-                                      .withOpacity(0.2)
+                                      .withValues(alpha: 0.2)
                                   : color.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(
                                   DesignTokens.borders.sm),

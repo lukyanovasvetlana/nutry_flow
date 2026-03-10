@@ -74,7 +74,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   };
 
   /// Загружает записи о питании из SharedPreferences и конвертирует в CalendarEvent
-  Future<List<CalendarEvent>> _loadMealEntriesAsEvents([DateTime? month]) async {
+  Future<List<CalendarEvent>> _loadMealEntriesAsEvents(
+      [DateTime? month]) async {
     final targetMonth = month ?? selectedMonth;
     final mealEvents = <CalendarEvent>[];
     final prefs = await SharedPreferences.getInstance();
@@ -91,18 +92,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
         var order = 0;
         for (final entry in decoded.entries) {
-          final mealType = entry.key as String;
+          final mealType = entry.key;
           final items = entry.value;
           if (items is! List) continue;
           final hour = _mealTypeHours[mealType] ?? 9;
           for (var i = 0; i < items.length; i++) {
             final item = items[i];
             if (item is! Map<String, dynamic>) continue;
-            final foodName = item['foodName'] as String? ?? item['name'] as String? ?? mealType;
+            final foodName = item['foodName'] as String? ??
+                item['name'] as String? ??
+                mealType;
             final calories = (item['calories'] as num?)?.toInt();
             final note = calories != null ? '$calories ккал' : null;
-            final dateTime = DateTime(date.year, date.month, date.day, hour, 0, 0)
-                .add(Duration(minutes: order * 15));
+            final dateTime =
+                DateTime(date.year, date.month, date.day, hour, 0, 0)
+                    .add(Duration(minutes: order * 15));
             order++;
             mealEvents.add(CalendarEvent(
               id: 'meal_${dateKey}_${mealType}_$i',
@@ -122,7 +126,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   /// Загружает записи о физической активности из SharedPreferences и конвертирует в CalendarEvent
-  Future<List<CalendarEvent>> _loadActivityEntriesAsEvents([DateTime? month]) async {
+  Future<List<CalendarEvent>> _loadActivityEntriesAsEvents(
+      [DateTime? month]) async {
     final targetMonth = month ?? selectedMonth;
     final activityEvents = <CalendarEvent>[];
     final prefs = await SharedPreferences.getInstance();
@@ -176,7 +181,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   static const _localCalendarKey = 'calendar_entries_local';
 
   /// Загружает локально сохранённые события (встречи) из SharedPreferences
-  Future<List<CalendarEvent>> _loadLocalCalendarEvents([DateTime? month]) async {
+  Future<List<CalendarEvent>> _loadLocalCalendarEvents(
+      [DateTime? month]) async {
     final targetMonth = month ?? selectedMonth;
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(_localCalendarKey);
@@ -263,7 +269,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     });
     try {
       await CalendarDependencies.instance.initialize();
-      final result = await CalendarDependencies.instance.getCalendarEventsUseCase
+      final result = await CalendarDependencies
+          .instance.getCalendarEventsUseCase
           .execute();
       if (!mounted) return;
       List<CalendarEvent> calendarEvents;
@@ -277,7 +284,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final localEvents = await _loadLocalCalendarEvents();
       if (!mounted) return;
       setState(() {
-        events = [...calendarEvents, ...mealEvents, ...activityEvents, ...localEvents];
+        events = [
+          ...calendarEvents,
+          ...mealEvents,
+          ...activityEvents,
+          ...localEvents
+        ];
         events.sort((a, b) => a.dateTime.compareTo(b.dateTime));
         isLoading = false;
         error = null;
@@ -289,7 +301,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final localEvents = await _loadLocalCalendarEvents();
       if (!mounted) return;
       setState(() {
-        events = [...CalendarService.getMockEvents(), ...mealEvents, ...activityEvents, ...localEvents];
+        events = [
+          ...CalendarService.getMockEvents(),
+          ...mealEvents,
+          ...activityEvents,
+          ...localEvents
+        ];
         events.sort((a, b) => a.dateTime.compareTo(b.dateTime));
         isLoading = false;
         error = null;
@@ -489,385 +506,425 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         return SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: EdgeInsets.symmetric(
-                            horizontal: _getResponsivePadding(constraints.maxWidth),
+                            horizontal:
+                                _getResponsivePadding(constraints.maxWidth),
                           ),
                           child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        const SizedBox(height: 12),
-                        // Карточки-статистика (по выбранному месяцу, tap = фильтр)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _StatCard(
-                                icon: Icons.restaurant_menu,
-                                label: 'Планирование питания',
-                                category: _categoryMealPlanning,
-                                count: events
-                                    .where((e) =>
-                                        e.category == _categoryMealPlanning &&
-                                        e.dateTime.year == selectedMonth.year &&
-                                        e.dateTime.month == selectedMonth.month)
-                                    .length,
-                                color: context.primary,
-                                isSelected: selectedCategories
-                                    .contains(_categoryMealPlanning),
-                                onTap: () =>
-                                    _onStatCardTap(_categoryMealPlanning),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _StatCard(
-                                icon: Icons.directions_run,
-                                label: 'Физическая активность',
-                                category: _categoryPhysicalActivities,
-                                count: events
-                                    .where((e) =>
-                                        e.category == _categoryPhysicalActivities &&
-                                        e.dateTime.year == selectedMonth.year &&
-                                        e.dateTime.month == selectedMonth.month)
-                                    .length,
-                                color: context.warning,
-                                isSelected: selectedCategories
-                                    .contains(_categoryPhysicalActivities),
-                                onTap: () =>
-                                    _onStatCardTap(_categoryPhysicalActivities),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _StatCard(
-                                icon: Icons.event,
-                                label: 'Встречи и события',
-                                category: _categoryAppointments,
-                                count: events
-                                    .where((e) =>
-                                        e.category == _categoryAppointments &&
-                                        e.dateTime.year == selectedMonth.year &&
-                                        e.dateTime.month == selectedMonth.month)
-                                    .length,
-                                color: context.tertiary,
-                                isSelected: selectedCategories
-                                    .contains(_categoryAppointments),
-                                onTap: () =>
-                                    _onStatCardTap(_categoryAppointments),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        // Фильтры и селектор месяца
-                        Row(
-                          children: [
-                            // Селектор месяца
-                            Flexible(
-                              flex: 2,
-                              child: PopupMenuButton<int>(
-                                onSelected: (month) {
-                                  _onMonthChanged(
-                                      DateTime(selectedMonth.year, month));
-                                },
-                                itemBuilder: (context) =>
-                                    List.generate(12, (index) {
-                                  final month = index + 1;
-                                  final isSelected =
-                                      month == selectedMonth.month;
-                                  return PopupMenuItem<int>(
-                                    value: month,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            _monthName(month),
-                                            style: TextStyle(
-                                              fontWeight: isSelected
-                                                  ? FontWeight.w600
-                                                  : FontWeight.normal,
-                                              color: isSelected
-                                                  ? context.primary
-                                                  : context.onSurface,
-                                            ),
-                                          ),
-                                        ),
-                                        if (isSelected)
-                                          Icon(Icons.check,
-                                              color: context.primary, size: 18),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: context.surface,
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: context.outline),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          _monthName(selectedMonth.month),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 13,
-                                            color: context.onSurface,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Icon(Icons.keyboard_arrow_down,
-                                          color: context.onSurfaceVariant,
-                                          size: 14),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            // Селектор года
-                            Flexible(
-                              flex: 1,
-                              child: PopupMenuButton<int>(
-                                onSelected: (year) {
-                                  _onMonthChanged(
-                                      DateTime(year, selectedMonth.month));
-                                },
-                                itemBuilder: (context) {
-                                  final currentYear = DateTime.now().year;
-                                  final years = List.generate(
-                                      5, (index) => currentYear - 1 + index);
-                                  return years.map((year) {
-                                    final isSelected =
-                                        year == selectedMonth.year;
-                                    return PopupMenuItem<int>(
-                                      value: year,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              year.toString(),
-                                              style: TextStyle(
-                                                fontWeight: isSelected
-                                                    ? FontWeight.w600
-                                                    : FontWeight.normal,
-                                                color: isSelected
-                                                    ? context.primary
-                                                    : context.onSurface,
-                                              ),
-                                            ),
-                                          ),
-                                          if (isSelected)
-                                            Icon(Icons.check,
-                                                color: context.primary,
-                                                size: 18),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList();
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: context.surface,
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: context.outline),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        selectedMonth.year.toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 13,
-                                          color: context.onSurface,
-                                        ),
-                                      ),
-                                      Icon(Icons.keyboard_arrow_down,
-                                          color: context.onSurfaceVariant,
-                                          size: 14),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            // Кнопка добавления события
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: context.primary,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: IconButton(
-                                icon: Icon(Icons.add,
-                                    color: context.onPrimary, size: 18),
-                                onPressed: _showAddEventSheet,
-                                padding: const EdgeInsets.all(6),
-                                constraints: const BoxConstraints(
-                                    minWidth: 28, minHeight: 28),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        // Чекбоксы-фильтры
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              _FilterChip(
-                                key: _filterChipKeys[_categoryMealPlanning],
-                                label: 'Планирование питания',
-                                color: context.primary,
-                                isSelected: selectedCategories
-                                    .contains(_categoryMealPlanning),
-                                onTap: () =>
-                                    _toggleCategory(_categoryMealPlanning),
-                              ),
-                              const SizedBox(width: 8),
-                              _FilterChip(
-                                key: _filterChipKeys[_categoryPhysicalActivities],
-                                label: 'Физическая активность',
-                                color: context.warning,
-                                isSelected: selectedCategories
-                                    .contains(_categoryPhysicalActivities),
-                                onTap: () =>
-                                    _toggleCategory(_categoryPhysicalActivities),
-                              ),
-                              const SizedBox(width: 8),
-                              _FilterChip(
-                                key: _filterChipKeys[_categoryAppointments],
-                                label: 'Встречи',
-                                color: context.tertiary,
-                                isSelected: selectedCategories
-                                    .contains(_categoryAppointments),
-                                onTap: () =>
-                                    _toggleCategory(_categoryAppointments),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        // Календарная сетка
-                        _CalendarGrid(
-                          selectedDay: selectedDay,
-                          selectedMonth: selectedMonth,
-                          onSelect: (day) => setState(() => selectedDay = day),
-                          eventsByDay: eventsByDay,
-                        ),
-                        const SizedBox(height: 24),
-                        // Schedule Details
-                        Text(
-                          'Детали расписания',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: context.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        if (eventsForSelectedDay.isEmpty)
-                          Text('Нет событий на этот день',
-                              style:
-                                  TextStyle(color: context.onSurfaceVariant)),
-                        ...() {
-                          final assignedKeys = <String>{};
-                          return eventsForSelectedDay.map((e) {
-                            final key = _scrollToEventKeys.containsKey(e.category) &&
-                                    !assignedKeys.contains(e.category)
-                                ? _scrollToEventKeys[e.category]
-                                : null;
-                            if (key != null) assignedKeys.add(e.category);
-                            return Padding(
-                              key: key,
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: _EventCard(
-                                category: _categoryDisplayName(e.category),
-                                categoryColor: _categoryColor(e.category),
-                                categoryIcon: _categoryIcon(e.category),
-                                title: e.title,
-                                date:
-                                    '${_weekdayName(e.dateTime.weekday)}, ${e.dateTime.day} ${_monthName(e.dateTime.month)} ${e.dateTime.year}',
-                                time: e.endDateTime != null
-                                    ? '${TimeOfDay.fromDateTime(e.dateTime).format(context)} – ${TimeOfDay.fromDateTime(e.endDateTime!).format(context)}'
-                                    : TimeOfDay.fromDateTime(e.dateTime)
-                                        .format(context),
-                                location: e.location ?? '',
-                                note: e.note ?? '',
-                              ),
-                            );
-                          });
-                        }(),
-                        const SizedBox(height: 32),
-                        // Footer
-                        Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                'Copyright © 2024 Peterdraw',
-                                style: TextStyle(
-                                  color: context.onSurfaceVariant,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              SizedBox(height: 12),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 12),
+                                // Карточки-статистика (по выбранному месяцу, tap = фильтр)
+                                Row(
                                   children: [
-                                    _FooterLink(
-                                        text: 'Политика конфиденциальности'),
-                                    Text(' · ',
-                                        style: TextStyle(
-                                            color: context.onSurfaceVariant)),
-                                    _FooterLink(text: 'Условия использования'),
-                                    Text(' · ',
-                                        style: TextStyle(
-                                            color: context.onSurfaceVariant)),
-                                    _FooterLink(text: 'Контакты'),
+                                    Expanded(
+                                      child: _StatCard(
+                                        icon: Icons.restaurant_menu,
+                                        label: 'Планирование питания',
+                                        category: _categoryMealPlanning,
+                                        count: events
+                                            .where((e) =>
+                                                e.category ==
+                                                    _categoryMealPlanning &&
+                                                e.dateTime.year ==
+                                                    selectedMonth.year &&
+                                                e.dateTime.month ==
+                                                    selectedMonth.month)
+                                            .length,
+                                        color: context.primary,
+                                        isSelected: selectedCategories
+                                            .contains(_categoryMealPlanning),
+                                        onTap: () => _onStatCardTap(
+                                            _categoryMealPlanning),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _StatCard(
+                                        icon: Icons.directions_run,
+                                        label: 'Физическая активность',
+                                        category: _categoryPhysicalActivities,
+                                        count: events
+                                            .where((e) =>
+                                                e.category ==
+                                                    _categoryPhysicalActivities &&
+                                                e.dateTime.year ==
+                                                    selectedMonth.year &&
+                                                e.dateTime.month ==
+                                                    selectedMonth.month)
+                                            .length,
+                                        color: context.warning,
+                                        isSelected: selectedCategories.contains(
+                                            _categoryPhysicalActivities),
+                                        onTap: () => _onStatCardTap(
+                                            _categoryPhysicalActivities),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _StatCard(
+                                        icon: Icons.event,
+                                        label: 'Встречи и события',
+                                        category: _categoryAppointments,
+                                        count: events
+                                            .where((e) =>
+                                                e.category ==
+                                                    _categoryAppointments &&
+                                                e.dateTime.year ==
+                                                    selectedMonth.year &&
+                                                e.dateTime.month ==
+                                                    selectedMonth.month)
+                                            .length,
+                                        color: context.tertiary,
+                                        isSelected: selectedCategories
+                                            .contains(_categoryAppointments),
+                                        onTap: () => _onStatCardTap(
+                                            _categoryAppointments),
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                              SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _SocialIcon(
-                                      icon: Icons.facebook,
-                                      color: context.info),
-                                  _SocialIcon(
-                                      icon: Icons.message, color: context.info),
-                                  _SocialIcon(
-                                      icon: Icons.camera_alt,
-                                      color: context.nutritionProtein),
-                                  _SocialIcon(
-                                      icon: Icons.play_arrow,
-                                      color: context.error),
-                                  _SocialIcon(
-                                      icon: Icons.link, color: context.primary),
-                                ],
-                              ),
-                            ],
+                                const SizedBox(height: 24),
+                                // Фильтры и селектор месяца
+                                Row(
+                                  children: [
+                                    // Селектор месяца
+                                    Flexible(
+                                      flex: 2,
+                                      child: PopupMenuButton<int>(
+                                        onSelected: (month) {
+                                          _onMonthChanged(DateTime(
+                                              selectedMonth.year, month));
+                                        },
+                                        itemBuilder: (context) =>
+                                            List.generate(12, (index) {
+                                          final month = index + 1;
+                                          final isSelected =
+                                              month == selectedMonth.month;
+                                          return PopupMenuItem<int>(
+                                            value: month,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    _monthName(month),
+                                                    style: TextStyle(
+                                                      fontWeight: isSelected
+                                                          ? FontWeight.w600
+                                                          : FontWeight.normal,
+                                                      color: isSelected
+                                                          ? context.primary
+                                                          : context.onSurface,
+                                                    ),
+                                                  ),
+                                                ),
+                                                if (isSelected)
+                                                  Icon(Icons.check,
+                                                      color: context.primary,
+                                                      size: 18),
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: context.surface,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            border: Border.all(
+                                                color: context.outline),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  _monthName(
+                                                      selectedMonth.month),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                    color: context.onSurface,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Icon(Icons.keyboard_arrow_down,
+                                                  color:
+                                                      context.onSurfaceVariant,
+                                                  size: 14),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    // Селектор года
+                                    Flexible(
+                                      flex: 1,
+                                      child: PopupMenuButton<int>(
+                                        onSelected: (year) {
+                                          _onMonthChanged(DateTime(
+                                              year, selectedMonth.month));
+                                        },
+                                        itemBuilder: (context) {
+                                          final currentYear =
+                                              DateTime.now().year;
+                                          final years = List.generate(
+                                              5,
+                                              (index) =>
+                                                  currentYear - 1 + index);
+                                          return years.map((year) {
+                                            final isSelected =
+                                                year == selectedMonth.year;
+                                            return PopupMenuItem<int>(
+                                              value: year,
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      year.toString(),
+                                                      style: TextStyle(
+                                                        fontWeight: isSelected
+                                                            ? FontWeight.w600
+                                                            : FontWeight.normal,
+                                                        color: isSelected
+                                                            ? context.primary
+                                                            : context.onSurface,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if (isSelected)
+                                                    Icon(Icons.check,
+                                                        color: context.primary,
+                                                        size: 18),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: context.surface,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            border: Border.all(
+                                                color: context.outline),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                selectedMonth.year.toString(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 13,
+                                                  color: context.onSurface,
+                                                ),
+                                              ),
+                                              Icon(Icons.keyboard_arrow_down,
+                                                  color:
+                                                      context.onSurfaceVariant,
+                                                  size: 14),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    // Кнопка добавления события
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: context.primary,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(Icons.add,
+                                            color: context.onPrimary, size: 18),
+                                        onPressed: _showAddEventSheet,
+                                        padding: const EdgeInsets.all(6),
+                                        constraints: const BoxConstraints(
+                                            minWidth: 28, minHeight: 28),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                // Чекбоксы-фильтры
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      _FilterChip(
+                                        key: _filterChipKeys[
+                                            _categoryMealPlanning],
+                                        label: 'Планирование питания',
+                                        color: context.primary,
+                                        isSelected: selectedCategories
+                                            .contains(_categoryMealPlanning),
+                                        onTap: () => _toggleCategory(
+                                            _categoryMealPlanning),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _FilterChip(
+                                        key: _filterChipKeys[
+                                            _categoryPhysicalActivities],
+                                        label: 'Физическая активность',
+                                        color: context.warning,
+                                        isSelected: selectedCategories.contains(
+                                            _categoryPhysicalActivities),
+                                        onTap: () => _toggleCategory(
+                                            _categoryPhysicalActivities),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _FilterChip(
+                                        key: _filterChipKeys[
+                                            _categoryAppointments],
+                                        label: 'Встречи',
+                                        color: context.tertiary,
+                                        isSelected: selectedCategories
+                                            .contains(_categoryAppointments),
+                                        onTap: () => _toggleCategory(
+                                            _categoryAppointments),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                // Календарная сетка
+                                _CalendarGrid(
+                                  selectedDay: selectedDay,
+                                  selectedMonth: selectedMonth,
+                                  onSelect: (day) =>
+                                      setState(() => selectedDay = day),
+                                  eventsByDay: eventsByDay,
+                                ),
+                                const SizedBox(height: 24),
+                                // Schedule Details
+                                Text(
+                                  'Детали расписания',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: context.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                if (eventsForSelectedDay.isEmpty)
+                                  Text('Нет событий на этот день',
+                                      style: TextStyle(
+                                          color: context.onSurfaceVariant)),
+                                ...() {
+                                  final assignedKeys = <String>{};
+                                  return eventsForSelectedDay.map((e) {
+                                    final key = _scrollToEventKeys
+                                                .containsKey(e.category) &&
+                                            !assignedKeys.contains(e.category)
+                                        ? _scrollToEventKeys[e.category]
+                                        : null;
+                                    if (key != null) {
+                                      assignedKeys.add(e.category);
+                                    }
+                                    return Padding(
+                                      key: key,
+                                      padding:
+                                          const EdgeInsets.only(bottom: 16),
+                                      child: _EventCard(
+                                        category:
+                                            _categoryDisplayName(e.category),
+                                        categoryColor:
+                                            _categoryColor(e.category),
+                                        categoryIcon: _categoryIcon(e.category),
+                                        title: e.title,
+                                        date:
+                                            '${_weekdayName(e.dateTime.weekday)}, ${e.dateTime.day} ${_monthName(e.dateTime.month)} ${e.dateTime.year}',
+                                        time: e.endDateTime != null
+                                            ? '${TimeOfDay.fromDateTime(e.dateTime).format(context)} – ${TimeOfDay.fromDateTime(e.endDateTime!).format(context)}'
+                                            : TimeOfDay.fromDateTime(e.dateTime)
+                                                .format(context),
+                                        location: e.location ?? '',
+                                        note: e.note ?? '',
+                                      ),
+                                    );
+                                  });
+                                }(),
+                                const SizedBox(height: 32),
+                                // Footer
+                                Center(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Copyright © 2024 Peterdraw',
+                                        style: TextStyle(
+                                          color: context.onSurfaceVariant,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            _FooterLink(
+                                                text:
+                                                    'Политика конфиденциальности'),
+                                            Text(' · ',
+                                                style: TextStyle(
+                                                    color: context
+                                                        .onSurfaceVariant)),
+                                            _FooterLink(
+                                                text: 'Условия использования'),
+                                            Text(' · ',
+                                                style: TextStyle(
+                                                    color: context
+                                                        .onSurfaceVariant)),
+                                            _FooterLink(text: 'Контакты'),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          _SocialIcon(
+                                              icon: Icons.facebook,
+                                              color: context.info),
+                                          _SocialIcon(
+                                              icon: Icons.message,
+                                              color: context.info),
+                                          _SocialIcon(
+                                              icon: Icons.camera_alt,
+                                              color: context.nutritionProtein),
+                                          _SocialIcon(
+                                              icon: Icons.play_arrow,
+                                              color: context.error),
+                                          _SocialIcon(
+                                              icon: Icons.link,
+                                              color: context.primary),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        ],
-                        ),
-                      ),
-                    );
-                },
-              ),
-            ),
+                        );
+                      },
+                    ),
+                  ),
       ),
     );
   }
@@ -881,14 +938,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
       userId: _userId,
     );
     if (result == null || !mounted) return;
-    final event = result as CalendarEvent;
+    final event = result;
 
     if (_isSupabaseAvailable) {
       try {
         await CalendarDependencies.instance.initialize();
-        final createResult =
-            await CalendarDependencies.instance.createCalendarEventUseCase
-                .execute(event);
+        final createResult = await CalendarDependencies
+            .instance.createCalendarEventUseCase
+            .execute(event);
         if (!mounted) return;
         if (createResult.isSuccess) {
           _loadEvents();
@@ -897,7 +954,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
           if (mounted) _loadEvents();
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(createResult.error ?? 'Событие добавлено')),
+              SnackBar(
+                  content: Text(createResult.error ?? 'Событие добавлено')),
             );
           }
         }
@@ -911,13 +969,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
+  // ignore: unused_element
   Future<void> _showEditEventSheet(CalendarEvent event) async {
     final result = await _showEventFormSheet(
       context: context,
       initialEvent: event,
     );
     if (result == null || !mounted) return;
-    final updated = result as CalendarEvent;
+    final updated = result;
 
     if (event.id.startsWith('local_')) {
       await _updateEventLocally(updated);
@@ -928,9 +987,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (_isSupabaseAvailable) {
       try {
         await CalendarDependencies.instance.initialize();
-        final updateResult =
-            await CalendarDependencies.instance.updateCalendarEventUseCase
-                .execute(updated);
+        final updateResult = await CalendarDependencies
+            .instance.updateCalendarEventUseCase
+            .execute(updated);
         if (!mounted) return;
         if (updateResult.isSuccess) {
           _loadEvents();
@@ -949,6 +1008,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
+  // ignore: unused_element
   Future<void> _confirmDeleteEvent(CalendarEvent event) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -985,7 +1045,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         if (mounted) _loadEvents();
       } catch (_) {
         if (mounted) {
-          setState(() => events = events.where((e) => e.id != event.id).toList());
+          setState(
+              () => events = events.where((e) => e.id != event.id).toList());
         }
       }
     } else {
@@ -1001,7 +1062,7 @@ Future<CalendarEvent?> _showEventFormSheet({
   String userId = 'demo_user',
   CalendarEvent? initialEvent,
 }) async {
-  var title = initialEvent?.title ?? '';
+  final title = initialEvent?.title ?? '';
   var category = initialEvent?.category ?? _categoryMealPlanning;
   var dateTime = initialEvent?.dateTime ??
       DateTime(
@@ -1011,21 +1072,21 @@ Future<CalendarEvent?> _showEventFormSheet({
         9,
         0,
       );
-  var endDateTime = initialEvent?.endDateTime ??
-      dateTime.add(const Duration(hours: 1));
+  var endDateTime =
+      initialEvent?.endDateTime ?? dateTime.add(const Duration(hours: 1));
   var isAllDay = initialEvent?.isAllDay ?? false;
-  var location = initialEvent?.location ?? '';
-  var note = initialEvent?.note ?? '';
+  final location = initialEvent?.location ?? '';
+  final note = initialEvent?.note ?? '';
   final isEdit = initialEvent != null;
 
   final titleController = TextEditingController(text: title);
   final locationController = TextEditingController(text: location);
   final noteController = TextEditingController(text: note);
-  var _locationLoading = false;
-  var _titleError = '';
+  var locationLoading = false;
+  var titleError = '';
 
-  const _inputRadius = 12.0;
-  const _inputPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+  const inputRadius = 12.0;
+  const inputPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 14);
 
   final parentContext = context;
   return showModalBottomSheet<CalendarEvent>(
@@ -1070,21 +1131,22 @@ Future<CalendarEvent?> _showEventFormSheet({
                     controller: titleController,
                     style: TextStyle(color: AppColors.dynamicTextPrimary),
                     onChanged: (_) {
-                      if (_titleError.isNotEmpty) {
-                        setModalState(() => _titleError = '');
+                      if (titleError.isNotEmpty) {
+                        setModalState(() => titleError = '');
                       }
                     },
                     decoration: InputDecoration(
                       hintText: 'Название',
-                      errorText: _titleError.isEmpty ? null : _titleError,
+                      errorText: titleError.isEmpty ? null : titleError,
                       hintStyle: TextStyle(
-                        color: AppColors.dynamicTextSecondary.withValues(alpha: 0.7),
+                        color: AppColors.dynamicTextSecondary
+                            .withValues(alpha: 0.7),
                       ),
                       filled: true,
                       fillColor: AppColors.dynamicCard,
-                      contentPadding: _inputPadding,
+                      contentPadding: inputPadding,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1092,7 +1154,7 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1100,19 +1162,22 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
-                          color: AppColors.dynamicPrimary.withValues(alpha: 0.5),
+                          color:
+                              AppColors.dynamicPrimary.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
-                        borderSide: const BorderSide(color: Colors.red, width: 1),
+                        borderRadius: BorderRadius.circular(inputRadius),
+                        borderSide:
+                            const BorderSide(color: Colors.red, width: 1),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
-                        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                        borderRadius: BorderRadius.circular(inputRadius),
+                        borderSide:
+                            const BorderSide(color: Colors.red, width: 1.5),
                       ),
                     ),
                   ),
@@ -1127,15 +1192,15 @@ Future<CalendarEvent?> _showEventFormSheet({
                   ),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
-                    value: category,
+                    initialValue: category,
                     dropdownColor: AppColors.dynamicCard,
                     style: TextStyle(color: AppColors.dynamicTextPrimary),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: AppColors.dynamicCard,
-                      contentPadding: _inputPadding,
+                      contentPadding: inputPadding,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1143,7 +1208,7 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1184,7 +1249,8 @@ Future<CalendarEvent?> _showEventFormSheet({
                       final date = await showDatePicker(
                         context: ctx,
                         initialDate: dateTime,
-                        firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                        firstDate:
+                            DateTime.now().subtract(const Duration(days: 365)),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
                       );
                       if (date != null &&
@@ -1192,8 +1258,10 @@ Future<CalendarEvent?> _showEventFormSheet({
                           (ModalRoute.of(ctx)?.isCurrent ?? false)) {
                         setModalState(() {
                           if (isAllDay) {
-                            dateTime = DateTime(date.year, date.month, date.day, 0, 0);
-                            endDateTime = DateTime(date.year, date.month, date.day + 1, 0, 0, 0);
+                            dateTime =
+                                DateTime(date.year, date.month, date.day, 0, 0);
+                            endDateTime = DateTime(
+                                date.year, date.month, date.day + 1, 0, 0, 0);
                           } else {
                             dateTime = DateTime(
                               date.year,
@@ -1213,12 +1281,12 @@ Future<CalendarEvent?> _showEventFormSheet({
                         });
                       }
                     },
-                    borderRadius: BorderRadius.circular(_inputRadius),
+                    borderRadius: BorderRadius.circular(inputRadius),
                     child: Container(
-                      padding: _inputPadding,
+                      padding: inputPadding,
                       decoration: BoxDecoration(
                         color: AppColors.dynamicCard,
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         border: Border.all(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1272,192 +1340,200 @@ Future<CalendarEvent?> _showEventFormSheet({
                         activeThumbColor: Colors.white,
                         inactiveTrackColor: Colors.transparent,
                         inactiveThumbColor: AppColors.dynamicPrimary,
-                        trackOutlineColor: WidgetStateProperty.all(AppColors.dynamicPrimary),
+                        trackOutlineColor:
+                            WidgetStateProperty.all(AppColors.dynamicPrimary),
                         onChanged: (v) {
-                            setModalState(() {
-                              isAllDay = v;
-                              if (v) {
-                                dateTime = DateTime(
-                                  dateTime.year,
-                                  dateTime.month,
-                                  dateTime.day,
-                                  0,
-                                  0,
-                                );
-                                endDateTime = DateTime(
-                                  dateTime.year,
-                                  dateTime.month,
-                                  dateTime.day + 1,
-                                  0,
-                                  0,
-                                  0,
-                                );
-                              } else {
-                                dateTime = DateTime(
-                                  dateTime.year,
-                                  dateTime.month,
-                                  dateTime.day,
-                                  9,
-                                  0,
-                                );
-                                endDateTime = dateTime.add(const Duration(hours: 1));
-                              }
-                            });
-                          },
+                          setModalState(() {
+                            isAllDay = v;
+                            if (v) {
+                              dateTime = DateTime(
+                                dateTime.year,
+                                dateTime.month,
+                                dateTime.day,
+                                0,
+                                0,
+                              );
+                              endDateTime = DateTime(
+                                dateTime.year,
+                                dateTime.month,
+                                dateTime.day + 1,
+                                0,
+                                0,
+                                0,
+                              );
+                            } else {
+                              dateTime = DateTime(
+                                dateTime.year,
+                                dateTime.month,
+                                dateTime.day,
+                                9,
+                                0,
+                              );
+                              endDateTime =
+                                  dateTime.add(const Duration(hours: 1));
+                            }
+                          });
+                        },
                       ),
                     ],
                   ),
                   if (!isAllDay) ...[
-                  const SizedBox(height: 16),
-                  // Начало
-                  Text(
-                    'Начало',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.dynamicTextSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  InkWell(
-                    onTap: () async {
-                      final time = await showTimePicker(
-                        context: ctx,
-                        initialTime: TimeOfDay.fromDateTime(dateTime),
-                      );
-                      if (time != null &&
-                          ctx.mounted &&
-                          (ModalRoute.of(ctx)?.isCurrent ?? false)) {
-                        setModalState(() {
-                          dateTime = DateTime(
-                            dateTime.year,
-                            dateTime.month,
-                            dateTime.day,
-                            time.hour,
-                            time.minute,
-                          );
-                          if (endDateTime.isBefore(dateTime) ||
-                              endDateTime.isAtSameMomentAs(dateTime)) {
-                            endDateTime = dateTime.add(const Duration(hours: 1));
-                          }
-                        });
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(_inputRadius),
-                    child: Container(
-                      padding: _inputPadding,
-                      decoration: BoxDecoration(
-                        color: AppColors.dynamicCard,
-                        borderRadius: BorderRadius.circular(_inputRadius),
-                        border: Border.all(
-                          color: Theme.of(ctx).brightness == Brightness.light
-                              ? const Color(0xFFD8D8D8)
-                              : AppColors.dynamicBorder.withValues(alpha: 0.3),
-                        ),
-                        boxShadow: Theme.of(ctx).brightness == Brightness.light
-                            ? [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
+                    const SizedBox(height: 16),
+                    // Начало
+                    Text(
+                      'Начало',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.dynamicTextSecondary,
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}',
-                              style: TextStyle(
-                                color: AppColors.dynamicTextPrimary,
-                                fontSize: 15,
+                    ),
+                    const SizedBox(height: 6),
+                    InkWell(
+                      onTap: () async {
+                        final time = await showTimePicker(
+                          context: ctx,
+                          initialTime: TimeOfDay.fromDateTime(dateTime),
+                        );
+                        if (time != null &&
+                            ctx.mounted &&
+                            (ModalRoute.of(ctx)?.isCurrent ?? false)) {
+                          setModalState(() {
+                            dateTime = DateTime(
+                              dateTime.year,
+                              dateTime.month,
+                              dateTime.day,
+                              time.hour,
+                              time.minute,
+                            );
+                            if (endDateTime.isBefore(dateTime) ||
+                                endDateTime.isAtSameMomentAs(dateTime)) {
+                              endDateTime =
+                                  dateTime.add(const Duration(hours: 1));
+                            }
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(inputRadius),
+                      child: Container(
+                        padding: inputPadding,
+                        decoration: BoxDecoration(
+                          color: AppColors.dynamicCard,
+                          borderRadius: BorderRadius.circular(inputRadius),
+                          border: Border.all(
+                            color: Theme.of(ctx).brightness == Brightness.light
+                                ? const Color(0xFFD8D8D8)
+                                : AppColors.dynamicBorder
+                                    .withValues(alpha: 0.3),
+                          ),
+                          boxShadow: Theme.of(ctx).brightness ==
+                                  Brightness.light
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.04),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  color: AppColors.dynamicTextPrimary,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: AppColors.dynamicTextSecondary,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Конец
-                  Text(
-                    'Конец',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.dynamicTextSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  InkWell(
-                    onTap: () async {
-                      final time = await showTimePicker(
-                        context: ctx,
-                        initialTime: TimeOfDay.fromDateTime(endDateTime),
-                      );
-                      if (time != null &&
-                          ctx.mounted &&
-                          (ModalRoute.of(ctx)?.isCurrent ?? false)) {
-                        setModalState(() {
-                          endDateTime = DateTime(
-                            endDateTime.year,
-                            endDateTime.month,
-                            endDateTime.day,
-                            time.hour,
-                            time.minute,
-                          );
-                          if (endDateTime.isBefore(dateTime) ||
-                              endDateTime.isAtSameMomentAs(dateTime)) {
-                            dateTime = endDateTime.subtract(const Duration(hours: 1));
-                          }
-                        });
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(_inputRadius),
-                    child: Container(
-                      padding: _inputPadding,
-                      decoration: BoxDecoration(
-                        color: AppColors.dynamicCard,
-                        borderRadius: BorderRadius.circular(_inputRadius),
-                        border: Border.all(
-                          color: Theme.of(ctx).brightness == Brightness.light
-                              ? const Color(0xFFD8D8D8)
-                              : AppColors.dynamicBorder.withValues(alpha: 0.3),
+                            Icon(
+                              Icons.chevron_right,
+                              color: AppColors.dynamicTextSecondary,
+                              size: 20,
+                            ),
+                          ],
                         ),
-                        boxShadow: Theme.of(ctx).brightness == Brightness.light
-                            ? [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${endDateTime.hour.toString().padLeft(2, '0')}:${endDateTime.minute.toString().padLeft(2, '0')}',
-                              style: TextStyle(
-                                color: AppColors.dynamicTextPrimary,
-                                fontSize: 15,
+                    ),
+                    const SizedBox(height: 16),
+                    // Конец
+                    Text(
+                      'Конец',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.dynamicTextSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    InkWell(
+                      onTap: () async {
+                        final time = await showTimePicker(
+                          context: ctx,
+                          initialTime: TimeOfDay.fromDateTime(endDateTime),
+                        );
+                        if (time != null &&
+                            ctx.mounted &&
+                            (ModalRoute.of(ctx)?.isCurrent ?? false)) {
+                          setModalState(() {
+                            endDateTime = DateTime(
+                              endDateTime.year,
+                              endDateTime.month,
+                              endDateTime.day,
+                              time.hour,
+                              time.minute,
+                            );
+                            if (endDateTime.isBefore(dateTime) ||
+                                endDateTime.isAtSameMomentAs(dateTime)) {
+                              dateTime = endDateTime
+                                  .subtract(const Duration(hours: 1));
+                            }
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(inputRadius),
+                      child: Container(
+                        padding: inputPadding,
+                        decoration: BoxDecoration(
+                          color: AppColors.dynamicCard,
+                          borderRadius: BorderRadius.circular(inputRadius),
+                          border: Border.all(
+                            color: Theme.of(ctx).brightness == Brightness.light
+                                ? const Color(0xFFD8D8D8)
+                                : AppColors.dynamicBorder
+                                    .withValues(alpha: 0.3),
+                          ),
+                          boxShadow: Theme.of(ctx).brightness ==
+                                  Brightness.light
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.04),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${endDateTime.hour.toString().padLeft(2, '0')}:${endDateTime.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  color: AppColors.dynamicTextPrimary,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: AppColors.dynamicTextSecondary,
-                            size: 20,
-                          ),
-                        ],
+                            Icon(
+                              Icons.chevron_right,
+                              color: AppColors.dynamicTextSecondary,
+                              size: 20,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                   ],
                   const SizedBox(height: 16),
                   // Место
@@ -1475,11 +1551,12 @@ Future<CalendarEvent?> _showEventFormSheet({
                     decoration: InputDecoration(
                       hintText: 'Место',
                       hintStyle: TextStyle(
-                        color: AppColors.dynamicTextSecondary.withValues(alpha: 0.7),
+                        color: AppColors.dynamicTextSecondary
+                            .withValues(alpha: 0.7),
                       ),
                       filled: true,
                       fillColor: AppColors.dynamicCard,
-                      contentPadding: _inputPadding,
+                      contentPadding: inputPadding,
                       suffixIcon: IconButton(
                         icon: Icon(
                           Icons.my_location,
@@ -1489,13 +1566,15 @@ Future<CalendarEvent?> _showEventFormSheet({
                         onPressed: () async {
                           if (!ctx.mounted) return;
                           if (ModalRoute.of(ctx)?.isCurrent != true) return;
-                          if (_locationLoading) return;
-                          _locationLoading = true;
+                          if (locationLoading) return;
+                          locationLoading = true;
 
-                          final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+                          final serviceEnabled =
+                              await Geolocator.isLocationServiceEnabled();
                           if (!serviceEnabled) {
-                            _locationLoading = false;
-                            if (ctx.mounted && (ModalRoute.of(ctx)?.isCurrent ?? false)) {
+                            locationLoading = false;
+                            if (ctx.mounted &&
+                                (ModalRoute.of(ctx)?.isCurrent ?? false)) {
                               ScaffoldMessenger.of(ctx).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -1507,13 +1586,16 @@ Future<CalendarEvent?> _showEventFormSheet({
                             return;
                           }
 
-                          var status = await Permission.locationWhenInUse.status;
+                          var status =
+                              await Permission.locationWhenInUse.status;
                           if (!status.isGranted) {
-                            status = await Permission.locationWhenInUse.request();
+                            status =
+                                await Permission.locationWhenInUse.request();
                           }
                           if (!status.isGranted) {
-                            _locationLoading = false;
-                            if (ctx.mounted && (ModalRoute.of(ctx)?.isCurrent ?? false)) {
+                            locationLoading = false;
+                            if (ctx.mounted &&
+                                (ModalRoute.of(ctx)?.isCurrent ?? false)) {
                               if (status.isPermanentlyDenied) {
                                 ScaffoldMessenger.of(ctx).showSnackBar(
                                   SnackBar(
@@ -1522,7 +1604,7 @@ Future<CalendarEvent?> _showEventFormSheet({
                                     ),
                                     action: SnackBarAction(
                                       label: 'Настройки',
-                                      onPressed: () => openAppSettings(),
+                                      onPressed: openAppSettings,
                                     ),
                                   ),
                                 );
@@ -1540,17 +1622,18 @@ Future<CalendarEvent?> _showEventFormSheet({
                           }
 
                           try {
-                            final position = await Geolocator.getCurrentPosition(
+                            final position =
+                                await Geolocator.getCurrentPosition(
                               locationSettings: const LocationSettings(
                                 accuracy: LocationAccuracy.medium,
                               ),
                             );
                             if (!ctx.mounted) {
-                              _locationLoading = false;
+                              locationLoading = false;
                               return;
                             }
                             if (ModalRoute.of(ctx)?.isCurrent != true) {
-                              _locationLoading = false;
+                              locationLoading = false;
                               return;
                             }
 
@@ -1560,11 +1643,11 @@ Future<CalendarEvent?> _showEventFormSheet({
                             );
 
                             if (!ctx.mounted) {
-                              _locationLoading = false;
+                              locationLoading = false;
                               return;
                             }
                             if (ModalRoute.of(ctx)?.isCurrent != true) {
-                              _locationLoading = false;
+                              locationLoading = false;
                               return;
                             }
 
@@ -1576,7 +1659,9 @@ Future<CalendarEvent?> _showEventFormSheet({
                                       p.subLocality,
                                       p.locality,
                                       p.administrativeArea,
-                                    ].whereType<String>().where((s) => s.isNotEmpty);
+                                    ]
+                                        .whereType<String>()
+                                        .where((s) => s.isNotEmpty);
                                     return parts.isNotEmpty
                                         ? parts.join(', ')
                                         : '${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}';
@@ -1584,18 +1669,19 @@ Future<CalendarEvent?> _showEventFormSheet({
                                 : '${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}';
 
                             if (!ctx.mounted) {
-                              _locationLoading = false;
+                              locationLoading = false;
                               return;
                             }
                             if (ModalRoute.of(ctx)?.isCurrent != true) {
-                              _locationLoading = false;
+                              locationLoading = false;
                               return;
                             }
                             locationController.text = address;
                             setModalState(() {});
-                            _locationLoading = false;
+                            locationLoading = false;
 
-                            if (ctx.mounted && (ModalRoute.of(ctx)?.isCurrent ?? false)) {
+                            if (ctx.mounted &&
+                                (ModalRoute.of(ctx)?.isCurrent ?? false)) {
                               ScaffoldMessenger.of(ctx).showSnackBar(
                                 const SnackBar(
                                   content: Text('Место добавлено'),
@@ -1604,8 +1690,9 @@ Future<CalendarEvent?> _showEventFormSheet({
                               );
                             }
                           } catch (e) {
-                            _locationLoading = false;
-                            if (ctx.mounted && (ModalRoute.of(ctx)?.isCurrent ?? false)) {
+                            locationLoading = false;
+                            if (ctx.mounted &&
+                                (ModalRoute.of(ctx)?.isCurrent ?? false)) {
                               ScaffoldMessenger.of(ctx).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -1618,7 +1705,7 @@ Future<CalendarEvent?> _showEventFormSheet({
                         },
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1626,7 +1713,7 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1634,9 +1721,10 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
-                          color: AppColors.dynamicPrimary.withValues(alpha: 0.5),
+                          color:
+                              AppColors.dynamicPrimary.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
@@ -1659,13 +1747,14 @@ Future<CalendarEvent?> _showEventFormSheet({
                     decoration: InputDecoration(
                       hintText: 'Заметка',
                       hintStyle: TextStyle(
-                        color: AppColors.dynamicTextSecondary.withValues(alpha: 0.7),
+                        color: AppColors.dynamicTextSecondary
+                            .withValues(alpha: 0.7),
                       ),
                       filled: true,
                       fillColor: AppColors.dynamicCard,
-                      contentPadding: _inputPadding,
+                      contentPadding: inputPadding,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1673,7 +1762,7 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
                           color: Theme.of(ctx).brightness == Brightness.light
                               ? const Color(0xFFD8D8D8)
@@ -1681,9 +1770,10 @@ Future<CalendarEvent?> _showEventFormSheet({
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(_inputRadius),
+                        borderRadius: BorderRadius.circular(inputRadius),
                         borderSide: BorderSide(
-                          color: AppColors.dynamicPrimary.withValues(alpha: 0.5),
+                          color:
+                              AppColors.dynamicPrimary.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
@@ -1696,9 +1786,10 @@ Future<CalendarEvent?> _showEventFormSheet({
                       TextButton(
                         onPressed: () => Navigator.pop(ctx),
                         style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(ctx).brightness == Brightness.dark
-                              ? const Color(0xFF6EE7B7)
-                              : AppColors.primary,
+                          foregroundColor:
+                              Theme.of(ctx).brightness == Brightness.dark
+                                  ? const Color(0xFF6EE7B7)
+                                  : AppColors.primary,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
@@ -1725,11 +1816,12 @@ Future<CalendarEvent?> _showEventFormSheet({
                           final noteText = noteController.text.trim();
                           if (titleText.isEmpty) {
                             setModalState(() {
-                              _titleError = 'Необходимо заполнить это поле';
+                              titleError = 'Необходимо заполнить это поле';
                             });
                             ScaffoldMessenger.of(parentContext).showSnackBar(
                               SnackBar(
-                                content: const Text('Необходимо заполнить поле «Название»'),
+                                content: const Text(
+                                    'Необходимо заполнить поле «Название»'),
                                 duration: const Duration(seconds: 3),
                                 backgroundColor: Colors.red.shade700,
                               ),
@@ -1738,27 +1830,30 @@ Future<CalendarEvent?> _showEventFormSheet({
                           }
                           if (titleText.length < 3) {
                             setModalState(() {
-                              _titleError = 'Название должно быть не менее 3 символов';
+                              titleError =
+                                  'Название должно быть не менее 3 символов';
                             });
                             ScaffoldMessenger.of(parentContext).showSnackBar(
                               SnackBar(
-                                content: const Text('Название должно быть не менее 3 символов'),
+                                content: const Text(
+                                    'Название должно быть не менее 3 символов'),
                                 duration: const Duration(seconds: 3),
                                 backgroundColor: Colors.red.shade700,
                               ),
                             );
                             return;
                           }
-                          setModalState(() => _titleError = '');
+                          setModalState(() => titleError = '');
                           final now = DateTime.now();
                           final event = isEdit
-                              ? initialEvent!.copyWith(
+                              ? initialEvent.copyWith(
                                   title: titleText,
                                   category: category,
                                   dateTime: dateTime,
                                   endDateTime: endDateTime,
-                                  location:
-                                      locationText.isEmpty ? null : locationText,
+                                  location: locationText.isEmpty
+                                      ? null
+                                      : locationText,
                                   note: noteText.isEmpty ? null : noteText,
                                 )
                               : CalendarEvent(
@@ -1768,10 +1863,9 @@ Future<CalendarEvent?> _showEventFormSheet({
                                   title: titleText,
                                   dateTime: dateTime,
                                   endDateTime: endDateTime,
-                                  location:
-                                      locationText.isEmpty
-                                          ? null
-                                          : locationText,
+                                  location: locationText.isEmpty
+                                      ? null
+                                      : locationText,
                                   note: noteText.isEmpty ? null : noteText,
                                   createdAt: now,
                                   updatedAt: now,
@@ -1790,7 +1884,7 @@ Future<CalendarEvent?> _showEventFormSheet({
       );
     },
   ).whenComplete(() {
-    _locationLoading = false;
+    locationLoading = false;
     // Отложенная очистка: даём время завершиться async-колбэкам (геолокация и т.д.),
     // чтобы избежать "TextEditingController used after disposed" и "_dependents.isEmpty"
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1837,7 +1931,8 @@ class _StatCard extends StatelessWidget {
             ),
           ],
           border: Border.all(
-            color: isSelected ? color.withValues(alpha: 0.5) : Colors.transparent,
+            color:
+                isSelected ? color.withValues(alpha: 0.5) : Colors.transparent,
             width: 2,
           ),
         ),
@@ -2097,7 +2192,9 @@ class _EventCard extends StatelessWidget {
         color: isLight ? Colors.white : AppColors.dynamicCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isLight ? const Color(0xFFE8E8E8) : AppColors.dynamicBorder.withValues(alpha: 0.5),
+          color: isLight
+              ? const Color(0xFFE8E8E8)
+              : AppColors.dynamicBorder.withValues(alpha: 0.5),
           width: 1,
         ),
         boxShadow: [
@@ -2119,134 +2216,100 @@ class _EventCard extends StatelessWidget {
           ),
         ),
         child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Иконка в бледном цветном квадрате (как на скрине)
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: categoryColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Иконка в бледном цветном квадрате (как на скрине)
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: categoryColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(categoryIcon, color: categoryColor, size: 24),
             ),
-            child: Icon(categoryIcon, color: categoryColor, size: 24),
-          ),
-          const SizedBox(width: 14),
-          // Основной контент: категория + название
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  category,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: context.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: context.onSurface,
-                  ),
-                ),
-                if (date.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+            const SizedBox(width: 14),
+            // Основной контент: категория + название
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   Text(
-                    date,
+                    category,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: context.onSurfaceVariant.withValues(alpha: 0.9),
+                      fontSize: 13,
+                      color: context.onSurfaceVariant,
                     ),
                   ),
-                ],
-                if (location.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(
-                    location,
+                    title,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: context.onSurfaceVariant.withValues(alpha: 0.8),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: context.onSurface,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-                if (note.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    note,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.onSurfaceVariant,
-                      height: 1.3,
+                  if (date.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      date,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.onSurfaceVariant.withValues(alpha: 0.9),
+                      ),
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  ],
+                  if (location.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      location,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.onSurfaceVariant.withValues(alpha: 0.8),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (note.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      note,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.onSurfaceVariant,
+                        height: 1.3,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
-              ],
-            ),
-          ),
-          // Время справа (без иконки)
-          if (time.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: lightGreen,
-                borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
-                time,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: greenAccent,
+            ),
+            // Время справа (без иконки)
+            if (time.isNotEmpty)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: lightGreen,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  time,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: greenAccent,
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
         ),
       ),
-    );
-  }
-}
-
-class _EventInfoRow extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final Color? iconColor;
-
-  const _EventInfoRow({
-    required this.icon,
-    required this.text,
-    this.iconColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 16,
-          color: iconColor ?? context.onSurfaceVariant,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 13,
-              color: context.onSurfaceVariant,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -604,8 +604,7 @@ class GoalsSetupView extends StatelessWidget {
                   Size(double.infinity, DesignTokens.spacing.buttonHeightLarge),
               side: const BorderSide(color: AppColors.button, width: 2),
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(DesignTokens.borders.full),
+                borderRadius: BorderRadius.circular(DesignTokens.borders.full),
               ),
               backgroundColor: Colors.white,
             ),

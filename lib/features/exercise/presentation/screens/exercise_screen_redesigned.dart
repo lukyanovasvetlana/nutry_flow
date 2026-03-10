@@ -442,7 +442,7 @@ class _ExerciseScreenRedesignedState extends State<ExerciseScreenRedesigned> {
                 width: 50, // Уменьшил с 60 до 50
                 height: 50, // Уменьшил с 60 до 50
                 decoration: BoxDecoration(
-                  color: (exercise['color'] as Color).withOpacity(0.1),
+                  color: (exercise['color'] as Color).withValues(alpha: 0.1),
                   borderRadius:
                       BorderRadius.circular(10), // Уменьшил с 12 до 10
                 ),

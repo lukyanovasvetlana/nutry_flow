@@ -355,7 +355,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
                     ),
                     trailing: Text(
                       _formatDuration(
-                          (session.actualDurationMinutes ?? 0) * 60),
+                          session.actualDurationMinutes * 60),
                       style: context.typography.bodyMediumStyle.copyWith(
                         color: context.colors.primary,
                         fontWeight: FontWeight.w600,
@@ -588,7 +588,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen>
                     const SizedBox(width: 4),
                     Text(
                       _formatDuration(
-                          (session.actualDurationMinutes ?? 0) * 60),
+                          session.actualDurationMinutes * 60),
                       style: context.typography.bodySmallStyle.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),
