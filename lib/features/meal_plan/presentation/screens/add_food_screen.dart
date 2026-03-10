@@ -173,10 +173,10 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
             ),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: AppColors.dynamicCard.withValues(alpha: 0.6),
+                color: AppColors.dynamicSurface,
                 borderRadius: BorderRadius.circular(DesignTokens.borders.lg),
                 border: Border.all(
-                  color: AppColors.dynamicBorder.withValues(alpha: 0.1),
+                  color: AppColors.dynamicBorder.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -305,7 +305,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
       padding: EdgeInsets.symmetric(horizontal: DesignTokens.spacing.lg),
       itemCount: filteredFoods.length,
       separatorBuilder: (context, index) =>
-          SizedBox(height: DesignTokens.spacing.xs),
+          SizedBox(height: DesignTokens.spacing.sm),
       itemBuilder: (context, index) {
         return _buildFoodListItem(filteredFoods[index]);
       },
@@ -317,12 +317,10 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
 
     return InkWell(
       onTap: () async {
-        // Подсвечиваем выбранный элемент
         setState(() {
           _selectedFoodItem = name;
         });
 
-        // Ждем немного для визуальной обратной связи, затем переходим
         await Future.delayed(const Duration(milliseconds: 200));
 
         if (!mounted) return;
@@ -336,19 +334,17 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
           ),
         );
 
-        // Сбрасываем выделение после возврата
         if (mounted) {
           setState(() {
             _selectedFoodItem = null;
           });
         }
 
-        // Если данные сохранены, возвращаем их обратно
         if (result != null && mounted) {
           Navigator.of(context).pop(result);
         }
       },
-      borderRadius: BorderRadius.circular(DesignTokens.borders.md),
+      borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
@@ -359,14 +355,26 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.dynamicPrimary.withValues(alpha: 0.15)
-              : AppColors.dynamicCard.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(DesignTokens.borders.md),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.dynamicPrimary
-                : AppColors.dynamicBorder.withValues(alpha: 0.1),
-            width: isSelected ? 2 : 1,
-          ),
+              : AppColors.dynamicSurface,
+          borderRadius: BorderRadius.circular(12),
+          border: isSelected
+              ? Border.all(
+                  color: AppColors.dynamicPrimary,
+                  width: 2,
+                )
+              : Border.all(
+                  color: AppColors.dynamicBorder.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+          boxShadow: !isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.dynamicShadow.withValues(alpha: 0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Row(
           children: [
@@ -496,7 +504,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                       size: 24,
                       color: isActive ? selectedColor : unselectedColor,
                     ),
-                    if (index == 0) // AI с бейджем
+                    if (index == 0)
                       Positioned(
                         top: -4,
                         right: -4,
@@ -538,7 +546,6 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
               _selectedNavIndex = index;
             });
 
-            // Обработка действий
             switch (index) {
               case 0:
                 _showAIPremiumDialog();
@@ -563,7 +570,6 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
         shape: BoxShape.circle,
         color: AppColors.dynamicPrimary,
         boxShadow: [
-          // Подсветка обводки
           BoxShadow(
             color: borderColor.withValues(alpha: 0.4),
             blurRadius: 20,
@@ -574,7 +580,6 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
             blurRadius: 15,
             spreadRadius: 1,
           ),
-          // Дополнительная подсветка
           BoxShadow(
             color: borderColor.withValues(alpha: 0.2),
             blurRadius: 10,

@@ -9,6 +9,8 @@ import 'package:nutry_flow/features/onboarding/presentation/screens/enhanced_log
 import 'package:nutry_flow/features/onboarding/presentation/screens/profile_info_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/goals_setup_screen.dart';
 import 'package:nutry_flow/features/onboarding/presentation/screens/forgot_password_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/privacy_policy_screen.dart';
+import 'package:nutry_flow/features/onboarding/presentation/screens/terms_of_use_screen.dart';
 import 'package:nutry_flow/features/profile/presentation/screens/profile_settings_screen.dart';
 import 'package:nutry_flow/app.dart';
 import 'package:nutry_flow/shared/theme/theme_manager.dart';
@@ -124,6 +126,14 @@ class _MyAppState extends State<MyApp> {
             '/forgot-password': (context) => Theme(
                   data: ThemeData.light(),
                   child: const ForgotPasswordScreen(),
+                ),
+            '/privacy-policy': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: const PrivacyPolicyScreen(),
+                ),
+            '/terms-of-use': (context) => Theme(
+                  data: ThemeData.light(),
+                  child: const TermsOfUseScreen(),
                 ),
             '/profile-settings': (context) => Theme(
                   data: ThemeData.light(),

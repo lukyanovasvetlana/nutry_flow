@@ -33,6 +33,8 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to camera to take photos for your profile avatar.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Приложение использует геолокацию для добавления места проведения события.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Allow local network access so Flutter tools can connect for debugging during development.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

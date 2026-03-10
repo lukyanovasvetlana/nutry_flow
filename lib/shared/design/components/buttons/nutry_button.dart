@@ -223,73 +223,72 @@ class _NutryButtonState extends State<NutryButton>
             onFocusChange: (hasFocus) {
               setState(() => _hasFocus = hasFocus);
             },
-            child: KeyboardListener(
-              focusNode: _focusNode,
-              onKeyEvent: (event) {
-                if (event is KeyDownEvent &&
-                    (event.logicalKey.keyLabel == 'Enter' ||
-                        event.logicalKey.keyLabel == ' ')) {
-                  if (widget.isEnabled &&
-                      !widget.isLoading &&
-                      widget.onPressed != null) {
-                    widget.onPressed!();
-                  }
+            onKeyEvent: (node, event) {
+              if (event is KeyDownEvent &&
+                  (event.logicalKey.keyLabel == 'Enter' ||
+                      event.logicalKey.keyLabel == ' ')) {
+                if (widget.isEnabled &&
+                    !widget.isLoading &&
+                    widget.onPressed != null) {
+                  widget.onPressed!();
+                  return KeyEventResult.handled;
                 }
-              },
-              child: InkWell(
-                onTapDown: _onTapDown,
-                onTapUp: _onTapUp,
-                onTapCancel: _onTapCancel,
-                onTap: widget.isEnabled && !widget.isLoading
-                    ? widget.onPressed
-                    : null,
-                borderRadius:
-                    BorderRadius.circular(DesignTokens.borders.buttonRadius),
-                child: Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: AnimatedContainer(
-                    duration: DesignTokens.animations.fast,
-                    width: widget.width,
-                    height: _getButtonHeight(),
-                    padding: widget.padding ?? _getButtonPadding(),
-                    decoration: _getButtonDecoration(context),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (widget.isLoading) ...[
-                          SizedBox(
-                            width: _getIconSize(),
-                            height: _getIconSize(),
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                _getTextColor(context),
-                              ),
+              }
+              return KeyEventResult.ignored;
+            },
+            child: InkWell(
+              onTapDown: _onTapDown,
+              onTapUp: _onTapUp,
+              onTapCancel: _onTapCancel,
+              onTap: widget.isEnabled && !widget.isLoading
+                  ? widget.onPressed
+                  : null,
+              borderRadius:
+                  BorderRadius.circular(DesignTokens.borders.buttonRadius),
+              child: Transform.scale(
+                scale: _scaleAnimation.value,
+                child: AnimatedContainer(
+                  duration: DesignTokens.animations.fast,
+                  width: widget.width,
+                  height: _getButtonHeight(),
+                  padding: widget.padding ?? _getButtonPadding(),
+                  decoration: _getButtonDecoration(context),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (widget.isLoading) ...[
+                        SizedBox(
+                          width: _getIconSize(),
+                          height: _getIconSize(),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              _getTextColor(context),
                             ),
                           ),
-                          SizedBox(width: spacing.sm),
-                        ] else if (widget.icon != null) ...[
-                          Semantics(
-                            label: _getIconLabel(widget.icon!),
-                            excludeSemantics: true,
-                            child: Icon(
-                              widget.icon,
-                              size: _getIconSize(),
-                              color: _getTextColor(context),
-                            ),
+                        ),
+                        SizedBox(width: spacing.sm),
+                      ] else if (widget.icon != null) ...[
+                        Semantics(
+                          label: _getIconLabel(widget.icon!),
+                          excludeSemantics: true,
+                          child: Icon(
+                            widget.icon,
+                            size: _getIconSize(),
+                            color: _getTextColor(context),
                           ),
-                          SizedBox(width: spacing.sm),
-                        ],
-                        if (widget.child != null)
-                          widget.child!
-                        else
-                          Text(
-                            widget.text,
-                            style: _getTextStyle(context),
-                          ),
+                        ),
+                        SizedBox(width: spacing.sm),
                       ],
-                    ),
+                      if (widget.child != null)
+                        widget.child!
+                      else
+                        Text(
+                          widget.text,
+                          style: _getTextStyle(context),
+                        ),
+                    ],
                   ),
                 ),
               ),

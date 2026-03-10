@@ -373,24 +373,23 @@ class _EnhancedLoginScreenState extends State<EnhancedLoginScreen> {
 
   Widget _buildPrivacyPolicy(BuildContext context) {
     return Center(
-      child: GestureDetector(
-        onTap: () {
+      child: TextButton(
+        onPressed: () {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               Navigator.pushNamed(context, '/privacy-policy');
             }
           });
         },
-        child: Container(
+        style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: const Text(
-            'Политика конфиденциальности',
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-              color: Colors.blue,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+        ),
+        child: const Text(
+          'Политика конфиденциальности',
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),

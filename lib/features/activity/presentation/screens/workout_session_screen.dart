@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:neon_circular_timer/neon_circular_timer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/activity_session.dart';
 import '../../../../shared/design/tokens/design_tokens.dart';
@@ -608,7 +612,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
     });
   }
 
-  void _completeWorkout() {
+  Future<void> _completeWorkout() async {
     if (_currentSession == null) return;
     // Отслеживаем завершение тренировки
     AnalyticsTracker.trackWorkoutCompleted(
@@ -616,7 +620,34 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen>
       duration: _sessionDuration,
       caloriesBurned: _caloriesBurned,
     );
+    // Сохраняем в календарь (SharedPreferences)
+    await _saveActivityToCalendar();
+    if (!mounted) return;
     _showCompletionDialog();
+  }
+
+  Future<void> _saveActivityToCalendar() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final now = DateTime.now();
+      final dateKey = now.toIso8601String().split('T')[0];
+      final key = 'activity_entries_$dateKey';
+
+      final existing = prefs.getString(key);
+      final List<Map<String, dynamic>> entries = existing != null
+          ? (jsonDecode(existing) as List)
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList()
+          : [];
+
+      entries.add({
+        'workoutName': widget.workout.name,
+        'duration': _sessionDuration,
+        'calories': _caloriesBurned,
+        'completedAt': now.toIso8601String(),
+      });
+      await prefs.setString(key, jsonEncode(entries));
+    } catch (_) {}
   }
 
   void _showExitDialog() {

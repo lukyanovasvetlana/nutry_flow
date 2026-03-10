@@ -7,6 +7,8 @@ class NutrySaveButton extends StatelessWidget {
   final String text;
   final double? width;
   final bool isLoading;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   const NutrySaveButton({
     super.key,
@@ -14,6 +16,8 @@ class NutrySaveButton extends StatelessWidget {
     this.text = 'Сохранить',
     this.width,
     this.isLoading = false,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   @override
@@ -23,8 +27,8 @@ class NutrySaveButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.dynamicPrimary,
-          foregroundColor: Colors.white,
+          backgroundColor: backgroundColor ?? AppColors.dynamicPrimary,
+          foregroundColor: foregroundColor ?? Colors.white,
           minimumSize:
               Size(double.infinity, DesignTokens.spacing.buttonHeightLarge),
           padding: EdgeInsets.symmetric(vertical: DesignTokens.spacing.sm),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutry_flow/shared/design/components/buttons/nutry_save_button.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
@@ -21,6 +23,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   DateTime? _selectedDate;
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
+  bool _isPickingImage = false;
+  bool _isLoadingGallery = false;
 
   final List<String> _genders = ['Мужской', 'Женский', 'Другой'];
 
@@ -31,62 +35,158 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _profileImage = File(image.path);
-      });
+  Future<void> _startImagePick(ImageSource source) async {
+    if (_isPickingImage) return;
+    setState(() {
+      _isPickingImage = true;
+    });
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (image != null && mounted) {
+        setState(() {
+          _profileImage = File(image.path);
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            source == ImageSource.camera
+                ? 'Не удалось сделать фото: $error'
+                : 'Не удалось выбрать фото: $error',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPickingImage = false;
+        });
+      }
     }
   }
 
-  Future<void> _takePhoto() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
-      setState(() {
-        _profileImage = File(image.path);
-      });
-    }
-  }
-
-  void _showImagePickerDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Выберите фото'),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading:
-                    const Icon(Icons.photo_library, color: AppColors.green),
-                title: const Text('Галерея'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.green),
-                title: const Text('Камера'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _takePhoto();
-                },
-              ),
-            ],
+  Future<void> _pickFromGalleryCustom() async {
+    if (_isPickingImage || _isLoadingGallery) return;
+    setState(() {
+      _isLoadingGallery = true;
+    });
+    try {
+      final permission = await PhotoManager.requestPermissionExtend();
+      final hasAccess =
+          permission.isAuth || permission == PermissionState.limited;
+      if (!hasAccess) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Нет доступа к фото. Разрешите в настройках.'),
+            action: SnackBarAction(
+              label: 'Настройки',
+              onPressed: PhotoManager.openSetting,
+            ),
           ),
         );
-      },
-    );
+        return;
+      }
+
+      if (!mounted) return;
+      final File? selectedFile = await Navigator.of(context).push<File?>(
+        MaterialPageRoute(
+          builder: (_) => const _GalleryPickerScreen(),
+        ),
+      );
+      if (selectedFile != null && mounted) {
+        setState(() {
+          _profileImage = selectedFile;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingGallery = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _showImagePickerDialog() async {
+    if (_isPickingImage) return;
+    ImageSource? source;
+    if (Platform.isIOS) {
+      source = await showCupertinoModalPopup<ImageSource>(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoActionSheet(
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () =>
+                    Navigator.pop(context, ImageSource.gallery),
+                child: const Text('Галерея'),
+              ),
+              CupertinoActionSheetAction(
+                onPressed: () => Navigator.pop(context, ImageSource.camera),
+                child: const Text('Камера'),
+              ),
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () => Navigator.pop(context),
+              isDefaultAction: true,
+              child: const Text('Отмена'),
+            ),
+          );
+        },
+      );
+    } else {
+      source = await showModalBottomSheet<ImageSource>(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading:
+                      const Icon(Icons.photo_library, color: AppColors.green),
+                  title: const Text('Галерея'),
+                  onTap: () => Navigator.pop(context, ImageSource.gallery),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt, color: AppColors.green),
+                  title: const Text('Камера'),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+                ListTile(
+                  title: const Center(child: Text('Отмена')),
+                  onTap: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    if (source != null && mounted) {
+      await Future.delayed(const Duration(milliseconds: 150));
+      if (source == ImageSource.gallery) {
+        await _pickFromGalleryCustom();
+      } else {
+        await _startImagePick(source);
+      }
+    }
   }
 
   Future<void> _selectDate() async {
-    final initialDate = _selectedDate ??
-        DateTime.now().subtract(const Duration(days: 365 * 25));
+    final initialDate = _selectedDate ?? DateTime.now();
     final firstDate = DateTime(1900);
     final lastDate = DateTime.now();
 
@@ -183,9 +283,9 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                 ),
                 const SizedBox(height: 32),
                 _buildFormFields(),
-                const SizedBox(height: 40),
+                const SizedBox(height: 72),
                 _buildSaveButton(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 _buildSkipButton(),
                 const SizedBox(height: 24),
               ],
@@ -204,8 +304,13 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           CircleAvatar(
             radius: 70,
             backgroundColor: Colors.white,
-            backgroundImage:
-                _profileImage != null ? FileImage(_profileImage!) : null,
+            backgroundImage: _profileImage != null
+                ? ResizeImage(
+                    FileImage(_profileImage!),
+                    width: 256,
+                    height: 256,
+                  )
+                : null,
             child: _profileImage == null
                 ? Icon(Icons.person_outline, size: 60, color: Colors.grey[300])
                 : null,
@@ -399,6 +504,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   Widget _buildSaveButton() {
     return NutrySaveButton(
       onPressed: _saveProfile,
+      backgroundColor: AppColors.button,
+      foregroundColor: Colors.white,
     );
   }
 
@@ -427,6 +534,96 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
             color: Colors.grey[600],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _GalleryPickerScreen extends StatefulWidget {
+  const _GalleryPickerScreen();
+
+  @override
+  State<_GalleryPickerScreen> createState() => _GalleryPickerScreenState();
+}
+
+class _GalleryPickerScreenState extends State<_GalleryPickerScreen> {
+  late Future<List<AssetEntity>> _assetsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _assetsFuture = _loadAssets();
+  }
+
+  Future<List<AssetEntity>> _loadAssets() async {
+    final paths = await PhotoManager.getAssetPathList(
+      type: RequestType.image,
+      onlyAll: true,
+    );
+    if (paths.isEmpty) return [];
+    return paths.first.getAssetListPaged(page: 0, size: 200);
+  }
+
+  Future<void> _selectAsset(AssetEntity asset) async {
+    final file = await asset.file;
+    if (!mounted) return;
+    Navigator.pop(context, file);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Выберите фото'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: FutureBuilder<List<AssetEntity>>(
+        future: _assetsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final assets = snapshot.data ?? [];
+          if (assets.isEmpty) {
+            return const Center(child: Text('Нет фотографий'));
+          }
+          return GridView.builder(
+            padding: const EdgeInsets.all(8),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 6,
+              mainAxisSpacing: 6,
+            ),
+            itemCount: assets.length,
+            itemBuilder: (context, index) {
+              final asset = assets[index];
+              return GestureDetector(
+                onTap: () => _selectAsset(asset),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: FutureBuilder<Uint8List?>(
+                    future: asset.thumbnailDataWithSize(
+                      const ThumbnailSize(200, 200),
+                    ),
+                    builder: (context, snap) {
+                      final bytes = snap.data;
+                      if (bytes == null) {
+                        return Container(color: Colors.grey[200]);
+                      }
+                      return Image.memory(
+                        bytes,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

@@ -190,12 +190,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   title: 'Политика конфиденциальности',
                   subtitle: 'Как мы используем ваши данные',
                   onTap: () {
-                    // TODO: Открыть политику конфиденциальности
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('Политика конфиденциальности в разработке')),
-                    );
+                    Navigator.pushNamed(context, '/privacy-policy');
                   },
                 ),
                 _buildSettingsTile(

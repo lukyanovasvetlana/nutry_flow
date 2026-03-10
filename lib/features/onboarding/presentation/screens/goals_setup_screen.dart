@@ -5,6 +5,8 @@ import '../../domain/entities/user_goals.dart';
 import '../../di/onboarding_dependencies.dart';
 import '../../../../app.dart';
 
+import 'package:nutry_flow/shared/design/components/buttons/nutry_save_button.dart';
+import 'package:nutry_flow/shared/design/tokens/design_tokens.dart';
 import 'package:nutry_flow/shared/theme/app_colors.dart';
 
 class GoalsSetupScreen extends StatelessWidget {
@@ -96,42 +98,57 @@ class GoalsSetupView extends StatelessWidget {
               );
             }
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Индикатор прогресса убран
-                  // _buildProgressIndicator(),
-                  // const SizedBox(height: 24),
+            return CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(16.0),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        // Индикатор прогресса убран
+                        // _buildProgressIndicator(),
+                        // const SizedBox(height: 24),
 
-                  // Выбор основной цели
-                  _buildGoalSelection(context),
-                  const SizedBox(height: 32),
+                        // Выбор основной цели
+                        _buildGoalSelection(context),
+                        const SizedBox(height: 32),
 
-                  // Целевые параметры
-                  if (state is GoalsSetupLoaded &&
-                      state.goals.fitnessGoals.isNotEmpty) ...[
-                    _buildTargetParameters(context, state.goals),
-                    const SizedBox(height: 32),
-                  ],
+                        // Целевые параметры
+                        if (state is GoalsSetupLoaded &&
+                            state.goals.fitnessGoals.isNotEmpty) ...[
+                          _buildTargetParameters(context, state.goals),
+                          const SizedBox(height: 32),
+                        ],
 
-                  // Диетические предпочтения
-                  _buildDietaryPreferences(context, state),
-                  const SizedBox(height: 32),
+                        // Диетические предпочтения
+                        _buildDietaryPreferences(context, state),
+                        const SizedBox(height: 32),
 
-                  // Настройка активности
-                  _buildActivitySettings(context, state),
-                  const SizedBox(height: 32),
+                        // Настройка активности
+                        _buildActivitySettings(context, state),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 48),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // Кнопки навигации
+                        _buildNavigationButtons(context, state),
+                        const SizedBox(height: 16),
 
-                  // Кнопки навигации
-                  _buildNavigationButtons(context, state),
-                  const SizedBox(height: 16),
-
-                  // Кнопка пропуска
-                  _buildSkipButton(context),
-                ],
-              ),
+                        // Кнопка пропуска
+                        _buildSkipButton(context),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             );
           },
         ),
@@ -561,7 +578,10 @@ class GoalsSetupView extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: ElevatedButton(
+          child: NutrySaveButton(
+            text: 'Назад',
+            backgroundColor: AppColors.button,
+            foregroundColor: Colors.white,
             onPressed: () {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
@@ -569,33 +589,33 @@ class GoalsSetupView extends StatelessWidget {
                 }
               });
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: AppColors.button,
-              foregroundColor: Colors.white,
-              elevation: 0,
-            ),
-            child: const Text('Назад'),
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: ElevatedButton(
+          child: OutlinedButton(
             onPressed: canProceed
                 ? () {
                     context.read<GoalsSetupBloc>().add(SaveGoals());
                   }
                 : null,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+            style: OutlinedButton.styleFrom(
+              minimumSize:
+                  Size(double.infinity, DesignTokens.spacing.buttonHeightLarge),
+              side: const BorderSide(color: AppColors.button, width: 2),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius:
+                    BorderRadius.circular(DesignTokens.borders.full),
+              ),
+              backgroundColor: Colors.white,
+            ),
+            child: Text(
+              'Завершить',
+              style: DesignTokens.typography.bodyLargeStyle.copyWith(
+                color: AppColors.button,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            child: const Text('Завершить'),
           ),
         ),
       ],
