@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bottom_picker/bottom_picker.dart';
-import 'package:bottom_picker/resources/arrays.dart';
+import 'package:nutry_flow/shared/widgets/date_picker_bottom_sheet.dart';
+import 'package:nutry_flow/shared/design/components/cards/nutry_card.dart';
+import 'package:nutry_flow/shared/design/tokens/design_tokens.dart';
 import '../../domain/entities/user_profile.dart';
 import '../bloc/profile_bloc.dart';
-import '../widgets/profile_form_section.dart';
-import '../widgets/profile_form_field.dart';
-import '../widgets/profile_selection_field.dart';
 import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_styles.dart';
 
@@ -27,12 +25,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
 
-  // Keys for scrolling to errors
+  // Key for scrolling to errors
   final _personalInfoKey = GlobalKey();
-  final _physicalInfoKey = GlobalKey();
-  final _healthInfoKey = GlobalKey();
-  final _nutritionTargetsKey = GlobalKey();
-  final _goalsKey = GlobalKey();
 
   // Validation constants
   static const int _minNameLength = 2;
@@ -235,12 +229,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Column(
+                      key: _personalInfoKey,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildPersonalInfoSection(key: _personalInfoKey),
-                        const SizedBox(height: 32),
+                        _buildSectionHeader('Личная информация'),
+                        _buildPersonalInfoCard(),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
@@ -269,138 +267,136 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       iconTheme: IconThemeData(
         color: AppColors.dynamicTextPrimary,
       ),
-      actions: [
-        if (_isModified && !_isSubmitting)
-          TextButton(
-            onPressed: _saveProfile,
-            child: Text(
-              'Сохранить',
-              style: TextStyle(
-                color: AppColors.dynamicPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-      ],
     );
   }
 
-  Widget _buildPersonalInfoSection({Key? key}) {
-    return ProfileFormSection(
-      key: key,
-      title: 'Личная информация',
-      icon: Icons.person_outline,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: ProfileFormField(
-                controller: _firstNameController,
-                focusNode: _firstNameFocus,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) => _lastNameFocus.requestFocus(),
-                label: 'Имя',
-                semanticLabel: 'Поле ввода имени',
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Введите имя';
-                  }
-                  if (value.trim().length < _minNameLength) {
-                    return 'Имя должно содержать минимум $_minNameLength символа';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ProfileFormField(
-                controller: _lastNameController,
-                focusNode: _lastNameFocus,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) => _emailFocus.requestFocus(),
-                label: 'Фамилия',
-                semanticLabel: 'Поле ввода фамилии',
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Введите фамилию';
-                  }
-                  if (value.trim().length < _minNameLength) {
-                    return 'Фамилия должна содержать минимум $_minNameLength символа';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: DesignTokens.spacing.sm,
+        left: DesignTokens.spacing.xs,
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.dynamicTextPrimary,
         ),
-        const SizedBox(height: 16),
-        ProfileFormField(
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoCard() {
+    final isLightTheme = Theme.of(context).brightness == Brightness.light;
+    return Column(
+      children: [
+        _buildNutritionStyleCard(
+          color: AppColors.dynamicPrimary,
+          icon: Icons.person_outline,
+          label: 'Имя',
+          hint: 'Введите имя',
+          isLightTheme: isLightTheme,
+          controller: _firstNameController,
+          focusNode: _firstNameFocus,
+          onFieldSubmitted: (_) => _lastNameFocus.requestFocus(),
+          validator: (v) {
+            if (v == null || v.trim().isEmpty) return 'Введите имя';
+            if (v.trim().length < _minNameLength) {
+              return 'Имя должно содержать минимум $_minNameLength символа';
+            }
+            return null;
+          },
+        ),
+        SizedBox(height: DesignTokens.spacing.md),
+        _buildNutritionStyleCard(
+          color: AppColors.dynamicInfo,
+          icon: Icons.badge_outlined,
+          label: 'Фамилия',
+          hint: 'Введите фамилию',
+          isLightTheme: isLightTheme,
+          controller: _lastNameController,
+          focusNode: _lastNameFocus,
+          onFieldSubmitted: (_) => _emailFocus.requestFocus(),
+          validator: (v) {
+            if (v == null || v.trim().isEmpty) return 'Введите фамилию';
+            if (v.trim().length < _minNameLength) {
+              return 'Фамилия должна содержать минимум $_minNameLength символа';
+            }
+            return null;
+          },
+        ),
+        SizedBox(height: DesignTokens.spacing.md),
+        _buildNutritionStyleCard(
+          color: AppColors.dynamicWarning,
+          icon: Icons.email_outlined,
+          label: 'Email',
+          hint: 'Введите email',
+          isLightTheme: isLightTheme,
           controller: _emailController,
           focusNode: _emailFocus,
-          textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => _phoneFocus.requestFocus(),
-          label: 'Email',
-          semanticLabel: 'Поле ввода email адреса',
           keyboardType: TextInputType.emailAddress,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Введите email';
-            }
-            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          validator: (v) {
+            if (v == null || v.trim().isEmpty) return 'Введите email';
+            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
               return 'Введите корректный email';
             }
             return null;
           },
         ),
-        const SizedBox(height: 16),
-        ProfileFormField(
+        SizedBox(height: DesignTokens.spacing.md),
+        _buildNutritionStyleCard(
+          color: AppColors.dynamicPurple,
+          icon: Icons.phone_outlined,
+          label: 'Телефон (необязательно)',
+          hint: 'Введите телефон',
+          isLightTheme: isLightTheme,
           controller: _phoneController,
           focusNode: _phoneFocus,
-          textInputAction: TextInputAction.next,
-          onFieldSubmitted: (_) => _heightFocus.requestFocus(),
-          label: 'Телефон (необязательно)',
-          semanticLabel: 'Поле ввода номера телефона, необязательное',
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           keyboardType: TextInputType.phone,
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
+          validator: (v) {
+            if (v != null && v.isNotEmpty) {
               if (!RegExp(r'^\+?[1-9]\d{1,14}$')
-                  .hasMatch(value.replaceAll(RegExp(r'[\s\-\(\)]'), ''))) {
+                  .hasMatch(v.replaceAll(RegExp(r'[\s\-\(\)]'), ''))) {
                 return 'Введите корректный номер телефона';
               }
             }
             return null;
           },
         ),
-        const SizedBox(height: 16),
-        ProfileSelectionField<DateTime>(
+        SizedBox(height: DesignTokens.spacing.md),
+        _buildMealStyleSelectionCard(
+          color: AppColors.dynamicPrimary,
+          icon: Icons.calendar_today_outlined,
           label: 'Дата рождения',
-          value: _selectedDateOfBirth,
-          displayText: _selectedDateOfBirth != null
-              ? _formatDateDDMMYYYY(_selectedDateOfBirth!)
-              : null,
+          value: _selectedDateOfBirth != null
+              ? _formatDateLikeProfile(_selectedDateOfBirth!)
+              : 'Выберите дату рождения',
+          isLightTheme: isLightTheme,
           onTap: () => _selectDateOfBirth(context),
-          validator: (value) {
-            if (value == null) {
-              return 'Выберите дату рождения';
-            }
-            final age = DateTime.now().difference(value).inDays / 365.25;
+          validator: () {
+            if (_selectedDateOfBirth == null) return 'Выберите дату рождения';
+            final age =
+                DateTime.now().difference(_selectedDateOfBirth!).inDays /
+                    365.25;
             if (age < _minAge || age > _maxAge) {
               return 'Возраст должен быть от $_minAge до $_maxAge лет';
             }
             return null;
           },
         ),
-        const SizedBox(height: 16),
-        ProfileSelectionField<Gender>(
+        SizedBox(height: DesignTokens.spacing.md),
+        _buildMealStyleSelectionCard(
+          color: AppColors.dynamicInfo,
+          icon: Icons.wc_outlined,
           label: 'Пол',
-          value: _selectedGender,
-          displayText: _selectedGender?.displayName,
+          value: _selectedGender?.displayName ?? 'Выберите пол',
+          isLightTheme: isLightTheme,
           onTap: () => _selectGender(context),
-          validator: (value) {
-            if (value == null) {
-              return 'Выберите пол';
-            }
+          validator: () {
+            if (_selectedGender == null) return 'Выберите пол';
             return null;
           },
         ),
@@ -408,11 +404,218 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
+  /// Карточка в стиле «Калории»: иконка | метка + значение | кнопка очистки
+  Widget _buildNutritionStyleCard({
+    required Color color,
+    required IconData icon,
+    required String label,
+    required String hint,
+    required bool isLightTheme,
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    void Function(String)? onFieldSubmitted,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return NutryCard(
+      margin: EdgeInsets.zero,
+      padding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      shadow: const [],
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withValues(alpha: isLightTheme ? 0.6 : 0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: isLightTheme ? 0.3 : 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            SizedBox(width: DesignTokens.spacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: DesignTokens.typography.labelSmallStyle.copyWith(
+                      color: AppColors.dynamicTextSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: DesignTokens.spacing.xs),
+                  TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: onFieldSubmitted,
+                    keyboardType: keyboardType,
+                    validator: validator,
+                    decoration: InputDecoration(
+                      hintText: hint,
+                      hintStyle:
+                          DesignTokens.typography.titleMediumStyle.copyWith(
+                        color: AppColors.dynamicTextSecondary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      isDense: true,
+                      filled: false,
+                    ),
+                    style: DesignTokens.typography.titleMediumStyle.copyWith(
+                      color: AppColors.dynamicTextPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller,
+              builder: (context, value, _) {
+                if (value.text.isEmpty) return const SizedBox.shrink();
+                return InkWell(
+                  onTap: () {
+                    controller.clear();
+                    _onFormChanged();
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: isLightTheme ? 0.3 : 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.close, size: 20, color: color),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Карточка выбора в стиле «Калории»: иконка | метка + значение | кнопка
+  Widget _buildMealStyleSelectionCard({
+    required Color color,
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isLightTheme,
+    required VoidCallback onTap,
+    String? Function()? validator,
+  }) {
+    return FormField<String>(
+      validator: (_) => validator?.call(),
+      builder: (field) {
+        return NutryCard(
+          margin: EdgeInsets.zero,
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          shadow: const [],
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: field.hasError
+                    ? AppColors.dynamicError
+                    : color.withValues(alpha: isLightTheme ? 0.6 : 0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: field.hasError
+                        ? AppColors.dynamicError.withValues(alpha: 0.2)
+                        : color.withValues(alpha: isLightTheme ? 0.3 : 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: field.hasError ? AppColors.dynamicError : color,
+                    size: 24,
+                  ),
+                ),
+                SizedBox(width: DesignTokens.spacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: DesignTokens.typography.labelSmallStyle.copyWith(
+                          color: AppColors.dynamicTextSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: DesignTokens.spacing.xs),
+                      Text(
+                        value,
+                        style:
+                            DesignTokens.typography.titleMediumStyle.copyWith(
+                          color: field.hasError
+                              ? AppColors.dynamicError
+                              : AppColors.dynamicTextPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (field.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            field.errorText!,
+                            style: TextStyle(
+                              color: AppColors.dynamicError,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: isLightTheme ? 0.3 : 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.chevron_right, size: 20, color: color),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildBottomActions() {
+    final isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.dynamicCard,
+        color: isLight ? Colors.white : AppColors.dynamicCard,
         boxShadow: [
           BoxShadow(
             color: AppColors.dynamicShadow.withValues(alpha: 0.1),
@@ -465,51 +668,45 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   // Selection methods
   Future<void> _selectDateOfBirth(BuildContext context) async {
-    final initialDate = _selectedDateOfBirth ??
-        DateTime.now().subtract(const Duration(days: 365 * 25));
     final firstDate = DateTime.now().subtract(const Duration(days: 365 * 120));
     final lastDate = DateTime.now().subtract(const Duration(days: 365 * 13));
+    var initialDate = _selectedDateOfBirth ??
+        DateTime.now().subtract(const Duration(days: 365 * 25));
+    if (initialDate.isBefore(firstDate)) initialDate = firstDate;
+    if (initialDate.isAfter(lastDate)) initialDate = lastDate;
 
-    // Используем Bottom Picker для выбора даты
-    BottomPicker.date(
-      headerBuilder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            'Выберите дату рождения',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-              color: AppColors.dynamicTextPrimary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        );
-      },
-      onSubmit: (selectedDate) {
+    await DatePickerBottomSheet.show(
+      context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      onDateSelected: (date) {
         setState(() {
-          _selectedDateOfBirth = selectedDate;
+          _selectedDateOfBirth = date;
           _onFormChanged();
         });
       },
-      onDismiss: (dynamic value) {},
-      bottomPickerTheme: BottomPickerTheme.plumPlate,
-      maxDateTime: lastDate,
-      minDateTime: firstDate,
-      initialDateTime: initialDate,
-      buttonSingleColor: AppColors.dynamicPrimary,
-      backgroundColor: AppColors.dynamicCard,
-      // ignore: deprecated_member_use
-      pickerTextStyle: TextStyle(
-        color: AppColors.dynamicTextPrimary,
-        fontSize: 14,
-      ),
-    ).show(context);
+      accentColor: AppColors.dynamicPrimary,
+    );
   }
 
-  /// Форматирует дату в формат dd/mm/yyyy
-  String _formatDateDDMMYYYY(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  /// Форматирует дату как на экране профиля: «15 марта 1990»
+  String _formatDateLikeProfile(DateTime date) {
+    const months = [
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
   Future<void> _selectGender(BuildContext context) async {
@@ -596,13 +793,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     // Wait for the next frame to ensure validation errors are rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Try to find the first section with an error by checking each section
-      final sections = [
-        _personalInfoKey,
-        _physicalInfoKey,
-        _healthInfoKey,
-        _nutritionTargetsKey,
-        _goalsKey,
-      ];
+      final sections = [_personalInfoKey];
 
       for (final sectionKey in sections) {
         final context = sectionKey.currentContext;

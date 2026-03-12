@@ -140,13 +140,13 @@ class AppStyles {
     color: AppColors.textSecondary,
   );
 
-  // Стили кнопок
+  // Стили кнопок (как на экране настройки целей: зелёная заливка + белая с обводкой)
   static ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
         backgroundColor: AppColors.button,
-        foregroundColor: AppColors.surface,
+        foregroundColor: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
+          borderRadius: BorderRadius.circular(25),
         ),
         minimumSize: const Size(double.infinity, buttonHeight),
         textStyle: const TextStyle(
@@ -157,9 +157,9 @@ class AppStyles {
 
   static ButtonStyle get secondaryButtonStyle => OutlinedButton.styleFrom(
         foregroundColor: AppColors.button,
-        side: const BorderSide(color: AppColors.button),
+        side: const BorderSide(color: AppColors.button, width: 2),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
+          borderRadius: BorderRadius.circular(25),
         ),
         minimumSize: const Size(double.infinity, buttonHeight),
         textStyle: const TextStyle(

@@ -485,12 +485,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_horiz, color: context.onSurface),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SafeArea(
         child: isLoading

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nutry_flow/config/supabase_config.dart';
 import 'package:nutry_flow/core/services/firebase_service.dart';
@@ -100,6 +101,16 @@ class _MyAppState extends State<MyApp> {
           darkTheme: _themeManager.darkTheme,
           themeMode: currentTheme,
           debugShowCheckedModeBanner: false,
+          locale: const Locale('ru', 'RU'),
+          supportedLocales: const [
+            Locale('ru', 'RU'),
+            Locale('en', 'US'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           initialRoute: '/',
           routes: {
             '/': (context) => const SplashScreen(),
